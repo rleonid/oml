@@ -1,0 +1,6 @@
+description="OCaml Math Library"
+requires=""
+version="0.0.1"
+
+archive(byte)="oml.cma"
+archive(byte,mt)="oml.cmo"
