@@ -20,15 +20,15 @@ let unbiased_var arr =
   let n = float (Array.length arr) in
   (n /. (n -.  1.0)) *. (var arr)
 
-let cov x y =
+let covariance x y =
   let x_mean = mean x in
   let y_mean = mean y in
   mean (Array.map2 (fun x_i y_i -> (x_i -. x_mean) *. (y_i -. y_mean)) x y)
 
 let correlation x y =
-  (cov x y) /. (sqrt ((var x) *. (var y)))
+  (covariance x y) /. (sqrt ((var x) *. (var y)))
 
-let auto_correl lag ar =
+let auto_correlation lag ar =
   let m = Array.length ar - lag in
   correlation (Array.sub ar 0 m) (Array.sub ar lag m)
 
