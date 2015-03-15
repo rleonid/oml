@@ -14,17 +14,31 @@ module Array = struct
   include Array
 
   let fold2 f i a b =
-    let r = ref i in
-    let n = Array.length a in
-    for i = 0 to n - 1 do
-      r := f !r a.(i) b.(i)
-    done;
-    !r
+    let n = Array.length a
+    and m = Array.length b in
+    if n <> m then
+      invalidArg "unequal lengths %d and %d" n m
+    else
+      begin
+        let r = ref i in
+        for i = 0 to n - 1 do
+          r := f !r a.(i) b.(i)
+        done;
+        !r
+      end
 
   let map2 f a b =
-    Array.mapi (fun i a_i -> f a_i b.(i)) a
+    let n = Array.length a
+    and m = Array.length b in
+    if n <> m then
+      invalidArg "unequal lengths %d and %d" n m
+    else
+      Array.mapi (fun i a_i -> f a_i b.(i)) a
 
   let sumf = Array.fold_left (+.) 0.0
+
+  (* TODO: Are there heuristics to consider when arrays are large? or elements
+     in the array are particulary large/small. log transforms? *)
   let prodf = Array.fold_left ( *. ) 0.0
 
   let max a = Array.fold_left max a.(0) a
