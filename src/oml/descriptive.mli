@@ -21,7 +21,12 @@ val classify_kurtosis : float array -> string
 val stat_classify : float array -> (string * float) list
 val unbiased_classify : float array -> (string * float) list
 val unbiased_distribution_commentary : float array -> (string * float * string) list
-type dist_stats 
+type dist_stats = { size     : int
+                  ; mean     : float
+                  ; var      : float
+                  ; skew     : float
+                  ; kurtosis : float
+                  }
 val dist_classify : float array -> dist_stats
 val unbiased_dist_classify : float array -> dist_stats
 val histogram : float array -> float -> (float * int) array
