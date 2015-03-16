@@ -23,7 +23,7 @@ type linear_model = { m_pred                : float
 (* resp = alpha + beta * pred *)
 let eval_lrm lrm x = lrm.alpha +. lrm.beta *. x
 
-let linear_regress ?pred_variance ~resp ~pred =
+let linear_regress ?pred_variance ~resp ~pred () =
   let corr = correlation pred resp in
   let deg_of_freedom = float (Array.length pred - 2) in (* one for the constant and one for beta *)
   let act_pv =
