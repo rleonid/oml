@@ -16,8 +16,8 @@ type linear_model = { m_pred                : float
                     ; chi_square            : float
                     ; inferred_response_var : float
                     ; goodness_of_fit       : float option
-                    ; s_xx : float
-                    ; d_w : float
+                    ; s_xx                  : float
+                    ; d_w                   : float
                     }
 
 (* resp = alpha + beta * pred *)
