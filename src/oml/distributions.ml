@@ -1,7 +1,6 @@
 
 open Util
 
-let poisson_prob mean less_than_occurances = Functions.gammaq less_than_occurances mean
 
 let standard_normal_cdf z =
   try (1.0 +. Functions.erf (z /. sqrt 2.0)) /. 2.0
@@ -20,3 +19,5 @@ let normal_pdf ~mean ~std x =
 let standard_normal_pdf =
   normal_pdf ~mean:0.0 ~std:1.0
 
+let poisson_cdf ~mean k =
+    Functions.gammaq (floor (k +. 1.0)) mean
