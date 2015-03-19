@@ -30,3 +30,6 @@ type dist_stats = { size     : int
 val dist_classify : float array -> dist_stats
 val unbiased_dist_classify : float array -> dist_stats
 val histogram : float array -> float -> (float * int) array
+(** [geometric_mean arr] is the product of the elements of [arr] raised to the
+    power of the reciprocal of the length. *)
+val geometric_mean : float array -> float

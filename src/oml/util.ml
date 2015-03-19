@@ -39,7 +39,7 @@ module Array = struct
 
   (* TODO: Are there heuristics to consider when arrays are large? or elements
      in the array are particulary large/small. log transforms? *)
-  let prodf = Array.fold_left ( *. ) 0.0
+  let prodf = Array.fold_left ( *. ) 1.0
 
   let max a = Array.fold_left max a.(0) a
   let min a = Array.fold_left min a.(0) a

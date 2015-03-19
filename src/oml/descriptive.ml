@@ -143,3 +143,8 @@ let histogram arr icr =
       let icr, count = harr.(idx) in
       harr.(idx) <- (icr, count + 1)) arr;
   harr
+
+let geometric_mean arr =
+  let n = float (Array.length arr) in
+  let p = Array.prodf arr in
+  p ** (1.0 /. n)
