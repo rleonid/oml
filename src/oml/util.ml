@@ -35,10 +35,13 @@ module Array = struct
     else
       Array.mapi (fun i a_i -> f a_i b.(i)) a
 
+  (* TODO: On the subject of heurisitcs, see Kahan's summation algorithm. *)
   let sumf = Array.fold_left (+.) 0.0
 
   (* TODO: Are there heuristics to consider when arrays are large? or elements
-     in the array are particulary large/small. log transforms? *)
+           in the array are particulary large/small. log transforms?
+           Specifically, if I'm not going to use this method of geometric_mean,
+           when should I use this default version?  *)
   let prodf = Array.fold_left ( *. ) 1.0
 
   let max a = Array.fold_left max a.(0) a

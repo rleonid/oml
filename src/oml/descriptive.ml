@@ -144,7 +144,14 @@ let histogram arr icr =
       harr.(idx) <- (icr, count + 1)) arr;
   harr
 
-let geometric_mean arr =
+let geometric_mean_definitional arr =
   let n = float (Array.length arr) in
   let p = Array.prodf arr in
   p ** (1.0 /. n)
+
+let geometric_mean arr =
+  (* TODO: Determine a heuristic for when to do use the simpler method.*)
+  exp (mean (Array.map log arr))
+
+let harmonic_mean arr =
+  1.0 /. (mean (Array.map (fun x -> 1.0 /. x) arr))
