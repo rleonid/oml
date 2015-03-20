@@ -15,8 +15,10 @@ build: setup.ml setup.data
 	
 install:
 	ocamlfind install oml META \
-		_build/src/lib/Oml.cma \
-		_build/src/lib/Oml.cmxa \
+		_build/src/lib/oml.a \
+		_build/src/lib/oml.o \
+		_build/src/lib/oml.cma \
+		_build/src/lib/oml.cmxa \
 		_build/src/lib/*.cmi \
   	_build/src/lib/*.cmo
 
