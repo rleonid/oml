@@ -1,0 +1,21 @@
+OASISFormat: 0.4
+Name:        Oml
+Version:     0.0.1
+Synopsis:    OCaml Math Library
+Authors:     Leonid Rozenberg <leonidr@gmail.com>
+License:     Apache-2.0
+
+Library oml
+  Path      : src/lib
+  Pack      : true
+  BuildTools: ocamlbuild
+  Modules   : Descriptive
+            , Distributions
+            , Estimations
+            , Functions
+            , Inference
+            , Random_normal
+            , Regression
+            , Running
+            , Util
+  
