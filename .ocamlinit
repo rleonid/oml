@@ -1,2 +1,2 @@
-#directory "_build/src/oml" ;;
-#load "oml.cmo";;
+#directory "_build/src/lib" ;;
+#load_rec "oml.cma";;

@@ -1,15 +1,24 @@
 
 all: build
 
-build:
-	ocamlbuild src/oml/oml.cma
+clean:
+	rm -rf _build
 
+setup.ml:
+	oasis setup -setup-update dynamic
+
+setup.data:
+	ocaml setup.ml -configure
+
+build: setup.ml setup.data
+	ocaml setup.ml -build
+	
 install:
 	ocamlfind install oml META \
-		_build/src/oml/oml.cma \
-		_build/src/oml/oml.mlpack \
-		_build/src/oml/*.cmi \
-		_build/src/oml/*.cmo
+		_build/src/lib/Oml.cma \
+		_build/src/lib/Oml.cmxa \
+		_build/src/lib/*.cmi \
+  	_build/src/lib/*.cmo
 
 
-.PHONY: all build
+.PHONY: all clean build install
