@@ -5,5 +5,5 @@ module Estimations = Estimations
 module Descriptive = Descriptive
 module Inference = Inference
 module Regression = Regression
-module Random_normal = Random_normal
+module Sampling = Sampling
 module Running = Running 
