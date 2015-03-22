@@ -23,8 +23,8 @@ let random_std_normal ?seed () =
     | Some x -> (cur_ref := None; x)
     | None   -> loop (p ()) (p ()))
 
-let random_normal seed ~mean ~std () =
-  let rsn = random_std_normal seed  in
+let random_normal ?seed ~mean ~std () =
+  let rsn = random_std_normal ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
 
