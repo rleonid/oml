@@ -1,7 +1,7 @@
 
 open Util
 
-let random_std_normal ?seed () =
+let normal_std ?seed () =
   let r =
     match seed with
     | None   -> Random.State.make_self_init ()
@@ -23,12 +23,6 @@ let random_std_normal ?seed () =
     | Some x -> (cur_ref := None; x)
     | None   -> loop (p ()) (p ()))
 
-let random_normal ?seed ~mean ~std () =
-  let rsn = random_std_normal ?seed () in
+let normal ?seed ~mean ~std () =
+  let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
-
-
-(* create an array of data correlated (by r) with the first array. *)
-let correlated_random r ar1 ar2 =
-  Array.map2 (fun x1 x2 -> r *. x1 +. (sqrt (1.0 -. r *. r)) *. x2) ar1 ar2
-

@@ -14,7 +14,7 @@ Library oml
             , Estimations
             , Functions
             , Inference
-            , Random_normal
+            , Sampling
             , Regression
             , Running
             , Util
