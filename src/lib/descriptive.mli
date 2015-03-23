@@ -29,10 +29,14 @@ type dist_stats = { size     : int
                   }
 val dist_classify : float array -> dist_stats
 val unbiased_dist_classify : float array -> dist_stats
-val histogram : float array -> float -> (float * int) array
+
+(** [histogra data width] group [data] into buckets of the specified [width]. *)
+val histogram : float array -> width:float -> (float * int) array
+
 (** [geometric_mean arr] is the product of the elements of [arr] raised to the
     power of the reciprocal of the length. *)
 val geometric_mean : float array -> float
+
 (*val geometric_mean_definitional  : float array -> float *)
 (** [harmonic_mean arr] is the reciprocal of the arithmetic mean of the
     reciprocals of arr. *)

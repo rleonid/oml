@@ -133,16 +133,16 @@ let unbiased_dist_classify arr =
   ; kurtosis = unbiased_kurtosis arr
   }
 
-let histogram arr icr =
+let histogram arr ~width =
   let mn   = Array.min arr in
   let mx   = Array.max arr in
-  let size = truncate (ceil ((floor ((mx -. mn) /. icr)) +. 1.0)) in
-  let harr = Array.init size (fun i -> (mn +. (float i) *. icr, 0)) in
+  let size = truncate (ceil ((floor ((mx -. mn) /. width)) +. 1.0)) in
+  let harr = Array.init size (fun i -> (mn +. (float i) *. width, 0)) in
   Array.iter (fun v ->
-      let idx = truncate ((v -. mn) /. icr) in
-      let icr, count = harr.(idx) in
-      harr.(idx) <- (icr, count + 1)) arr;
-  harr
+      let idx = truncate ((v -. mn) /. width) in
+      let width, count = harr.(idx) in
+      harr.(idx) <- (width, count + 1)) arr;
+    harr
 
 let geometric_mean_definitional arr =
   let n = float (Array.length arr) in
