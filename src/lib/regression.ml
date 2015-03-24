@@ -10,14 +10,14 @@ type linear_model = { m_pred                : float
                     (*; alpha_test            : test *)
                     ; beta                  : float
                     (*; beta_test             : test *)
-                    (*;      alpha_var : float *)
-                    (*;      beta_var : float  *)
+                    (*; alpha_var             : float *)
+                    (*; beta_var              : float *)
                     ; correlation           : float
                     ; chi_square            : float
                     ; inferred_response_var : float
                     ; goodness_of_fit       : float option
                     ; s_xx                  : float
-                    ; d_w                   : float
+                    (*; d_w                   : float *)
                     }
 
 (* resp = alpha + beta * pred *)
@@ -88,7 +88,7 @@ let linear_regress ?pred_variance ~resp ~pred () =
     inferred_response_var = chi_sq /. deg_of_freedom;
     goodness_of_fit = q;
     s_xx = s_xx;
-    d_w = nan;
+    (*d_w = nan; *)
   }
 
   let confidence_interval, prediction_interval =
