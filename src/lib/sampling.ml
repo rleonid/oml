@@ -27,16 +27,20 @@ let normal ?seed ~mean ~std () =
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
-let multinomial ?seed weights () =
-  if Array.length weights = 0 then raise (Invalid_argument "weights") else
+let multinomial ?seed weights =
+  let sum = Array.sumf weights in
+  if Util.significantly_different_from 1.0 sum then
+    raise (Invalid_argument "weights") else
   let r =
     match seed with
     | None   -> Random.State.make_self_init ()
     | Some a -> Random.State.make a
   in
-  let threshold = (Random.State.float r 1.0) in
-  let rec iter i sum =
-    if i = Array.length weights - 1 then i else
-      let sum' = sum +. weights.(i) in
-      if sum' >= threshold then i else iter (i+1) sum' in
-  iter 0 0.0
+  let n = Array.length weights - 1 in
+  (fun () ->
+    let threshold = Random.State.float r 1.0 in
+    let rec iter i sum =
+      if i = n then i else
+        let sum' = sum +. weights.(i) in
+        if sum' >= threshold then i else iter (i+1) sum' in
+    iter 0 0.0)
