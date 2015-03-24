@@ -10,6 +10,7 @@ val normal_std : ?seed:int array -> unit -> (unit -> float)
 
 (** [multinomial ?seed weights] creates a generator that will return an integer
     representating the ith element from the Multinomial distribution given by
-    a [weights] vector which sums to [1]. *)
+    a [weights] vector which sums to [1].
+    @raise Invalid_argument if [weights] is empty *)
 val multinomial : ?seed:int array -> float array -> (unit -> int)
 
