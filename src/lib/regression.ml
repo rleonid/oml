@@ -91,4 +91,17 @@ let linear_regress ?pred_variance ~resp ~pred () =
     d_w = nan;
   }
 
-
+  let confidence_interval, prediction_interval =
+    let interval a lrm ~alpha_level x =
+      let dgf = lrm.size -. 2.0 in
+      let dgi = truncate dgf in
+      let t  = Functions.t_lookup (alpha_level /. 2.0) dgi in
+      let y  = eval_lrm lrm x in
+      let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
+      let c  = lrm.chi_square /. (lrm.size -. 2.0) in
+      let se = sqrt ((a +. b) *. c) in
+      let d  = t *. se in
+      (y -. d), (y +. d)
+    in
+    (fun lrm -> interval (1.0 /. lrm.size) lrm),
+    (fun lrm -> interval ((lrm.size +. 1.0) /. lrm.size) lrm)
