@@ -28,6 +28,7 @@ let normal ?seed ~mean ~std () =
   (fun () -> std *. (rsn ()) +. mean)
 
 let multinomial ?seed weights () =
+  if Array.length weights = 0 then raise (Invalid_argument "weights") else
   let r =
     match seed with
     | None   -> Random.State.make_self_init ()
