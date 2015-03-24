@@ -1,9 +1,6 @@
 
 open Descriptive
 
-(* When we do not know the mean or standard deviation of a distribution
- * we can still create a prediction interval based off distribution stat.
- *)
 let prediction_interval alpha dist_stat =
   let n = dist_stat.size in
   let t_value = Functions.t_lookup alpha n in
@@ -15,8 +12,6 @@ let prediction_interval alpha dist_stat =
 type test = { standard_error      : float
             ; degrees_of_freedom  : float
             ; stat                : float
-            (* the probability that |t_stat| could be this large (or larger) by
-               chance, for distributions with equal means. *)
             ; prob_by_chance      : float;
             }
 
