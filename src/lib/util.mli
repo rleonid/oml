@@ -50,3 +50,10 @@ module Array : sig
       Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
   val binary_search : ('a -> int) -> 'a array -> 'a
 end
+
+(** A really small value. *)
+val dx : float
+
+(** [significantly_different_from ?d x y] will check if [y] is more than [d]
+    (defaults to [dx]) away from [x]. *)
+val significantly_different_from : ?d:float -> float -> float -> bool
