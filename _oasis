@@ -15,6 +15,7 @@ Library oml
             , Functions
             , Inference
             , Sampling
+            , Solvers
             , Regression
             , Running
             , Util
