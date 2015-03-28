@@ -44,3 +44,7 @@ let multinomial ?seed weights =
         let sum' = sum +. weights.(i) in
         if sum' >= threshold then i else iter (i+1) sum' in
     iter 0 0.0)
+
+let softmax ?seed ?temp weights =
+  let f = Functions.softmax ?temp weights in
+  multinomial ?seed (Array.init (Array.length weights) f)
