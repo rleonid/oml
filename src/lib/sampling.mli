@@ -15,3 +15,9 @@ val normal_std : ?seed:int array -> unit -> (unit -> float)
     @raise Invalid_argument if [weights] do not sum to [1.0] *)
 val multinomial : ?seed:int array -> float array -> (unit -> int)
 
+(** [softmax ?seed ?temp weights] creates a generator that will return an integer
+    representating the ith element from the softmax distribution given by
+    a [weights] vector and [temp]erature parameter which defaults to [1.0].
+
+    @raise Invalid_argument if [weights] is empty *)
+val softmax : ?seed:int array -> ?temp:float -> float array -> (unit -> int)
