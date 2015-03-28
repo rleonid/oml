@@ -177,7 +177,7 @@ let t_lookup alpha_level dgf =
 let softmax ?(temp=1.0) weights =
   if Array.length weights = 0 then raise (Invalid_argument "weights") else
   if temp = 0.0 then raise (Invalid_argument "temp") else
-    let weights = Array.map (fun w -> exp w /. temp) weights in
+    let weights = Array.map (fun w -> exp (w /. temp)) weights in
     let sum = Array.fold_left (+.) 0.0 weights in
     let weights = Array.map (fun w -> w /. sum) weights in
     Array.get weights
