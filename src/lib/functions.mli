@@ -10,3 +10,4 @@ val erfc : float -> float
 val chi_square_less : float -> int -> float
 val chi_square_greater : float -> int -> float
 val t_lookup : float -> int -> float
+val softmax : ?temp:float -> float array -> int -> float
