@@ -27,6 +27,15 @@ let normal ?seed ~mean ~std () =
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
+let uniform ?seed n =
+  if n <= 0 then raise (Invalid_argument "n") else
+  let r =
+    match seed with
+    | None   -> Random.State.make_self_init ()
+    | Some a -> Random.State.make a
+  in
+  fun () -> Random.State.int r n
+
 let multinomial ?seed weights =
   let sum = Array.sumf weights in
   if Util.significantly_different_from 1.0 sum then
