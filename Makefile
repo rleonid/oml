@@ -8,7 +8,7 @@ oml.cmxa:
 
 build: oml.cmxa
 
-driver.test:
+driver.test: oml.cmxa
 	ocamlbuild -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test
 
 test: driver.test
