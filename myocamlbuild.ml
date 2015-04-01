@@ -24,6 +24,8 @@ let rec copy_mlt_files path =
       else
         ())
 
+let integrate_coverage = true
+
 let () =
   let additional_rules =
     function
@@ -33,24 +35,43 @@ let () =
       | After_options   -> ()
       | Before_rules    -> ()
       | After_rules     ->
-        rule "Create a test target."
-          ~prod:"%.test"
-          ~dep:"%.native"
-          begin fun env _build ->
-            let test = env "%.test" and native = env "%.native" in
-            Seq [ mv native test
-                ; Cmd (S [ A"ln"
-                          ; A"-sf"
-                          ; P (!Options.build_dir/test)
-                          ; A Pathname.parent_dir_name])
-            ]
-          end;
-        if target_with_extension "test" then
           begin
-            flag ["pp"]
-              (S [A(lib_dir "kaputt" / "kaputt_pp.byte"); A"on"; A "camlp4o"])
+            rule "Create a test target."
+              ~prod:"%.test"
+              ~dep:"%.native"
+              begin fun env _build ->
+                let test = env "%.test" and native = env "%.native" in
+                Seq [ mv native test
+                    ; Cmd (S [ A"ln"
+                              ; A"-sf"
+                              ; P (!Options.build_dir/test)
+                              ; A Pathname.parent_dir_name])
+                ]
+              end;
+            if target_with_extension "test" then
+              begin
+                if integrate_coverage then
+                  begin
+                    let bsdir = lib_dir "bisect" in
+                    flag ["pp"]
+                      (S [A "/Users/leonidrozenberg/Documents/code/kaputt-1.2/_build/src/syntax/kaputt_pp.byte"
+                        ; A "overwrite"
+                      (*(S [A(lib_dir "kaputt" / "kaputt_pp.byte"); A"on" *)
+                         ; A "camlp4o"
+                         ; A "str.cma"
+                         ; A (bsdir / "bisect_pp.cmo")]);
+                    flag ["compile"]
+                      (S [A"-I"; A bsdir]);
+                    flag ["link"; "byte"; "program"]
+                      (S [A"-I"; A bsdir; A"bisect.cmo"]);
+                    flag ["link"; "native"; "program"]
+                      (S [A"-I"; A bsdir; A"bisect.cmx"])
+                  end
+                else
+                  flag ["pp"]
+                    (S [ A(lib_dir "kaputt" / "kaputt_pp.byte")
+                       ; A"on"; A "camlp4o"]);
+              end
           end
-        else
-          ();
   in
   dispatch additional_rules
