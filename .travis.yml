@@ -2,8 +2,7 @@ sudo: required
 language: c
 script: bash -e ./tools/travis_ci_test.sh
 os:
-- linux
-- osx
+  - linux
+  - osx
 env: 
-  - OCAML_VERSION=4.01.0 OPAM_VERSION=1.2.0
   - OCAML_VERSION=4.02.0 OPAM_VERSION=1.2.0
