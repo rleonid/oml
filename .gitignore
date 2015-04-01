@@ -2,3 +2,4 @@ _build
 setup.data
 setup.ml
 setup.log
+*.test

@@ -1,18 +1,22 @@
 
+.PHONY: all clean build
+
 all: build
 
+oml.cmxa:
+	ocamlbuild -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa
+
+build: oml.cmxa
+
+driver.test:
+	ocamlbuild -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test
+
+test: driver.test
+	./driver.test
+
 clean:
-	rm -rf _build
+	ocamlbuild -clean
 
-setup.ml:
-	oasis setup -setup-update dynamic
-
-setup.data:
-	ocaml setup.ml -configure
-
-build: setup.ml setup.data
-	ocaml setup.ml -build
-	
 install:
 	ocamlfind install oml META \
 		_build/src/lib/oml.a \
@@ -20,7 +24,4 @@ install:
 		_build/src/lib/oml.cma \
 		_build/src/lib/oml.cmxa \
 		_build/src/lib/*.cmi \
-  	_build/src/lib/*.cmo
-
-
-.PHONY: all clean build install
+		_build/src/lib/*.cmo
