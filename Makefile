@@ -7,7 +7,7 @@ setup:
 all: build
 
 oml.cmxa:
-	ocamlbuild -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa
+	ocamlbuild -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
