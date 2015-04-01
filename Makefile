@@ -26,5 +26,10 @@ install:
 		_build/src/lib/oml.o \
 		_build/src/lib/oml.cma \
 		_build/src/lib/oml.cmxa \
+		_build/src/lib/oml.cmxs \
 		_build/src/lib/*.cmi \
-		_build/src/lib/*.cmo
+		_build/src/lib/*.cmo \
+		_build/src/lib/*.cmx
+
+uninstall:
+	ocamlfind remove oml
