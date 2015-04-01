@@ -1,6 +1,9 @@
 
 .PHONY: all clean build
 
+setup:
+	opam install kaputt
+
 all: build
 
 oml.cmxa:
