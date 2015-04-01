@@ -56,8 +56,11 @@ eval `opam config env`
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
-echo Compiling!
+echo Installing Libraries
+make setup
+
+echo Compiling
 make
 
-echo Testing! 
+echo Testing
 make test
