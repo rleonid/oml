@@ -1,3 +1,4 @@
+sudo: required
 language: c
 script: bash -e ./tools/travis_ci_test.sh
 os:
