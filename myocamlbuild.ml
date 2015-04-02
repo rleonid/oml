@@ -54,9 +54,7 @@ let () =
                   begin
                     let bsdir = lib_dir "bisect" in
                     flag ["pp"]
-                      (S [A "/Users/leonidrozenberg/Documents/code/kaputt-1.2/_build/src/syntax/kaputt_pp.byte"
-                        ; A "overwrite"
-                      (*(S [A(lib_dir "kaputt" / "kaputt_pp.byte"); A"on" *)
+                      (S [P (!Options.build_dir / "tools/joiner.native")
                          ; A "camlp4o"
                          ; A "str.cma"
                          ; A (bsdir / "bisect_pp.cmo")]);
