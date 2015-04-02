@@ -17,7 +17,10 @@ oml.cmxa:
 
 build: oml.cmxa
 
-driver.test:
+joiner.native:
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
+
+driver.test: joiner.native
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test
 
 test: driver.test
