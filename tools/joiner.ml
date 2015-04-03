@@ -44,8 +44,11 @@ let copy from_chan to_chan =
   with _ -> ()
 
 let joined_header ~source_file ~test_file =
-  Printf.sprintf "# 0 %S (* concating files for glory %S %S *)"
-    source_file source_file test_file
+  Printf.sprintf "(* concating files for glory %S %S *)"
+    source_file test_file
+
+let starts_with prefix str =
+  (str <> "") && String.sub str 0 (String.length prefix) = prefix
 
 (* Argument Format:
   joiner.exe camlp4o other arguments source_file.ml
@@ -67,7 +70,7 @@ let () =
           let first_line  = input_line source_chan in
           let join_guard  = joined_header ~source_file ~test_file in
           let temp_name, temp_chan = Filename.open_temp_file "joiner" ".ml" in
-          if first_line = join_guard then
+          if starts_with join_guard first_line then
             begin
               close_in_noerr source_chan;
               close_out_noerr temp_chan;
@@ -75,13 +78,11 @@ let () =
             end
           else
             begin
-              output_string temp_chan join_guard;
-              output_char temp_chan '\n';
-              (*let directive = Printf.sprintf "# 0 %S\n" source_file in
-              output_string temp_chan directive; *)
-              output_string temp_chan first_line;
+              output_string temp_chan (join_guard ^ first_line);
               output_char temp_chan '\n';
               copy source_chan temp_chan;
+              (* Not certain where this enters the chain,
+                 but bisect seems to pipe this to a different file! *)
               let directive = Printf.sprintf "# 1 %S\n" test_file in
               output_string temp_chan directive;
               let test_chan = open_in test_file in
