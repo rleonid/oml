@@ -31,6 +31,7 @@ let call args =
     Buffer.add_string buff (quote args.(i));
     Buffer.add_char buff ' ';
   done;
+  (*Printf.eprintf "Calling: %s\n" (Buffer.contents buff); *)
   let code = Sys.command (Buffer.contents buff) in
   ignore (exit code)
 
@@ -89,7 +90,7 @@ let () =
               close_in_noerr test_chan;
               close_out_noerr temp_chan;
               Sys.rename temp_name source_file;
-              args.(len - 3) <- source_file;
+              args.(len - 2) <- source_file;
               call args
             end
         end
