@@ -42,10 +42,10 @@ let () =
               begin fun env _build ->
                 let test = env "%.test" and native = env "%.native" in
                 Seq [ mv native test
-                    ; Cmd (S [ A"ln"
-                              ; A"-sf"
-                              ; P (!Options.build_dir/test)
-                              ; A Pathname.parent_dir_name])
+                    ; Cmd (S [ A "ln"
+                             ; A "-sf"
+                             ; P (!Options.build_dir/test)
+                             ; A Pathname.parent_dir_name])
                 ]
               end;
             if target_with_extension "test" then
@@ -54,7 +54,7 @@ let () =
                   begin
                     let bsdir = lib_dir "bisect" in
                     flag ["pp"]
-                      (S [P (!Options.build_dir / "tools/joiner.native")
+                      (S [ P (!Options.build_dir / "tools/joiner.native")
                          ; A "camlp4o"
                          ; A "str.cma"
                          ; A (bsdir / "bisect_pp.cmo")]);
