@@ -89,7 +89,8 @@ let () =
               close_in_noerr test_chan;
               close_out_noerr temp_chan;
               Sys.rename temp_name source_file;
-              args.(len - 3) <- source_file
+              args.(len - 3) <- source_file;
+              call args
             end
         end
       else
