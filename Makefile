@@ -48,8 +48,13 @@ uninstall:
 report_dir:
 	mkdir report_dir
 
+# By running bisect-report in the actual directory with the modified source path
+# (ie. the *.ml has the *.mlt inside of it with our label), we get proper
+# alignment of the html!
 report: report_dir
-	bisect-report -I $(DRIVER_BUILD_DIR) -html report_dir $(shell ls -t bisect*.out | head -1)
+	cd $(DRIVER_BUILD_DIR) && \
+	bisect-report -html ../report_dir ../$(shell ls -t bisect*.out | head -1) && \
+	cd -
 
 clean_reports:
 	rm -rf report_dir bisect*.out
