@@ -1,6 +1,14 @@
 (*
- * This utility is adapted from kaputt_pp.ml found in Kaputt, the associated
- * license is included below.
+ * This utility concats the test file (.mlt) at the end of the regular source
+ * (.ml) file, modifying the source in the meantime. This should be used in
+ * a copied build directory (such as if you're using OCamlbuild).
+ *
+ * We need to modify the files in place so that Bisect (used afterwards)
+ * can easily detect which file (specifically filename) it is instrumenting,
+ * as opposed to a random generated tempfile by camlp4.
+ *
+ * It is adapted from kaputt_pp.ml found in Kaputt, which performs a similar
+ * processing. The associated license is included below.
  *
  * This file is part of Kaputt.
  * Copyright (C) 2008-2012 Xavier Clerc.
