@@ -1,2 +1,3 @@
 S ./src/oml/
-B _build/src/oml
+B _build
+B _driver
