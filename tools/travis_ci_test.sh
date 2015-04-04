@@ -63,7 +63,7 @@ echo Compiling
 make
 
 echo Testing
-make test
+make covered_test
 
 echo PostingCoverage
 opam install ocveralls

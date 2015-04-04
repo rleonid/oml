@@ -20,10 +20,12 @@ build: oml.cmxa
 joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
-driver.test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test
+test: joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test && \
+	./driver.test
 
-test: driver.test
+covered_test: joiner.native
+	COVERAGE=true ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test && \
 	./driver.test
 
 clean:
