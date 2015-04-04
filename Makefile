@@ -1,24 +1,35 @@
 
-.PHONY: all clean build
+DRIVER_BUILD_DIR=_driver
 
-setup:
-	opam install kaputt
+.PHONY: all clean build install uninstall setup default
+
+default: build
 
 all: build
+
+# This should be called something else.
+setup:
+	opam install kaputt
+	opam install bisect
 
 oml.cmxa:
 	ocamlbuild -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
-driver.test: oml.cmxa
-	ocamlbuild -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test
+joiner.native:
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
+
+driver.test: joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test
 
 test: driver.test
 	./driver.test
 
 clean:
 	ocamlbuild -clean
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -clean
+	rm -rf driver.test
 
 install:
 	ocamlfind install oml META \
@@ -33,3 +44,17 @@ install:
 
 uninstall:
 	ocamlfind remove oml
+
+report_dir:
+	mkdir report_dir
+
+# By running bisect-report in the actual directory with the modified source path
+# (ie. the *.ml has the *.mlt inside of it with our label), we get proper
+# alignment of the html!
+report: report_dir
+	cd $(DRIVER_BUILD_DIR) && \
+	bisect-report -html ../report_dir ../$(shell ls -t bisect*.out | head -1) && \
+	cd -
+
+clean_reports:
+	rm -rf report_dir bisect*.out
