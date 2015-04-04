@@ -64,3 +64,8 @@ make
 
 echo Testing
 make test
+
+echo PostingCoverage
+opam install ocveralls
+cd _driver
+ocveralls --repo_token $(COVERALLSTOKEN) --send ../bisect0001.out
