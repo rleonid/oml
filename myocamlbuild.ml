@@ -24,7 +24,9 @@ let rec copy_mlt_files path =
       else
         ())
 
-let integrate_coverage = true
+let integrate_coverage () =
+  try (ignore (Sys.getenv "COVERAGE"); true)
+  with Not_found -> false
 
 let () =
   let additional_rules =
@@ -50,7 +52,7 @@ let () =
               end;
             if target_with_extension "test" then
               begin
-                if integrate_coverage then
+                if integrate_coverage () then
                   begin
                     let bsdir = lib_dir "bisect" in
                     flag ["pp"]
@@ -67,8 +69,7 @@ let () =
                   end
                 else
                   flag ["pp"]
-                    (S [ A(lib_dir "kaputt" / "kaputt_pp.byte")
-                       ; A"on"; A "camlp4o"]);
+                      (S [ P (!Options.build_dir / "tools/joiner.native") ; A "camlp4o"])
               end
           end
   in
