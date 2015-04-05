@@ -1,0 +1,6 @@
+
+open Kaputt.Abbreviations
+
+let () =
+  Test.add_simple_test ~title:"midpoint"
+    (fun () -> Assert.equal_float 1.0 (midpoint 0.0 2.0))
