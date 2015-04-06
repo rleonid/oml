@@ -3,4 +3,8 @@ open Kaputt.Abbreviations
 
 let () =
   Test.add_simple_test ~title:"midpoint"
-    (fun () -> Assert.equal_float 1.0 (midpoint 0.0 2.0))
+    (fun () -> Assert.equal_float 1.0 (midpoint 0.0 2.0));
+  Test.add_simple_test ~title:"significantly different"
+    (fun () -> Assert.is_true (significantly_different_from 1.0 2.0));
+  Test.add_simple_test ~title:"significantly different modulo d"
+    (fun () -> Assert.is_false (significantly_different_from ~d:0.1 1.0 1.1));
