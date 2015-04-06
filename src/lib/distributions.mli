@@ -19,3 +19,6 @@ val standard_normal_pdf : float -> float
 (** [poisson_cdf mean x] the probability that a Poisson random variable with
     [mean] will take a value less than or equal to [x]. *)
 val poisson_cdf : mean:float -> float -> float
+
+val beta_pdf : alpha:float -> beta:float -> float -> float
+val beta_cdf : alpha:float -> beta:float -> float -> float
