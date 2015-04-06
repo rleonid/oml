@@ -28,3 +28,30 @@ val multinomial : ?seed:int array -> float array -> (unit -> int)
 
     @raise Invalid_argument if [weights] is empty *)
 val softmax : ?seed:int array -> ?temp:float -> float array -> (unit -> int)
+
+(** Provides polymorphic versions that sample over arrays of any type *)
+module Poly :
+  sig
+    (** [uniform ?seed elems] creates a generator that will sample from the
+        [elems] array using the uniformly random distribution.
+
+        @raise Invalid_argument if the given element array is empty. *)
+    val uniform : ?seed:int array -> 'a array -> (unit -> 'a)
+
+    (** [multinomial ?seed elems weights] creates a generator will sample from
+        the [elems] array using Multinomial distribution given by
+        a [weights] vector which sums to [1].
+
+        @raise Invalid_argument if [weights] do not sum to [1.0] or
+        the length of the [elems] and [weights] arrays are not equal. *)
+    val multinomial : ?seed:int array -> 'a array -> float array -> (unit -> 'a)
+
+    (** [softmax ?seed ?temp elems weights] creates a generator that will
+        sample from the [elems] array using the softmax distribution given by
+        a [weights] vector and [temp]erature parameter which defaults to [1.0].
+
+        @raise Invalid_argument if [weights] is empty or the length of the
+        [elems] and [weights] arrays are not equal. *)
+    val softmax : ?seed:int array -> ?temp:float ->'a array ->
+      float array -> (unit -> 'a)
+  end
