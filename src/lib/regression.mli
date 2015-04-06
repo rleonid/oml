@@ -15,6 +15,9 @@ type linear_model =
                                               [m_pred] useful by interval. *)
   }
 
+(** [to_string lrm] returns a string representing the inferred linear model. *)
+val to_string : linear_model -> string
+
 (** [eval_lrm linear_model x] evaluate a the [linear_model] at [x]. *)
 val eval_lrm : linear_model -> float -> float
 
