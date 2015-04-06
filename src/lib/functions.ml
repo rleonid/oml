@@ -20,7 +20,11 @@ let ln_gamma x =
     let sum = Array.fold2 (fun s i c_i -> s +. c_i /. ( x +. i)) c_0 [| 1.0; 2.0; 3.0; 4.0; 5.0; 6.0 |] coefs in
     tmp +. log ((sqrt (2.0 *. pi)) *. sum /. x)
 
-let beta_func x y = exp (ln_gamma x +. ln_gamma y -. ln_gamma (x +. y))
+let ln_beta_func, beta_func =
+  let beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y) in
+  beta, fun x y -> (exp (beta x y))
+
+(*let beta_func x y = exp (ln_gamma x +. ln_gamma y -. ln_gamma (x +. y)) *)
 
 (* Incomplete regularized gamma function P(a, x) *)
 let gammap, gammaq =
