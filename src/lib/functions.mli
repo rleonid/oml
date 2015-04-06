@@ -1,6 +1,7 @@
 (** Implementations of basic functions needed to compute distributions. *)
 
 val ln_gamma : float -> float
+val ln_beta_func : float -> float -> float
 val beta_func : float -> float -> float
 (*val incomplete_beta_func : alpha:float -> beta:float -> float -> float *)
 val gammap : float -> float -> float
