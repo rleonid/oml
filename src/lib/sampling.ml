@@ -57,3 +57,22 @@ let multinomial ?seed weights =
 let softmax ?seed ?temp weights =
   let f = Functions.softmax ?temp weights in
   multinomial ?seed (Array.init (Array.length weights) f)
+
+module Poly =
+  struct
+    let uniform ?seed elems =
+      let f = uniform ?seed (Array.length elems) in
+      fun () -> elems.(f())
+
+    let multinomial ?seed elems weights =
+      if (Array.length elems != Array.length weights) then
+        raise (Invalid_argument "weights") else
+          let f = multinomial ?seed weights in
+          fun () -> elems.(f())
+
+    let softmax ?seed ?temp elems weights =
+      if (Array.length elems != Array.length weights) then
+        raise (Invalid_argument "weights") else
+          let f = softmax ?seed weights in
+          fun () -> elems.(f())
+  end
