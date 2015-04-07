@@ -57,3 +57,5 @@ val dx : float
 (** [significantly_different_from ?d x y] will check if [y] is more than [d]
     (defaults to [dx]) away from [x]. *)
 val significantly_different_from : ?d:float -> float -> float -> bool
+
+val is_nan : float -> bool
