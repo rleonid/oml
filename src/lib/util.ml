@@ -83,3 +83,5 @@ let dx = 2.22044e-16
 
 let significantly_different_from ?(d=dx) x y =
   y < (x -. dx) || y > (x +. dx)
+
+let is_nan x = x == nan

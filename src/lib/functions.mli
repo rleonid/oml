@@ -3,7 +3,8 @@
 val ln_gamma : float -> float
 val ln_beta_func : float -> float -> float
 val beta_func : float -> float -> float
-(*val incomplete_beta_func : alpha:float -> beta:float -> float -> float *)
+val regularized_beta : alpha:float -> beta:float -> ?epsilon:float ->
+  ?max_iterations:int -> float -> float
 val gammap : float -> float -> float
 val gammaq : float -> float -> float
 val erf_taylor : float -> int -> float

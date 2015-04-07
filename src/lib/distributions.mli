@@ -20,5 +20,8 @@ val standard_normal_pdf : float -> float
     [mean] will take a value less than or equal to [x]. *)
 val poisson_cdf : mean:float -> float -> float
 
+val ln_beta_pdf : alpha:float -> beta:float -> float -> float
+
 val beta_pdf : alpha:float -> beta:float -> float -> float
+
 val beta_cdf : alpha:float -> beta:float -> float -> float
