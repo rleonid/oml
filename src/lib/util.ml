@@ -82,3 +82,5 @@ let midpoint x y = (x +. y) /. 2.0
 let dx = 2.22044e-16
 
 let significantly_different_from ?(d=dx) x y = y < (x -. d) || y > (x +. d)
+
+let is_nan x = x == nan
