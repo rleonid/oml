@@ -38,20 +38,14 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
   let get_a n x = 1.0 in
   let log_beta = ln_beta_func a b in
   let fraction = Continued_fraction.init ~get_a ~get_b in fun x ->
-    if Util.is_nan x ||
-            Util.is_nan a ||
-            Util.is_nan b ||
-            x < 0.0 ||
-            x > 1.0 ||
-            a <= 0.0 ||
-            b <= 0.0 then nan
+    if Util.is_nan x || Util.is_nan a || Util.is_nan b ||
+            x < 0.0 || x > 1.0 || a <= 0.0 || b <= 0.0 then nan
     else if (x > (a +. 1.) /. (2. +. b +. a) &&
-                   1. -. x <= (b +. 1.) /. (2. +. b +. a)) 
+                   1. -. x <= (b +. 1.) /. (2. +. b +. a))
     then  1. -. regularized_beta ~alpha:b ~beta:a ?epsilon ?max_iterations (1. -. x)
     else exp ((a *. log(x)) +. (b *. log1p(-.x)) -.
                 log(a) -. log_beta *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x)
-
 
 (* Incomplete regularized gamma function P(a, x) *)
 let gammap, gammaq =
