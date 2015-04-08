@@ -1,3 +1,4 @@
 S ./src/lib
 B _build/**
 B _driver/**
+PKG lacaml
