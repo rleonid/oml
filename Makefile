@@ -13,7 +13,7 @@ setup:
 	opam install bisect
 
 oml.cmxa:
-	ocamlbuild -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
+	ocamlbuild -use-ocamlfind -package lacaml -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
