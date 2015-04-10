@@ -1,0 +1,14 @@
+open Kaputt.Abbreviations
+
+let () =
+  let is_true (x : bool ) = x in
+  let beta_cdf = beta_cdf ~alpha:1.0 ~beta:1.0 in
+  Test.add_random_test
+    ~title:"beta cdf: alpha=beta=1, assert f(x)=x"
+    ~nb_runs:200
+    Gen.(zip1 (make_float 0. 1.))
+    (fun weight ->
+      let result = beta_cdf weight in
+      not (Util.significantly_different_from weight result))
+    Spec.([always => zip2 always is_true])
+
