@@ -24,7 +24,7 @@ let () =
     ~nb_runs:14
     Gen.(make_int 1 10)
     (fun i -> (float (fac (i - 1)), exp (ln_gamma (float i))))
-    Spec.([ just_postcond_pred (fun (x, y) -> roughly_equal 1e13 x y)]);
+    Spec.([ just_postcond_pred (fun (x, y) -> roughly_equal 1e12 x y)]);
   Test.add_random_test
     ~title:"(log) gamma function statisfies multiplicative recurrence (aka Bohr-Mollerup 2)."
     ~nb_runs:1000
