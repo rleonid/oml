@@ -28,11 +28,11 @@ let ln_beta_func, beta_func =
 let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
   let get_b n x = 
     if (n mod 2 = 0) then
-      let m = float_of_int n /. 2.0 in
+      let m = float n /. 2.0 in
       (m *. (b -. m) *. x) /.
                             ((a +. (2. *. m) -. 1.) *. (a +. (2. *. m)))
   else
-    let m = (float_of_int n -. 1.0) /. 2.0 in
+    let m = (float n -. 1.0) /. 2.0 in
     -.((a +. m) *. (a +. b +. m) *. x) /.
                                 ((a +. (2. *. m)) *. (a +. (2. *. m) +. 1.0)) in
   let get_a n x = 1.0 in
@@ -42,10 +42,10 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
             x < 0.0 || x > 1.0 || a <= 0.0 || b <= 0.0 then nan
     else if (x > (a +. 1.) /. (2. +. b +. a) &&
                    1. -. x <= (b +. 1.) /. (2. +. b +. a))
-    then  1. -. regularized_beta ~alpha:b ~beta:a ?epsilon ?max_iterations (1. -. x)
-    else exp ((a *. log(x)) +. (b *. log1p(-.x)) -.
-                log(a) -. log_beta *.
-                1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x)
+    then 1. -. regularized_beta ~alpha:b ~beta:a ?epsilon ?max_iterations (1. -. x)
+    else exp ((a *. log x) +. (b *. log1p (-.x)) -.
+                log a -. log_beta) *.
+                1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
 (* Incomplete regularized gamma function P(a, x) *)
 let gammap, gammaq =
