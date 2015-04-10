@@ -1,0 +1,12 @@
+
+open Kaputt.Abbreviations
+open Test_utils
+
+let () =
+  Test.add_random_test
+    ~title:"log gamma defined for all positive values"
+    ~nb_runs:10000
+    pos_float
+    ln_gamma
+    [ just_postcond_pred Spec.is_nonzero_float ]
+

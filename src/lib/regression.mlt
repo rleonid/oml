@@ -1,8 +1,8 @@
 
 open Kaputt.Abbreviations
+open Test_utils
 
 let () =
-  let is_true (x : bool ) = x in
   Test.add_random_test
     ~title:"linear regression"
     ~nb_runs:200
@@ -14,4 +14,4 @@ let () =
       let lrm  = linear_regress ~resp ~pred () in
       not (Util.significantly_different_from alpha lrm.alpha) &&
       not (Util.significantly_different_from beta lrm.beta))
-    Spec.([always => zip2 always is_true])
+    [just_postcond_pred is_true]
