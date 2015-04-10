@@ -1,13 +1,20 @@
 (* Common functions for writing tests and specifications. *)
 
-open Kaputt.Abbreviations
-
 (* Generators *)
-let pos_float = Gen.(filter ((<=) 0.0) float)
-let neg_float = Gen.(filter ((>=) 0.0) float)
+module Gen = struct
+  let pos_float = Kaputt.Generator.(filter ((<=) 0.0) float)
+  let neg_float = Kaputt.Generator.(filter ((>=) 0.0) float)
+  include Kaputt.Abbreviations.Gen
+end
 
 (* Specifications *)
-let is_true x = x
-let is_false x = not x
-let just_postcond_pred p = Spec.( always ==> p)
+module Spec = struct
 
+  let is_true x = x
+  let is_false x = not x
+  let just_postcond_pred p = Kaputt.Abbreviations.Spec.( always ==> p)
+  include Kaputt.Abbreviations.Spec
+end
+
+module Test = Kaputt.Abbreviations.Test
+module Assert = Kaputt.Abbreviations.Assert

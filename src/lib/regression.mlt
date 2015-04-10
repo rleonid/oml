@@ -1,5 +1,4 @@
 
-open Kaputt.Abbreviations
 open Test_utils
 
 let () =
@@ -14,4 +13,4 @@ let () =
       let lrm  = linear_regress ~resp ~pred () in
       not (Util.significantly_different_from alpha lrm.alpha) &&
       not (Util.significantly_different_from beta lrm.beta))
-    [just_postcond_pred is_true]
+    Spec.([just_postcond_pred is_true])
