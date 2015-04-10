@@ -58,4 +58,9 @@ val dx : float
     (defaults to [dx]) away from [x]. *)
 val significantly_different_from : ?d:float -> float -> float -> bool
 
+(** [is_nan x] robustly determine if a float represents NaN (aka Not a number). *)
 val is_nan : float -> bool
+
+(** [is_degenerate x] determine if a value is [nan] or [neg_infinity] or
+    [infinity]. *)
+val is_degenerate : float -> bool
