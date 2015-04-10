@@ -2,11 +2,30 @@
 open Kaputt.Abbreviations
 open Test_utils
 
+let order_comp = 1000.0
+
+let roughly_equal x y =
+    let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
+    not (Util.significantly_different_from ~d x y)
+
+let fac i =
+  let rec loop a i =
+    if i = 0
+    then a
+    else loop (a * i) (i - 1)
+  in loop 1 i
+
 let () =
   Test.add_random_test
     ~title:"log gamma defined for all positive values"
     ~nb_runs:10000
     pos_float
     ln_gamma
-    [ just_postcond_pred Spec.is_nonzero_float ]
+    [ just_postcond_pred Spec.is_nonzero_float ];
+  Test.add_random_test
+    ~title:"gamma is equivalent to factorial for manageable ints."
+    ~nb_runs:10
+    Gen.(make_int 1 10)
+    (fun i -> (float (fac (i - 1)), exp (ln_gamma (float i))))
+    [ just_postcond_pred (fun (x, y) -> roughly_equal x y)]
 
