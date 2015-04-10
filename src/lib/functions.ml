@@ -4,7 +4,7 @@ open Util
 (* ln of the gamma function for x > 0*)
 let ln_gamma x =
   if x <= 0.0 then
-    invalidArg "Inralid argument =< 0 passed to ln_gamma: %f" x
+    invalidArg "Invalid argument (=< 0) passed to ln_gamma: %f" x
   else
     let coefs = [| 76.18009172947146
                  ; -86.50532032941677
@@ -17,7 +17,10 @@ let ln_gamma x =
     let tmp = x +. 5.5 in
     let tmp = -1.0 *. tmp +. (x +. 0.5) *. (log tmp) in
     let c_0 = 1.000000000190015 in
-    let sum = Array.fold2 (fun s i c_i -> s +. c_i /. ( x +. i)) c_0 [| 1.0; 2.0; 3.0; 4.0; 5.0; 6.0 |] coefs in
+    let sum =
+      Array.fold2 (fun s i c_i -> s +. c_i /. ( x +. i)) c_0
+        [| 1.0; 2.0; 3.0; 4.0; 5.0; 6.0 |] coefs
+    in
     tmp +. log ((sqrt (2.0 *. pi)) *. sum /. x)
 
 let ln_beta_func, beta_func =
@@ -26,7 +29,7 @@ let ln_beta_func, beta_func =
 
 
 let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
-  let get_b n x = 
+  let get_b n x =
     if (n mod 2 = 0) then
       let m = float n /. 2.0 in
       (m *. (b -. m) *. x) /.

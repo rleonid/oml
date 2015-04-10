@@ -1,6 +1,8 @@
 (** Implementations of basic functions needed to compute distributions. *)
 
+(** [ln_gamma x] compute the natural logarithm of the gamma function of [x]. *)
 val ln_gamma : float -> float
+
 val ln_beta_func : float -> float -> float
 val beta_func : float -> float -> float
 val regularized_beta : alpha:float -> beta:float -> ?epsilon:float ->
