@@ -1,4 +1,3 @@
-open Kaputt.Abbreviations
 open Test_utils
 
 let () =
@@ -10,4 +9,4 @@ let () =
     (fun weight ->
       let result = beta_cdf weight in
       not (Util.significantly_different_from weight result))
-    [just_postcond_pred is_true]
+    Spec.([just_postcond_pred is_true])
