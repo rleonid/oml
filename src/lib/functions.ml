@@ -1,24 +1,28 @@
 
 open Util
 
-(* ln of the gamma function for x > 0*)
+(* ln of the gamma function for x > 0
+  As of 2015-04-10, I can't find the exact source for this algorithm.
+  http://www.rskey.org/CMS/index.php/the-library/11 claims that this was the
+  version of Lanczos approximation originally given in Numerical Recipies.
+  Since, their code is not free, we should replace this with a different
+  implementation.
+ *)
 let ln_gamma x =
   if x <= 0.0 then
-    invalidArg "Inralid argument =< 0 passed to ln_gamma: %f" x
+    invalidArg "Invalid argument (=< 0) passed to ln_gamma: %f" x
   else
-    let coefs = [| 76.18009172947146
-                 ; -86.50532032941677
-                 ; 24.01409824083091
-                 ; -1.231739572450155
-                 ; 0.1208650973866179e-2
-                 ;-0.5395239384953e-5
-                 |]
+    let xp55 = x +. 5.5 in
+    let cons = -1.0 *. xp55 +. (x +. 0.5) *. (log xp55) in
+    let sum = 1.000000000190015
+         +.  76.18009172947146 /. ( x +. 1.0)
+         +. -86.50532032941677 /. ( x +. 2.0)
+         +.  24.01409824083091 /. ( x +. 3.0)
+         +.  -1.231739572450155 /. ( x +. 4.0)
+         +.   0.1208650973866179e-2 /. ( x +. 5.0)
+         +.  -0.5395239384953e-5 /. ( x +. 6.0)
     in
-    let tmp = x +. 5.5 in
-    let tmp = -1.0 *. tmp +. (x +. 0.5) *. (log tmp) in
-    let c_0 = 1.000000000190015 in
-    let sum = Array.fold2 (fun s i c_i -> s +. c_i /. ( x +. i)) c_0 [| 1.0; 2.0; 3.0; 4.0; 5.0; 6.0 |] coefs in
-    tmp +. log ((sqrt (2.0 *. pi)) *. sum /. x)
+    cons +. log ((sqrt (2.0 *. pi)) *. sum /. x)
 
 let ln_beta_func, beta_func =
   let beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y) in
@@ -26,7 +30,7 @@ let ln_beta_func, beta_func =
 
 
 let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
-  let get_b n x = 
+  let get_b n x =
     if (n mod 2 = 0) then
       let m = float n /. 2.0 in
       (m *. (b -. m) *. x) /.
