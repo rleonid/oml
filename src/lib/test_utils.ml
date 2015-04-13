@@ -1,21 +1,32 @@
 (* Common functions for writing tests and specifications. *)
 
 (* Generators *)
-module Gen = struct
-  module KG = Kaputt.Generator
-  let pos_float = KG.(filter ((<=) 0.0) float)
-  let neg_float = KG.(filter ((>=) 0.0) float)
-  (* Fixed length *)
-  let array_fl n  = 
-    let msg = "array length " ^ (string_of_int n) in
-    KG.(array (lift n msg))
-  let matrix r c e = KG.(array r (array_fl c e))
-
-  let array_float n = array_fl n KG.float
-  let matrix_float r c = matrix r c KG.float
-
-  include Kaputt.Abbreviations.Gen
+module type FloatParameters = sig
+  val largest_float : float
 end
+
+module FGen (Fp : FloatParameters) = struct
+  include Kaputt.Abbreviations.Gen
+  let nlarge  = -1.0 *. Fp.largest_float
+  let float   = make_float nlarge Fp.largest_float
+
+  let pos_float = filter ((<=) 0.0) float
+  let neg_float = filter ((>=) 0.0) float
+  let non_zero_float = filter ((<>) 0.0) float
+
+  (* Fixed length *)
+  let fl_array n  =
+    let msg = "array length " ^ (string_of_int n) in
+    array (lift n msg)
+  let matrix r c e =
+    array r (fl_array c e)
+
+  let array_float n = fl_array n float
+  let matrix_float r c = matrix r c float
+
+end
+
+module Gen = FGen (struct let largest_float = max_float end)
 
 (* Specifications *)
 module Spec = struct
