@@ -49,6 +49,12 @@ module Array : sig
   (** [Array.binary_search c a], finds an element [e] in [a] where [c e = 0].
       Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
   val binary_search : ('a -> int) -> 'a array -> 'a
+
+  (** [all arr] equivalent to [true && arr.(0) && arr.(1) ... && arr.(n)] *)
+  val all : bool array -> bool
+
+  (** [any arr] equivalent to [false || arr.(0) || arr.(1) ... || arr.(n)] *)
+  val any : bool array -> bool
 end
 
 (** A really small value. *)
