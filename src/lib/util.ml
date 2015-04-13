@@ -74,6 +74,9 @@ module Array = struct
     in
     bs_loop 0 (Array.length a - 1)
 
+  let all = Array.fold_left ( && ) true
+  let any = Array.fold_left ( || ) false
+
 end
 
 let midpoint x y = (x +. y) /. 2.0
