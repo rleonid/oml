@@ -19,3 +19,16 @@ val standard_normal_pdf : float -> float
 (** [poisson_cdf mean x] the probability that a Poisson random variable with
     [mean] will take a value less than or equal to [x]. *)
 val poisson_cdf : mean:float -> float -> float
+
+(** [beta_pdf ~alpha ~beta x] natural log value of the Beta distribution
+    function (with [alpha] and [beta] shape parameters) at [x].*)
+val ln_beta_pdf : alpha:float -> beta:float -> float -> float
+
+(** [beta_pdf ~alpha ~beta x] value of the Beta distribution
+    function (with [alpha] and [beta] shape parameters) at [x].*)
+val beta_pdf : alpha:float -> beta:float -> float -> float
+
+(** [beta_cdf ~alpha ~beta x] probability that a beta random
+    variable with [alpha] and [beta] shape parameters takes a value less than
+    or equal to [x]. *)
+val beta_cdf : alpha:float -> beta:float -> float -> float

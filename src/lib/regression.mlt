@@ -1,5 +1,5 @@
 
-open Kaputt.Abbreviations
+open Test_utils
 
 (* Testing the accuracy of numerical algorithms is hard (and fun).
   Linear Regression provides an interesting example.
