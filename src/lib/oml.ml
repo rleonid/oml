@@ -1,5 +1,5 @@
 module Util = Util
-module Matrices = Matrices
+module Vectors = Vectors
 module Functions = Functions
 module Continued_fraction = Continued_fraction
 module Distributions = Distributions

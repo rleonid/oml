@@ -8,7 +8,11 @@ end
 module FGen (Fp : FloatParameters) = struct
   include Kaputt.Abbreviations.Gen
   let nlarge  = -1.0 *. Fp.largest_float
-  let float   = make_float nlarge Fp.largest_float
+  let float   = (fun r ->
+      let s = Random.State.bool r in
+      let x = Random.State.float r Fp.largest_float in
+      if s then x else -.x),
+      string_of_float
 
   let pos_float = filter ((<=) 0.0) float
   let neg_float = filter ((>=) 0.0) float
@@ -39,3 +43,7 @@ end
 
 module Test = Kaputt.Abbreviations.Test
 module Assert = Kaputt.Abbreviations.Assert
+
+(*
+
+*)
