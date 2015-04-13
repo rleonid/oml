@@ -1,0 +1,9 @@
+
+open Test_utils
+
+let () =
+  Test.add_random_test
+    ~title:"We can svd"
+   Gen.(matrix pos_int pos_int float)
+   svd
+  Spec.([just_postcond_pred always])

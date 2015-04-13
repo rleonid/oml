@@ -2,8 +2,13 @@
 
 (* Generators *)
 module Gen = struct
-  let pos_float = Kaputt.Generator.(filter ((<=) 0.0) float)
-  let neg_float = Kaputt.Generator.(filter ((>=) 0.0) float)
+  module KG = Kaputt.Generator
+  let pos_float = KG.(filter ((<=) 0.0) float)
+  let neg_float = KG.(filter ((>=) 0.0) float)
+  let array_fl n  = 
+    let msg = "array length " ^ (string_of_int n) in
+    KG.(array (lift n msg))
+  let matrix r c e = KG.(array r (array_fl c e))
   include Kaputt.Abbreviations.Gen
 end
 
