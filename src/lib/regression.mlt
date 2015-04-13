@@ -15,13 +15,13 @@ end)
 
 let () =
   (* handy predicates *)
-  let order_comp = 1e5 in (* TODO: rethink this order comparison logic *)
-
-  let equal_floats x y  = not (Util.significantly_different_from x y) in
-  let roughly_equal x y =
+  let equal_floats x y = not (Util.significantly_different_from x y) in
+  let roughly_equal ~order_comp x y =
     let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
-    not (Util.significantly_different_from ~d x y)
-  in
+    not (Util.significantly_different_from ~d x y) in
+
+  let order_comp = 1e5 in (* TODO: rethink this order comparison logic *)
+  let roughly_equal = roughly_equal ~order_comp in
 
   (* Short cut evaluation. *)
   let lregress (a, b, pred)  =
@@ -30,17 +30,17 @@ let () =
   in
 
   (* useful generators. *)
-  let grt_zer_lss_one   = Gen.make_float (0.0 +. Util.dx) 1.0 in
+  (*let grt_zer_lss_one   = Gen.make_float (0.0 +. Util.dx) 1.0 in
   let two_ordered       = Gen.(transform (fun (x,y) -> min x y,max x y)
                                   (zip2 grt_zer_lss_one grt_zer_lss_one))
-  in
+  in *)
   let simple_test_array =
     Gen.(lift (Array.init 100 float_of_int) "[0.;1.; ... ;99.]")
   in
-  let random_test_array = Gen.(array (make_int 2 100) float) in
+  let random_test_array = Gen.(array (make_int 2 50) float) in
   let simple_lrm_inputs = Gen.(zip3 float non_zero_float simple_test_array) in
   let lrm_inputs        = Gen.(zip3 float non_zero_float random_test_array) in
-  let simple_lrm_gen    = Gen.(map1 lregress to_string simple_lrm_inputs) in
+  (*let simple_lrm_gen    = Gen.(map1 lregress to_string simple_lrm_inputs) in *)
   let lrm_gen           = Gen.(map1 lregress to_string lrm_inputs) in
 
   (* The tests. *)
