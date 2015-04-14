@@ -10,4 +10,5 @@ module Inference = Inference
 module Regression = Regression
 module Sampling = Sampling
 module Solvers = Solvers
-module Running = Running 
+module Running = Running
+module Svd = Svd
