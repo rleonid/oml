@@ -57,7 +57,8 @@ module Array : sig
   val any : bool array -> bool
 end
 
-(** A really small value. *)
+(** A really small value. Also known as the machine epsilon, the smallest
+    distance between two representable floats. *)
 val dx : float
 
 (** [significantly_different_from ?d x y] will check if [y] is more than [d]
