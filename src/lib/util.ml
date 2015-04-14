@@ -93,7 +93,9 @@ end
 
 let midpoint x y = (x +. y) /. 2.0
 
-(* TODO: Find the source of this value, what is the right thing to do? *)
+(* This value is taken from http://en.wikipedia.org/wiki/Machine_epsilon which
+    sites Higham, Nicholas (2002). Accuracy and Stability of Numerical Algorithms
+    (2 ed). SIAM. p. 37. *)
 let dx = 2.22044e-16
 
 let significantly_different_from ?(d=dx) x y = y < (x -. d) || y > (x +. d)
