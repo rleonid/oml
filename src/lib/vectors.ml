@@ -1,7 +1,7 @@
 
 open Util
 
-type vector = float array
+type t = float array
 
 (* TODO: add range checks. *)
 let equal ?d x y =
