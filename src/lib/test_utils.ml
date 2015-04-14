@@ -23,7 +23,9 @@ module FGen (Fp : FloatParameters) = struct
     let msg = "array length " ^ (string_of_int n) in
     array (lift n msg)
   let matrix r c e =
-    array r (fl_array c e)
+    let row_msg = "row length " ^ string_of_int r
+    and col_msg = "col length " ^ string_of_int c in
+    array (lift r row_msg) (array (lift c col_msg) e)
 
   let array_float n = fl_array n float
   let matrix_float r c = matrix r c float
