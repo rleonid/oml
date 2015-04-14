@@ -1,12 +1,28 @@
 
 open Test_utils
 
+(* TODO: Organize the testing parameters:
+  There are currently three factors that effect the stability of these tests
+    1. [largest_float] the largest float that around random generator will
+      return.  This specifies a range [0, largest_float] that dictates our test
+      values.  Bigger is better.
+    2. [vector_test_size] the size of the arrays generated to be compared.
+      Bigger is better
+    3. [d] when passed to Util.significantly_different_from for pairwise
+      element float comparison. Smaller is better. These are usually implemented
+      as rescalings of the machine epsilon [Util.dx], so less rescaling is
+      better.
+
+  At the moment (2015-04-13), these parameters are 'maxed' out such that all
+  100 tests cases "regularly" pass. As the algorithms used to implement these
+  operations are improved, we should extend these
+  *)
+
 module Gen = FGen (struct
   let largest_float = 1e3
 end)
 
 let () =
-  let vs = 10 in  (* TODO: need to apply this as a map.*)
   Test.add_simple_test ~title:"we can test vectors for equality 1"
     (fun () -> Assert.is_true (equal [|1.0; 2.0; 3.0|] [|1.0; 2.0; 3.0|]));
   Test.add_simple_test ~title:"we can test vectors for equality 2"
@@ -19,9 +35,11 @@ let () =
       equal v1 v2 = equal v2 v1)
     Spec.([just_postcond_pred is_true]);
 
-  let pair_of_arrays = Gen.(zip2 (array_float vs) (array_float vs)) in
-  let within = Util.dx *. 1e6 in (* on order of 1e-10 *)
-  let equal = equal ~d:within in
+  let vector_test_size = 10 in  (* TODO: need to apply this as a map.*)
+  let pair_of_arrays =
+    Gen.(zip2 (array_float vector_test_size) (array_float vector_test_size))
+  in
+  let equal = equal ~d:(Util.dx *. 1e6) in (* on order of 1e-10 *)
   Test.add_random_test
     ~title:"Vector addition is commutative."
     pair_of_arrays
@@ -30,7 +48,7 @@ let () =
 
   Test.add_random_test
     ~title:"Vector scalar multiplication is additive."
-    Gen.(zip3 float float (array_float vs))
+    Gen.(zip3 float float (array_float vector_test_size))
     (fun (a, b, v) -> equal (mult (a +. b) v) (add (mult a v) (mult b v)))
     Spec.([just_postcond_pred is_true]);
 
@@ -42,7 +60,7 @@ let () =
 
   Test.add_random_test
     ~title:"Dot products are distributive"
-    Gen.(zip2 (array_float vs) pair_of_arrays)
+    Gen.(zip2 (array_float vector_test_size) pair_of_arrays)
     (fun (v1, (v2, v3)) ->
       not (Util.significantly_different_from ~d:(Util.dx *. 1e7)
             (dot v1 (add v2 v3)) (dot v1 v2 +. dot v1 v3)))
