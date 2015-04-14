@@ -21,8 +21,12 @@ let () =
       Spec.([ just_postcond_pred is_false]);
 
   Test.add_simple_test ~title:"Any works on arrays."
-    (fun () -> Assert.is_true (Array.any [| false; true |]
+    (fun () -> Assert.is_true (Array.any [| true; true |]
+                            && Array.any [| false; true |]
+                            && Array.any [| true; false |]
                        && not (Array.any [| false; false |])));
   Test.add_simple_test ~title:"All works on arrays."
     (fun () -> Assert.is_true (Array.all [| true; true |]
-                       && not (Array.all [| true; false |])))
+                       && not (Array.all [| true; false |])
+                       && not (Array.all [| false; true |])
+                       && not (Array.all [| false; false |])))
