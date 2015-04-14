@@ -74,8 +74,20 @@ module Array = struct
     in
     bs_loop 0 (Array.length a - 1)
 
-  let all = Array.fold_left ( && ) true
-  let any = Array.fold_left ( || ) false
+  let all a =
+    let n = Array.length a in
+    let rec loop i =
+      i = n || a.(i) && loop (i + 1)
+    in
+    loop 0
+  let any a =
+    let n = Array.length a in
+    let rec loop i =
+      if i < n
+      then a.(i) || loop (i + 1)
+      else false
+    in
+    loop 0
 
 end
 
