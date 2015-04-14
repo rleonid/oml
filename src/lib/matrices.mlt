@@ -38,4 +38,28 @@ let () =
     (fun (m1, m2) -> equal (sub m1 m2) (add m1 (mult (-1.0) m2)))
     Spec.([just_postcond_pred is_true]);
 
+  Test.add_simple_test ~title:"Matrix dimensions."
+    (fun () -> Assert.is_true (dim mv = (3,3)));
 
+  Test.add_simple_test ~title:"Identity."
+    (fun () -> Assert.is_true (identity 3 = [| [| 1.0; 0.0; 0.0|]
+                                             ; [| 0.0; 1.0; 0.0|]
+                                             ; [| 0.0; 0.0; 1.0|]|]));
+
+  Test.add_simple_test ~title:"Matrix multiplication."
+    (fun () -> Assert.is_true ((prod mv mv) = [| [| 6.0; 12.0; 18.0 |]
+                                               ; [| 6.0; 12.0; 18.0 |]
+                                               ; [| 6.0; 12.0; 18.0 |]|]));
+
+  Test.add_random_test
+    ~title:"Matrix products against identity are commutative."
+    Gen.(matrix_float mts mts)
+    (fun m -> let i = identity mts in prod m i = prod i m)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Matrix products are not effected by scaling."
+    Gen.(zip3 float (matrix_float mts mts) (matrix_float mts mts))
+    (fun (s, m1, m2) ->
+      equal ~d:(Util.dx *. 1e10) (prod m1 (mult s m2)) (prod (mult s m1) m2))
+    Spec.([just_postcond_pred is_true])
