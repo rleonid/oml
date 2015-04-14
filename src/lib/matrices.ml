@@ -3,6 +3,24 @@ open Util
 
 type t = Vectors.t array
 
+let row m i = Array.copy (Array.get m i)
+
+let column m i = Array.init (Array.length m) (fun j -> m.(j).(i))
+
+let dim m = Array.length m, Array.length m.(0)
+
+let transpose m =
+  let rows,cols = dim m in
+  Array.init cols (fun c ->
+    Array.init rows (fun r ->
+      m.(r).(c)))
+
+let diagonal v =
+  let n = Array.length v in
+  Array.init n (fun r ->
+    Array.init n (fun c ->
+      if r = c then v.(r) else 0.0))
+
 let equal ?d x y =
   let n = Array.length x
   and m = Array.length y in
@@ -16,8 +34,6 @@ let sub x y = Array.init (Array.length x) (fun i -> Vectors.sub x.(i) y.(i))
 
 let mult x = Array.map (Vectors.mult x)
 
-let dim m =
-  Array.length m, Array.length m.(0)
 
 let identity n =
   Array.init n (fun i ->

@@ -41,7 +41,7 @@ let () =
   Test.add_simple_test ~title:"Matrix dimensions."
     (fun () -> Assert.is_true (dim mv = (3,3)));
 
-  Test.add_simple_test ~title:"Identity."
+  Test.add_simple_test ~title:"Matrix has an identity function."
     (fun () -> Assert.is_true (identity 3 = [| [| 1.0; 0.0; 0.0|]
                                              ; [| 0.0; 1.0; 0.0|]
                                              ; [| 0.0; 0.0; 1.0|]|]));
@@ -50,6 +50,12 @@ let () =
     (fun () -> Assert.is_true ((prod mv mv) = [| [| 6.0; 12.0; 18.0 |]
                                                ; [| 6.0; 12.0; 18.0 |]
                                                ; [| 6.0; 12.0; 18.0 |]|]));
+
+  Test.add_simple_test ~title:"Matrix transpose works."
+    (fun () -> Assert.is_true ((prod mv mv) = transpose (
+                                              [| [| 6.0;   6.0;  6.0 |]
+                                               ; [| 12.0; 12.0; 12.0 |]
+                                               ; [| 18.0; 18.0; 18.0 |]|])));
 
   Test.add_random_test
     ~title:"Matrix products against identity are commutative."
@@ -62,4 +68,22 @@ let () =
     Gen.(zip3 float (matrix_float mts mts) (matrix_float mts mts))
     (fun (s, m1, m2) ->
       equal ~d:(Util.dx *. 1e10) (prod m1 (mult s m2)) (prod (mult s m1) m2))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Matrix product is like mapping row products from the left."
+    Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
+    (fun (m1, m2) ->
+      let p1 = prod m1 m2
+      and p2 = Array.map (fun r -> prod_row_vector r m2) m1 in
+      p1 = p2)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Matrix product is also like mapping column products from the right."
+    Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
+    (fun (m1, m2) ->
+      let p1 = prod m1 m2
+      and p2 = Array.init mts (fun c -> prod_column_vector m1 (column m2 c)) in
+      p1 = transpose (p2))
     Spec.([just_postcond_pred is_true])
