@@ -11,6 +11,7 @@ all: build
 setup:
 	opam install kaputt
 	opam install bisect
+	opam install lacaml
 
 oml.cmxa:
 	ocamlbuild -use-ocamlfind -package lacaml -I src/lib oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
@@ -21,11 +22,11 @@ joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
 test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -I src/lib -I src/test driver.test && \
 	./driver.test
 
 covered_test: joiner.native
-	COVERAGE=true ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -I src/lib -I src/test driver.test && \
+	COVERAGE=true ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -I src/lib -I src/test driver.test && \
 	./driver.test
 
 clean:

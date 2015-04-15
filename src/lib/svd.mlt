@@ -1,0 +1,16 @@
+
+open Test_utils
+
+module Gen = FGen (struct
+  let largest_float = 1e7
+end)
+
+let () =
+  Test.add_random_test
+    ~title:"We can svd"
+    Gen.(matrix_float 10 10)
+    (fun m ->
+      let u, s, vt = svd m in
+      let m_rec = Matrices.(prod (prod u (diagonal s)) vt) in
+      Matrices.equal ~d:(Util.dx *. 1e9) m m_rec)
+    Spec.([just_postcond_pred is_true])

@@ -49,9 +49,16 @@ module Array : sig
   (** [Array.binary_search c a], finds an element [e] in [a] where [c e = 0].
       Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
   val binary_search : ('a -> int) -> 'a array -> 'a
+
+  (** [all arr] equivalent to [true && arr.(0) && arr.(1) ... && arr.(n)] *)
+  val all : bool array -> bool
+
+  (** [any arr] equivalent to [false || arr.(0) || arr.(1) ... || arr.(n)] *)
+  val any : bool array -> bool
 end
 
-(** A really small value. *)
+(** A really small value. Also known as the machine epsilon, the smallest
+    distance between two representable floats. *)
 val dx : float
 
 (** [significantly_different_from ?d x y] will check if [y] is more than [d]
