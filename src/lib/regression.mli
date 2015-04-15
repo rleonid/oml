@@ -35,3 +35,20 @@ val confidence_interval : linear_model -> alpha_level:float -> float -> float * 
 (** [prediction_interval linear_model alpha_level x], given [linear_model]
     compute the alpha (ex 0.95) prediction interval around [x]. *)
 val prediction_interval : linear_model -> alpha_level:float -> float -> float * float
+
+type general_linear_model =
+  { g_m_pred                : float array   (** Means of the predicted variables. *)
+  ; g_m_resp                : float         (** Mean of the response variable. *)
+  ; deg_of_freedom          : float         (** Degree's of freedom in the regression. *)
+  ; coefficients            : float array   (** The coefficients of the determined model. *)
+  ; correlations            : float array   (** TODO. *)
+  ; chi_square              : float
+  ; g_inferred_response_var : float
+  ; removed_predictors      : int list
+  ; ss_tot                  : float
+  ; cod                     : float         (** coefficient of determination. r^2 *)
+  ; adj_cod                 : float         (** adjusted coefficient of determination. r^2 *)
+  ; covariacne              : float array array (* Covariance matrix. *)
+  ; residuals               : float array
+  ; aic                     : float
+  }
