@@ -10,12 +10,24 @@ let svd m =
   u, s, vt
 
 (* TODO: expose the dimensionality reduction. *)
-let solve_linear a b =
-  let u, s, vt = svd a in
-  let s_inv = Array.map (function 0.0 -> 0.0 | x -> 1.0 /. x) s in
-  let s_mat = Matrices.diagonal s_inv in
-  let b_mat = Array.init (Array.length b) (fun c -> [| b.(c) |]) in
-  (* should I have kept these in Lacaml? *)
-  Matrices.(prod (transpose u) b_mat)
-  |> Matrices.prod s_mat
-  |> Matrices.prod vt
+let solve_linear, solve_linear_with_covariance =
+  let f a b =
+    let u, s, vt = svd a in
+    let s_inv = Array.map (function 0.0 -> 0.0 | x -> 1.0 /. x) s in
+    let s_mat = Matrices.diagonal s_inv in
+    (* should I have kept these in Lacaml? *)
+    let coeff =
+      Matrices.(prod_column_vector (transpose u) b)
+      |> Matrices.prod_column_vector s_mat
+      |> Matrices.prod_column_vector vt
+    in
+    let m = lazy (
+      let s_inv_sq = Array.map (fun x -> x *. x) s_inv in
+      let s_sq_mat = Matrices.diagonal s_inv_sq in
+      Matrices.(prod s_sq_mat (transpose vt))
+      |> Matrices.prod vt)
+    in
+    coeff, m
+  in
+  (fun a b -> fst (f a b)),
+  (fun a b -> let c, lm = f a b in c, Lazy.force lm)
