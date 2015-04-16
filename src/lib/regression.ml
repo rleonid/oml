@@ -20,6 +20,8 @@ type linear_model = { m_pred                : float
                     (*; d_w                   : float *)
                     }
 
+let to_string lrm = Printf.sprintf "%.6f * x + %.6f" lrm.beta lrm.alpha 
+
 (* resp = alpha + beta * pred *)
 let eval_lrm lrm x = lrm.alpha +. lrm.beta *. x
 

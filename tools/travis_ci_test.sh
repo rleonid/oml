@@ -20,6 +20,7 @@ travis_install_on_linux () {
     sudo apt-get update -qq
 
     sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam time git
+    sudo apt-get install liblapack-dev
 }
 
 travis_install_on_osx () {
@@ -28,6 +29,7 @@ travis_install_on_osx () {
     sudo installer -verbose -pkg /Volumes/XQuartz-2.7.6/XQuartz.pkg -target /
 
     brew update
+    brew install homebrew/dupes/lapack
     brew install opam --HEAD
     export opam_init_options="--comp=$OCAML_VERSION"
     export opam_pin_add="add"
