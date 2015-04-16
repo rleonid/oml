@@ -1,2 +1,4 @@
+#require "lacaml"
 #directory "_build/src/lib" ;;
 #load_rec "oml.cma";;
+open Util

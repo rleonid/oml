@@ -1,6 +1,8 @@
 (** Implementations of basic functions needed to compute distributions. *)
 
-(** [ln_gamma x] compute the natural logarithm of the gamma function of [x]. *)
+(** [ln_gamma x] compute the natural logarithm of the gamma function of [x].
+    
+    For positive integers [exp (ln_gamma x)] approximates [(x - 1)!] *)
 val ln_gamma : float -> float
 
 val ln_beta_func : float -> float -> float
