@@ -74,6 +74,13 @@ module Array = struct
     in
     bs_loop 0 (Array.length a - 1)
 
+  let range ?(incr=1.0) ~start ~stop () =
+    if stop < start
+    then [||]
+    else
+      Array.init (truncate (ceil ((stop -. start) /. incr)))
+        (fun i -> start +. incr *. (float i))
+
 end
 
 let midpoint x y = (x +. y) /. 2.0

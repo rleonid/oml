@@ -49,6 +49,11 @@ module Array : sig
   (** [Array.binary_search c a], finds an element [e] in [a] where [c e = 0].
       Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
   val binary_search : ('a -> int) -> 'a array -> 'a
+
+  (** [range incr start stop] create a float elements of all values in the
+      interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
+  val range : ?incr:float -> start:float -> stop:float -> unit -> float array
+
 end
 
 (** A really small value. *)
