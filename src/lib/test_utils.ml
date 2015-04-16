@@ -46,7 +46,3 @@ end
 
 module Test = Kaputt.Abbreviations.Test
 module Assert = Kaputt.Abbreviations.Assert
-
-(*
-
-*)
