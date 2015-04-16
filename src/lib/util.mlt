@@ -16,6 +16,20 @@ let () =
     (fun () -> Assert.is_true (is_degenerate nan &&
                                is_degenerate neg_infinity &&
                                is_degenerate infinity));
+
   Test.add_random_test ~title:"Normal float generates non degenerate values."
     ~nb_runs:10000 Gen.float (fun x -> is_degenerate x)
-      Spec.([ just_postcond_pred is_false])
+      Spec.([ just_postcond_pred is_false]);
+
+  Test.add_simple_test ~title:"Range simple."
+    (fun () ->
+      Assert.is_true (Array.range ~start:3.0 ~stop:4.0 () = [| 3.0 |]))
+
+  (*
+  let module Gen = FGen (struct let largest_float = 1e9 end) in
+  Test.add_random_test
+    ~title:"Range default increment is 1 and yields arrays of length 1."
+    Gen.float
+    (fun start -> Array.range ~start ~stop:(start +. 1.0) () = [| start |])
+    Spec.([ just_postcond_pred is_true])
+*)
