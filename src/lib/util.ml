@@ -80,6 +80,7 @@ module Array = struct
       i = n || a.(i) && loop (i + 1)
     in
     loop 0
+
   let any a =
     let n = Array.length a in
     let rec loop i =
@@ -88,6 +89,12 @@ module Array = struct
       else false
     in
     loop 0
+  let range ?(incr=1.0) ~start ~stop () =
+    if stop < start
+    then [||]
+    else
+      Array.init (truncate (ceil ((stop -. start) /. incr)))
+        (fun i -> start +. incr *. (float i))
 
 end
 

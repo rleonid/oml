@@ -55,6 +55,11 @@ module Array : sig
 
   (** [any arr] equivalent to [false || arr.(0) || arr.(1) ... || arr.(n)] *)
   val any : bool array -> bool
+
+  (** [range incr start stop] create a float elements of all values in the
+      interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
+  val range : ?incr:float -> start:float -> stop:float -> unit -> float array
+
 end
 
 (** A really small value. Also known as the machine epsilon, the smallest
