@@ -29,6 +29,7 @@ module FGen (Fp : FloatParameters) = struct
 
   let array_float n = fl_array n float
   let matrix_float r c = matrix r c float
+  let sq_float_matrix s = matrix_float s s
 
 end
 
