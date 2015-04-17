@@ -98,19 +98,32 @@ let () =
         ub2 -. lb2 > ub1 -. lb1)])
 *)
 
-  let module Gen = FGen (struct let largest_float = 1e2 end) in
+  (* This is making a stronger case. *)
+  let module Gen = FGen (struct let largest_float = 1e11 end) in
   let largest_number_samples = 10 in
   let largest_number_predictors = 3 in
+  let print_float_array m =
+    m
+    |> Array.map (Kaputt.Utils.make_string_of_array (snd Gen.float))
+    |> Array.to_list
+    |> String.concat "\n"
+  in
   Test.add_random_test
     ~title:"Regression: general can recover coefficients."
-    ~nb_runs:20
-    Gen.((matrix (make_int 2 largest_number_predictors)
-                (make_int 3 largest_number_samples)
-                float))
-        (*(zip2 (make_int 2 largest_number_predictors)
-              (make_int 2 largest_number_samples))
-        |> transform (fun (p, s) -> (p, p + s))
-        |> transform (fun (p, s) -> matrix p s float)) *)
+    ~nb_runs:1000
+    Gen.(zip2
+          (make_int 2 largest_number_predictors)
+          (make_int 2 largest_number_samples)
+         (* +1 is for how we build samples models below. *)
+         |> transform (fun (p, s) -> min p s, 1 + max p s)
+         |> fun (rcg, _) ->
+             (* TODO: refactor this into a bind. *)
+             (fun random ->
+                let (rows, columns) = rcg random in
+                Array.init rows (fun _ ->
+                  Array.init columns (fun _ ->
+                    (fst Gen.float) random))),
+             print_float_array)
     (fun m ->
       let mt = Matrices.transpose m in
       let data = Array.sub mt 1 (Array.length mt - 1) in
