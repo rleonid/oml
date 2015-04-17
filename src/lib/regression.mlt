@@ -10,7 +10,7 @@ open Test_utils
   *)
 
 module Gen = FGen (struct
-  let largest_float = 1e9
+  let largest_float = 1e8
 end)
 
 let () =
@@ -48,7 +48,7 @@ let () =
   (* Even though this test is awkward, if the [linear_model]' implementation is
      hidden, this guards to against an incorrect implementation. *)
   Test.add_random_test
-    ~title:"lrm models evaluate like linear models"
+    ~title:"Regression: lrm models evaluate like linear models"
     Gen.(zip2 non_zero_float lrm_gen)
     (fun (x, lrm) -> eval_lrm lrm x)
     Spec.([ always =>
@@ -56,7 +56,7 @@ let () =
         equal_floats y (lrm.alpha +. lrm.beta *. x)) ]);
 
   Test.add_random_test
-    ~title:"using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
+    ~title:"Regression: using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
     ~nb_runs:1000
     simple_lrm_inputs
     lregress
@@ -66,7 +66,7 @@ let () =
         (roughly_equal a lrm.alpha) && (roughly_equal b lrm.beta))]);
 
   Test.add_random_test
-    ~title:"using linear regression on random float data we can recover coefficients"
+    ~title:"Regression: using linear regression on random float data we can recover coefficients"
     ~nb_runs:1000
     lrm_inputs
     lregress
@@ -77,9 +77,9 @@ let () =
 
   (* TODO: clever test to react to variance in the predicted variable. *)
 
-        (*
+(*
   Test.add_random_test
-    ~title:"confidence intervals are symmetric around evaluation point."
+    ~title:"Regression: confidence intervals are symmetric around evaluation point."
     Gen.(zip3 simple_lrm_gen grt_zer_lss_one float)
     (fun (lrm, alpha_level, x) -> confidence_interval lrm ~alpha_level x)
     Spec.([ always =>
@@ -87,7 +87,7 @@ let () =
         roughly_equal x (Util.midpoint lb ub))]);
 
   Test.add_random_test
-    ~title:"prediction intervals grow as alpha increases."
+    ~title:"Regression: prediction intervals grow as alpha increases."
       Gen.(zip3 simple_lrm_gen two_ordered float)
     (fun (lrm, (a1, a2), x) ->
       (*Printf.printf "our lrm %s alpha %f %f and x %f\n" (to_string lrm) a1 a2 x; *)
@@ -96,5 +96,5 @@ let () =
     Spec.([always =>
       (fun ((_lrm, _alpha_pair, x), ((lb1, ub1), (lb2, ub2))) ->
         ub2 -. lb2 > ub1 -. lb1)])
-
 *)
+
