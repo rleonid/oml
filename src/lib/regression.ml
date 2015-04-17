@@ -130,25 +130,19 @@ type general_linear_model = { g_m_pred                : float array
                             }
 
 let sub_general_linear_regress ~resp ~pred () =
-  (* average of the first column, 1's the constant factor is 1. *)
-  let num_obs, num_pred = Matrices.dim pred in
+  let num_pred, num_obs = Matrices.dim pred in
   (* correlation against the constant column do not make sense,
      is always nan ignore *)
-  let g_m_pred        =
-    Array.init (num_pred - 1)
-      (fun i -> Matrices.column pred (i + 1) |> Descriptive.mean)
-  in
-  let correlations    =
-      Array.init (num_pred - 1)
-        (fun i -> Matrices.column pred (i + 1) |> Descriptive.correlation resp)
-  in
+  let g_m_pred        = Array.map Descriptive.mean pred in
+  let correlations    = Array.map (Descriptive.correlation resp) pred in
   let g_m_resp        = Descriptive.mean resp in
   (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
   let deg_of_freedom  = float (num_obs - num_pred) in
-  let coeff, covarm   = Svd.solve_linear_with_covariance pred resp in
+  let pred_trans      = Matrices.transpose pred in
+  let coeff, covarm   = Svd.solve_linear_with_covariance pred_trans resp in
   (* TODO: when SVD exposes the dimensionality reduction, we can add
        back removed_predictors logic. *)
-  let predict_values  = Matrices.prod_column_vector pred coeff in
+  let predict_values  = Matrices.prod_column_vector pred_trans coeff in
   let residuals       = Vectors.sub resp predict_values in
   let chi_sq          = Vectors.dot residuals residuals in
   let infer_resp_var  = chi_sq /. deg_of_freedom in
@@ -184,6 +178,6 @@ let sub_general_linear_regress ~resp ~pred () =
   ; adj_cod = 1.0 -. (chi_sq /. sum_squares) *. m
   ; covariance = covarm
   ; residuals = residuals
-          (*d_w = durbin_watson (residuals.ToArray ()); *)
+  (*d_w = durbin_watson residuals *)
   ; aic = aic
   }

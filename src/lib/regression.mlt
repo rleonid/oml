@@ -98,3 +98,27 @@ let () =
         ub2 -. lb2 > ub1 -. lb1)])
 *)
 
+  let module Gen = FGen (struct let largest_float = 1e2 end) in
+  let largest_number_samples = 10 in
+  let largest_number_predictors = 3 in
+  Test.add_random_test
+    ~title:"Regression: general can recover coefficients."
+    ~nb_runs:20
+    Gen.((matrix (make_int 2 largest_number_predictors)
+                (make_int 3 largest_number_samples)
+                float))
+        (*(zip2 (make_int 2 largest_number_predictors)
+              (make_int 2 largest_number_samples))
+        |> transform (fun (p, s) -> (p, p + s))
+        |> transform (fun (p, s) -> matrix p s float)) *)
+    (fun m ->
+      let mt = Matrices.transpose m in
+      let data = Array.sub mt 1 (Array.length mt - 1) in
+      let coef = mt.(0) in
+      let resp = Matrices.prod_column_vector data coef in
+      let pred = Matrices.transpose data in
+      let glm  = sub_general_linear_regress ~resp ~pred () in
+      Vectors.equal ~d:100.0 glm.coefficients coef)
+    Spec.([just_postcond_pred is_true]);
+
+  ()
