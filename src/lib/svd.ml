@@ -3,11 +3,18 @@ open Lacaml.D
 
 let svd m =
   let open Lacaml.D in
+  let r,c = Matrices.dim m in
   let s, u, vt = gesvd (Mat.of_array m) in
-  let s   = Vec.to_array s
-  and u   = Mat.to_array u
-  and vt  = Mat.to_array vt in
-  u, s, vt
+  let s = Vec.to_array s in
+  let n = Array.length s in
+  let cols nc p =
+    Array.init nc (fun i -> i + 1 |> Mat.col p)
+    |> Mat.of_col_vecs
+    |> Mat.to_array
+  in
+  (cols n u),
+  s,
+  Array.sub (cols c vt) 0 n
 
 (* TODO: expose the dimensionality reduction. *)
 let solve_linear, solve_linear_with_covariance =
