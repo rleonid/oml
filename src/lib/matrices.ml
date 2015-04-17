@@ -75,14 +75,14 @@ let prod_row_vector v m =
 let prod_column_vector m v =
   let row_l, col_l = dim m and row_r = Array.length v in
   if col_l <> row_r then
-    invalidArg "incompatible vector matrix dimensions (%d, %d)*[%d] for prod_row_vector"
+    invalidArg "incompatible vector matrix dimensions (%d, %d)*[%d] for prod_column_vector"
       row_l col_l row_r
   else
-    let n = row_l - 1 in
+    let n = col_l - 1 in
     let s = ref 0.0 in
-    Array.init col_l (fun c ->
+    Array.init row_l (fun r ->
       s := 0.0;
       for i = 0 to n do
-        s := !s +. v.(i) *. m.(c).(i)
+        s := !s +. v.(i) *. m.(r).(i)
       done;
       !s)

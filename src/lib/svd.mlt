@@ -6,11 +6,11 @@ module Gen = FGen (struct
 end)
 
 let () =
-  let matrix_size = 10 in
+  let max_matrix_size = 10 in
   Test.add_random_test
     ~title:"Svd, we can"
     ~nb_runs:1000
-    Gen.(matrix (make_int 1 10) (make_int 1 10) float)
+    Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) float)
     (fun m ->
       let u, s, vt = svd m in
       let m_rec = Matrices.(prod (prod u (diagonal s)) vt) in
