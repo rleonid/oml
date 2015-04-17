@@ -23,16 +23,18 @@ let solve_linear, solve_linear_with_covariance =
     let s_inv = Array.map (function 0.0 -> 0.0 | x -> 1.0 /. x) s in
     let s_mat = Matrices.diagonal s_inv in
     (* should I have kept these in Lacaml? *)
+    let v   = Matrices.transpose vt in
+    let ut  = Matrices.transpose u in
     let coeff =
-      Matrices.(prod_column_vector (transpose u) b)
+      Matrices.(prod_column_vector ut b)
       |> Matrices.prod_column_vector s_mat
-      |> Matrices.prod_column_vector vt
+      |> Matrices.(prod_column_vector v)
     in
     let m = lazy (
       let s_inv_sq = Array.map (fun x -> x *. x) s_inv in
       let s_sq_mat = Matrices.diagonal s_inv_sq in
-      Matrices.(prod s_sq_mat (transpose vt))
-      |> Matrices.prod vt)
+      Matrices.(prod s_sq_mat v)
+      |> Matrices.prod v)
     in
     coeff, m
   in
