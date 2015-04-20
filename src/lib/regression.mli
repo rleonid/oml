@@ -18,7 +18,7 @@ type linear_model =
 (** [to_string lrm] returns a string representing the inferred linear model. *)
 val to_string : linear_model -> string
 
-(** [eval_lrm linear_model x] evaluate a the [linear_model] at [x]. *)
+(** [eval_lrm linear_model x] evaluate the [linear_model] at [x]. *)
 val eval_lrm : linear_model -> float -> float
 
 (** [linear_regress ?pred_variance resp pred] create a linear model that
@@ -37,6 +37,8 @@ val confidence_interval : linear_model -> alpha_level:float -> float -> float * 
     compute the alpha (ex 0.95) prediction interval around [x]. *)
 val prediction_interval : linear_model -> alpha_level:float -> float -> float * float
 
+(** A [general_linear_model] is a linear model over a vector space,
+    allowing the user to perform multiple linear regression. *)
 type general_linear_model =
   { g_m_pred                : float array   (** Means of the predicted variables. *)
   ; g_m_resp                : float         (** Mean of the response variable. *)
@@ -52,6 +54,10 @@ type general_linear_model =
   ; residuals               : float array
   ; aic                     : float
   }
+
+(** [eval_glm glm data] evaluate the general linear model [glm] over the vector
+    of [data]. *)
+val eval_glm : general_linear_model -> float array -> float
 
 val sub_general_linear_regress : resp: float array -> pred: float array array
                                 -> unit -> general_linear_model
