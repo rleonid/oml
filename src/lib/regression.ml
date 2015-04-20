@@ -129,6 +129,9 @@ type general_linear_model = { g_m_pred                : float array
                             ; aic                     : float
                             }
 
+let eval_glm glm vec =
+  Vectors.dot glm.coefficients vec
+
 let sub_general_linear_regress ~resp ~pred () =
   let num_pred, num_obs = Matrices.dim pred in
   (* correlation against the constant column do not make sense,
