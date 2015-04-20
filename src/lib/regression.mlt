@@ -10,7 +10,7 @@ open Test_utils
   *)
 
 module Gen = FGen (struct
-  let largest_float = 1e9
+  let largest_float = 1e8
 end)
 
 let () =
@@ -48,7 +48,7 @@ let () =
   (* Even though this test is awkward, if the [linear_model]' implementation is
      hidden, this guards to against an incorrect implementation. *)
   Test.add_random_test
-    ~title:"lrm models evaluate like linear models"
+    ~title:"Regression: lrm models evaluate like linear models"
     Gen.(zip2 non_zero_float lrm_gen)
     (fun (x, lrm) -> eval_lrm lrm x)
     Spec.([ always =>
@@ -56,7 +56,7 @@ let () =
         equal_floats y (lrm.alpha +. lrm.beta *. x)) ]);
 
   Test.add_random_test
-    ~title:"using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
+    ~title:"Regression: using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
     ~nb_runs:1000
     simple_lrm_inputs
     lregress
@@ -66,7 +66,7 @@ let () =
         (roughly_equal a lrm.alpha) && (roughly_equal b lrm.beta))]);
 
   Test.add_random_test
-    ~title:"using linear regression on random float data we can recover coefficients"
+    ~title:"Regression: using linear regression on random float data we can recover coefficients"
     ~nb_runs:1000
     lrm_inputs
     lregress
@@ -77,9 +77,9 @@ let () =
 
   (* TODO: clever test to react to variance in the predicted variable. *)
 
-        (*
+(*
   Test.add_random_test
-    ~title:"confidence intervals are symmetric around evaluation point."
+    ~title:"Regression: confidence intervals are symmetric around evaluation point."
     Gen.(zip3 simple_lrm_gen grt_zer_lss_one float)
     (fun (lrm, alpha_level, x) -> confidence_interval lrm ~alpha_level x)
     Spec.([ always =>
@@ -87,7 +87,7 @@ let () =
         roughly_equal x (Util.midpoint lb ub))]);
 
   Test.add_random_test
-    ~title:"prediction intervals grow as alpha increases."
+    ~title:"Regression: prediction intervals grow as alpha increases."
       Gen.(zip3 simple_lrm_gen two_ordered float)
     (fun (lrm, (a1, a2), x) ->
       (*Printf.printf "our lrm %s alpha %f %f and x %f\n" (to_string lrm) a1 a2 x; *)
@@ -96,5 +96,42 @@ let () =
     Spec.([always =>
       (fun ((_lrm, _alpha_pair, x), ((lb1, ub1), (lb2, ub2))) ->
         ub2 -. lb2 > ub1 -. lb1)])
-
 *)
+
+  (* This is making a stronger case. *)
+  let module Gen = FGen (struct let largest_float = 1e11 end) in
+  let largest_number_samples = 10 in
+  let largest_number_predictors = 3 in
+  let print_float_array m =
+    m
+    |> Array.map (Kaputt.Utils.make_string_of_array (snd Gen.float))
+    |> Array.to_list
+    |> String.concat "\n"
+  in
+  Test.add_random_test
+    ~title:"Regression: general can recover coefficients."
+    ~nb_runs:1000
+    Gen.(zip2
+          (make_int 2 largest_number_predictors)
+          (make_int 2 largest_number_samples)
+         (* +1 is for how we build samples models below. *)
+         |> transform (fun (p, s) -> min p s, 1 + max p s)
+         |> fun (rcg, _) ->
+             (* TODO: refactor this into a bind. *)
+             (fun random ->
+                let (rows, columns) = rcg random in
+                Array.init rows (fun _ ->
+                  Array.init columns (fun _ ->
+                    (fst Gen.float) random))),
+             print_float_array)
+    (fun m ->
+      let mt = Matrices.transpose m in
+      let data = Array.sub mt 1 (Array.length mt - 1) in
+      let coef = mt.(0) in
+      let resp = Matrices.prod_column_vector data coef in
+      let pred = Matrices.transpose data in
+      let glm  = sub_general_linear_regress ~resp ~pred () in
+      Vectors.equal ~d:100.0 glm.coefficients coef)
+    Spec.([just_postcond_pred is_true]);
+
+  ()

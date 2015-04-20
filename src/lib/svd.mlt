@@ -2,15 +2,34 @@
 open Test_utils
 
 module Gen = FGen (struct
-  let largest_float = 1e7
+  let largest_float = 1e6
 end)
 
 let () =
+  let max_matrix_size = 10 in
   Test.add_random_test
-    ~title:"We can svd"
-    Gen.(matrix_float 10 10)
+    ~title:"Svd, we can."
+    ~nb_runs:1000
+    Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) float)
     (fun m ->
       let u, s, vt = svd m in
       let m_rec = Matrices.(prod (prod u (diagonal s)) vt) in
       Matrices.equal ~d:(Util.dx *. 1e9) m m_rec)
-    Spec.([just_postcond_pred is_true])
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Svd, can find a solution to linear problems."
+    ~nb_runs:1000
+    Gen.(matrix (make_int 2 max_matrix_size) (make_int 1 max_matrix_size) float)
+    (fun m ->
+      let x = m.(0) in
+      let a = Array.sub m 1 (Array.length m - 1) in
+      let b = Matrices.prod_column_vector a x in
+      let y = solve_linear a b in
+      let bc = Matrices.prod_column_vector a y in
+      (* Can't compare x and y since they might be different projections,
+         especially in just unaligned random data! *)
+      Vectors.equal ~d:1.0 b bc)
+    Spec.([just_postcond_pred is_true]);
+
+  ()
