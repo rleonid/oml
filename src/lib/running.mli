@@ -13,10 +13,10 @@ type t = { size : int         (** Number of observations. *)
 val empty : t
 
 (** [init x] initialize a [t] with [x]. *)
-    val init : float -> t
+val init : float -> t
 
 (** [update t x] incorporate [x] into the statistics tracked in [t] *)
-    val update : t -> float -> t
+val update : t -> float -> t
 
 (** [join t1 t2] return a running stat if you had first observed the elements
     by [t1] and then [t2]. *)
