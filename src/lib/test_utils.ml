@@ -19,16 +19,30 @@ module FGen (Fp : FloatParameters) = struct
   let non_zero_float = filter ((<>) 0.0) float
 
   (* Fixed length *)
-  let fl_array n  =
+  let fixed_length_array n  =
     let msg = "array length " ^ (string_of_int n) in
     array (lift n msg)
-  let matrix r c e =
+
+  let fixed_length_matrix r c e =
     let row_msg = "row length " ^ string_of_int r
     and col_msg = "col length " ^ string_of_int c in
     array (lift r row_msg) (array (lift c col_msg) e)
 
-  let array_float n = fl_array n float
-  let matrix_float r c = matrix r c float
+  let matrix (r, _) (c, _) (e, es) =
+    (fun random ->
+      let rows = r random and columns = c random in
+      Array.init rows (fun _ ->
+        Array.init columns (fun _ ->
+          e random))),
+    (fun m ->
+      m
+      |> Array.map (Kaputt.Utils.make_string_of_array es)
+      |> Array.to_list
+      |> String.concat "\n")
+
+  let array_float n = fixed_length_array n float
+  let matrix_float r c = fixed_length_matrix r c float
+  let sq_float_matrix s = matrix_float s s
 
 end
 
