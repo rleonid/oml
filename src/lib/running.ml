@@ -63,9 +63,12 @@ let join rs1 rs2 =
        then rs1
        else let new_size = float (rs1.size + rs2.size) in
             let new_mean =
-              let num = rs1.mean *. (float rs1.size) 
+              let p1 = (float rs1.size) /. new_size
+              and p2 = (float rs2.size) /. new_size in
+              rs1.mean *. p1 +. rs2.mean *. p2
+              (* let num = rs1.mean *. (float rs1.size)
                       +. rs2.mean *. (float rs2.size) in
-              num /. new_size
+              num /. new_size *)
             in
             let new_var =
               let num = rs1.sum_sq
