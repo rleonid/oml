@@ -23,11 +23,11 @@ joiner.native:
 
 test: joiner.native
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -I src/lib -I src/test driver.test && \
-	./driver.test
+	time ./driver.test
 
 covered_test: joiner.native
 	COVERAGE=true ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -I src/lib -I src/test driver.test && \
-	./driver.test
+	time ./driver.test
 
 clean:
 	ocamlbuild -clean
