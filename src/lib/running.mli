@@ -12,7 +12,7 @@ type t = { size : int         (** Number of observations. *)
 (** [empty] an empty [t], useful for initializing the fold. *)
 val empty : t
 
-(** [init x] initialize a [t] with [x]. *)
+(** [init x] initializes a [t] with [x]. *)
 val init : float -> t
 
 (** [update t x] incorporate [x] into the statistics tracked in [t] *)
