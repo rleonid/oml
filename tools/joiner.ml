@@ -56,7 +56,10 @@ let joined_header ~source_file ~test_file =
     source_file test_file
 
 let starts_with prefix str =
-  (str <> "") && String.sub str 0 (String.length prefix) = prefix
+  let lp = String.length prefix in
+  (str <> "") &&
+  String.length str >= lp &&
+  String.sub str 0 lp = prefix
 
 (* Argument Format:
   joiner.exe camlp4o other arguments source_file.ml
