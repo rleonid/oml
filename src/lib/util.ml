@@ -74,18 +74,18 @@ module Array = struct
     in
     bs_loop 0 (Array.length a - 1)
 
-  let all a =
+  let all p a =
     let n = Array.length a in
     let rec loop i =
-      i = n || a.(i) && loop (i + 1)
+      i = n || (p a.(i)) && loop (i + 1)
     in
     loop 0
 
-  let any a =
+  let any p a =
     let n = Array.length a in
     let rec loop i =
       if i < n
-      then a.(i) || loop (i + 1)
+      then (p a.(i)) || loop (i + 1)
       else false
     in
     loop 0
