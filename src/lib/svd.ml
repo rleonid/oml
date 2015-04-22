@@ -33,7 +33,7 @@ let solve_linear, solve_linear_with_covariance =
     let m = lazy (
       let s_inv_sq = Array.map (fun x -> x *. x) s_inv in
       let s_sq_mat = Matrices.diagonal s_inv_sq in
-      Matrices.(prod s_sq_mat v)
+      Matrices.(prod s_sq_mat vt)
       |> Matrices.prod v)
     in
     coeff, m
