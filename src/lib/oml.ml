@@ -1,4 +1,5 @@
 module Util = Util
+module Array = Util.Array
 module Vectors = Vectors
 module Matrices = Matrices
 module Functions = Functions
