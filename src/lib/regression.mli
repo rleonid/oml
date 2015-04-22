@@ -40,7 +40,8 @@ val prediction_interval : linear_model -> alpha_level:float -> float -> float * 
 (** A [general_linear_model] is a linear model over a vector space,
     allowing the user to perform multiple linear regression. *)
 type general_linear_model =
-  { g_m_pred                : float array   (** Means of the predicted variables. *)
+  { padded                  : bool
+  ; g_m_pred                : float array   (** Means of the predicted variables. *)
   ; g_m_resp                : float         (** Mean of the response variable. *)
   ; deg_of_freedom          : float         (** Degree's of freedom in the regression. *)
   ; coefficients            : float array   (** The coefficients of the determined model. *)
@@ -59,5 +60,6 @@ type general_linear_model =
     of [data]. *)
 val eval_glm : general_linear_model -> float array -> float
 
-val sub_general_linear_regress : resp: float array -> pred: float array array
-                                -> unit -> general_linear_model
+val general_linear_regress : ?pad:bool -> resp: float array
+                            -> pred: float array array -> unit
+                            -> general_linear_model
