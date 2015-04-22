@@ -15,9 +15,9 @@ val empty : t
 (** [init x] initializes a [t] with [x]. *)
 val init : float -> t
 
-(** [update t x] incorporate [x] into the statistics tracked in [t] *)
+(** [update t x] incorporate [x] into the statistics tracked in [t]. *)
 val update : t -> float -> t
 
-(** [join t1 t2] return a running stat if you had first observed the elements
+(** [join t1 t2] return a [Running.t] if you had first observed the elements
     by [t1] and then [t2]. *)
 val join : t -> t -> t
