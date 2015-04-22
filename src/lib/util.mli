@@ -50,7 +50,7 @@ module Array : sig
       Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
   val binary_search : ('a -> int) -> 'a array -> 'a
 
-  (** [all p arr] equivalent to [true && (p arr.(0)) && (p arr.(1)) ... 
+  (** [all p arr] equivalent to [true && (p arr.(0)) && (p arr.(1)) ...
       && (p arr.(n))] *)
   val all : ('a -> bool) -> 'a array -> bool
 
