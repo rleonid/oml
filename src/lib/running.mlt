@@ -1,0 +1,98 @@
+
+open Util
+open Test_utils
+
+module Gen = FGen (struct
+  (* In order for these tests to work well, we have to span the range of
+  acceptable floats as well. If we're uniformly sampling from [0, largest_float]
+  we'll have different characteristics if largest_float is tiny or huge:
+  this will influence the significand in the algorithms.*)
+  let largest_float = 1e10
+end)
+
+let () =
+  let equal_floats ?d x y = not (Util.significantly_different_from ?d x y) in
+  let max_array_size = 10000 in (* tested up to 100000 *)
+  let not_degenerate rs =
+    not (Util.is_degenerate rs.last) &&
+    not (Util.is_degenerate rs.max) &&
+    not (Util.is_degenerate rs.min) &&
+    not (Util.is_degenerate rs.sum) &&
+    not (Util.is_degenerate rs.sum_sq) &&
+    not (Util.is_degenerate rs.mean) &&
+    not (Util.is_degenerate rs.var)
+  in
+  let roughly_equal ~order_comp x y =
+    let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
+    not (Util.significantly_different_from ~d x y)
+    in
+  let compare_against_descriptive rs data =
+    let n = Array.length data in
+    let dv = Descriptive.unbiased_var data in
+    let ds = data |> Array.map (fun x-> x *. x) |> Array.sumf in
+    (*Printf.printf "%f vs %f \n" rs.sum_sq ds; *)
+    rs.size = n &&
+    equal_floats rs.last data.(n - 1) &&
+    equal_floats rs.max (Array.max data) &&
+    equal_floats rs.min (Array.min data)  &&
+    equal_floats ~d:(Util.dx*.1e14) rs.sum (Array.sumf data) &&
+    roughly_equal ~order_comp:1e14 rs.sum_sq ds &&
+    equal_floats rs.mean (Descriptive.mean data) &&
+    roughly_equal ~order_comp:1e13 rs.var dv
+  in
+  let compare_rs rs1 rs2 =
+    Printf.printf "%f vs %f \n" rs1.var rs2.var;
+    rs1.size = rs2.size &&
+    equal_floats rs1.last rs2.last &&
+    equal_floats rs1.max rs2.max &&
+    equal_floats rs1.min rs2.min &&
+    equal_floats ~d:(Util.dx*.1e14) rs1.sum rs2.sum &&
+    roughly_equal ~order_comp:1e14 rs1.sum_sq rs2.sum_sq &&
+    equal_floats ~d:(Util.dx*.1e13) rs1.mean rs2.mean &&
+    roughly_equal ~order_comp:1e14 rs1.var rs2.var
+  in
+  Test.add_random_test
+    ~title:"Running: analysis is not degenerate."
+    ~nb_runs:100
+    Gen.(array (make_int 1 max_array_size) float)
+    (fun data ->
+      let n = Array.length data in
+      let rs1 = Array.fold_left update empty data in
+      let rs2 = Array.fold_left update (init data.(0))
+                  (Array.sub data 1 (n - 1))
+      in
+      not_degenerate rs1 && not_degenerate rs2)
+      Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Running: works as well as Descriptive."
+    (* This is really a test of Descriptive ...  as the point of Running is to
+       be more accurate. How to encode the higher accuracy though? We're
+       essentially comparing the difference between the two. *)
+    ~nb_runs:1000
+    Gen.(array (make_int 1 max_array_size) float)
+    (fun data ->
+      let n = Array.length data in
+      let rs1 = Array.fold_left update empty data in
+      let rs2 = Array.fold_left update (init data.(0))
+                  (Array.sub data 1 (n - 1))
+      in
+      compare_against_descriptive rs1 data &&
+      compare_against_descriptive rs2 data)
+      Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Running: we can also join!"
+    ~nb_runs:1000
+    Gen.(zip2 (make_int 1 max_array_size) (array_float max_array_size))
+    (fun (index, data) ->
+      let left  = Array.sub data 0 index
+      and right = Array.sub data index (Array.length data - index) in
+      let rs_left   = Array.fold_left update empty left
+      and rs_right  = Array.fold_left update empty right in
+      let rs_data   = Array.fold_left update empty data in
+      let rs_joined = join rs_left rs_right in
+      compare_rs rs_data rs_joined)
+    Spec.([just_postcond_pred is_true]);
+
+  ()
