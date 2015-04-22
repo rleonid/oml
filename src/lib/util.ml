@@ -89,12 +89,14 @@ module Array = struct
       else false
     in
     loop 0
+
   let range ?(incr=1.0) ~start ~stop () =
     if stop < start
     then [||]
     else
       Array.init (truncate (ceil ((stop -. start) /. incr)))
         (fun i -> start +. incr *. (float i))
+
 
 end
 
