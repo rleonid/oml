@@ -50,11 +50,13 @@ module Array : sig
       Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
   val binary_search : ('a -> int) -> 'a array -> 'a
 
-  (** [all arr] equivalent to [true && arr.(0) && arr.(1) ... && arr.(n)] *)
-  val all : bool array -> bool
+  (** [all p arr] equivalent to [true && (p arr.(0)) && (p arr.(1)) ...
+      && (p arr.(n))] *)
+  val all : ('a -> bool) -> 'a array -> bool
 
-  (** [any arr] equivalent to [false || arr.(0) || arr.(1) ... || arr.(n)] *)
-  val any : bool array -> bool
+  (** [any p arr] equivalent to [false || (p arr.(0)) || (p arr.(1)) ...
+      || (p arr.(n))] *)
+  val any : ('a -> bool) -> 'a array -> bool
 
   (** [range incr start stop] create a float elements of all values in the
       interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
