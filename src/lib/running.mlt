@@ -41,7 +41,7 @@ let () =
     roughly_equal ~order_comp:1e13 rs.var dv
   in
   let compare_rs rs1 rs2 =
-    Printf.printf "%f vs %f \n" rs1.var rs2.var;
+    (* Printf.printf "%f vs %f \n" rs1.var rs2.var; *)
     rs1.size = rs2.size &&
     equal_floats rs1.last rs2.last &&
     equal_floats rs1.max rs2.max &&
