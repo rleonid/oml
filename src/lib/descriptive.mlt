@@ -1,0 +1,29 @@
+
+open Test_utils
+
+module Gen = FGen (struct
+  let largest_float = 1e8
+end)
+
+let () =
+  let max_array_size = 1000 in
+  Test.add_random_test
+    ~title:"Descriptive: a histograms buckets have all the elements."
+    Gen.(zip2 pos_float (array (make_int 2 max_array_size) float))
+    (fun (w, data) ->
+      let hist = histogram data (`width w) in
+      let nume = Array.map snd hist |> Array.fold_left (+) 0 in
+      Array.length data = nume)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Descriptive: a histograms buckets have all the elements, 2."
+    Gen.(zip2 (make_int 1 (10 * max_array_size))
+              (array (make_int 2 max_array_size) float))
+    (fun (b, data) ->
+      let hist = histogram data (`buckets b) in
+      let nume = Array.map snd hist |> Array.fold_left (+) 0 in
+      Array.length data = nume)
+    Spec.([just_postcond_pred is_true]);
+
+  ()
