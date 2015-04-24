@@ -138,8 +138,8 @@ let histogram arr width_setting =
   let mx   = Array.max arr in
   let width =
     match width_setting with
-    | `width w   -> w
-    | `buckets n -> (mx -. mn) /. (float n)
+    | `Width w   -> w
+    | `Buckets n -> (mx -. mn) /. (float n)
   in
   let size = truncate (ceil ((floor ((mx -. mn) /. width)) +. 1.0)) in
   let harr = Array.init size (fun i -> (mn +. (float i) *. width, 0)) in
