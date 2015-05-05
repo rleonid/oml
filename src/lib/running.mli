@@ -16,13 +16,9 @@ val empty : t
     which defaults to [1]. *)
 val init : ?size:int -> float -> t
 
-(** [update t x] incorporate [x] with [1] sample into the
-    statistics tracked in [t]. *)
-val update : t -> float -> t
-
-(** [update2 t ?size x] incorporate [x] with [size] default to [1] sample(s)
+(** [update t ?size x] incorporate [x] with [size] (defaulting to [1]) samples
     into the statistics tracked in [t]. *)
-val update2 : t -> ?size:int -> float -> t
+val update : ?size:int -> t -> float -> t
 
 (** [join t1 t2] return a [Running.t] if you had first observed the elements
     by [t1] and then [t2]. *)

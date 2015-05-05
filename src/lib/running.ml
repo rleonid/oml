@@ -32,7 +32,7 @@ let init ?(size=1) o = { size
              ; var    = 0.0
              }
 
-let update2 t ?(size=1) v =
+let update ?(size=1) t v =
   if t.size = 0
   then init ~size v
   else let size_f = float size in
@@ -56,8 +56,6 @@ let update2 t ?(size=1) v =
       ; mean   = n_mean
       ; var    = n_var
       }
-
-let update t v = update2 t ~size:1 v
 
 let join rs1 rs2 =
   if rs1.size = 0

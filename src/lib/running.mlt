@@ -97,14 +97,14 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   Test.add_random_test
-    ~title:"Running: sampling with variable sizes using update2"
+    ~title:"Running: variable sizes using update"
     ~nb_runs:1000
     Gen.(zip2 (make_int 1 max_array_size) (array_float max_array_size))
     (fun (index, data) ->
       let left = Array.sub data 0 index in
       let left_1 = Array.fold_left update empty left in
       let left_1' = Array.fold_left update left_1 left in
-      let left_2 = Array.fold_left (update2 ~size:2) empty left in
+      let left_2 = Array.fold_left (update ~size:2) empty left in
       compare_rs left_1' left_2)
     Spec.([just_postcond_pred is_true]);
 
