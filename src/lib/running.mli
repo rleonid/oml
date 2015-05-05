@@ -16,7 +16,7 @@ val empty : t
     which defaults to [1]. *)
 val init : ?size:int -> float -> t
 
-(** [update t ?size x] incorporate [x] with [size] (defaulting to [1]) samples
+(** [update ?size t x] incorporate [x] with [size] (defaulting to [1]) samples
     into the statistics tracked in [t]. *)
 val update : ?size:int -> t -> float -> t
 
