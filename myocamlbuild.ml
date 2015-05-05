@@ -1,12 +1,6 @@
 open Ocamlbuild_plugin
 open Ocamlbuild_pack
 
-let lib_dir pkg =
-  let ic = Unix.open_process_in ("ocamlfind query " ^ pkg) in
-  let line = input_line ic in
-  close_in ic;
-  line
-
 let target_with_extension ext =
   List.exists (fun s -> Pathname.get_extension s = ext) !Options.targets
 
@@ -54,18 +48,13 @@ let () =
               begin
                 if integrate_coverage () then
                   begin
-                    let bsdir = lib_dir "bisect" in
                     flag ["pp"]
                       (S [ P (!Options.build_dir / "tools/joiner.native")
                          ; A "camlp4o"
-                         ; A "str.cma"
-                         ; A (bsdir / "bisect_pp.cmo")]);
-                    flag ["compile"]
-                      (S [A"-I"; A bsdir]);
-                    flag ["link"; "byte"; "program"]
-                      (S [A"-I"; A bsdir; A"bisect.cmo"]);
-                    flag ["link"; "native"; "program"]
-                      (S [A"-I"; A bsdir; A"bisect.cmx"])
+                         ; A "str.cma"]);
+                    flag ["compile"]                      (S [A"-package"; A "bisect_ppx"]);
+                    flag ["link"; "byte"; "program"]      (S [A"-package"; A "bisect_ppx"]);
+                    flag ["link"; "native"; "program"]    (S [A"-package"; A "bisect_ppx"]);
                   end
                 else
                   flag ["pp"]
