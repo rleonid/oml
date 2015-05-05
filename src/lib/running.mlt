@@ -41,7 +41,8 @@ let () =
     roughly_equal ~order_comp:1e13 rs.var dv
   in
   let compare_rs rs1 rs2 =
-    (* Printf.printf "%f vs %f \n" rs1.var rs2.var; *)
+    (* Printf.printf "[mean] %f vs %f \n" rs1.mean rs2.mean; *)
+    (* Printf.printf "[var] %f vs %f \n" rs1.var rs2.var; *)
     rs1.size = rs2.size &&
     equal_floats rs1.last rs2.last &&
     equal_floats rs1.max rs2.max &&
@@ -93,6 +94,18 @@ let () =
       let rs_data   = Array.fold_left update empty data in
       let rs_joined = join rs_left rs_right in
       compare_rs rs_data rs_joined)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Running: sampling with variable sizes using update2"
+    ~nb_runs:1000
+    Gen.(zip2 (make_int 1 max_array_size) (array_float max_array_size))
+    (fun (index, data) ->
+      let left = Array.sub data 0 index in
+      let left_1 = Array.fold_left update empty left in
+      let left_1' = Array.fold_left update left_1 left in
+      let left_2 = Array.fold_left (update2 ~size:2) empty left in
+      compare_rs left_1' left_2)
     Spec.([just_postcond_pred is_true]);
 
   ()
