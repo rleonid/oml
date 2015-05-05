@@ -12,11 +12,13 @@ type t = { size : int         (** Number of observations. *)
 (** [empty] an empty [t], useful for initializing the fold. *)
 val empty : t
 
-(** [init x] initializes a [t] with [x]. *)
-val init : float -> t
+(** [init ?size x] initializes a [t] with [x] and initial [size]
+    which defaults to [1]. *)
+val init : ?size:int -> float -> t
 
-(** [update t x] incorporate [x] into the statistics tracked in [t]. *)
-val update : t -> float -> t
+(** [update ?size t x] incorporate [x] with [size] (defaulting to [1]) samples
+    into the statistics tracked in [t]. *)
+val update : ?size:int -> t -> float -> t
 
 (** [join t1 t2] return a [Running.t] if you had first observed the elements
     by [t1] and then [t2]. *)
