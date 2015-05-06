@@ -109,7 +109,8 @@ let confidence_interval, prediction_interval =
   (fun lrm -> interval ((lrm.size +. 1.0) /. lrm.size) lrm)
 
 (* general linear least squares. *)
-type general_linear_model = { g_m_pred                : float array
+type general_linear_model = { padded                  : bool
+                            ; g_m_pred                : float array
                             ; g_m_resp                : float
                             ; deg_of_freedom          : float
                             ; coefficients            : float array
@@ -129,7 +130,15 @@ type general_linear_model = { g_m_pred                : float array
                             ; aic                     : float
                             }
 
-let sub_general_linear_regress ~resp ~pred () =
+let eval_glm glm vec =
+  if glm.padded then
+    let n = Array.length glm.coefficients in
+    let c = Array.sub glm.coefficients 1 (n - 1) in
+    glm.coefficients.(0) +. Vectors.dot c vec
+  else
+    Vectors.dot glm.coefficients vec
+
+let sub_general_linear_regress padded ~resp ~pred () =
   let num_pred, num_obs = Matrices.dim pred in
   (* correlation against the constant column do not make sense,
      is always nan ignore *)
@@ -166,7 +175,8 @@ let sub_general_linear_regress ~resp ~pred () =
     let k = float num_pred in
     2.0 *. k +. (log (chi_sq /. n)) +. (n +. k) /. (n -. k -. 2.0)
   in
-  { g_m_pred = g_m_pred
+  { padded
+  ; g_m_pred = g_m_pred
   ; g_m_resp = g_m_resp
   ; deg_of_freedom = deg_of_freedom
   ; coefficients = coeff
@@ -181,3 +191,13 @@ let sub_general_linear_regress ~resp ~pred () =
   (*d_w = durbin_watson residuals *)
   ; aic = aic
   }
+
+let general_linear_regress ?(pad=true) ~resp ~pred () =
+  let pred, padded =
+    if pad then
+      let n = Array.length pred.(0) in
+      Array.init (Array.length pred + 1) (function | 0 -> Array.make n 1.0 | i -> pred.(i - 1))
+      , true
+    else pred, false
+  in
+  sub_general_linear_regress padded resp pred ()
