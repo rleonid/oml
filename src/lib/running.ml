@@ -11,6 +11,12 @@ type t = { size   : int
          ; var    : float
          }
 
+type mean_update = ?size:int -> n_sum:float ->
+  n_sum_sq:float -> n_size:float -> t -> float -> float
+
+let default_mean_update ?size ~n_sum ~n_sum_sq ~n_size t v =
+  t.mean +. (v -. t.mean) /. n_size
+
 (* Mutators *)
 let empty = { size   = 0
             ; last   = nan
@@ -22,31 +28,32 @@ let empty = { size   = 0
             ; var    = nan
             }
 
-let init o = { size   = 1
+let init ?(size=1) o = { size
              ; last   = o
              ; max    = o
              ; min    = o
-             ; sum    = o
-             ; sum_sq = o *. o
+             ; sum    = o *. float size
+             ; sum_sq = o *. o *. float size
              ; mean   = o
              ; var    = 0.0
              }
 
-let update t v =
+let update ?(size=1) ?(mean_update=default_mean_update) t v =
   if t.size = 0
   then init v
-  else let n_sum = t.sum +. v in
-       let n_sum_sq = t.sum_sq +. v *. v in
-       let n_size = float t.size +. 1.0 in
-       let n_mean = t.mean +. (v -. t.mean) /. n_size in
+  else let size_f = float size in
+       let n_sum = t.sum +. size_f *. v in
+       let n_sum_sq = t.sum_sq +. size_f *. size_f *. v *. v in
+       let n_size = float t.size +. size_f in
+       let n_mean = mean_update ~size ~n_sum ~n_sum_sq ~n_size t v in
        let n_var =
          let num = n_sum_sq
                  -. 2.0 *. n_mean *. n_sum
-                 +. n_size *. n_mean *.  n_mean
+                 +. n_size *. n_mean *. n_mean
          and den = n_size -. 1.0 in
          num /. den
       in
-      { size   = t.size + 1
+      { size = t.size + size
       ; last   = v
       ; max    = max t.max v
       ; min    = min t.min v
