@@ -26,7 +26,7 @@ let () =
     let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
     not (Util.significantly_different_from ~d x y)
     in
-  let compare_against_descriptive rs data =
+  let compare_against_descriptive (rs : t)  data =
     let n = Array.length data in
     let dv = Descriptive.unbiased_var data in
     let ds = data |> Array.map (fun x-> x *. x) |> Array.sumf in
@@ -37,7 +37,7 @@ let () =
     equal_floats rs.min (Array.min data)  &&
     equal_floats ~d:(Util.dx*.1e14) rs.sum (Array.sumf data) &&
     roughly_equal ~order_comp:1e14 rs.sum_sq ds &&
-    equal_floats rs.mean (Descriptive.mean data) &&
+    equal_floats ~d:(Util.dx*.1e10) rs.mean (Descriptive.mean data) &&
     roughly_equal ~order_comp:1e13 rs.var dv
   in
   let compare_rs rs1 rs2 =
@@ -47,13 +47,13 @@ let () =
     equal_floats rs1.max rs2.max &&
     equal_floats rs1.min rs2.min &&
     equal_floats ~d:(Util.dx*.1e14) rs1.sum rs2.sum &&
-    roughly_equal ~order_comp:1e14 rs1.sum_sq rs2.sum_sq &&
+    roughly_equal ~order_comp:1e13 rs1.sum_sq rs2.sum_sq &&
     equal_floats ~d:(Util.dx*.1e13) rs1.mean rs2.mean &&
-    roughly_equal ~order_comp:1e14 rs1.var rs2.var
+    roughly_equal ~order_comp:1e13 rs1.var rs2.var
   in
   Test.add_random_test
     ~title:"Running: analysis is not degenerate."
-    ~nb_runs:100
+    ~nb_runs:1000
     Gen.(array (make_int 1 max_array_size) float)
     (fun data ->
       let n = Array.length data in

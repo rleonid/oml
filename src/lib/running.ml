@@ -38,7 +38,7 @@ let update t v =
   else let n_sum = t.sum +. v in
        let n_sum_sq = t.sum_sq +. v *. v in
        let n_size = float t.size +. 1.0 in
-       let n_mean = n_sum /. n_size in
+       let n_mean = t.mean +. (v -. t.mean) /. n_size in
        let n_var =
          let num = n_sum_sq
                  -. 2.0 *. n_mean *. n_sum
