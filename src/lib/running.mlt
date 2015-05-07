@@ -26,7 +26,7 @@ let () =
     let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
     not (Util.significantly_different_from ~d x y)
     in
-  let compare_against_descriptive (rs : t)  data =
+  let compare_against_descriptive rs data =
     let n = Array.length data in
     let dv = Descriptive.unbiased_var data in
     let ds = data |> Array.map (fun x-> x *. x) |> Array.sumf in
@@ -99,13 +99,12 @@ let () =
   Test.add_random_test
     ~title:"Running: variable sizes using update"
     ~nb_runs:1000
-    Gen.(zip2 (make_int 1 max_array_size) (array_float max_array_size))
-    (fun (index, data) ->
-      let left = Array.sub data 0 index in
-      let left_1 = Array.fold_left update empty left in
-      let left_1' = Array.fold_left update left_1 left in
-      let left_2 = Array.fold_left (update ~size:2) empty left in
-      compare_rs left_1' left_2)
+    Gen.(array_float 10)
+    (fun data ->
+      let first = Array.fold_left update empty data in
+      let second = Array.fold_left update first data in
+      let twice = Array.fold_left (update ~size:2) empty data in
+      compare_rs second twice)
     Spec.([just_postcond_pred is_true]);
 
   ()
