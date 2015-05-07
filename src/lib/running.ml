@@ -11,10 +11,13 @@ type t = { size   : int
          ; var    : float
          }
 
-type mean_update = ?size:int -> n_sum:float ->
+type mean_update = size:int -> n_sum:float ->
   n_sum_sq:float -> n_size:float -> t -> float -> float
 
-let default_mean_update ?size ~n_sum ~n_sum_sq ~n_size t v = n_sum /. n_size
+let default_mean_update ~size ~n_sum ~n_sum_sq ~n_size t v =
+  let size_f = float size in
+  t.mean +. size_f *. (v -. t.mean) /. n_size
+  (*t.mean +. (v -. t.mean) /. n_size *)
 
 (* Mutators *)
 let empty = { size   = 0

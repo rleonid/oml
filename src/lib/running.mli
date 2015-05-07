@@ -10,10 +10,10 @@ type t = { size : int         (** Number of observations. *)
          }
 
 (** Defines a mean update function. Given an existing running
-    statistic [t], an option sample [size], the already computed
+    statistic [t], number of samples [size], the already computed
     updated statistics [n_sum], [num_sum_sq], and [n_size], finally
     with the newly observed value, return a new estimate of the mean. *)
-type mean_update = ?size:int -> n_sum:float ->
+type mean_update = size:int -> n_sum:float ->
   n_sum_sq:float -> n_size:float -> t -> float -> float
 
 (** [empty] an empty [t], useful for initializing the fold. *)
