@@ -13,3 +13,4 @@ module Sampling = Sampling
 module Solvers = Solvers
 module Running = Running
 module Svd = Svd
+module Classify = Classify
