@@ -59,7 +59,7 @@ type smoothing =
   ; feature_space_size  : int array
   }
 
-let estimate ?smoothing ~feature_size to_ftr_arr data =
+let estimate ?smoothing ?(classes=[]) ~feature_size to_ftr_arr data =
   if data = [] then
     invalidArg "Classify.estimate: Nothing to train on"
   else
@@ -69,6 +69,8 @@ let estimate ?smoothing ~feature_size to_ftr_arr data =
       (* keep track of the class count at the end of array. *)
       arr.(feature_size) <- arr.(feature_size) + 1;
     in
+    let error_on_new = classes <> [] in
+    let init_class_lst = List.map classes ~f:(fun c -> (c, Array.make aa 0)) in
     let (total, all) =
       List.fold_left data
         ~f:(fun (total, asc) (label, feature) ->
@@ -78,12 +80,15 @@ let estimate ?smoothing ~feature_size to_ftr_arr data =
               update fr (to_ftr_arr feature);
               asc
             with Not_found ->
-              let fr = Array.make aa 0 in
-              update fr (to_ftr_arr feature);
-              (label, fr) :: asc
+              if error_on_new then
+                invalidArg "Found a new (unexpected) class at datum %d" total
+              else
+                let fr = Array.make aa 0 in
+                update fr (to_ftr_arr feature);
+                (label, fr) :: asc
           in
           total + 1, n_asc)
-        ~init:(0, [])
+        ~init:(0, init_class_lst)
     in
     let totalf = float total in
     let cls_sz = float (List.length all) in
@@ -139,13 +144,18 @@ let gauss_eval gb features =
   in
   List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
 
-let gauss_estimate data =
+let gauss_estimate ?(classes=[]) data =
   if data = [] then
     invalidArg "Classify.gauss_estimate: Nothing to train on!"
   else
     let update = Array.map2 Running.update in
     let init   = Array.map Running.init in
     let features = Array.length (snd (List.hd data)) in
+    let init_cl  =
+      let empty () = Array.make features Running.empty in
+      List.map classes ~f:(fun c -> (c, (0, empty ())))
+    in
+    let error_on_new = classes <> [] in
     let total, by_class =
       List.fold_left data
         ~f:(fun (t, acc) (cls, attr) ->
@@ -156,8 +166,11 @@ let gauss_estimate data =
             let cf'        = cf + 1 in
             (t + 1, (cls, (cf', nrs)) :: acc')
           with Not_found ->
-            (t + 1, (cls, (1, (init attr))) :: acc))
-        ~init:(0, [])
+            if error_on_new then
+              invalidArg "Found a new (unexpected) class at datum %d" t
+            else
+              (t + 1, (cls, (1, (init attr))) :: acc))
+        ~init:(0, init_cl)
     in
     let totalf = float total in
       (* A lot of the literature in estimating Naive Bayes focuses on estimating
