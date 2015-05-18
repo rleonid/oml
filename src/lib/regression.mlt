@@ -108,9 +108,7 @@ let () =
     |> Array.to_list
     |> String.concat "\n"
   in
-  Test.add_random_test
-    ~title:"Regression: general can recover coefficients."
-    ~nb_runs:1000
+  let general_model_array =
     Gen.(zip2
           (make_int 2 largest_number_predictors)
           (make_int 2 largest_number_samples)
@@ -124,14 +122,39 @@ let () =
                   Array.init columns (fun _ ->
                     (fst Gen.float) random))),
              print_float_array)
-    (fun m ->
+  in
+  let general_model =
+    Gen.(map1 (fun m ->
       let mt = Matrices.transpose m in
       let data = Array.sub mt 1 (Array.length mt - 1) in
       let coef = mt.(0) in
       let resp = Matrices.prod_column_vector data coef in
       let pred = Matrices.transpose data in
-      let glm  = sub_general_linear_regress ~resp ~pred () in
-      Vectors.equal ~d:100.0 glm.coefficients coef)
+      (pred, coef, resp))
+      (fun (pred, coef, resp) ->
+        Printf.sprintf "predictors: %s\n coefficients: %s\n response: %s\n"
+          (print_float_array pred)
+          (Kaputt.Utils.make_string_of_array (snd Gen.float) coef)
+          (Kaputt.Utils.make_string_of_array (snd Gen.float) resp))
+      general_model_array)
+  in
+  Test.add_random_test
+    ~title:"Regression: general can recover coefficients."
+    ~nb_runs:1000
+    general_model
+    (fun (pred, coef, resp) ->
+      let glm = sub_general_linear_regress false ~resp ~pred () in
+      Vectors.equal ~d:1e-2 glm.coefficients coef)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Regression: residuals are just the difference between eval_glm and resp"
+    ~nb_runs:1000
+    general_model
+    (fun (pred, _, resp) ->
+      let glm = sub_general_linear_regress false ~resp ~pred () in
+      let pt = Matrices.transpose pred in
+      equal_floats glm.residuals.(0) (resp.(0) -. eval_glm glm pt.(0)))
     Spec.([just_postcond_pred is_true]);
 
   ()

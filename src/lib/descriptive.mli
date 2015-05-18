@@ -30,7 +30,7 @@ type dist_stats = { size     : int
 val dist_classify : float array -> dist_stats
 val unbiased_dist_classify : float array -> dist_stats
 
-(** [histogra data width_setting] group [data] into a specific number of buckets
+(** [histogram data width_setting] group [data] into a specific number of buckets
     of given width (according to [width_setting]. *)
 val histogram : float array -> [`Width of float | `Buckets of int] -> (float * int) array
 
