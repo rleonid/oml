@@ -26,7 +26,7 @@ test: joiner.native
 	time ./driver.test
 
 covered_test: joiner.native
-	COVERAGE=true ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -I src/lib -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package bisect_ppx -I src/lib -I src/test driver.test && \
 	time ./driver.test
 
 clean:
