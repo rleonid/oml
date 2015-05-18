@@ -10,7 +10,7 @@ all: build
 # This should be called something else.
 setup:
 	opam install kaputt
-	opam install bisect
+	opam install bisect_ppx
 	opam install lacaml
 
 oml.cmxa:
