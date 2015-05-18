@@ -18,10 +18,6 @@ let rec copy_mlt_files path =
       else
         ())
 
-let integrate_coverage () =
-  try (ignore (Sys.getenv "COVERAGE"); true)
-  with Not_found -> false
-
 let () =
   let additional_rules =
     function
@@ -45,21 +41,7 @@ let () =
                 ]
               end;
             if target_with_extension "test" then
-              begin
-                if integrate_coverage () then
-                  begin
-                    flag ["pp"]
-                      (S [ P (!Options.build_dir / "tools/joiner.native")
-                         ; A "camlp4o"
-                         ; A "str.cma"]);
-                    flag ["compile"]                      (S [A"-package"; A "bisect_ppx"]);
-                    flag ["link"; "byte"; "program"]      (S [A"-package"; A "bisect_ppx"]);
-                    flag ["link"; "native"; "program"]    (S [A"-package"; A "bisect_ppx"]);
-                  end
-                else
-                  flag ["pp"]
-                      (S [ P (!Options.build_dir / "tools/joiner.native") ; A "camlp4o"])
-              end
+              flag ["pp"] (S [ P (!Options.build_dir / "tools/joiner.native") ; A "camlp4o"])
           end
   in
   dispatch additional_rules
