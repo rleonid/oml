@@ -1,12 +1,6 @@
 open Ocamlbuild_plugin
 open Ocamlbuild_pack
 
-let lib_dir pkg =
-  let ic = Unix.open_process_in ("ocamlfind query " ^ pkg) in
-  let line = input_line ic in
-  close_in ic;
-  line
-
 let target_with_extension ext =
   List.exists (fun s -> Pathname.get_extension s = ext) !Options.targets
 
@@ -23,10 +17,6 @@ let rec copy_mlt_files path =
         Pathname.copy src dst
       else
         ())
-
-let integrate_coverage () =
-  try (ignore (Sys.getenv "COVERAGE"); true)
-  with Not_found -> false
 
 let () =
   let additional_rules =
@@ -51,26 +41,7 @@ let () =
                 ]
               end;
             if target_with_extension "test" then
-              begin
-                if integrate_coverage () then
-                  begin
-                    let bsdir = lib_dir "bisect" in
-                    flag ["pp"]
-                      (S [ P (!Options.build_dir / "tools/joiner.native")
-                         ; A "camlp4o"
-                         ; A "str.cma"
-                         ; A (bsdir / "bisect_pp.cmo")]);
-                    flag ["compile"]
-                      (S [A"-I"; A bsdir]);
-                    flag ["link"; "byte"; "program"]
-                      (S [A"-I"; A bsdir; A"bisect.cmo"]);
-                    flag ["link"; "native"; "program"]
-                      (S [A"-I"; A bsdir; A"bisect.cmx"])
-                  end
-                else
-                  flag ["pp"]
-                      (S [ P (!Options.build_dir / "tools/joiner.native") ; A "camlp4o"])
-              end
+              flag ["pp"] (S [ P (!Options.build_dir / "tools/joiner.native") ; A "camlp4o"])
           end
   in
   dispatch additional_rules
