@@ -254,21 +254,20 @@ module BinaryClassificationPerformance = struct
           else (sr, n0, n1 + 1))
         ~init:(0,0,0)
     in
-    let sr_f = float (sr + n0) (* Since mapi ranks starting from 0 *)
-    and n0_f = float n0
-    and n1_f = float n1 in
+    let sr_f = float (sr + n0) in (* Since mapi ranks starting from 0 *)
+    let n0_f = float n0 in
+    let n1_f = float n1 in
     (sr_f -. n0_f *. (n0_f +. 1.0) *. 0.5) /. (n0_f *. n1_f)
 
   let to_descriptive data =
     let cr  = List.fold_left ~f:update_classification_record ~init:empty_cr data in
     let auc = to_auc data in
-    let true_positive   = float cr.true_positive
-    and false_negative  = float cr.false_negative
-    and false_positive  = float cr.false_positive
-    and true_negative   = float cr.true_negative in
-    let positive        = true_positive +. false_negative
-    and negative        = false_positive +. true_negative
-    in
+    let true_positive   = float cr.true_positive in
+    let false_negative  = float cr.false_negative in
+    let false_positive  = float cr.false_positive in
+    let true_negative   = float cr.true_negative in
+    let positive        = true_positive +. false_negative in
+    let negative        = false_positive +. true_negative in
     { sensitivity         = true_positive /. positive
     ; specificity         = true_negative /. negative
     ; positive_predictive = true_positive /. (true_positive +. false_positive)
