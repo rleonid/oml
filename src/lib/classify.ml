@@ -27,6 +27,10 @@ type ('cls, 'ftr) naive_bayes =
   ; features          : int
   }
 
+let class_probabilities nb cls =
+  let arr = List.assoc cls nb.table in
+  arr.(nb.features), Array.sub arr 0 (nb.features - 1)
+
 let eval ?(bernoulli=false) nb b =
   let evidence = ref 0.0 in
   let to_likelihood class_probs =
@@ -111,10 +115,11 @@ let estimate ?smoothing ?(classes=[]) ~feature_size to_ftr_arr data =
         let prior_count = float attr_count.(feature_size) in
         let likelihood =
           Array.init aa (fun i ->
-            to_lkhd_prob (float attr_count.(i)) prior_count i)
+            if i = feature_size then    (* Store the prior at the end. *)
+              to_prior_prob prior_count totalf cls_sz
+            else
+              to_lkhd_prob (float attr_count.(i)) prior_count i)
         in
-        (* Store the prior at the end. *)
-        likelihood.(feature_size) <- to_prior_prob prior_count totalf cls_sz;
         cl, likelihood)
     in
     { table
