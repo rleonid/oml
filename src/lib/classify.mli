@@ -56,3 +56,22 @@ val gauss_estimate : ?classes:'cls list ->
 
 (** [gauss_eval classifier feature] classify the [feature] using the [classifier]. *)
 val gauss_eval : 'cls gauss_bayes -> float array -> 'cls probabilities
+
+(** A two class prediction. *)
+type binary =
+  { predicted   : bool
+  ; probability : float   (* Probability of the _predicted_ class. *)
+  ; actual      : bool
+  }
+
+(** Common statistics that describe performance of a two state classifier. *)
+type descriptive_statistics =
+  { sensitivity         : float
+  ; specificity         : float
+  ; positive_predictive : float
+  ; negative_predictive : float
+  ; accuracy            : float
+  ; area_under_curve    : float   (* Area under ROC. *)
+  }
+
+val evaluate_performance : binary list -> descriptive_statistics
