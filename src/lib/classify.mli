@@ -11,6 +11,12 @@ val most_likely : 'a probabilities -> 'a
     features ['ftr]. *)
 type ('cls, 'ftr) naive_bayes
 
+(** [class_probabilities bayes class] returns the prior and per feature likelihood
+    probabilities learned by [bayes] for [class].
+
+    @raise Not_found if [bayes] never trained on [class]. *)
+val class_probabilities : ('cls, 'ftr) naive_bayes -> 'cls -> float * float array
+
 (** When estimating a probability distribution by counting observed instances
     in the feature space we may want to smooth the values, particularly if our
     training data is sparse.
@@ -25,11 +31,12 @@ type smoothing =
 
 (** [estimate smoothing classes feature_size to_feature_array training_data]
     trains a discrete Naive Bayes classifier based on the [training_data].
-    [to_feature_array] maps a feature to an integer array of length
-    [feature_size]. Optionally, [classes] supplies all the classes to learn
-    or they're aggregated from observations in data (this is useful, for classes
-    that may be 'missing' in the data and smoothing is applied.  Additive
-    [smoothing] can be applied to the final estimates if provided.
+    [to_feature_array] maps a feature to an integer array of indices of in
+    the feature_space bounded by \[0,feature_size\). Optionally, [classes]
+    supplies all the classes to learn or they're aggregated from observations
+    in data (this is useful, for classes that may be 'missing' in the data and
+    smoothing is applied. Additive [smoothing] can be applied to the final
+    estimates if provided.
 *)
 val estimate : ?smoothing:smoothing -> ?classes:'cls list ->
               feature_size:int -> ('ftr -> int array) -> ('cls * 'ftr) list ->
