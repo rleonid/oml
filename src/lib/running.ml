@@ -14,10 +14,19 @@ type t = { size   : int
 type mean_update = size:int -> n_sum:float ->
   n_sum_sq:float -> n_size:float -> t -> float -> float
 
+type var_update = n_mean:float -> n_sum:float ->
+  n_sum_sq:float -> n_size:float -> t -> float
+
 let default_mean_update ~size ~n_sum ~n_sum_sq ~n_size t v =
   let size_f = float size in
   t.mean +. size_f *. (v -. t.mean) /. n_size
   (*t.mean +. (v -. t.mean) /. n_size *)
+
+let default_var_update ~n_mean ~n_sum ~n_sum_sq ~n_size t =
+  let num = n_sum_sq
+    -. 2.0 *. n_mean *. n_sum
+    +. n_mean *. n_mean *. n_size
+   and den = n_size -. 1.0 in num /. den
 
 (* Mutators *)
 let empty = { size   = 0
@@ -40,22 +49,18 @@ let init ?(size=1) o = { size
              ; var    = 0.0
              }
 
-let update ?(size=1) ?(mean_update=default_mean_update) t v =
+let update ?(size=1) ?(mean_update=default_mean_update)
+ ?(var_update=default_var_update) t v =
   if t.size = 0
   then init ~size v
   else let size_f = float size in
        let n_sum = t.sum +. size_f *. v in
        let n_sum_sq = t.sum_sq +. size_f *. v *. v in
-       let n_size = float t.size +. size_f in
+       let n_size_i = t.size + size in
+       let n_size = float n_size_i in
        let n_mean = mean_update ~size ~n_sum ~n_sum_sq ~n_size t v in
-       let n_var =
-         let num = n_sum_sq
-                 -. 2.0 *. n_mean *. n_sum
-                 +. n_size *. n_mean *. n_mean
-         and den = n_size -. 1.0 in
-         num /. den
-      in
-      { size = t.size + size
+       let n_var = var_update ~n_mean ~n_sum ~n_sum_sq ~n_size t in
+      { size = n_size_i
       ; last   = v
       ; max    = max t.max v
       ; min    = min t.min v
@@ -65,31 +70,25 @@ let update ?(size=1) ?(mean_update=default_mean_update) t v =
       ; var    = n_var
       }
 
-let join rs1 rs2 =
+let join ?(mean_update=default_mean_update) ?(var_update=default_var_update)
+  rs1 rs2 =
   if rs1.size = 0
   then rs2
   else if rs2.size = 0
        then rs1
-       else let new_size = float (rs1.size + rs2.size) in
-            let new_mean =
-              let p1 = (float rs1.size) /. new_size
-              and p2 = (float rs2.size) /. new_size in
-              rs1.mean *. p1 +. rs2.mean *. p2
-            in
-            let new_var =
-              let num = rs1.sum_sq
-                      +. rs2.sum_sq
-                      -. 2.0 *. new_mean *. (rs1.sum +. rs2.sum)
-                      +. new_mean *. new_mean *. new_size
-              and den = new_size -. 1.0 in
-              num /. den
-            in
-            { size = rs1.size + rs2.size
+       else let n_size_i = rs1.size + rs2.size in
+            let n_size = float n_size_i in
+            let n_sum  = rs1.sum +. rs2.sum in
+            let n_sum_sq = rs1.sum_sq +. rs2.sum_sq in
+            let n_mean = mean_update ~size:rs2.size ~n_sum ~n_sum_sq ~n_size
+              rs1 rs2.mean in
+            let n_var = var_update ~n_mean ~n_sum ~n_sum_sq ~n_size rs1 in
+            { size = n_size_i
             ; last = rs2.last              (* dangerous, *)
             ; max  = max rs1.max rs2.max
             ; min  = min rs1.min rs2.min
-            ; sum  = rs1.sum +. rs2.sum
-            ; sum_sq = rs1.sum_sq +. rs2.sum_sq
-            ; mean = new_mean
-            ; var  = new_var
+            ; sum  = n_sum
+            ; sum_sq = n_sum_sq
+            ; mean = n_mean
+            ; var  = n_var
             }
