@@ -29,7 +29,7 @@ type ('cls, 'ftr) naive_bayes =
 
 let class_probabilities nb cls =
   let arr = List.assoc cls nb.table in
-  arr.(nb.features), Array.sub arr 0 (nb.features - 1)
+  arr.(nb.features), Array.sub arr 0 nb.features
 
 let eval ?(bernoulli=false) nb b =
   let evidence = ref 0.0 in
