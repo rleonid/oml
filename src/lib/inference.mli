@@ -18,3 +18,7 @@ val test_to_string : test -> string
 type null_hypothesis =
   | TwoTail
   | OneTail
+
+(** [chi observed expected] computes Pearson's Chi squared test of drawing
+  [observed] data from the the same categorical distribution as [expected]. *)
+val chi : float array -> float array -> test
