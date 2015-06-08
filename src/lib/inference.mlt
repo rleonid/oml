@@ -1,0 +1,15 @@
+
+open Test_utils
+
+let () =
+  (* Mendel's peas from "All of Statistics". *)
+  Test.add_simple_test ~title:"Chi test of Mendel's peas."
+    (fun () ->
+      let exp_prob = [| 9./.16.; 3./.16.; 3./.16.; 1./.16.|] in
+      let n   = float 556 in
+      let exp = Array.map (fun x -> x *. n) exp_prob in
+      let obs = [| 315.; 101.; 108.; 32.|] in
+      let t   = chi obs exp in
+      Assert.equal_float 3.0 t.degrees_of_freedom;
+      Assert.equal_float 0.470023980815347686 t.stat;
+      Assert.equal_float 0.925425895134266208 t.prob_by_chance)

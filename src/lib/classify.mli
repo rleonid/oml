@@ -64,6 +64,13 @@ val gauss_estimate : ?classes:'cls list ->
 (** [gauss_eval classifier feature] classify the [feature] using the [classifier]. *)
 val gauss_eval : 'cls gauss_bayes -> float array -> 'cls probabilities
 
+type 'cls log_reg
+
+val log_reg_eval : 'cls log_reg -> float array -> 'cls probabilities
+
+val log_reg_estimate : class_f:('cls -> bool) ->
+                       ('cls * float array) list -> 'cls log_reg
+
 (** A two class prediction. *)
 type binary =
   { predicted   : bool
@@ -82,3 +89,5 @@ type descriptive_statistics =
   }
 
 val evaluate_performance : binary list -> descriptive_statistics
+
+
