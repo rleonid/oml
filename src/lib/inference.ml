@@ -1,4 +1,5 @@
 
+open Util
 open Descriptive
 
 let prediction_interval alpha dist_stat =
@@ -19,6 +20,19 @@ let test_to_string t =
   Printf.sprintf "standard error: %.3f, degrees of freedom: %.3f, \
                   stat: %.3f, probability observation by chance: %.3f"
         t.standard_error t.degrees_of_freedom t.stat t.prob_by_chance
+
+let chi observed expected =
+  let dgf = Array.length expected - 1 in
+  let stat =
+    Array.map2 (fun o e -> (o -. e) *. (o -. e) /. e) observed expected
+    |> Array.sumf
+  in
+  let degrees_of_freedom = float dgf in
+  { degrees_of_freedom  ; stat
+  ; prob_by_chance      = Functions.chi_square_greater stat dgf
+  ; standard_error      = sqrt (2.0 *. degrees_of_freedom)
+  }
+
 
 type null_hypothesis =
   | TwoTail   (* the sample mean equals the population mean. *)

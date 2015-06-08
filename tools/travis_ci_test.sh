@@ -21,6 +21,7 @@ travis_install_on_linux () {
 
     sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam time git
     sudo apt-get install liblapack-dev
+    sudo apt-get install gfortran   # for lbgfs
 }
 
 travis_install_on_osx () {
@@ -30,6 +31,7 @@ travis_install_on_osx () {
 
     brew update
     brew install homebrew/dupes/lapack
+    brew install gcc  # for gfortran
     brew install opam --HEAD
     export opam_init_options="--comp=$OCAML_VERSION"
     export opam_pin_add="add"
@@ -45,6 +47,8 @@ esac
 export OPAMYES=1
 echo "ocaml -version"
 ocaml -version
+echo "ocamlbuild version"
+ocamlbuild -version
 echo "opam --version"
 opam --version
 echo "git --version"
@@ -59,6 +63,7 @@ git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
 echo Installing Libraries
+opam install oasis  # needed for LBFGS
 make setup
 
 echo Compiling
