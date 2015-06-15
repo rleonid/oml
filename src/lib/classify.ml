@@ -192,7 +192,74 @@ let gauss_estimate ?(classes=[]) data =
     in
     { table ; features }
 
+module LD = Lacaml_D
 
+type 'cls log_reg =
+  { to_feature : float array -> LD.vec
+  ; weights : LD.vec
+  ; classes : ('cls * int) list
+  }
+
+let log_reg_eval lr features =
+  let proba w x y = 1. /. (1. +. exp(-. float y *. LD.dot w x)) in
+  let m = lr.to_feature features in
+  List.map (fun (c,c_i) -> c, proba lr.weights m c_i) lr.classes
+
+module Log_reg = struct
+
+  (* Code modified from
+     http://math.umons.ac.be/anum/fr/software/OCaml/Logistic_Regression/
+  *)
+
+  (* [logistic_grad_n_eval] returns the value of the function to maximize and store
+    its gradient in [g]. *)
+  let logistic_grad_n_eval ~lambda x y =
+    let fy = Array.map float y in
+    (fun w g ->
+      let s = ref 0. in
+      ignore(LD.copy ~y:g w);                   (* g ← w *)
+      LD.scal (-. lambda) g;                    (* g = -λ w *)
+      for i = 0 to Array.length x - 1 do
+        let yi = fy.(i) in
+        let e  = exp(-. yi *. LD.dot w x.(i)) in
+        s := !s +. log1p e;
+        LD.axpy x.(i) ~alpha:(yi *. e /. (1. +. e)) g;
+      done;
+      -. !s -. 0.5 *. lambda *. LD.dot w w)
+
+  let log_reg ?(lambda=0.1) x y =
+    let w = LD.Vec.make0 (LD.Vec.dim x.(0)) in
+    ignore(Lbfgs.F.max (*~print:(Lbfgs.Every 10) *) (logistic_grad_n_eval ~lambda x y) w);
+    w
+
+end
+
+let log_reg_estimate ~class_f data =
+  if data = [] then
+    invalidArg "Classify.log_reg_estimate: Nothing to train on!"
+  else
+    let classes = ref [] in
+    let clss    =
+      List.map (fun (c, _) ->
+        (* TODO: are there better choices for these? *)
+        let cc = if class_f c then 1 else -1 in 
+        if not (List.mem_assoc c !classes) then classes := (c, cc) :: !classes;
+        cc) data
+      |> Array.of_list
+    in
+    if List.length !classes < 2 then
+      invalidArg "Trying to estimate Log Reg on only one classification."
+    else
+      let fs      = Array.length (snd (List.hd data)) in
+                                        (* Fortran destination so 1 based. *)
+      let to_f a  = LD.Vec.init (fs + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
+      let ftrs    = List.map (fun (_, f) -> to_f f) data |> Array.of_list in
+      let weights = Log_reg.log_reg ftrs clss in
+      { to_feature  = to_f
+      ; weights
+      ; classes = !classes
+      }
+ 
 type binary =
   { predicted   : bool
   ; probability : float
