@@ -11,4 +11,4 @@ build: [
   [make "install"]
 ]
 remove: ["ocamlfind" "remove" "oml"]
-depends: ["ocamlfind" "lacaml" {build}]
+depends: ["ocamlfind" "lacaml" "lbfgs" {build}]

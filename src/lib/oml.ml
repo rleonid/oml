@@ -14,3 +14,4 @@ module Solvers = Solvers
 module Running = Running
 module Svd = Svd
 module Classify = Classify
+module Data = Data
