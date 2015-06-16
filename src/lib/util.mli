@@ -62,6 +62,9 @@ module Array : sig
       interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
   val range : ?incr:float -> start:float -> stop:float -> unit -> float array
 
+  val ranks : ?start:int -> ?average_ties:bool -> ?compare:(float -> float -> int)
+              -> float array -> float array
+
 end
 
 (** A really small value. Also known as the machine epsilon, the smallest
