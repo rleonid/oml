@@ -3,6 +3,7 @@ val median : float array -> float
 val var : float array -> float
 val unbiased_var : float array -> float
 val covariance : float array -> float array -> float
+(** [correlation x y] returns the Pearson correlation coefficient of [x] and [y].*)
 val correlation : float array -> float array -> float
 val auto_correlation : int -> float array -> float
 val moment : int -> float array -> float
@@ -42,3 +43,6 @@ val geometric_mean : float array -> float
 (** [harmonic_mean arr] is the reciprocal of the arithmetic mean of the
     reciprocals of arr. *)
 val harmonic_mean : float array -> float
+
+(** [spearman x y] returns the Spearman rank correlation coefficient. *)
+val spearman : ?comp:(float -> float -> bool) -> float array -> float array -> float
