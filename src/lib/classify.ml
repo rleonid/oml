@@ -223,7 +223,7 @@ module Log_reg = struct
         let yi = fy.(i) in
         let e  = exp(-. yi *. LD.dot w x.(i)) in
         s := !s +. log1p e;
-        LD.axpy x.(i) ~alpha:(yi *. e /. (1. +. e)) g;
+        LD.axpy x.(i) ~alpha:(yi *. e /. (1. +. e)) ~x:g;
       done;
       -. !s -. 0.5 *. lambda *. LD.dot w w)
 
