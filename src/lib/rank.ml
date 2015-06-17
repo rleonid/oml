@@ -2,27 +2,20 @@
 
 let average_ties_f n arr comp =
   let rec loop i p rm rn same =
-    let label_ties c =
-      match same with
-      | []     -> c ()
-      | h :: _ ->
-          begin
-            let assign j =
-              let r,v,p = arr.(j) in
-              arr.(j) <- rm, v, p
-            in
-            List.iter assign same;
-            assign (h - 1);  (*        This avoids boxing a single list *)
-            c ()
-          end
+    let assign j =
+      let r,v,p = arr.(j) in
+      arr.(j) <- rm, v, p
     in
+    let label_ties c = List.iter assign same; c () in
     if i = n then
       label_ties (fun _ -> ())
-    else let (r_i, v_i, p_i) = arr.(i) in
+    else
+      let (r_i, v_i, _) = arr.(i) in
       if comp v_i p = 0 then
         let nn = rn +. 1.0 in
-        let nm = rm +. rn *. (r_i -. rm) /. nn in
-        loop (i + 1) v_i nm nn (i :: same)
+        let nm = rm +. (r_i -. rm) /. nn in
+        let nsame = match same with [] -> [i;i-1] | _ -> (i :: same) in
+        loop (i + 1) v_i nm nn nsame
       else
         label_ties (fun () -> loop (i + 1) v_i r_i 1.0 [])
   in

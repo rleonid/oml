@@ -62,6 +62,14 @@ module Array : sig
       interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
   val range : ?incr:float -> start:float -> stop:float -> unit -> float array
 
+  (** [ranks ?start ?average_ties ?compare arr] returns an array where each
+     element [arr.(i)] is replaced by it's rank in [arr]. The first element is
+     [start] (defaults to 1).
+
+     Optionally [average_ties] can be specified if the assigned ranks should
+     be averaged together (ex. [|1;2;3|] -> [|2;2;2|]).
+     [compare] can also be specified if more granularity is desired over float
+     comparison. *)
   val ranks : ?start:int -> ?average_ties:bool -> ?compare:(float -> float -> int)
               -> float array -> float array
 
