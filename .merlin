@@ -2,4 +2,4 @@ PKG kaputt
 S ./src/lib
 B _build/**
 B _driver/**
-PKG lacaml
+PKG lacaml lbfgs
