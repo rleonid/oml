@@ -58,10 +58,13 @@ let eval ?(bernoulli=false) nb b =
 
 let within a b x = max a (min x b)
 
-type smoothing =
-  { factor              : float
-  ; feature_space_size  : int array
-  }
+let smoothing_to_prob = function
+  | None    ->
+      (fun count bkgrnd _ -> count /. bkgrnd)
+  | Some sf ->
+      let sf = within 0.0 1.0 sf in
+      (fun count bkgrnd space_size ->
+        (count +. sf) /. (bkgrnd +. sf *. space_size))
 
 let estimate ?smoothing ?(classes=[]) ~feature_size to_ftr_arr data =
   if data = [] then
@@ -96,35 +99,99 @@ let estimate ?smoothing ?(classes=[]) ~feature_size to_ftr_arr data =
     in
     let totalf = float total in
     let cls_sz = float (List.length all) in
-    let to_prior_prob, to_lkhd_prob =
-      match smoothing with
-      | None ->
-          (fun count bkgrnd _ -> count /. bkgrnd),
-          (fun count bkgrnd _ -> count /. bkgrnd)
-      | Some s ->
-          (* TODO: Issue warning? Fail? *)
-          let sf  = within 0.0 1.0 s.factor in
-          let fss = Array.map float s.feature_space_size in
-          (fun count bkgrnd space_size ->
-              (count +. sf) /. (bkgrnd +. sf *. space_size)),
-          (fun count bkgrnd idx ->
-              (count +. sf) /. (bkgrnd +. sf *. fss.(idx)))
-    in
+    let to_prob = smoothing_to_prob smoothing in
     let table =
       List.map all ~f:(fun (cl, attr_count) ->
         let prior_count = float attr_count.(feature_size) in
         let likelihood =
           Array.init aa (fun i ->
             if i = feature_size then    (* Store the prior at the end. *)
-              to_prior_prob prior_count totalf cls_sz
+              to_prob prior_count totalf cls_sz
             else
-              to_lkhd_prob (float attr_count.(i)) prior_count i)
+              to_prob (float attr_count.(i)) prior_count 2.0)   (* Binary. *)
         in
         cl, likelihood)
     in
     { table
     ; to_feature_array = to_ftr_arr
     ; features = feature_size
+    }
+
+type ('cls, 'ftr) naive_bayes_mv =
+  { table             : ('cls * (float * float array array)) list
+  ; to_feature_array  : 'ftr -> int array
+  ; feature_sizes     : int array
+  }
+
+let class_probabilities_mv mvnb cls =
+  let (prior, likelihood_arr) = List.assoc cls mvnb.table in
+  (fun ftr -> 
+    prior,
+    Array.map2 (fun i lk_arr -> lk_arr.(i)) (mvnb.to_feature_array ftr) likelihood_arr)
+
+let eval_mv mvnb feature =
+  let evidence = ref 0.0 in
+  let indices = mvnb.to_feature_array feature in
+  let to_likelihood arr = prod_arr2 (fun i lk_arr -> lk_arr.(i)) indices arr in
+  let byc =
+    List.map mvnb.table ~f:(fun (c, (prior, class_probs)) ->
+      let likelihood = to_likelihood class_probs in
+      let prob  = prior *. likelihood in
+      evidence := !evidence +. prob;
+      (c, prob))
+  in
+  List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
+
+let assoc_opt ~default f lst =
+  try
+    let g = List.assoc f lst in
+    let r = List.remove_assoc f lst in
+    g, r
+  with Not_found ->
+    default (), lst
+
+let estimate_mv ?smoothing ?(classes=[]) ~feature_sizes to_ftr_arr data =
+  if data = [] then
+    invalidArg "Classify.estimate_mv: Nothing to train on"
+  else
+    let update arr feature =
+      let ftr_arr = to_ftr_arr feature in
+      Array.iteri (fun i j -> arr.(i).(j) <- arr.(i).(j) + 1) ftr_arr
+    in
+    let new_arr () = Array.map (fun i -> Array.make i 0) feature_sizes in
+    let init_lst, default =
+      match classes with
+      | [] -> [], (fun () -> 0, new_arr ())
+      | cl -> List.map (fun c -> c, (0, new_arr ())) cl,
+              fun () -> invalidArg "Classify.estimate_mv classes have been specified."
+    in
+    let (total, all) =
+      List.fold_left data
+        ~f:(fun (total, asc) (label, feature) ->
+          let (p, fr), n_asc = assoc_opt ~default label asc in
+          update fr feature;
+          total + 1, ((label, (p + 1, fr)) :: n_asc))
+        ~init:(0, init_lst)
+    in
+    let to_prob = smoothing_to_prob smoothing in
+    let totalf = float total in
+    let numcls = float (List.length all) in
+    let table =
+      List.map all ~f:(fun (cl, (class_count, attr_count)) ->
+        let prior      = to_prob (float class_count) totalf numcls in
+        let likelihood =
+          Array.map (fun arr ->
+            let farr = Array.map float arr in
+            let lsum = Array.sumf farr in
+            let fssf = float (Array.length arr) in
+            Array.map (fun c -> to_prob c lsum fssf) farr)
+            attr_count
+        in
+        cl, (prior, likelihood))
+    in
+    { table
+    ; to_feature_array = to_ftr_arr
+    ; feature_sizes
     }
 
 type 'a gauss_bayes =
@@ -242,7 +309,7 @@ let log_reg_estimate ~class_f data =
     let clss    =
       List.map (fun (c, _) ->
         (* TODO: are there better choices for these? *)
-        let cc = if class_f c then 1 else -1 in 
+        let cc = if class_f c then 1 else -1 in
         if not (List.mem_assoc c !classes) then classes := (c, cc) :: !classes;
         cc) data
       |> Array.of_list
@@ -259,7 +326,7 @@ let log_reg_estimate ~class_f data =
       ; weights
       ; classes = !classes
       }
- 
+
 type binary =
   { predicted   : bool
   ; probability : float

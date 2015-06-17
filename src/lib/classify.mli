@@ -17,28 +17,23 @@ type ('cls, 'ftr) naive_bayes
     @raise Not_found if [bayes] never trained on [class]. *)
 val class_probabilities : ('cls, 'ftr) naive_bayes -> 'cls -> float * float array
 
-(** When estimating a probability distribution by counting observed instances
-    in the feature space we may want to smooth the values, particularly if our
-    training data is sparse.
-
-    [http://en.wikipedia.org/wiki/Additive_smoothing]
-  *)
-type smoothing =
-  { factor              : float     (** Multiplicative factor *)
-  ; feature_space_size  : int array (** Size of the space of each feature.
-                                        Must be at least [feature_size] long.*)
-  }
-
 (** [estimate smoothing classes feature_size to_feature_array training_data]
     trains a discrete Naive Bayes classifier based on the [training_data].
     [to_feature_array] maps a feature to an integer array of indices of in
     the feature_space bounded by \[0,feature_size\). Optionally, [classes]
     supplies all the classes to learn or they're aggregated from observations
     in data (this is useful, for classes that may be 'missing' in the data and
-    smoothing is applied. Additive [smoothing] can be applied to the final
-    estimates if provided.
+    smoothing is applied.
+    
+    Additive [smoothing] can be applied to the final estimates if provided.
+    When estimating a probability distribution by counting observed instances
+    in the feature space we may want to smooth the values, particularly if our
+    training data is sparse.
+
+    [http://en.wikipedia.org/wiki/Additive_smoothing]
+
 *)
-val estimate : ?smoothing:smoothing -> ?classes:'cls list ->
+val estimate : ?smoothing:float -> ?classes:'cls list ->
               feature_size:int -> ('ftr -> int array) -> ('cls * 'ftr) list ->
               ('cls, 'ftr) naive_bayes
 
@@ -49,6 +44,17 @@ val estimate : ?smoothing:smoothing -> ?classes:'cls list ->
     from [feature].
 *)
 val eval : ?bernoulli:bool -> ('cls, 'ftr) naive_bayes -> 'ftr -> 'cls probabilities
+
+type ('cls, 'ftr) naive_bayes_mv
+
+val class_probabilities_mv : ('cls, 'ftr) naive_bayes_mv -> 'cls -> ('ftr -> float * float array)
+
+val estimate_mv : ?smoothing:float -> ?classes:'cls list ->
+                  feature_sizes:int array -> ('ftr -> int array) ->
+                  ('cls * 'ftr) list -> ('cls, 'ftr) naive_bayes_mv
+
+val eval_mv : ('cls, 'ftr) naive_bayes_mv  -> 'ftr -> 'cls probabilities
+
 
 (** A continuous Gaussian Naive Bayes classifier of class ['cls]. The
     feature space is assumed to be a float array. *)
