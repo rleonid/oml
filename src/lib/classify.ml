@@ -347,6 +347,25 @@ module BinaryClassificationPerformance = struct
     ; accuracy            = (true_positive +. true_negative) /. (negative +. positive)
     ; area_under_curve    = auc
     }
+
+  let trapezoid_area (x1,y1) (x2,y2) =
+    let xd = x2 -. x1 in
+    let yp = y2 -. y1 in
+    xd *. (y1 +. yp *. 0.5)
+
+  (* (false_positive_rate, true_positive_rate) will add (0,0) and (1,1) *)
+  let cross_validated_auc data =
+    let bottom_left = 0.0, 0.0 in
+    let top_right   = 1.0, 1.0 in
+    let last, area =
+      Array.fold_left (fun (prev_p, sum) point ->
+        point, sum +. (trapezoid_area prev_p point))
+        (bottom_left, 0.0) data
+    in
+    area +. (trapezoid_area last top_right)
+
 end
 
 let evaluate_performance = BinaryClassificationPerformance.to_descriptive
+
+let cross_validated_auc = BinaryClassificationPerformance.cross_validated_auc
