@@ -1,0 +1,45 @@
+
+open Test_utils
+
+module Gen = FGen (struct
+  let largest_float = 1e8
+end)
+
+let () =
+  Test.add_random_test
+    ~title:"Measures: normal kl divergence approaches infinity as means diverge"
+    Gen.(zip2 (make_float 0.0 1e8) (make_float 0.0 1e8))
+    (fun (p_mean, q_mean) ->
+      let p_sigma = max 0.1 (sqrt @@ abs_float p_mean) in
+      let q_sigma = p_sigma in
+      let kldiv q_mean = (*Oml.Measures.*) normal_kl_divergence
+        ~p_mean ~q_mean ~p_sigma ~q_sigma in
+      List.fold_left
+      (fun (res, kl, l) frac ->
+        let delta = (p_mean -. res) *. frac in
+        let res' = res +. delta in
+        let kl' = kldiv res' in
+        (res', kl', (res', kl, kl')::l)) (q_mean, infinity, [])
+      [0.6;0.4;0.25;0.1] |> fun (_, _, l) ->
+        List.for_all (fun (res, kl, kl') -> kl' <= kl) l)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Measures: normal kl divergence approaches infinity as sigmas diverge"
+    Gen.(zip2 (make_float 0.01 1e8) (make_float 0.01 1e8))
+    (fun (p_sigma, q_sigma) ->
+      let p_mean = p_sigma *. p_sigma in
+      let q_mean = p_mean in
+      let kldiv q_sigma = (*Oml.Measures.*) normal_kl_divergence
+        ~p_mean ~q_mean ~p_sigma ~q_sigma in
+      List.fold_left
+      (fun (res, kl, l) frac ->
+        let delta = (p_sigma -. res) *. frac in
+        let res' = res +. delta in
+        let kl' = kldiv res' in
+        (res', kl', (res', kl, kl')::l)) (q_sigma, infinity, [])
+      [0.6;0.4;0.25;0.1] |> fun (_, _, l) ->
+        List.for_all (fun (res, kl, kl') -> kl' <= kl) l)
+    Spec.([just_postcond_pred is_true]);
+
+  ()
