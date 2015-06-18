@@ -160,3 +160,13 @@ let geometric_mean arr =
 
 let harmonic_mean arr =
   1.0 /. (mean (Array.map (fun x -> 1.0 /. x) arr))
+
+let spearman x y =
+  let n = Array.length x in
+  let ny = Array.length y in
+  if ny <> n then
+    invalidArg "spearman: array lengths don't match %d %d." n ny
+  else
+    let rx = Array.ranks ~average_ties:true x in
+    let ry = Array.ranks ~average_ties:true y in
+    correlation rx ry
