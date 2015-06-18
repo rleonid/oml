@@ -88,6 +88,11 @@ type descriptive_statistics =
   ; area_under_curve    : float   (* Area under ROC. *)
   }
 
+(* For a classifier that returns associated probabilities,
+   describe it's performance. *)
 val evaluate_performance : binary list -> descriptive_statistics
 
+(* For a list of false positive rates and true positive rates, estimate the
+   AUC by trapezoid integration. End points are added by default. *)
+val cross_validated_auc : (float * float) array -> float
 
