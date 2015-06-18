@@ -161,7 +161,7 @@ let geometric_mean arr =
 let harmonic_mean arr =
   1.0 /. (mean (Array.map (fun x -> 1.0 /. x) arr))
 
-let spearman ?(comp=(=)) x y =
+let spearman x y =
   let n = Array.length x in
   let ny = Array.length y in
   if ny <> n then
@@ -169,9 +169,4 @@ let spearman ?(comp=(=)) x y =
   else
     let rx = Array.ranks ~average_ties:true x in
     let ry = Array.ranks ~average_ties:true y in
-    let nf = float n in
-    let ds =
-      Array.map2 (fun xi yi -> (xi -. yi) *. (xi -. yi)) rx ry
-      |> Array.sumf
-    in
-    1.0 -. (ds /. (nf *. (nf *. nf -. 1.0)))
+    correlation rx ry

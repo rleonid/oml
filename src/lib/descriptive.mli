@@ -45,4 +45,4 @@ val geometric_mean : float array -> float
 val harmonic_mean : float array -> float
 
 (** [spearman x y] returns the Spearman rank correlation coefficient. *)
-val spearman : ?comp:(float -> float -> bool) -> float array -> float array -> float
+val spearman : float array -> float array -> float

@@ -25,5 +25,30 @@ let () =
       let nume = Array.map snd hist |> Array.fold_left (+) 0 in
       Array.length data = nume)
     Spec.([just_postcond_pred is_true]);
-
+  Test.add_random_test
+    ~title:"Descriptive: spearman is bounded by -1 and 1"
+    Gen.(zip2 (array_float max_array_size) (array_float max_array_size))
+    (fun (arr1, arr2) ->
+      let s = spearman arr1 arr2 in
+      -1.0 <= s && s <= 1.0)
+    Spec.([just_postcond_pred is_true]);
+  Test.add_random_test
+    ~title:"Descriptive: spearman is 1 for monotonic transformations"
+    Gen.(array_float max_array_size)
+    (fun arr1 ->
+      let arr1 = Array.map abs_float arr1 in
+      let arr2 = Array.map log arr1 in
+      let s = spearman arr1 arr2 in
+      s = 1.0)
+    Spec.([just_postcond_pred is_true]);
+  Test.add_simple_test ~title:"Descriptive, spearman exmaple"
+    (fun () ->
+      (* From wikipedia *)
+      let data =
+        [| (106, 7); (86,  0); (100, 27); (101, 50); (99,  28)
+         ; (103, 29); (97,  20); (113, 12); (112, 6); (110, 17); |]
+      in
+      let x = Array.map (fun (x,_) -> float x) data in
+      let y = Array.map (fun (_,y) -> float y) data in
+      Assert.equal (spearman x y) (-29.0 /. 165.0));
   ()
