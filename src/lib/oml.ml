@@ -16,3 +16,4 @@ module Svd = Svd
 module Classify = Classify
 module Data = Data
 module Measures = Measures
+module Dimensional = Dimensional
