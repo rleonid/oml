@@ -24,11 +24,11 @@ joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
 test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package lbfgs  -I src/lib -I src/lib/datasets -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package lbfgs -I src/lib -I src/lib/datasets -I src/test driver.test && \
 	time ./driver.test
 
 covered_test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package lbfgs  -package bisect_ppx -I src/lib -I src/lib/datasets -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package lbfgs -package bisect_ppx -I src/lib -I src/lib/datasets -I src/test driver.test && \
 	time ./driver.test
 
 clean:

@@ -97,7 +97,7 @@ module Array = struct
       Array.init (truncate (ceil ((stop -. start) /. incr)))
         (fun i -> start +. incr *. (float i))
 
-
+  let ranks = Rank.ranks
 end
 
 let midpoint x y = (x +. y) /. 2.0
