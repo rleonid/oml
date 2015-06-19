@@ -9,23 +9,23 @@ let () =
   let max_matrix_size = 10 in
   Test.add_random_test
     ~title:"Svd, we can."
-    ~nb_runs:1000
     Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) float)
     (fun m ->
-      let u, s, vt = svd m in
-      let m_rec = Matrices.(prod (prod u (diagonal s)) vt) in
+      let open Lacaml.D in
+      let t = svd (Mat.of_array m) in
+      let m_rec = Matrices.(prod (prod (u t) (diagonal (s t))) (vt t)) in
       Matrices.equal ~d:(Util.dx *. 1e9) m m_rec)
     Spec.([just_postcond_pred is_true]);
 
   Test.add_random_test
     ~title:"Svd, can find a solution to linear problems."
-    ~nb_runs:1000
     Gen.(matrix (make_int 2 max_matrix_size) (make_int 1 max_matrix_size) float)
     (fun m ->
       let x = m.(0) in
       let a = Array.sub m 1 (Array.length m - 1) in
       let b = Matrices.prod_column_vector a x in
-      let y = solve_linear a b in
+      let t = svd (Mat.of_array a) in
+      let y = solve_linear t (Vec.of_array b) |> Vec.to_array in
       let bc = Matrices.prod_column_vector a y in
       (* Can't compare x and y since they might be different projections,
          especially in just unaligned random data! *)

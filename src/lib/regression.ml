@@ -138,37 +138,103 @@ let eval_glm glm vec =
   else
     Vectors.dot glm.coefficients vec
 
-let sub_general_linear_regress padded ~resp ~pred () =
-  let num_pred, num_obs = Matrices.dim pred in
+type lambda_spec =
+  [ `Spec of float
+  | `From of float array
+  | `Within of float * float * float  (* lower bound, upper bound, stopping distance. *)
+  ]
+
+let to_lambda svd resp = function
+  | `Spec l               -> l
+  | `From arr             ->
+      let open Lacaml.D in
+      let looe  = Svd.looe svd resp in
+      let loess = Array.map (fun l -> l, Vec.ssqr (looe l)) arr in
+      (*let _ = Array.iter (fun (v, s) -> Printf.printf "for %0.4f\t %0.4f\n" v s) loess in *)
+      Array.sort (fun (_,s1) (_,s2) -> compare s1 s2) loess;
+      fst loess.(0)
+  | `Within (lb, ub, dl)  ->
+      let open Lacaml.D in
+      let looe  = Svd.looe svd resp in
+      let loess l = Vec.ssqr (looe l) in
+      let rec loop lb ub =
+        let m = midpoint lb ub in
+        if ub -. lb < dl then
+          loess m
+        else
+          let m1 = midpoint lb m in
+          let m2 = midpoint m ub in
+          let fm1 = loess m1 in
+          let fm2 = loess m2 in
+          if fm1 < fm2 then
+            loop lb m
+          else
+            loop m ub
+      in
+      loop lb ub
+
+(* Either figure out the best lambda (aka ridge parameter)
+   or solve the system without it. *)
+let coefficients_and_covariance svd resp = function
+  | None          ->
+      Svd.solve_linear svd resp, Svd.covariance_matrix svd
+  | Some lambda_m ->
+      let lambda = to_lambda svd resp lambda_m in
+      Svd.solve_linear ~lambda svd resp, Svd.covariance_matrix ~lambda svd
+
+(* Etc:
+  - Should I call:
+    - pred the design matrix
+    - lambda the ridge parameter
+  - when SVD exposes the dimensionality reduction,
+    we can add back removed_predictors logic.
+*)
+let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
+  let open Lacaml.D in
+  let resp = Vec.of_array resp in
+  let pred, padded =
+    if pad then
+      let fill_me = lacpy ~bc:2 (Mat.of_array pred) in
+      let _ = Mat.fill ~ac:1 ~n:1 fill_me 1.0 in
+      fill_me, true
+    else (Mat.of_array pred), false
+  in
+  let num_obs = Mat.dim1 pred in   (* rows *)
+  let num_pred = Mat.dim2 pred in  (* cols *)
   (* correlation against the constant column do not make sense,
      is always nan ignore *)
-  let g_m_pred        = Array.map Descriptive.mean pred in
-  let correlations    = Array.map (Descriptive.correlation resp) pred in
-  let g_m_resp        = Descriptive.mean resp in
+  let across_pred_col f =
+    if padded then
+      Array.init (num_pred - 1) (fun i -> f (Mat.col pred (i + 2)))
+    else
+      Array.init num_pred (fun i -> f (Mat.col pred (i + 1)))
+  in
+  (* TODO: replace with folds, across the matrix in Lacaml. *)
+  let col_mean c    = Vec.sum c /. (float (Vec.dim c)) in
+  let g_m_resp      = col_mean resp in
+  let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
+  let sum_squares   = sum_sq_dm resp g_m_resp in
+  let col_std c m n = sqrt (sum_sq_dm c m /. n) in
+  let num_obs_float = float num_obs in
+  let g_s_resp      = col_std resp g_m_resp num_obs_float in
+  let col_corr c    =
+    let m = Vec.sum c /. num_obs_float in
+    let s = col_std c m num_obs_float in
+    let num = (dot c resp) -. num_obs_float *. m *. g_m_resp in
+    let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
+    num /. den
+  in
+  let g_m_pred      = across_pred_col col_mean in
+  let correlations  = across_pred_col col_corr in
   (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
   let deg_of_freedom  = float (num_obs - num_pred) in
-  let pred_trans      = Matrices.transpose pred in
-  let coeff, covarm   = Svd.solve_linear_with_covariance pred_trans resp in
-  (* TODO: when SVD exposes the dimensionality reduction, we can add
-       back removed_predictors logic. *)
-  let predict_values  = Matrices.prod_column_vector pred_trans coeff in
-  let residuals       = Vectors.sub resp predict_values in
-  let chi_sq          = Vectors.dot residuals residuals in
+  (* This is only needed for the residuals later, is there a more efficient way? *)
+  let pred_copy       = lacpy pred in
+  let svd             = Svd.svd pred in
+  let coeff, covarm   = coefficients_and_covariance svd resp lambda in
+  let residuals       = Vec.sub resp (gemv pred_copy coeff) in
+  let chi_sq          = dot residuals residuals in
   let infer_resp_var  = chi_sq /. deg_of_freedom in
-  (*let coefficient_tests =
-            Array.init num_pred (fun i ->
-                let (se : float) = sqrt (infer_resp_var * covarm.[i, i]) in
-                let stat = coeff.[i] / se in
-                { standard_error = se;
-                  degrees_of_freedom = deg_of_freedom;
-                  stat = stat;
-                  prob_by_chance = 1.0 - (student_t_test_sig (abs stat) deg_of_freedom);
-                })
-        in *)
-  (* total sum of squares *)
-  let sum_squares     =
-    Array.sumf (Array.map (fun r -> (r -. g_m_resp) *. (r -. g_m_resp)) resp)
-  in
   let m   = (float num_obs -. 1.0) /. deg_of_freedom in
   let aic =
     let n = float num_obs in
@@ -179,25 +245,15 @@ let sub_general_linear_regress padded ~resp ~pred () =
   ; g_m_pred = g_m_pred
   ; g_m_resp = g_m_resp
   ; deg_of_freedom = deg_of_freedom
-  ; coefficients = coeff
+  ; coefficients = Vec.to_array coeff
   ; correlations = correlations
   ; chi_square = chi_sq
   ; g_inferred_response_var = infer_resp_var
-  ; sum_squares = sum_squares
+  ; sum_squares
   ; cod = 1.0 -. (chi_sq /. sum_squares)
   ; adj_cod = 1.0 -. (chi_sq /. sum_squares) *. m
-  ; covariance = covarm
-  ; residuals = residuals
+  ; covariance = Mat.to_array covarm
+  ; residuals = Vec.to_array residuals
   (*d_w = durbin_watson residuals *)
   ; aic = aic
   }
-
-let general_linear_regress ?(pad=true) ~resp ~pred () =
-  let pred, padded =
-    if pad then
-      let n = Array.length pred.(0) in
-      Array.init (Array.length pred + 1) (function | 0 -> Array.make n 1.0 | i -> pred.(i - 1))
-      , true
-    else pred, false
-  in
-  sub_general_linear_regress padded resp pred ()

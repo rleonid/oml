@@ -60,6 +60,23 @@ type general_linear_model =
     of [data]. *)
 val eval_glm : general_linear_model -> float array -> float
 
-val general_linear_regress : ?pad:bool -> resp: float array
+type lambda_spec =
+  [ `Spec of float
+  | `From of float array
+  | `Within of float * float * float
+  ]
+
+(** [general_linear_regress ?lambda ?pad resp pred unit]
+  Compute a [general_linear_model] for predicting [resp] based on the design
+  matrix [pred].
+
+  [pad] instructs the method to efficiently insert a colum of 1's into the
+    design matrix for the constant term.
+  [lambda] specifies optional ridge regression logic.
+*)
+val general_linear_regress : ?lambda:lambda_spec
+                            -> ?pad:bool
+                            -> resp: float array
                             -> pred: float array array -> unit
                             -> general_linear_model
+
