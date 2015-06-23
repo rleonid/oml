@@ -80,3 +80,8 @@ val general_linear_regress : ?lambda:lambda_spec
                             -> pred: float array array -> unit
                             -> general_linear_model
 
+val general_tikhonov_regression : resp: float array
+                                -> pred: float array array
+                                -> tik: float array array
+                                -> general_linear_model
+

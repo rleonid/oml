@@ -1,4 +1,6 @@
 
+open Lacaml.D
+
 let r = Sampling.normal_std ()
 
 let gen_lm ?(noise=0.01) r num_pred num_spls =
@@ -32,4 +34,12 @@ let looe_manually lambda pred resp =
         ~pad:false ~pred:p_pred ~resp:p_resp ()
     in
     resp.(i) -. Regression.eval_glm model p)
+
+let general_tik ~pred ~resp ~tik =
+  let m = Mat.of_array pred in
+  let q = Mat.of_array tik in
+  let b = Vec.of_array resp in
+  Mat.axpy (gemm ~transa:`T m m) q;
+  getri q;      (* take inverse with LU decomp*)
+  gemv (gemm qc ~transb:`T m) b
 
