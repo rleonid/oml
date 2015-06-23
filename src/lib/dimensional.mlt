@@ -1,0 +1,25 @@
+
+open Test_utils
+
+let () =
+  let arr     = [|1.;2.;3.|] in
+  let v_arr   = vector arr in
+  let rv_arr  = row_vector arr in
+  let m_rv    = matrix [| arr |] in
+  let m_v     = matrix [| [| arr.(0); |]; [| arr.(1); |]; [| arr.(2) |] |] in
+  Test.add_simple_test ~title:"Dimensional, base case 1"
+    (fun () ->
+      Assert.equal (1,3) (dimensions rv_arr);
+      Assert.equal (1,3) (dimensions m_rv);
+      Assert.is_true (equal rv_arr m_rv));
+  Test.add_simple_test ~title:"Dimensional, base case 2"
+    (fun () ->
+      Assert.equal (3,1) (dimensions v_arr);
+      Assert.equal (3,1) (dimensions m_v);
+      Assert.is_true (equal v_arr m_v));
+  Test.add_simple_test ~title:"Dimensional, base case 3"
+    (fun () ->
+      Assert.is_true (equal (vector [|2.;4.;6.|]) (add v_arr v_arr)));
+ 
+  ()
+
