@@ -46,9 +46,9 @@ let linear_regress ?pred_variance ~resp ~pred () =
   let alpha = (s_y -. (s_x *. beta)) /. s in
   (*let alpha_var = (1.0 +. (s_x *. s_x) /. (s *. s_tt)) /. s in
   let beta_var  = 1.0 /. s_tt in *)
-  let residuals = Array.map2 (fun x y -> y -. alpha -. beta *. x) pred resp in
-  let chi_sq    = Array.sumf (Array.map2 (fun r v -> (r *. r) /. v) residuals act_pv) in
-  (*let rmse      = sqrt (chi_sq /. deg_of_freedom) in *)
+  let residuals   = Array.map2 (fun x y -> y -. alpha -. beta *. x) pred resp in
+  let chi_square  = Array.sumf (Array.map2 (fun r v -> (r *. r) /. v) residuals act_pv) in
+  (*let rmse      = sqrt (chi_square /. deg_of_freedom) in *)
   let m_x  = mean pred in
   let s_xx = Array.sumf (Array.map (fun x -> (x -. m_x) ** 2.0) pred) in
   (*
@@ -74,7 +74,7 @@ let linear_regress ?pred_variance ~resp ~pred () =
   let q =
     match pred_variance with
     | None   -> None
-    | Some _ -> Some (Functions.chi_square_greater chi_sq (truncate deg_of_freedom))
+    | Some _ -> Some (Functions.chi_square_greater chi_square (truncate deg_of_freedom))
   in
   (*let n = Array.length residuals in
   let d_w = durbin_watson residuals in *)
@@ -86,8 +86,8 @@ let linear_regress ?pred_variance ~resp ~pred () =
     beta = beta;
     (*beta_test = beta_test; *)
     correlation = corr;
-    chi_square = chi_sq;
-    inferred_response_var = chi_sq /. deg_of_freedom;
+    chi_square ;
+    inferred_response_var = chi_square /. deg_of_freedom;
     goodness_of_fit = q;
     s_xx = s_xx;
     (*d_w = nan; *)
@@ -258,13 +258,13 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
   let deg_of_freedom  = float (num_obs - num_pred) in
   let coef, covm, pc  = coefficients_and_covariance pred resp lambda in
   let residuals       = Vec.sub resp (gemv pc coef) in
-  let chi_sq          = dot residuals residuals in
-  let infer_resp_var  = chi_sq /. deg_of_freedom in
+  let chi_square      = dot residuals residuals in
+  let infer_resp_var  = chi_square /. deg_of_freedom in
   let m   = (float num_obs -. 1.0) /. deg_of_freedom in
   let aic =
     let n = float num_obs in
     let k = float num_pred in
-    2.0 *. k +. (log (chi_sq /. n)) +. (n +. k) /. (n -. k -. 2.0)
+    2.0 *. k +. (log (chi_square /. n)) +. (n +. k) /. (n -. k -. 2.0)
   in
   { padded = pad
   ; g_m_pred = g_m_pred
@@ -272,13 +272,72 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
   ; deg_of_freedom = deg_of_freedom
   ; coefficients = Vec.to_array coef
   ; correlations = correlations
-  ; chi_square = chi_sq
+  ; chi_square
   ; g_inferred_response_var = infer_resp_var
   ; sum_squares
-  ; cod = 1.0 -. (chi_sq /. sum_squares)
-  ; adj_cod = 1.0 -. (chi_sq /. sum_squares) *. m
+  ; cod = 1.0 -. (chi_square /. sum_squares)
+  ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
   ; covariance = Mat.to_array covm
   ; residuals = Vec.to_array residuals
   (*d_w = durbin_watson residuals *)
   ; aic = aic
   }
+
+let general_tikhonov_regression ~resp ~pred ~tik =
+  let open Lacaml.D in
+  let pred = Mat.of_array pred in
+  let tik  = Mat.of_array tik in
+  let resp = Vec.of_array resp in
+  Mat.axpy (gemm ~transa:`T pred pred) tik;
+  getri tik;      (* take inverse with LU decomp, tik is overwritten. *)
+  let coef = gemv (gemm tik ~transb:`T pred) resp in
+  let num_obs  = Mat.dim1 pred in   (* rows *)
+  let num_pred = Mat.dim2 pred in  (* cols *)
+  (* correlation against the constant column do not make sense,
+     is always nan ignore *)
+  let across_pred_col f = Array.init num_pred (fun i -> f (Mat.col pred (i + 1))) in
+  let col_mean c    = Vec.sum c /. (float (Vec.dim c)) in
+  let g_m_resp      = col_mean resp in
+  let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
+  let sum_squares   = sum_sq_dm resp g_m_resp in
+  let col_std c m n = sqrt (sum_sq_dm c m /. n) in
+  let num_obs_float = float num_obs in
+  let g_s_resp      = col_std resp g_m_resp num_obs_float in
+  let col_corr c    =
+    let m = Vec.sum c /. num_obs_float in
+    let s = col_std c m num_obs_float in
+    let num = (dot c resp) -. num_obs_float *. m *. g_m_resp in
+    let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
+    num /. den
+  in
+  let g_m_pred      = across_pred_col col_mean in
+  let correlations  = across_pred_col col_corr in
+  (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
+  let deg_of_freedom  = float (num_obs - num_pred) in
+  let residuals       = Vec.sub resp (gemv pred coef) in
+  let chi_square      = dot residuals residuals in
+  let infer_resp_var  = chi_square /. deg_of_freedom in
+  let m   = (float num_obs -. 1.0) /. deg_of_freedom in
+  let aic =
+    let n = float num_obs in
+    let k = float num_pred in
+    2.0 *. k +. (log (chi_square /. n)) +. (n +. k) /. (n -. k -. 2.0)
+  in
+  { padded = false
+  ; g_m_pred = g_m_pred
+  ; g_m_resp = g_m_resp
+  ; deg_of_freedom
+  ; coefficients = Vec.to_array coef
+  ; correlations
+  ; chi_square
+  ; g_inferred_response_var = infer_resp_var
+  ; sum_squares
+  ; cod = 1.0 -. (chi_square /. sum_squares)
+  ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
+  ; covariance = [||]   (* TODO. *)
+  ; residuals = Vec.to_array residuals
+  ; aic = aic
+  }
+
+
+
