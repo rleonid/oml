@@ -144,17 +144,17 @@ type lambda_spec =
   | `Within of float * float * float  (* lower bound, upper bound, stopping distance. *)
   ]
 
+open Lacaml.D
+
 let to_lambda svd resp = function
   | `Spec l               -> l
   | `From arr             ->
-      let open Lacaml.D in
       let looe  = Svd.looe svd resp in
       let loess = Array.map (fun l -> l, Vec.ssqr (looe l)) arr in
       (*let _ = Array.iter (fun (v, s) -> Printf.printf "for %0.4f\t %0.4f\n" v s) loess in *)
       Array.sort (fun (_,s1) (_,s2) -> compare s1 s2) loess;
       fst loess.(0)
   | `Within (lb, ub, dl)  ->
-      let open Lacaml.D in
       let looe  = Svd.looe svd resp in
       let loess l = Vec.ssqr (looe l) in
       let rec loop lb ub =
@@ -173,48 +173,76 @@ let to_lambda svd resp = function
       in
       loop lb ub
 
+let pad_design_matrix pred pad =
+  let orig     = Mat.of_array pred in
+  let num_obs  = Mat.dim1 orig in       (* rows *)
+  let num_pred = Mat.dim2 orig in       (* cols *)
+  let across_pred_col f =
+    (* + 1 since fortran style *)
+    Array.init num_pred (fun i -> f (Mat.col orig (i + 1)))
+  in
+  if pad then
+    let fill = lacpy ~bc:2 orig in
+    let _    = Mat.fill ~ac:1 ~n:1 fill 1.0 in
+    `Padded (orig, fill), num_obs, num_pred + 1, across_pred_col
+  else
+    `Unpadded orig, num_obs, num_pred, across_pred_col
+
+(* column mean. *)
+let col_mean c    = Vec.sum c /. (float (Vec.dim c))
+
+(* sum of squares diff of col *)
+let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c)
+
+(* column standard deviation *)
+let col_std c m n = sqrt (sum_sq_dm c m /. n)
+
 (* Either figure out the best lambda (aka ridge parameter)
    or solve the system without it. *)
-let coefficients_and_covariance svd resp = function
+let coefficients_and_covariance pred resp = function
   | None          ->
-      Svd.solve_linear svd resp, Svd.covariance_matrix svd
-  | Some lambda_m ->
-      let lambda = to_lambda svd resp lambda_m in
-      Svd.solve_linear ~lambda svd resp, Svd.covariance_matrix ~lambda svd
+      let p   = match pred with | `Padded (_,fill) -> fill | `Unpadded p -> p in
+      (* This is only needed for the residuals later, is there a more efficient way? *)
+      let pc  = lacpy p in
+      let svd = Svd.svd p in
+      Svd.solve_linear svd resp, Svd.covariance_matrix svd, pc
+  | Some lambda_spec ->
+      match pred with
+      | `Unpadded p ->
+          let pc  = lacpy p in
+          let svd = Svd.svd p in
+          let lambda = to_lambda svd resp lambda_spec in
+          let coef = Svd.solve_linear ~lambda svd resp in
+          let covm = Svd.covariance_matrix ~lambda svd in
+          coef, covm,pc
+      | `Padded (orig, fill) ->
+          let svd = Svd.svd orig in
+          let lambda = to_lambda svd resp lambda_spec in
+          let coef = Svd.solve_linear ~lambda svd resp in
+          let covm = Svd.covariance_matrix ~lambda svd in
+          (* Set the constant term beta to the mean of the response.
+            See "Estimation of the constant term when using ridge regression"
+            by Bertie and Cran for a clear explanation.  *)
+          let mres = col_mean resp in
+          let coef = copy ~ofsy:2 ~y:(Vec.make (Vec.dim coef + 1) mres) coef in
+          coef, covm, fill (* since not destroyed by svd ! *)
 
 (* Etc:
   - Should I call:
     - pred the design matrix
     - lambda the ridge parameter
+  TODO:
   - when SVD exposes the dimensionality reduction,
     we can add back removed_predictors logic.
+  - work through these covariance matrix calculations, they're probably not right
+  - once that's done we can expose the hypothesis testing
 *)
 let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
-  let open Lacaml.D in
   let resp = Vec.of_array resp in
-  let pred, padded =
-    if pad then
-      let fill_me = lacpy ~bc:2 (Mat.of_array pred) in
-      let _ = Mat.fill ~ac:1 ~n:1 fill_me 1.0 in
-      fill_me, true
-    else (Mat.of_array pred), false
-  in
-  let num_obs = Mat.dim1 pred in   (* rows *)
-  let num_pred = Mat.dim2 pred in  (* cols *)
-  (* correlation against the constant column do not make sense,
-     is always nan ignore *)
-  let across_pred_col f =
-    if padded then
-      Array.init (num_pred - 1) (fun i -> f (Mat.col pred (i + 2)))
-    else
-      Array.init num_pred (fun i -> f (Mat.col pred (i + 1)))
-  in
+  let pred, num_obs, num_pred, across_pred_col = pad_design_matrix pred pad in
   (* TODO: replace with folds, across the matrix in Lacaml. *)
-  let col_mean c    = Vec.sum c /. (float (Vec.dim c)) in
   let g_m_resp      = col_mean resp in
-  let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
   let sum_squares   = sum_sq_dm resp g_m_resp in
-  let col_std c m n = sqrt (sum_sq_dm c m /. n) in
   let num_obs_float = float num_obs in
   let g_s_resp      = col_std resp g_m_resp num_obs_float in
   let col_corr c    =
@@ -228,11 +256,8 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
   let correlations  = across_pred_col col_corr in
   (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
   let deg_of_freedom  = float (num_obs - num_pred) in
-  (* This is only needed for the residuals later, is there a more efficient way? *)
-  let pred_copy       = lacpy pred in
-  let svd             = Svd.svd pred in
-  let coeff, covarm   = coefficients_and_covariance svd resp lambda in
-  let residuals       = Vec.sub resp (gemv pred_copy coeff) in
+  let coef, covm, pc  = coefficients_and_covariance pred resp lambda in
+  let residuals       = Vec.sub resp (gemv pc coef) in
   let chi_sq          = dot residuals residuals in
   let infer_resp_var  = chi_sq /. deg_of_freedom in
   let m   = (float num_obs -. 1.0) /. deg_of_freedom in
@@ -241,18 +266,18 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
     let k = float num_pred in
     2.0 *. k +. (log (chi_sq /. n)) +. (n +. k) /. (n -. k -. 2.0)
   in
-  { padded
+  { padded = pad
   ; g_m_pred = g_m_pred
   ; g_m_resp = g_m_resp
   ; deg_of_freedom = deg_of_freedom
-  ; coefficients = Vec.to_array coeff
+  ; coefficients = Vec.to_array coef
   ; correlations = correlations
   ; chi_square = chi_sq
   ; g_inferred_response_var = infer_resp_var
   ; sum_squares
   ; cod = 1.0 -. (chi_sq /. sum_squares)
   ; adj_cod = 1.0 -. (chi_sq /. sum_squares) *. m
-  ; covariance = Mat.to_array covarm
+  ; covariance = Mat.to_array covm
   ; residuals = Vec.to_array residuals
   (*d_w = durbin_watson residuals *)
   ; aic = aic
