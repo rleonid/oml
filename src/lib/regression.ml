@@ -147,6 +147,15 @@ type lambda_spec =
 
 open Lacaml.D
 
+(* column mean. *)
+let col_mean c    = Vec.sum c /. (float (Vec.dim c))
+
+(* sum of squares diff of col *)
+let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c)
+
+(* column standard deviation *)
+let col_std c m n = sqrt (sum_sq_dm c m /. n)
+
 let to_lambda svd resp lambda_spec =
   let looe  = Svd.looe svd resp in
   let bestl =
@@ -177,30 +186,6 @@ let to_lambda svd resp lambda_spec =
         loop lb ub
   in
   bestl, looe bestl
-
-let pad_design_matrix pred pad =
-  let orig     = Mat.of_array pred in
-  let num_obs  = Mat.dim1 orig in       (* rows *)
-  let num_pred = Mat.dim2 orig in       (* cols *)
-  let across_pred_col f =
-    (* + 1 since fortran style *)
-    Array.init num_pred (fun i -> f (Mat.col orig (i + 1)))
-  in
-  if pad then
-    let fill = lacpy ~bc:2 orig in
-    let _    = Mat.fill ~ac:1 ~n:1 fill 1.0 in
-    `Padded (orig, fill), num_obs, num_pred + 1, across_pred_col
-  else
-    `Unpadded orig, num_obs, num_pred, across_pred_col
-
-(* column mean. *)
-let col_mean c    = Vec.sum c /. (float (Vec.dim c))
-
-(* sum of squares diff of col *)
-let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c)
-
-(* column standard deviation *)
-let col_std c m n = sqrt (sum_sq_dm c m /. n)
 
 type solved_lp =
   { coef : vec
@@ -266,6 +251,22 @@ let coefficients_and_covariance pred resp = function
             Vec.div resi (Mat.copy_diag h)
           in
           { coef ; covm ; resi ; looe }
+
+let pad_design_matrix pred pad =
+  let orig     = Mat.of_array pred in
+  let num_obs  = Mat.dim1 orig in       (* rows *)
+  let num_pred = Mat.dim2 orig in       (* cols *)
+  let across_pred_col f =
+    (* + 1 since fortran style *)
+    Array.init num_pred (fun i -> f (Mat.col orig (i + 1)))
+  in
+  if pad then
+    let fill = lacpy ~bc:2 orig in
+    let _    = Mat.fill ~ac:1 ~n:1 fill 1.0 in
+    `Padded (orig, fill), num_obs, num_pred + 1, across_pred_col
+  else
+    `Unpadded orig, num_obs, num_pred, across_pred_col
+
 
 (* Etc:
   - Should I call:
