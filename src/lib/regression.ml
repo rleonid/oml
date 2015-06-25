@@ -128,6 +128,7 @@ type general_linear_model = { padded                  : bool
                             ( < 1) indicates positive correlation while
                             higher (> 3) indicates negative correlation. *)
                             ; aic                     : float
+                            ; loocv                   : float array
                             }
 
 let eval_glm glm vec =
@@ -146,32 +147,36 @@ type lambda_spec =
 
 open Lacaml.D
 
-let to_lambda svd resp = function
-  | `Spec l               -> l
-  | `From arr             ->
-      let looe  = Svd.looe svd resp in
-      let loess = Array.map (fun l -> l, Vec.ssqr (looe l)) arr in
-      (*let _ = Array.iter (fun (v, s) -> Printf.printf "for %0.4f\t %0.4f\n" v s) loess in *)
-      Array.sort (fun (_,s1) (_,s2) -> compare s1 s2) loess;
-      fst loess.(0)
-  | `Within (lb, ub, dl)  ->
-      let looe  = Svd.looe svd resp in
-      let loess l = Vec.ssqr (looe l) in
-      let rec loop lb ub =
-        let m = midpoint lb ub in
-        if ub -. lb < dl then
-          loess m
-        else
-          let m1 = midpoint lb m in
-          let m2 = midpoint m ub in
-          let fm1 = loess m1 in
-          let fm2 = loess m2 in
-          if fm1 < fm2 then
-            loop lb m
+let to_lambda svd resp lambda_spec =
+  let looe  = Svd.looe svd resp in
+  let bestl =
+    match lambda_spec with
+    | `Spec l               -> l
+    | `From arr             ->
+        let loess = Array.map (fun l -> l, Vec.ssqr (looe l)) arr in
+        (*let _ = Array.iter (fun (v, s) -> Printf.printf "for %0.4f\t %0.4f\n" v s) loess in *)
+        Array.sort (fun (_,s1) (_,s2) -> compare s1 s2) loess;
+        fst loess.(0)
+    | `Within (lb, ub, dl)  ->
+        let looe  = Svd.looe svd resp in
+        let loess l = Vec.ssqr (looe l) in
+        let rec loop lb ub =
+          let m = midpoint lb ub in
+          if ub -. lb < dl then
+            loess m
           else
-            loop m ub
-      in
-      loop lb ub
+            let m1 = midpoint lb m in
+            let m2 = midpoint m ub in
+            let fm1 = loess m1 in
+            let fm2 = loess m2 in
+            if fm1 < fm2 then
+              loop lb m
+            else
+              loop m ub
+        in
+        loop lb ub
+  in
+  bestl, looe bestl
 
 let pad_design_matrix pred pad =
   let orig     = Mat.of_array pred in
@@ -197,27 +202,51 @@ let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c)
 (* column standard deviation *)
 let col_std c m n = sqrt (sum_sq_dm c m /. n)
 
+type solved_lp =
+  { coef : vec
+  ; covm : mat
+  ; resi : vec
+  ; looe : vec
+  }
+
 (* Either figure out the best lambda (aka ridge parameter)
    or solve the system without it. *)
 let coefficients_and_covariance pred resp = function
   | None          ->
-      let p   = match pred with | `Padded (_,fill) -> fill | `Unpadded p -> p in
+      let p    = match pred with | `Padded (_,fill) -> fill | `Unpadded p -> p in
       (* This is only needed for the residuals later, is there a more efficient way? *)
-      let pc  = lacpy p in
-      let svd = Svd.svd p in
-      Svd.solve_linear svd resp, Svd.covariance_matrix svd, pc
+      let dcp  = lacpy p in
+      let svd  = Svd.svd p in
+      let coef = Svd.solve_linear svd resp in
+      let resi = Vec.sub resp (gemv dcp coef) in
+      let looe =
+        let y = Vec.make (Vec.dim resp) 1.0 in
+        axpy (Svd.h_diag svd) ~alpha:(-1.0) y;
+        Vec.div resi y
+      in
+      { coef
+      ; covm = Svd.covariance_matrix svd
+      ; resi
+      ; looe
+      }
   | Some lambda_spec ->
       match pred with
       | `Unpadded p ->
-          let pc  = lacpy p in
+          let dcp = lacpy p in
           let svd = Svd.svd p in
-          let lambda = to_lambda svd resp lambda_spec in
+          (* Odd, that we should know the error on the coefficients
+            _before_ computing them! There's probably a better way to
+            structure this! *)
+          let lambda, looe = to_lambda svd resp lambda_spec in
           let coef = Svd.solve_linear ~lambda svd resp in
-          let covm = Svd.covariance_matrix ~lambda svd in
-          coef, covm,pc
+          { coef
+          ; covm = Svd.covariance_matrix ~lambda svd
+          ; resi = Vec.sub resp (gemv dcp coef)
+          ; looe
+          }
       | `Padded (orig, fill) ->
           let svd = Svd.svd orig in
-          let lambda = to_lambda svd resp lambda_spec in
+          let lambda, _ = to_lambda svd resp lambda_spec in
           let coef = Svd.solve_linear ~lambda svd resp in
           let covm = Svd.covariance_matrix ~lambda svd in
           (* Set the constant term beta to the mean of the response.
@@ -225,7 +254,18 @@ let coefficients_and_covariance pred resp = function
             by Bertie and Cran for a clear explanation.  *)
           let mres = col_mean resp in
           let coef = copy ~ofsy:2 ~y:(Vec.make (Vec.dim coef + 1) mres) coef in
-          coef, covm, fill (* since not destroyed by svd ! *)
+          let covm =
+            let s = Mat.dim1 covm in
+            lacpy ~b:(Mat.make0 (s + 1) (s + 1)) ~br:2 ~bc:2 covm
+          in
+          let resi = Vec.sub resp (gemv fill coef) in
+          let looe =
+            let cm = gemm ~transa:`T fill fill in
+            getri cm (* take inverse *);
+            let h  = gemm (gemm fill cm) ~transb:`T fill in
+            Vec.div resi (Mat.copy_diag h)
+          in
+          { coef ; covm ; resi ; looe }
 
 (* Etc:
   - Should I call:
@@ -256,9 +296,8 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
   let correlations  = across_pred_col col_corr in
   (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
   let deg_of_freedom  = float (num_obs - num_pred) in
-  let coef, covm, pc  = coefficients_and_covariance pred resp lambda in
-  let residuals       = Vec.sub resp (gemv pc coef) in
-  let chi_square      = dot residuals residuals in
+  let solved_lp       = coefficients_and_covariance pred resp lambda in
+  let chi_square      = dot solved_lp.resi solved_lp.resi in
   let infer_resp_var  = chi_square /. deg_of_freedom in
   let m   = (float num_obs -. 1.0) /. deg_of_freedom in
   let aic =
@@ -270,17 +309,18 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
   ; g_m_pred = g_m_pred
   ; g_m_resp = g_m_resp
   ; deg_of_freedom = deg_of_freedom
-  ; coefficients = Vec.to_array coef
+  ; coefficients = Vec.to_array solved_lp.coef
   ; correlations = correlations
   ; chi_square
   ; g_inferred_response_var = infer_resp_var
   ; sum_squares
   ; cod = 1.0 -. (chi_square /. sum_squares)
   ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
-  ; covariance = Mat.to_array covm
-  ; residuals = Vec.to_array residuals
+  ; covariance = Mat.to_array solved_lp.covm
+  ; residuals = Vec.to_array solved_lp.resi
   (*d_w = durbin_watson residuals *)
   ; aic = aic
+  ; loocv = Vec.to_array solved_lp.looe
   }
 
 let general_tikhonov_regression ~resp ~pred ~tik =
@@ -291,7 +331,7 @@ let general_tikhonov_regression ~resp ~pred ~tik =
   Mat.axpy (gemm ~transa:`T pred pred) tik;
   getri tik;      (* take inverse with LU decomp, tik is overwritten. *)
   let coef = gemv (gemm tik ~transb:`T pred) resp in
-  let num_obs  = Mat.dim1 pred in   (* rows *)
+  let num_obs  = Mat.dim1 pred in  (* rows *)
   let num_pred = Mat.dim2 pred in  (* cols *)
   (* correlation against the constant column do not make sense,
      is always nan ignore *)
@@ -337,7 +377,6 @@ let general_tikhonov_regression ~resp ~pred ~tik =
   ; covariance = [||]   (* TODO. *)
   ; residuals = Vec.to_array residuals
   ; aic = aic
+  ; loocv = [||]
   }
-
-
 

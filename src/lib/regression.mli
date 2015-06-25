@@ -54,6 +54,7 @@ type general_linear_model =
   ; covariance              : float array array (* Covariance matrix. *)
   ; residuals               : float array
   ; aic                     : float
+  ; loocv                   : float array
   }
 
 (** [eval_glm glm data] evaluate the general linear model [glm] over the vector
