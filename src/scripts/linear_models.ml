@@ -41,5 +41,5 @@ let general_tik ~pred ~resp ~tik =
   let b = Vec.of_array resp in
   Mat.axpy (gemm ~transa:`T m m) q;
   getri q;      (* take inverse with LU decomp*)
-  gemv (gemm qc ~transb:`T m) b
+  gemv (gemm q ~transb:`T m) b
 

@@ -33,6 +33,10 @@ let covariance_matrix ?lambda t =
   gemm (Mat.of_diag (Vec.sqr s_inv)) t.vt
   |> gemm ~transa:`T t.vt
 
+let h t = gemm t.u ~transb:`T t.u
+let h_diag t = Mat.gemm_diag t.u ~transb:`T t.u
+
+
 (* From "Notes on Regularized Least Squares"
    by Ryan M. Rifkin and Ross A. Lippert
    http://cbcl.mit.edu/projects/cbcl/publications/ps/MIT-CSAIL-TR-2007-025.pdf
