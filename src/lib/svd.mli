@@ -24,3 +24,6 @@ val covariance_matrix : ?lambda:float -> t -> mat
 (** [looe t y] returns a function to efficiently compute the Leave-One-Out-Error
     vector, for computing the optimal regularization parameter. *)
 val looe : t -> vec -> (float -> vec)
+
+val h : t -> mat
+val h_diag : t -> vec
