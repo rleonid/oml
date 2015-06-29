@@ -18,7 +18,7 @@ setup:
 	opam install lbfgs
 
 oml.cmxa:
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib -I src/lib/datasets oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
+	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib/datasets data.cma data.cmxa data.cmxs -I src/lib oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
@@ -26,11 +26,11 @@ joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
 test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib -I src/lib/datasets -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test && \
 	time ./driver.test
 
 covered_test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib -I src/lib/datasets -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test && \
 	time ./driver.test
 
 clean:
