@@ -1,5 +1,8 @@
 
 DRIVER_BUILD_DIR=_driver
+PACKAGES=lacaml lbfgs
+PACKAGES_TEST=$(PACKAGES) kaputt
+PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx
 
 .PHONY: all clean build install uninstall setup default
 
@@ -12,11 +15,10 @@ setup:
 	opam install kaputt
 	opam install bisect_ppx
 	opam install lacaml
-	opam pin add lbfgs https://github.com/rleonid/L-BFGS-ocaml.git
 	opam install lbfgs
 
 oml.cmxa:
-	ocamlbuild -use-ocamlfind -package lacaml -package lbfgs -I src/lib -I src/lib/datasets oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
+	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib -I src/lib/datasets oml.cmo oml.cmx oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
@@ -24,11 +26,11 @@ joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
 test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package lbfgs -I src/lib -I src/lib/datasets -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib -I src/lib/datasets -I src/test driver.test && \
 	time ./driver.test
 
 covered_test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind -package kaputt -package lacaml -package lbfgs -package bisect_ppx -I src/lib -I src/lib/datasets -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib -I src/lib/datasets -I src/test driver.test && \
 	time ./driver.test
 
 clean:
