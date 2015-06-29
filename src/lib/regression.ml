@@ -146,15 +146,7 @@ type lambda_spec =
   ]
 
 open Lacaml.D
-
-(* column mean. *)
-let col_mean c    = Vec.sum c /. (float (Vec.dim c))
-
-(* sum of squares diff of col *)
-let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c)
-
-(* column standard deviation *)
-let col_std c m n = sqrt (sum_sq_dm c m /. n)
+open Lacaml_stats
 
 let to_lambda f g lambda_spec =
   let bestl =
@@ -244,7 +236,7 @@ let solve_lp pred resp = function
           (* Set the constant term beta to the mean of the response.
             See "Estimation of the constant term when using ridge regression"
             by Bertie and Cran for a clear explanation.  *)
-          let mres = col_mean resp in
+          let mres = col_mean (float (Vec.dim resp)) resp in
           let coef = copy ~ofsy:2 ~y:(Vec.make (Vec.dim coef + 1) mres) coef in
           let covm =
             let s = Mat.dim1 covm in
@@ -288,9 +280,9 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
   let resp = Vec.of_array resp in
   let pred, num_obs, num_pred, across_pred_col = pad_design_matrix pred pad in
   (* TODO: replace with folds, across the matrix in Lacaml. *)
-  let g_m_resp      = col_mean resp in
-  let sum_squares   = sum_sq_dm resp g_m_resp in
   let num_obs_float = float num_obs in
+  let g_m_resp      = col_mean num_obs_float resp in
+  let sum_squares   = sum_sq_dm resp g_m_resp in
   let g_s_resp      = col_std resp g_m_resp num_obs_float in
   let col_corr c    =
     let m = Vec.sum c /. num_obs_float in
@@ -299,7 +291,7 @@ let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () =
     let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
     num /. den
   in
-  let g_m_pred      = across_pred_col col_mean in
+  let g_m_pred      = across_pred_col (col_mean num_obs_float) in
   let correlations  = across_pred_col col_corr in
   (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
   let deg_of_freedom  = float (num_obs - num_pred) in
@@ -367,12 +359,11 @@ let general_tikhonov_regression ?lambda ~resp ~pred ~tik () =
   let num_obs  = Mat.dim1 pred in  (* rows *)
   let num_pred = Mat.dim2 pred in  (* cols *)
   let across_pred_col f = Array.init num_pred (fun i -> f (Mat.col pred (i + 1))) in
-  let col_mean c    = Vec.sum c /. (float (Vec.dim c)) in
-  let g_m_resp      = col_mean resp in
+  let num_obs_float = float num_obs in
+  let g_m_resp      = col_mean num_obs_float resp in
   let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
   let sum_squares   = sum_sq_dm resp g_m_resp in
   let col_std c m n = sqrt (sum_sq_dm c m /. n) in
-  let num_obs_float = float num_obs in
   let g_s_resp      = col_std resp g_m_resp num_obs_float in
   let col_corr c    =
     let m = Vec.sum c /. num_obs_float in
@@ -381,7 +372,7 @@ let general_tikhonov_regression ?lambda ~resp ~pred ~tik () =
     let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
     num /. den
   in
-  let g_m_pred      = across_pred_col col_mean in
+  let g_m_pred      = across_pred_col (col_mean num_obs_float) in
   let correlations  = across_pred_col col_corr in
   (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
   let deg_of_freedom  = float (num_obs - num_pred) in
