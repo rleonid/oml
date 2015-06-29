@@ -335,6 +335,7 @@ let gtr_to_lambda fit_model lambda_spec =
   let g slp = Vec.ssqr slp.looe in
   to_lambda fit_model g lambda_spec
 
+(* TODO: This method can be optimized if we use a different decomposition. *)
 let gtk_solve_lp pred resp tik = function
   | None ->
       let covm = gemm ~transa:`T pred pred in
