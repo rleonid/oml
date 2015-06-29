@@ -54,7 +54,7 @@ type general_linear_model =
   ; covariance              : float array array (* Covariance matrix. *)
   ; residuals               : float array
   ; aic                     : float
-  ; loocv                   : float array
+  ; loocv                   : float array   (* Leave-One-Out-Cross-Validation, Predicted Residuals. *)
   }
 
 (** [eval_glm glm data] evaluate the general linear model [glm] over the vector
@@ -81,6 +81,16 @@ val general_linear_regress : ?lambda:lambda_spec
                             -> pred: float array array -> unit
                             -> general_linear_model
 
+(** [general_tikhonov_regression ?lambda resp pred tik unit]
+  Compute a [general_linear_model] for predicting [resp] based on the design
+  matrix [pred] and incorporating [tik] as a regularizer.
+
+  [tik] is the [T^t*T] of the Tikhonov matrix description as
+  described here https://en.wikipedia.org/wiki/Tikhonov_regularization.
+
+  [lambda] optionally specify logic for searching for an optimal multiple
+  of the [tik] based on the best Leave-One-Out-Cross-Validation.
+*)
 val general_tikhonov_regression : ?lambda:lambda_spec
                                 -> resp: float array
                                 -> pred: float array array
