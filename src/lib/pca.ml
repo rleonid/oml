@@ -33,8 +33,11 @@ let reduce t = function
   | SpecificNumberOfComponents n ->
       { t with variances = copy ~n t.variances; components = lacpy ~n t.components }
   | VarianceExplained th ->
+      let totalv = Vec.sum t.variances in
       let (_, n) =
-        Vec.fold (fun (s,i as ss) v -> if s > th then ss else (s +. v, i + 1))
+        Vec.fold (fun (s,i as ss) v ->
+          if s > th then ss
+          else (s +. v /. total, i + 1))
           (0.0,0) t.variances
       in
       { t with variances = copy ~n t.variances; components = lacpy ~n t.components }
