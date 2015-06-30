@@ -24,11 +24,13 @@ let normalize ?(demean=true) ?(scale=true) ?(unbiased=true) m =
     axpy ~alpha:(1.0/.s) col dm;
     ((m,s),dm)
   in
-  let adj_cols_lst = Mat.fold_cols (fun acc col -> (f col)::acc) [] m |> List.rev in
-  let adj = List.map fst adj_cols_lst in
+  let adj_cols_arr =
+    Mat.to_col_vecs m
+    |> Array.map f
+  in
+  let adj = Array.map fst adj_cols_arr in
   let mmm =
-    List.map snd adj_cols_lst
-    |> Array.of_list
+    Array.map snd adj_cols_arr
     |> Mat.of_col_vecs
   in
   adj, mmm
