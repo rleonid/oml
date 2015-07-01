@@ -37,7 +37,7 @@ let reduce t = function
       let (_, n) =
         Vec.fold (fun (s,i as ss) v ->
           if s > th then ss
-          else (s +. v /. total, i + 1))
+          else (s +. v /. totalv, i + 1))
           (0.0,0) t.variances
       in
       { t with variances = copy ~n t.variances; components = lacpy ~n t.components }
