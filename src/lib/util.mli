@@ -46,9 +46,18 @@ module Array : sig
       [f a.(i)] is true *)
   val find_index : ('a -> bool) -> 'a array -> int
 
-  (** [Array.binary_search c a], finds an element [e] in [a] where [c e = 0].
-      Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e]. *)
-  val binary_search : ('a -> int) -> 'a array -> 'a
+  (** [Array.binary_search c a], find the index of element [e] in [a] where
+      [c e = 0]. Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e].
+
+      If no element is found where [c e = 0] then the largest index such that
+      [c e < -1] is returned, this might be (-1). *)
+  val binary_search : ('a -> int) -> 'a array -> int
+
+  (** [Array.binary_search_exn c a], find the index of an element [e] in [a] where
+      [c e = 0].  Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e].
+
+      @raise Not_found if no element is found where [c e = 0]. *)
+  val binary_search_exn : ('a -> int) -> 'a array -> int
 
   (** [all p arr] equivalent to [true && (p arr.(0)) && (p arr.(1)) ...
       && (p arr.(n))] *)

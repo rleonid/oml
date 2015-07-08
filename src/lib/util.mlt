@@ -42,4 +42,35 @@ let () =
     ~title:"Array, range default increment is 1 and yields arrays of length 1."
     Gen.float
     (fun start -> Array.range ~start ~stop:(start +. 1.0) () = [| start |])
-    Spec.([ just_postcond_pred is_true])
+    Spec.([ just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Array, precise binary search recovers elements"
+    Gen.(fixed_length_array 100 int)
+    (fun arr ->
+      let find_me = arr.(0) in
+      Array.sort compare arr;
+      let bsidx = Array.binary_search (compare find_me) arr in
+      let bsidx2 = Array.binary_search_exn (compare find_me) arr in
+      bsidx >= 0 && bsidx < 100 && bsidx2 >= 0 && bsidx2 < 100)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Array, binary search (and exn) fails as specified"
+    ~nb_runs:10000
+    Gen.(zip3
+          (make_int 0 100)
+          (make_float (-1.0) 1.0)
+          (fixed_length_array 100 float))
+    (fun (idx, delta, arr) ->
+      Array.sort compare arr;
+      let find_me   = arr.(idx) +. delta in
+      let bsidx     = Array.binary_search (compare find_me) arr in
+      let notfound  =
+        try let _ = Array.binary_search_exn (compare find_me) arr in false
+        with Not_found  -> true
+      in
+      bsidx >= -1 && bsidx < 100 && notfound)
+    Spec.([just_postcond_pred is_true]);
+
+  ()
