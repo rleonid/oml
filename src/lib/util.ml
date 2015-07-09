@@ -59,10 +59,13 @@ module Array = struct
     in
     loop 0
 
-  let binary_search c a =
+  let bs precise c a =
     let rec bs_loop mi mx =
       if mx < mi then
-        raise Not_found
+        if precise then
+          raise Not_found
+        else
+          mx
       else
         let md = (mx + mi) / 2 in
         let cc = c a.(md) in
@@ -70,9 +73,12 @@ module Array = struct
         then bs_loop mi (md - 1)
         else if cc > 0
             then bs_loop (md + 1) mx
-            else a.(md)
+            else md
     in
     bs_loop 0 (Array.length a - 1)
+
+  let binary_search c arr = bs false c arr
+  let binary_search_exn c arr = bs true c arr
 
   let all p a =
     let n = Array.length a in

@@ -32,8 +32,14 @@ val dist_classify : float array -> dist_stats
 val unbiased_dist_classify : float array -> dist_stats
 
 (** [histogram data width_setting] group [data] into a specific number of buckets
-    of given width (according to [width_setting]. *)
-val histogram : float array -> [`Width of float | `Buckets of int] -> (float * int) array
+    of given width (according to [width_setting]:
+
+    - [`Buckets n] create [n] equally sized bucketes to fit all the data.
+    - [`Specific bkts] use [bkts] as lower boundaries on buckets.
+    - [`Width w] create buckets of size [w] to fit all the data.
+    *)
+val histogram : [`Width of float | `Buckets of int | `Specific of float array]
+                -> float array -> (float * int) array
 
 (** [geometric_mean arr] is the product of the elements of [arr] raised to the
     power of the reciprocal of the length. *)
