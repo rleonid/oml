@@ -133,14 +133,20 @@ let unbiased_dist_classify arr =
   ; kurtosis = unbiased_kurtosis arr
   }
 
-let histogram arr width_setting =
-  let mn   = Array.min arr in
-  let mx   = Array.max arr in
-  let width =
-    match width_setting with
-    | `Width w   -> w
-    | `Buckets n -> (mx -. mn) /. (float n)
-  in
+let specific_h buckets arr =
+  if Array.length buckets = 0 then [||] else
+    let tarr = Array.map (fun t -> (t,0)) buckets in
+    (* Sort this array only one array constructor. *)
+    Array.sort (fun (t1, _) (t2,_) -> compare t1 t2) tarr;
+    Array.iter (fun e ->
+        let idx = Array.binary_search (fun (t,_) -> compare e t) tarr in 
+        if idx > -1 then begin
+          let t,c = Array.get tarr idx in
+          Array.set tarr idx (t, succ c)
+        end) arr;
+    tarr
+
+let custom_h ~mx ~mn ~width arr =
   let size = truncate (ceil ((floor ((mx -. mn) /. width)) +. 1.0)) in
   let harr = Array.init size (fun i -> (mn +. (float i) *. width, 0)) in
   Array.iter (fun v ->
@@ -148,6 +154,17 @@ let histogram arr width_setting =
       let width, count = harr.(idx) in
       harr.(idx) <- (width, count + 1)) arr;
     harr
+
+let histogram width_setting arr =
+  match width_setting with
+  | `Specific buckets -> specific_h buckets arr
+  | `Width width      -> let mn   = Array.min arr in
+                         let mx   = Array.max arr in
+                         custom_h ~mx ~mn ~width arr
+  | `Buckets n        -> let mn   = Array.min arr in
+                         let mx   = Array.max arr in
+                         let width  = (mx -. mn) /. (float n) in
+                         custom_h ~mx ~mn ~width arr
 
 let geometric_mean_definitional arr =
   let n = float (Array.length arr) in
