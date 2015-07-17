@@ -2,7 +2,8 @@ OCaml Math Library
 ------------------
 
 [![Build Status](https://travis-ci.org/rleonid/oml.svg)](https://travis-ci.org/rleonid/oml)
-[![Coverage Status](https://coveralls.io/repos/rleonid/oml/badge.svg)](https://coveralls.io/r/rleonid/oml)
+[![Coverage Status](https://coveralls.io/repos/rleonid/oml/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/rleonid/oml?branch=HEAD)
+
 
 A collection of OCaml Math and Statistics functions.
 
