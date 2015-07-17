@@ -73,6 +73,8 @@ echo Testing
 make covered_test
 
 echo PostingCoverage
+opam pin add ocveralls https://github.com/rleonid/ocveralls.git
 opam install ocveralls
+
 cd _driver
-ocveralls --repo_token $COVERALLSTOKEN --send ../bisect0001.out
+ocveralls --repo_token $COVERALLSTOKEN --git --send ../bisect0001.out
