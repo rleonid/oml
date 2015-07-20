@@ -62,8 +62,7 @@ let multinomial ?seed weights =
         iter 0 0.0)
 
 let softmax ?seed ?temp weights =
-  let f = Functions.softmax ?temp weights in
-  multinomial ?seed (Array.init (Array.length weights) f)
+  multinomial ?seed (Functions.softmax ?temp weights)
 
 module Poly =
   struct
