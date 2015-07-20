@@ -8,6 +8,17 @@ end)
 let () =
   let max_array_size = 1000 in
   Test.add_random_test
+    ~title:"Descripitve: mean and median ar bounded by the array."
+    Gen.(array (make_int 2 max_array_size) float)
+    (fun data ->
+      let x = Array.max data in
+      let n = Array.min data in
+      let mn = mean data in
+      let md = median data in
+      n <= mn && mn <= x &&
+      n <= md && md <= x)
+    Spec.([just_postcond_pred is_true]);
+  Test.add_random_test
     ~title:"Descriptive: a histograms buckets have all the elements."
     Gen.(zip2 pos_float (array (make_int 2 max_array_size) float))
     (fun (w, data) ->
