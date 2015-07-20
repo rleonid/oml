@@ -5,6 +5,16 @@ let init = function
   | None   -> Random.State.make_self_init ()
   | Some a -> Random.State.make a
 
+let uniform_i ?seed n =
+  if n <= 0 then raise (Invalid_argument "n") else
+  let r = init seed in
+  fun () -> Random.State.int r n
+
+let uniform_f ?seed n =
+  if n <= 0.0 then raise (Invalid_argument "n") else
+  let r = init seed in
+  fun () -> Random.State.float r n
+
 let normal_std ?seed () =
   let r = init seed in
   let cur_ref = ref None in
@@ -26,16 +36,6 @@ let normal_std ?seed () =
 let normal ?seed ~mean ~std () =
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
-
-let uniform_i ?seed n =
-  if n <= 0 then raise (Invalid_argument "n") else
-  let r = init seed in
-  fun () -> Random.State.int r n
-
-let uniform_f ?seed n =
-  if n <= 0.0 then raise (Invalid_argument "n") else
-  let r = init seed in
-  fun () -> Random.State.float r n
 
 let multinomial ?seed weights =
   let sum = Array.sumf weights in
