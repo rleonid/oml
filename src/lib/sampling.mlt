@@ -1,0 +1,33 @@
+
+open Test_utils
+open Printf
+
+module Gen = FGen (struct
+  let largest_float = 1e8
+end)
+
+let () =
+  let msas = 100 in   (* max seed array size *)
+  let seed_gen = Gen.(array (make_int 1 msas) int |> option bool) in
+  let samples = 1000 in
+  let test f =
+    let rec loop p = p = samples || f () && loop (p + 1) in
+    loop 0
+  in
+  Test.add_random_test
+    ~title:"Sampling, uniform int obeys bounds."
+    Gen.(zip2 seed_gen (make_int 1 100000))
+    (fun (seed, b) ->
+      let int_maker = uniform_i ?seed b in
+      test (fun () -> let i = int_maker () in 0 <= i && i < b))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Sampling, uniform float obeys bounds."
+    Gen.(zip2 seed_gen pos_float)
+    (fun (seed, b) ->
+      let float_maker = uniform_f ?seed b in
+      test (fun () -> let f = float_maker () in 0.0 <= f && f <= b))
+    Spec.([just_postcond_pred is_true]);
+
+  ()
