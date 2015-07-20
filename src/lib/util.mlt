@@ -73,4 +73,28 @@ let () =
       bsidx >= -1 && bsidx < 100 && notfound)
     Spec.([just_postcond_pred is_true]);
 
+  Test.add_simple_test ~title:"Util, within works1."
+    (fun () ->
+      let bp = Open 3.0, Open 5.0 in
+      Assert.is_true (within bp 4.0);
+      Assert.is_false (within bp 5.0));
+
+  Test.add_simple_test ~title:"Util, within works2."
+    (fun () ->
+      let bp = Closed (-5.0), Open 5.0 in
+      Assert.is_true (within bp (-5.0));
+      Assert.is_false (within bp 6.0));
+
+  Test.add_simple_test ~title:"Util, within works3."
+    (fun () ->
+      let bp = Closed 3.0, Closed 5.0 in
+      Assert.is_true (within bp 5.0);
+      Assert.is_false (within bp 2.0));
+
+  Test.add_simple_test ~title:"Util, within works4."
+    (fun () ->
+      let bp = Open 3.0, Closed 5.0 in
+      Assert.is_true (within bp 4.0);
+      Assert.is_false (within bp 3.0));
+
   ()
