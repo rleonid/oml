@@ -17,7 +17,6 @@ let () =
     loop 0
   in
   let bound f = Spec.(zip2 always f) in
-  let is_invalid_arg = function | Invalid_argument _ -> true | _ -> false in
   Test.add_partial_random_test
     ~title:"Sampling, uniform int obeys bounds."
     Gen.(zip2 seed int)
