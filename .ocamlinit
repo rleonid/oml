@@ -4,4 +4,5 @@
 #directory "_build/src/lib/datasets" ;;
 #load_rec "oml.cma";;
 #load_rec "data.cmo";;
+open Oml
 open Oml.Util
