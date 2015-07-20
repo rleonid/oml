@@ -36,7 +36,7 @@ val multinomial : ?seed:int array -> float array -> int generator
     representating the ith element from the softmax distribution given by
     a [weights] vector and [temp]erature parameter which defaults to [1.0].
 
-    @raise Invalid_argument if [weights] is empty. *)
+    @raise Invalid_argument if [weights] is empty or [temp = 0]. *)
 val softmax : ?seed:int array -> ?temp:float -> float array -> int generator
 
 (** Provides polymorphic versions that sample over arrays of any type. *)
