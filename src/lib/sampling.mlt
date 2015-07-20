@@ -1,4 +1,6 @@
-
+(* The spirit of these tests isn't to find out if the underlying [Random]
+   module generates very good Random numbers (at-the-moment). Rather we
+   want our distributions to be well behaved. *)
 open Test_utils
 open Printf
 
@@ -8,26 +10,34 @@ end)
 
 let () =
   let msas = 100 in   (* max seed array size *)
-  let seed_gen = Gen.(array (make_int 1 msas) int |> option bool) in
+  let seed = Gen.(array (make_int 1 msas) int |> option bool) in
   let samples = 1000 in
   let test f =
     let rec loop p = p = samples || f () && loop (p + 1) in
     loop 0
   in
-  Test.add_random_test
+  let bound f = Spec.(zip2 always f) in
+  let is_invalid_arg = function | Invalid_argument _ -> true | _ -> false in
+  Test.add_partial_random_test
     ~title:"Sampling, uniform int obeys bounds."
-    Gen.(zip2 seed_gen (make_int 1 100000))
+    Gen.(zip2 seed int)
     (fun (seed, b) ->
       let int_maker = uniform_i ?seed b in
       test (fun () -> let i = int_maker () in 0 <= i && i < b))
-    Spec.([just_postcond_pred is_true]);
+    Spec.([ bound (fun x -> 0 <= x && x < int_upper_bound) ==> is_result is_true
+          ; bound (fun x -> x >= int_upper_bound) ==> is_exception is_invalid_arg
+          ; bound is_neg_int  ==> is_exception is_invalid_arg
+          ; bound is_zero_int ==> is_exception is_invalid_arg
+          ]);
 
-  Test.add_random_test
+  Test.add_partial_random_test
     ~title:"Sampling, uniform float obeys bounds."
-    Gen.(zip2 seed_gen pos_float)
+    Gen.(zip2 seed float)
     (fun (seed, b) ->
       let float_maker = uniform_f ?seed b in
       test (fun () -> let f = float_maker () in 0.0 <= f && f <= b))
-    Spec.([just_postcond_pred is_true]);
-
+    Spec.([ bound is_pos_float  ==> is_result is_true
+          ; bound is_neg_float  ==> is_exception is_invalid_arg
+          ; bound is_zero_float ==> is_exception is_invalid_arg
+          ]);
   ()
