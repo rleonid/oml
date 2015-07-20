@@ -98,3 +98,11 @@ val is_nan : float -> bool
 (** [is_degenerate x] determine if a value is [nan] or [neg_infinity] or
     [infinity]. *)
 val is_degenerate : float -> bool
+
+type 'a bound = Open of 'a
+              | Closed of 'a
+
+(** [within bound_pair x] evaluates whether [x] is inside the interval described
+    by the [bound_pair]. *)
+val within : ('a bound * 'a bound) -> 'a -> bool
+

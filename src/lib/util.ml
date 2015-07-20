@@ -118,3 +118,14 @@ let significantly_different_from ?(d=dx) x y = y < (x -. d) || y > (x +. d)
 let is_nan x = x <> x
 
 let is_degenerate x = is_nan x || x = neg_infinity || x = infinity
+
+type 'a bound = Open of 'a
+              | Closed of 'a
+
+let within bp x =
+  match bp with
+  | (Open l), (Open u)      -> l < x  && x < u
+  | (Open l), (Closed u)    -> l < x  && x <= u
+  | (Closed l), (Open u)    -> l <= x && x < u
+  | (Closed l), (Closed u)  -> l <= x && x <= u
+
