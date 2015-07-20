@@ -3,7 +3,7 @@
 (** [uniform_i ?seed n] creates a generator that will return an integer
     with equal probabilities from the interval [0,n).
 
-    @raise Invalid_argument if [n] is zero or negative. *)
+    @raise Invalid_argument if [n] is zero or negative, or above [2^30 - 1]. *)
 val uniform_i : ?seed:int array -> int -> (unit -> int)
 
 (** [uniform_f ?seed n] creates a generator that will return a float
@@ -11,7 +11,6 @@ val uniform_i : ?seed:int array -> int -> (unit -> int)
 
     @raise Invalid_argument if [n] is zero or negative. *)
 val uniform_f : ?seed:int array -> float -> (unit -> float)
-
 
 (** [normal ?seed mean std ()] creates a generator that will return variables
     from the Normal distribution of [mean] and [std] (standard deviation).*)
