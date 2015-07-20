@@ -15,7 +15,7 @@ setup:
 	opam install kaputt bisect_ppx lacaml lbfgs
 
 oml.cmxa:
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib/datasets data.cma data.cmxa data.cmxs -I src/lib oml.cma oml.cmxa oml.cmxs
+	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -cflags -annot -I src/lib/datasets data.cma data.cmxa data.cmxs -I src/lib oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
