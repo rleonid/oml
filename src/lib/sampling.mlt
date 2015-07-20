@@ -40,4 +40,66 @@ let () =
           ; bound is_neg_float  ==> is_exception is_invalid_arg
           ; bound is_zero_float ==> is_exception is_invalid_arg
           ]);
+
+  let mean_g = Gen.make_float (-10.0) 10.0 in
+  Test.add_partial_random_test
+    ~title:"Sampling, normal obeys bounds."
+    Gen.(zip2 seed (zip2 mean_g (make_float (-1.0) 1.0)))
+    (fun (seed, (mean, std)) ->
+      let _ = normal ?seed ~mean ~std () in
+      true)
+    Spec.([ zip2 always (zip2 always (fun x -> x < 0.0)) ==> is_exception is_invalid_arg
+          ; zip2 always (zip2 always (fun x -> x >= 0.0)) ==> is_result is_true]);
+
+  Test.add_partial_random_test
+    ~title:"Sampling, normal zero std gives you back the mean."
+    Gen.(zip2 seed mean_g)
+    (fun (seed, mean) ->
+      let gauss = normal ?seed ~mean ~std:0.0 () in
+      Array.init samples (fun _ -> gauss()) |> Array.all (fun x -> x = mean))
+    Spec.([ zip2 always always ==> is_result is_true]);
+
+  let samples_f = float samples in
+  let std_g     = Gen.make_float (0.0 +. dx) 10.0 in
+  Test.add_partial_random_test
+    ~title:"Sampling, normal obeys Chebyshev."
+    (* This forms such a wide bound that k closer to 1.0 are the worthwhile cases. *)
+    Gen.(zip3 seed (zip2 mean_g std_g) (make_float 1.0 2.0))
+    (fun (seed, (mean, std), k) ->
+      let bound = k *. std in
+      let gauss = normal ?seed ~mean ~std () in
+      let outside =
+        Array.init samples (fun _ -> gauss ())
+        |> Array.fold_left (fun c x ->
+              if abs_float (x -. mean) >= bound then c +. 1.0 else c)
+            0.0
+      in
+      (*let _ = Printf.printf "got %0.3f %0.3f samples outside \n" outside bound in *)
+      outside /. samples_f <= 1.0 /. (k *. k))
+    Spec.([ zip3 always always always ==> is_result is_true ]);
+
+  let sometimes_good_weights =        (* Two ways to be 'bad': 1. [||]  2. Sum <> 1.0 *)
+    Gen.(zip2 bool (array (make_int 0 10) (make_float 0.0 1.0))   (* 10  *)
+        |> transform (fun (good, arr) ->
+            let s = Array.sumf arr in
+            if good then
+              good, Array.map (fun x -> x /. s) arr
+            else
+              good, Array.map (fun x -> x *. s) arr))
+  in
+  let good_weights = Spec.(zip2 always (fun (b, w) -> b && Array.length w > 0)) in
+  (* I think with P=0.998 this test passes, but occasionally the restriction
+     that sum = 1.0 might trip, especially if the size of the array grows. *)
+  Test.add_partial_random_test
+    ~title:"Sampling, multinomial obeys bounds."
+    Gen.(zip2 seed sometimes_good_weights)
+    (fun (seed, (_, weights)) ->
+      let mm = multinomial ?seed weights in
+      let _  = Array.init samples (fun _ -> mm ()) in
+      true)
+    Spec.([ good_weights     ==> is_result is_true
+          ; not good_weights ==> is_exception is_invalid_arg
+          ]);
+
   ()
+
