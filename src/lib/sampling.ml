@@ -27,7 +27,7 @@ let normal ?seed ~mean ~std () =
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
-let uniform ?seed n =
+let uniform_i ?seed n =
   if n <= 0 then raise (Invalid_argument "n") else
   let r =
     match seed with
@@ -35,6 +35,15 @@ let uniform ?seed n =
     | Some a -> Random.State.make a
   in
   fun () -> Random.State.int r n
+
+let uniform_f ?seed n =
+  if n <= 0.0 then raise (Invalid_argument "n") else
+  let r =
+    match seed with
+    | None    -> Random.State.make_self_init ()
+    | Some a  -> Random.State.make a
+  in
+  fun () -> Random.State.float r n
 
 let multinomial ?seed weights =
   let sum = Array.sumf weights in
@@ -61,7 +70,7 @@ let softmax ?seed ?temp weights =
 module Poly =
   struct
     let uniform ?seed elems =
-      let f = uniform ?seed (Array.length elems) in
+      let f = uniform_i ?seed (Array.length elems) in
       fun () -> elems.(f())
 
     let multinomial ?seed elems weights =
