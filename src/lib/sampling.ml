@@ -1,12 +1,12 @@
 
 open Util
 
+let init = function
+  | None   -> Random.State.make_self_init ()
+  | Some a -> Random.State.make a
+
 let normal_std ?seed () =
-  let r =
-    match seed with
-    | None   -> Random.State.make_self_init ()
-    | Some a -> Random.State.make a
-  in
+  let r = init seed in
   let cur_ref = ref None in
   (fun () ->
     let p = fun () -> 2.0 *. (Random.State.float r 1.0) -. 1.0 in
@@ -29,31 +29,19 @@ let normal ?seed ~mean ~std () =
 
 let uniform_i ?seed n =
   if n <= 0 then raise (Invalid_argument "n") else
-  let r =
-    match seed with
-    | None   -> Random.State.make_self_init ()
-    | Some a -> Random.State.make a
-  in
+  let r = init seed in
   fun () -> Random.State.int r n
 
 let uniform_f ?seed n =
   if n <= 0.0 then raise (Invalid_argument "n") else
-  let r =
-    match seed with
-    | None    -> Random.State.make_self_init ()
-    | Some a  -> Random.State.make a
-  in
+  let r = init seed in
   fun () -> Random.State.float r n
 
 let multinomial ?seed weights =
   let sum = Array.sumf weights in
   if Util.significantly_different_from 1.0 sum then
     raise (Invalid_argument "weights") else
-  let r =
-    match seed with
-    | None   -> Random.State.make_self_init ()
-    | Some a -> Random.State.make a
-  in
+  let r = init seed in
   let n = Array.length weights - 1 in
   (fun () ->
     let threshold = Random.State.float r 1.0 in
