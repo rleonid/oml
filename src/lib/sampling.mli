@@ -8,12 +8,17 @@ val normal : ?seed:int array -> mean:float -> std:float -> unit -> (unit ->
 (** [normal_std seed ()] is equivalent to [normal seed ~mean:0.0 ~std:1.0 ()].*)
 val normal_std : ?seed:int array -> unit -> (unit -> float)
 
-(** [uniform ?seed n] creates a generator that will return an integer
-    representating the ith element of [n] possible elements from
-    the uniformly random distribution.
+(** [uniform_i ?seed n] creates a generator that will return an integer
+    with equal probabilities from the interval [0,n).
 
     @raise Invalid_argument if [n] is zero or negative. *)
-val uniform : ?seed:int array -> int -> (unit -> int)
+val uniform_i : ?seed:int array -> int -> (unit -> int)
+
+(** [uniform_f ?seed n] creates a generator that will return a float
+    with equal probabilities from the interval [0,n].
+
+    @raise Invalid_argument if [n] is zero or negative. *)
+val uniform_f : ?seed:int array -> float -> (unit -> float)
 
 (** [multinomial ?seed weights] creates a generator that will return an integer
     representating the ith element from the Multinomial distribution given by
