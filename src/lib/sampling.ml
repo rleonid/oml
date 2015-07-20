@@ -5,8 +5,10 @@ let init = function
   | None   -> Random.State.make_self_init ()
   | Some a -> Random.State.make a
 
+let int_upper_bound = 2 lsl (30 - 1)
+
 let uniform_i ?seed n =
-  if n <= 0 then raise (Invalid_argument "n") else
+  if n <= 0 || n >= int_upper_bound then raise (Invalid_argument "n") else
   let r = init seed in
   fun () -> Random.State.int r n
 
