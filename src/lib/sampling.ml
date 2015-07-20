@@ -1,6 +1,8 @@
 
 open Util
 
+type 'a generator = unit -> 'a
+
 let init = function
   | None   -> Random.State.make_self_init ()
   | Some a -> Random.State.make a
@@ -36,22 +38,28 @@ let normal_std ?seed () =
     | None   -> loop (p ()) (p ()))
 
 let normal ?seed ~mean ~std () =
+  if std < 0.0 then raise (Invalid_argument "std") else
+  if std = 0.0 then (fun () -> mean) else
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
 let multinomial ?seed weights =
-  let sum = Array.sumf weights in
-  if Util.significantly_different_from 1.0 sum then
-    raise (Invalid_argument "weights") else
-  let r = init seed in
-  let n = Array.length weights - 1 in
-  (fun () ->
-    let threshold = Random.State.float r 1.0 in
-    let rec iter i sum =
-      if i = n then i else
-        let sum' = sum +. weights.(i) in
-        if sum' >= threshold then i else iter (i+1) sum' in
-    iter 0 0.0)
+  if not (Array.all (within (Open 0.0, Closed 1.0)) weights) then
+    raise (Invalid_argument "weights")
+  else
+    let sum = Array.sumf weights in
+    if significantly_different_from 1.0 sum then
+      raise (Invalid_argument "weights")
+    else
+      let r = init seed in
+      let n = Array.length weights - 1 in
+      (fun () ->
+        let threshold = Random.State.float r 1.0 in
+        let rec iter i sum =
+          if i = n then i else
+            let sum' = sum +. weights.(i) in
+            if sum' >= threshold then i else iter (i+1) sum' in
+        iter 0 0.0)
 
 let softmax ?seed ?temp weights =
   let f = Functions.softmax ?temp weights in
