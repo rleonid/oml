@@ -60,9 +60,6 @@ let unbiased_skew arr =
 let kurtosis arr =
   (moment 4 arr) /. ((var arr) ** 2.0) -. 3.0
 
-let kurtosis_u arr =
-  (moment 4 arr) /. ((unbiased_var arr) ** 2.0) -. 3.0
-
 let unbiased_kurtosis arr =
     let n = float (Array.length arr) in
     let k = (kurtosis arr) in
