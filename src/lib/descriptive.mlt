@@ -6,7 +6,71 @@ module Gen = FGen (struct
 end)
 
 let () =
+  let sample_data = Array.range ~start:1. ~stop:6. () in
+  Test.add_simple_test ~title:"Descriptive, mean for small data set."
+    (fun () -> Assert.equalf (mean sample_data) 3.0);
+
+  Test.add_simple_test ~title:"Descriptive, median for small data set."
+    (fun () -> Assert.equalf (median sample_data) 3.0);
+
+  Test.add_simple_test ~title:"Descriptive, population var for small data set."
+    (fun () -> Assert.equalf (population_var 3.0 sample_data) 2.0);
+
+  Test.add_simple_test ~title:"Descriptive, var for small data set."
+    (fun () -> Assert.equalf (var sample_data) 2.0);
+
   let max_array_size = 1000 in
+  Test.add_random_test
+    ~title:"Descriptive: population_var is just mean var."
+    Gen.(array (make_int 2 max_array_size) float)
+    (fun data ->
+      let m = mean data in
+      (population_var m data) = var data)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_simple_test ~title:"Descriptive, unbiased_var for small data set."
+    (fun () -> Assert.equalf (unbiased_var sample_data) 2.5);
+
+  Test.add_random_test
+    ~title:"Descriptive: unbiased_var is bigger than var."
+    Gen.(array (make_int 2 max_array_size) float)
+    (fun data -> unbiased_var data > var data)
+    Spec.([just_postcond_pred is_true]);
+  let module Gen = FGen (struct let largest_float = 1e3 end) in
+  Test.add_random_test
+    ~title:"Descriptive: correlation and covariance are order invariant."
+    Gen.(zip2 (array (make_int 2 10) float)
+              (array (make_int 2 10) float))
+    (fun (d1, d2) ->
+      let co1 = covariance d1 d2 in
+      let co2 = covariance d2 d1 in
+      co1 = co2)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Descriptive: correlation and covariance have the same sign"
+    Gen.(zip2 (array (make_int 2 max_array_size) float)
+              (array (make_int 2 max_array_size) float))
+    (fun (d1, d2) ->
+      let co = covariance d1 d2 in
+      let cr = correlation d1 d2 in
+      let s v =  if v < 0.0 then -1 else if v > 0.0 then 1 else 0 in
+      s co = s cr)
+    Spec.([just_postcond_pred is_true]);
+
+  let module Gen = FGen (struct let largest_float = 1e8 end) in
+  Test.add_random_test
+    ~title:"Descripitve: mean and median are bounded by the array."
+    Gen.(array (make_int 2 max_array_size) float)
+    (fun data ->
+      let x = Array.max data in
+      let n = Array.min data in
+      let mn = mean data in
+      let md = median data in
+      n <= mn && mn <= x &&
+      n <= md && md <= x)
+    Spec.([just_postcond_pred is_true]);
+
   Test.add_random_test
     ~title:"Descriptive: a histograms buckets have all the elements."
     Gen.(zip2 pos_float (array (make_int 2 max_array_size) float))
@@ -25,6 +89,7 @@ let () =
       let nume = Array.map snd hist |> Array.fold_left (+) 0 in
       Array.length data = nume)
     Spec.([just_postcond_pred is_true]);
+
   Test.add_random_test
     ~title:"Descriptive: spearman is bounded by -1 and 1"
     Gen.(zip2 (array_float max_array_size) (array_float max_array_size))
@@ -32,6 +97,7 @@ let () =
       let s = spearman arr1 arr2 in
       -1.0 <= s && s <= 1.0)
     Spec.([just_postcond_pred is_true]);
+
   Test.add_random_test
     ~title:"Descriptive: spearman is 1 for monotonic transformations"
     Gen.(array_float max_array_size)
@@ -41,6 +107,7 @@ let () =
       let s = spearman arr1 arr2 in
       s = 1.0)
     Spec.([just_postcond_pred is_true]);
+
   Test.add_simple_test ~title:"Descriptive, spearman exmaple"
     (fun () ->
       (* From wikipedia *)
@@ -51,4 +118,5 @@ let () =
       let x = Array.map (fun (x,_) -> float x) data in
       let y = Array.map (fun (_,y) -> float y) data in
       Assert.equal (spearman x y) (-29.0 /. 165.0));
+
   ()

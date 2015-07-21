@@ -1,6 +1,16 @@
 
 open Util
 
+(* TODO: A tiny optimization; Once bench mark code has been written, it might
+   be useful to compare the logic in this code where variables such as the
+   length as a float are passed into methods specified for that. To avoid
+   converting this value redundantly. Specifically:
+
+   let mean_n m arr = (Array.sumf arr) /. m
+
+   let mean arr = mean_n (float (Array.length arr)) arr
+*)
+
 let mean arr = (Array.sumf arr) /. float (Array.length arr)
 
 let median arr =
@@ -12,9 +22,11 @@ let median arr =
   then (sorted.(m - 1) +. sorted.(m)) /. 2.0
   else sorted.(m)
 
-let var arr =
-  let m = mean arr in
+let population_var m arr =
   mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr)
+
+let var arr =
+  population_var (mean arr) arr
 
 let unbiased_var arr =
   let n = float (Array.length arr) in
@@ -28,7 +40,7 @@ let covariance x y =
 let correlation x y =
   (covariance x y) /. (sqrt ((var x) *. (var y)))
 
-let auto_correlation lag ar =
+let autocorrelation lag ar =
   let m = Array.length ar - lag in
   correlation (Array.sub ar 0 m) (Array.sub ar lag m)
 
@@ -41,26 +53,38 @@ let skew arr =
   let std = sqrt (var arr) in
   (moment 3 arr) /. (std ** 3.0)
 
-let kurtosis arr =
-  (moment 4 arr) /. ((var arr) ** 2.0) -. 3.0
-
 let unbiased_skew arr =
   let n = float (Array.length arr) in
   (skew arr) *. (sqrt (n *. (n -. 1.0))) /. (n -. 2.0)
+
+let kurtosis arr =
+  (moment 4 arr) /. ((var arr) ** 2.0) -. 3.0
+
+let kurtosis_u arr =
+  (moment 4 arr) /. ((unbiased_var arr) ** 2.0) -. 3.0
 
 let unbiased_kurtosis arr =
     let n = float (Array.length arr) in
     let k = (kurtosis arr) in
     ((n -. 1.0) *. ((n +. 1.0) *. k +. 6.0)) /. ((n -. 2.0) *. (n -. 3.0))
 
+(* See "Standard errors: A review and evaluation of standard error estimators
+  using Monte Carlo simulations" by Harding 2014, for a source of the standard
+  error calcuations. *)
 let var_standard_error arr =
-  float (Array.length arr)
+  let n = float (Array.length arr) in
+  let v = unbiased_var arr in
+  sqrt (2.0 /. (n -. 1.0)) *. v
 
 let skew_standard_error arr =
-  sqrt ( 6.0 /. (float (Array.length arr)))
+  (* Older: sqrt ( 6.0 /. (float (Array.length arr))) *)
+  let n = float (Array.length arr) in
+  sqrt ((6.0*.n*.(n-.1.0)) /. ((n-.2.0)*.(n+.1.0)*.(n+.3.0)))
 
 let kurtosis_standard_error arr =
-  sqrt ( 24.0 /. (float (Array.length arr)))
+  (* Older: sqrt ( 24.0 /. (float (Array.length arr))) *)
+  let n = float (Array.length arr) in
+  2.0*.(skew_standard_error arr)*. sqrt ((n*.n-.1.0)/.((n-.3.0)*.(n-.5.0)))
 
 let var_statistic arr =
   (unbiased_var arr) /. (var_standard_error arr)
@@ -71,66 +95,53 @@ let skew_statistic arr =
 let kurtosis_statistic arr =
   (unbiased_kurtosis arr) /. (kurtosis_standard_error arr)
 
+type skew_classification =
+  [ `Negative | `SlightNegative | `Normal | `SlightPositive | `Positive ]
+
 let classify_skew arr =
-    let s = skew_statistic arr in
-    if s < -2.0 then "negative skew"
-    else if s < -1.0 then "slight negative skew"
-    else if s > 2.0 then "positive skew"
-    else if s > 1.0 then "slight positive skew"
-    else "normal skew"
+  let s = skew_statistic arr in
+  if s < -2.0 then `Negative
+  else if s < -1.0 then `SlightNegative
+  else if s > 2.0 then `Positive
+  else if s > 1.0 then `SlightPositive
+  else `Normal
+
+type kurtosis_classification =
+  [ `Skinny | `SlightlySkinny | `Fat | `SlightlyFat | `Normal ]
 
 let classify_kurtosis arr =
-    let s = kurtosis_statistic arr in
-    if s < -2.0 then "skinny tails"
-    else if s < -1.0 then "slight skinny tails"
-    else if s > 2.0 then "fat tails"
-    else if s > 1.0 then "slight fat tails"
-    else "normal kurtosis"
+  let s = kurtosis_statistic arr in
+  if s < -2.0 then `Skinny
+  else if s < -1.0 then `SlightlySkinny
+  else if s > 2.0 then `Fat
+  else if s > 1.0 then `SlightlyFat
+  else `Normal
 
-let stat_classify arr =
-  [ ("mean", mean arr)
-  ; ("var", var arr)
-  ; ("skew", skew arr)
-  ; ("kurtosis", kurtosis arr)
-  ]
+type commentary =
+  { size     : int
+  ; min      : float
+  ; max      : float
+  ; mean     : float
+  ; std      : float
+  ; var      : float
+  ; skew     : float * skew_classification
+  ; kurtosis : float * kurtosis_classification
+  }
 
-let unbiased_classify arr =
-  [ ("mean", mean arr)
-  ; ("var", unbiased_var arr)
-  ; ("skew", unbiased_skew arr)
-  ; ("kurtosis", unbiased_kurtosis arr)
-  ]
-
-let unbiased_distribution_commentary arr =
-  [ ("num obs", (float (Array.length arr)), "")
-  ; ("min", Array.min arr, "")
-  ; ("max", Array.max arr, "")
-  ; ("mean", mean arr, "")
-  ; ("std", (sqrt (unbiased_var arr)), "")
-  ; ("sh", 16.0 *. (mean arr) /. (sqrt (unbiased_var arr)), "")
-  ; ("skew", skew_statistic arr, (classify_skew arr))
-  ; ("kurtosis", kurtosis_statistic arr, (classify_kurtosis arr))]
-
-type dist_stats = { size     : int
-                  ; mean     : float
-                  ; var      : float
-                  ; skew     : float
-                  ; kurtosis : float
-                  }
-
-let dist_classify arr = { size = Array.length arr
-                        ; mean = mean arr
-                        ; var  = var arr
-                        ; skew = skew arr
-                        ; kurtosis = kurtosis arr
-                        }
-
-let unbiased_dist_classify arr =
+let unbiased_commentary arr =
+  let v = unbiased_var arr in
+  let s = unbiased_skew arr in
+  let k = unbiased_kurtosis arr in
+  let sc = classify_skew arr in
+  let kc = classify_kurtosis arr in
   { size     = Array.length arr
-  ; mean     = mean arr
-  ; var      = unbiased_var arr
-  ; skew     = unbiased_skew arr
-  ; kurtosis = unbiased_kurtosis arr
+  ; min      = mean arr
+  ; max      = Array.min arr
+  ; mean     = Array.max arr
+  ; std      = sqrt (unbiased_var arr)
+  ; var      = v
+  ; skew     = s, sc
+  ; kurtosis = k, kc
   }
 
 let specific_h buckets arr =
@@ -139,7 +150,7 @@ let specific_h buckets arr =
     (* Sort this array only one array constructor. *)
     Array.sort (fun (t1, _) (t2,_) -> compare t1 t2) tarr;
     Array.iter (fun e ->
-        let idx = Array.binary_search (fun (t,_) -> compare e t) tarr in 
+        let idx = Array.binary_search (fun (t,_) -> compare e t) tarr in
         if idx > -1 then begin
           let t,c = Array.get tarr idx in
           Array.set tarr idx (t, succ c)
