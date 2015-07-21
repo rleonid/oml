@@ -12,9 +12,11 @@ let median arr =
   then (sorted.(m - 1) +. sorted.(m)) /. 2.0
   else sorted.(m)
 
-let var arr =
-  let m = mean arr in
+let population_var m arr =
   mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr)
+
+let var arr =
+  population_var (mean arr) arr
 
 let unbiased_var arr =
   let n = float (Array.length arr) in
@@ -28,7 +30,7 @@ let covariance x y =
 let correlation x y =
   (covariance x y) /. (sqrt ((var x) *. (var y)))
 
-let auto_correlation lag ar =
+let autocorrelation lag ar =
   let m = Array.length ar - lag in
   correlation (Array.sub ar 0 m) (Array.sub ar lag m)
 
@@ -38,7 +40,7 @@ let moment n arr =
   mean (Array.map (fun x -> (x -. m) ** p) arr)
 
 let skew arr =
-  let std = sqrt (var arr) in
+  let std = sqrt (unbiased_var arr) in
   (moment 3 arr) /. (std ** 3.0)
 
 let kurtosis arr =
