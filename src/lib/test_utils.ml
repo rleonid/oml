@@ -100,6 +100,7 @@ module Spec = struct
   let is_true x = x
   let is_false x = not x
   let just_postcond_pred p = Kaputt.Abbreviations.Spec.( always ==> p)
+  let is_invalid_arg = function | Invalid_argument _ -> true | _ -> false
   include Kaputt.Abbreviations.Spec
 end
 
