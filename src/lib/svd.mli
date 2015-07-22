@@ -25,5 +25,9 @@ val covariance_matrix : ?lambda:float -> t -> mat
     vector, for computing the optimal regularization parameter. *)
 val looe : t -> vec -> (float -> vec)
 
+(** [h t] compute the Hat matrix of the original matrix passed to Svd. *)
 val h : t -> mat
+
+(** [h_diag t] compute the diagonal of the Hat matrix of the original matrix
+    passed to Svd. *)
 val h_diag : t -> vec
