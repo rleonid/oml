@@ -24,7 +24,7 @@ let ln_gamma x =
     in
     cons +. log ((sqrt (2.0 *. pi)) *. sum /. x)
 
-let ln_beta_func, beta_func =
+let ln_beta, beta =
   let beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y) in
   beta, fun x y -> (exp (beta x y))
 
@@ -40,7 +40,7 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
     -.((a +. m) *. (a +. b +. m) *. x) /.
                                 ((a +. (2. *. m)) *. (a +. (2. *. m) +. 1.0)) in
   let get_a n x = 1.0 in
-  let log_beta = ln_beta_func a b in
+  let log_beta = ln_beta a b in
   let fraction = Continued_fraction.init ~get_a ~get_b in fun x ->
     if Util.is_nan x || Util.is_nan a || Util.is_nan b ||
             x < 0.0 || x > 1.0 || a <= 0.0 || b <= 0.0 then nan
