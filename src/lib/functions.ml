@@ -27,12 +27,11 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 log a -. log_beta) *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
-
-let gammap x = failwith "Not implemented"
-let gammaq x = failwith "Not implemented"
-
 let erf = Foreign.foreign "erf" Ctypes.(double @-> returning double)
 let erfc = Foreign.foreign "erfc" Ctypes.(double @-> returning double)
+
+let gammap a x = failwith "Not implemented"
+let gammaq a x = failwith "Not implemented"
 
 let chi_square_less chi_square num_observations =
   gammap ((float num_observations) /. 2.0) (chi_square /. 2.0)

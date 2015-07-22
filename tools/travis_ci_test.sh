@@ -21,7 +21,8 @@ travis_install_on_linux () {
 
     sudo apt-get install -qq ocaml ocaml-native-compilers camlp4-extra opam time git
     sudo apt-get install liblapack-dev
-    sudo apt-get install gfortran   # for lbgfs
+    sudo apt-get install gfortran       # for lbgfs
+    sudo apt-get install libffi-dev     # for Ctypes
 }
 
 travis_install_on_osx () {
@@ -33,6 +34,7 @@ travis_install_on_osx () {
     brew install homebrew/dupes/lapack
     brew install gcc  # for gfortran
     brew install opam --HEAD
+    brew install libffi
     export opam_init_options="--comp=$OCAML_VERSION"
     export opam_pin_add="add"
 }
