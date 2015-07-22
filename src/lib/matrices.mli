@@ -39,6 +39,8 @@ val identity : int -> t
     @raise Invalid_argument if matrix sizes are not compatible. *)
 val prod : t -> t -> t
 
+(** Multiply a row vector against a matrix. *)
 val prod_row_vector : Vectors.t -> t -> Vectors.t
 
+(** Multiply a matrix against a column vector. *)
 val prod_column_vector : t -> Vectors.t -> Vectors.t
