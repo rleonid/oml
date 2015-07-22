@@ -12,7 +12,7 @@ all: build
 
 # This should be called something else.
 setup:
-	opam install kaputt bisect_ppx lacaml lbfgs
+	opam install $(PACKAGES_COVERED)
 
 oml.cmxa:
 	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib/datasets data.cma data.cmxa data.cmxs -I src/lib oml.cma oml.cmxa oml.cmxs
