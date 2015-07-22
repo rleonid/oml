@@ -1,3 +1,5 @@
+#require "ctypes.foreign" ;;
+#require "ctypes.top";;
 #require "lacaml"
 #require "lbfgs"
 #directory "_build/src/lib" ;;

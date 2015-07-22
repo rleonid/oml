@@ -1,6 +1,6 @@
 
 DRIVER_BUILD_DIR=_driver
-PACKAGES=lacaml lbfgs
+PACKAGES=ctypes lacaml lbfgs
 PACKAGES_TEST=$(PACKAGES) kaputt
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx
 
