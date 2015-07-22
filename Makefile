@@ -1,8 +1,9 @@
 
 DRIVER_BUILD_DIR=_driver
-PACKAGES=lacaml lbfgs
+PACKAGES=ctypes ctypes.foreign lacaml lbfgs
 PACKAGES_TEST=$(PACKAGES) kaputt
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx
+PACKAGES_INSTALL=$(subst .,-,$(PACKAGES_COVERED))
 
 .PHONY: all clean build install uninstall setup default
 
@@ -12,7 +13,7 @@ all: build
 
 # This should be called something else.
 setup:
-	opam install kaputt bisect_ppx lacaml lbfgs
+	opam install $(PACKAGES_INSTALL)
 
 oml.cmxa:
 	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib/datasets data.cma data.cmxa data.cmxs -I src/lib oml.cma oml.cmxa oml.cmxs
