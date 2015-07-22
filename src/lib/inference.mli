@@ -4,6 +4,7 @@
 *)
 val prediction_interval : float -> Descriptive.commentary -> float * float
 
+(** A hypothesis test. *)
 type test =
   { standard_error     : float
   ; degrees_of_freedom : float
@@ -13,6 +14,7 @@ type test =
                                    distributions with equal means. *)
   }
 
+(** Describe a hypothesis test. *)
 val test_to_string : test -> string
 
 type null_hypothesis =
