@@ -1,4 +1,5 @@
 
+open Util
 
 (* TODO: Figure out the best bound for this and ensure the more
   accurate method is used. I think that Cephes might already do this
@@ -44,7 +45,10 @@ let chi_square_less chi_square num_observations =
 let chi_square_greater chi_square num_observations =
   regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
 
-let t_lookup alpha_level dgf = failwith "Not implemented"
+let t_lookup t dgf =
+  let v = float dgf in
+  let x = Float.(v / (t * t + v)) in
+  Float.(1.0 - 0.5 * (regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
 
 let softmax ?(temperature=1.0) weights =
   if Array.length weights = 0 then raise (Invalid_argument "weights") else
