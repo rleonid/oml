@@ -14,6 +14,7 @@ let fac i =
   in loop 1 i
 
 let () =
+  (* Gamma *)
   Test.add_random_test
     ~title:"Functions, gamma defined for (0+dx,1e2) positive values."
     Gen.(make_float Util.dx 1e2)
@@ -27,6 +28,7 @@ let () =
     (fun i -> (float (fac (i - 1)), (gamma (float i))))
     Spec.([ just_postcond_pred (fun (x, y) -> roughly_equal 1e12 x y)]);
 
+  (* Log gamma *)
   Test.add_random_test
     ~title:"Functions, log gamma defined for positive values."
     Gen.pos_float
@@ -47,6 +49,27 @@ let () =
     (fun x -> log x +. ln_gamma x, ln_gamma (x +. 1.0))
     Spec.([just_postcond_pred (fun (x, y) -> roughly_equal 1e300 x y)]);
 
+  (* Beta. *)
+  Test.add_random_test
+    ~title:"Functions, beta function is symmetric."
+    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    (fun (x, y) -> beta x y = beta y x)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Functions, adding one to x in beta function is like scaling."
+    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    (fun (x, y) -> beta x y = (beta (x +. 1.0) y) *. (x/. (x+.y)))
+    Spec.([just_postcond_pred is_true]);
+
+  (* Log beta *)
+  Test.add_random_test
+    ~title:"Functions, log beta function is symmetric."
+    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    (fun (x, y) -> ln_beta x y = ln_beta y x)
+    Spec.([just_postcond_pred is_true]);
+
+  (* Softmax. *)
   let temp_opt =
     Gen.(select_array [| 0.0; 0.5; 1.0; 2.0; 1000.0 |] (sprintf "%0.4f")
          |> option bool)
