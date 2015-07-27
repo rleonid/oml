@@ -3,8 +3,10 @@ open Test_utils
 open Printf
 
 let roughly_equal oc x y =
-    let d = (Descriptive.geometric_mean [|x; y|]) /. oc in
-    not (Util.significantly_different_from ~d x y)
+  let d = (Descriptive.geometric_mean [|x; y|]) /. oc in
+  not (Util.significantly_different_from ~d x y)
+
+let equal_floats ~d x y = not (Util.significantly_different_from ~d x y)
 
 let fac i =
   let rec loop a i =
@@ -67,6 +69,16 @@ let () =
     ~title:"Functions, log beta function is symmetric."
     Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
     (fun (x, y) -> ln_beta x y = ln_beta y x)
+    Spec.([just_postcond_pred is_true]);
+
+  (* Chi *)
+  Test.add_random_test
+    ~title:"Functions, Chi less and greater should sum to 1.0"
+    Gen.(zip2 (make_int 2 100) (make_float Util.dx 1e3))
+    (fun (df, x) ->
+      let l = chi_square_less x df in
+      let g = chi_square_greater x df in
+      equal_floats ~d:1e-8 1.0 (l +.g))
     Spec.([just_postcond_pred is_true]);
 
   (* Softmax. *)
