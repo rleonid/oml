@@ -15,14 +15,26 @@ let fac i =
 
 let () =
   Test.add_random_test
-    ~title:"Functions, log gamma defined for all positive values"
-    ~nb_runs:10000
+    ~title:"Functions, gamma defined for (0+dx,1e2) positive values."
+    Gen.(make_float Util.dx 1e2)
+    gamma
+    Spec.([ just_postcond_pred is_nonzero_float]);
+
+  Test.add_random_test
+    ~title:"Functions, gamma is equivalent to factorial for manageable ints."
+    ~nb_runs:14
+    Gen.(make_int 1 10)
+    (fun i -> (float (fac (i - 1)), (gamma (float i))))
+    Spec.([ just_postcond_pred (fun (x, y) -> roughly_equal 1e12 x y)]);
+
+  Test.add_random_test
+    ~title:"Functions, log gamma defined for positive values."
     Gen.pos_float
     ln_gamma
     Spec.([ just_postcond_pred is_nonzero_float ]);
 
   Test.add_random_test
-    ~title:"Functions, gamma is equivalent to factorial for manageable ints."
+    ~title:"Functions, (log)-gamma is equivalent to factorial for manageable ints."
     ~nb_runs:14
     Gen.(make_int 1 10)
     (fun i -> (float (fac (i - 1)), exp (ln_gamma (float i))))

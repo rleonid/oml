@@ -5,9 +5,13 @@
   the Ocephes library.
  *)
 
+(** [gamma x] computes the gamma function of [x]. For positive integers
+    [gamma x] approximates [(x - 1)!]. *)
+val gamma : float -> float
+
 (** [ln_gamma x] compute the natural logarithm of the gamma function of [x].
 
-    For positive integers [exp (ln_gamma x)] approximates [(x - 1)!], it is
+     it is
     usually much more accurate to use [ln_gamma] instead of [gamma] and
     afterwards compute the exponent.*)
 val ln_gamma : float -> float
