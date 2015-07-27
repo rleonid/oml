@@ -1,8 +1,15 @@
-(** Implementations of basic functions needed to compute distributions. *)
+(** Implementations of basic functions needed to compute distributions.
+
+  At the present moment many functions are wrappers to the Cephes library
+  (http://www.netlib.org/cephes/), via a Ctypes interface implemented in
+  the Ocephes library.
+ *)
 
 (** [ln_gamma x] compute the natural logarithm of the gamma function of [x].
 
-    For positive integers [exp (ln_gamma x)] approximates [(x - 1)!] *)
+    For positive integers [exp (ln_gamma x)] approximates [(x - 1)!], it is
+    usually much more accurate to use [ln_gamma] instead of [gamma] and
+    afterwards compute the exponent.*)
 val ln_gamma : float -> float
 
 val ln_beta : float -> float -> float
