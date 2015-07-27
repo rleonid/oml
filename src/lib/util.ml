@@ -39,9 +39,9 @@ module Array = struct
   let sumf = Array.fold_left (+.) 0.0
 
   (* TODO: Are there heuristics to consider when arrays are large? or elements
-           in the array are particulary large/small. log transforms?
-           Specifically, if I'm not going to use this method of geometric_mean,
-           when should I use this default version?  *)
+    in the array are particulary large/small. log transforms?
+    Specifically, if I'm not going to use this method for geometric_mean,
+    when should I use this default version?  *)
   let prodf = Array.fold_left ( *. ) 1.0
 
   let max a = Array.fold_left max a.(0) a
@@ -129,3 +129,10 @@ let within bp x =
   | (Closed l), (Open u)    -> l <= x && x < u
   | (Closed l), (Closed u)  -> l <= x && x <= u
 
+
+module Float = struct
+  let ( + ) x y = x +. y
+  let ( - ) x y = x -. y
+  let ( * ) x y = x *. y
+  let ( / ) x y = x /. y
+end

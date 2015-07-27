@@ -40,10 +40,9 @@ let chi_square_greater chi_square num_observations =
 
 let t_lookup alpha_level dgf = failwith "Not implemented"
 
-let softmax ?(temp=1.0) weights =
+let softmax ?(temperature=1.0) weights =
   if Array.length weights = 0 then raise (Invalid_argument "weights") else
-  if temp = 0.0 then raise (Invalid_argument "temp") else
-    let weights = Array.map (fun w -> exp (w /. temp)) weights in
+  if temperature = 0.0 then raise (Invalid_argument "temperature") else
+    let weights = Array.map (fun w -> exp (w /. temperature)) weights in
     let sum = Array.fold_left (+.) 0.0 weights in
-    let weights = Array.map (fun w -> w /. sum) weights in
-    Array.get weights
+    Array.map (fun w -> w /. sum) weights

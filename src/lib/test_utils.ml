@@ -1,5 +1,7 @@
 (* Common functions for writing tests and specifications. *)
 
+open Printf
+
 (* Generators *)
 module type FloatParameters = sig
   val largest_float : float
@@ -84,7 +86,7 @@ module FGen (Fp : FloatParameters) = struct
       let resp = prod_column_vector data coef in
       (data, coef, resp))
       (fun (pred, coef, resp) ->
-        Printf.sprintf "predictors: %s\n coefficients: %s\n response: %s\n"
+        sprintf "predictors: %s\n coefficients: %s\n response: %s\n"
           (print_float_array pred)
           (Kaputt.Utils.make_string_of_array (snd float) coef)
           (Kaputt.Utils.make_string_of_array (snd float) resp))
@@ -100,9 +102,13 @@ module Spec = struct
   let is_true x = x
   let is_false x = not x
   let just_postcond_pred p = Kaputt.Abbreviations.Spec.( always ==> p)
+  let is_invalid_arg = function | Invalid_argument _ -> true | _ -> false
   include Kaputt.Abbreviations.Spec
 end
 
 module Test = Kaputt.Abbreviations.Test
-module Assert = Kaputt.Abbreviations.Assert
+module Assert = struct
+  include Kaputt.Abbreviations.Assert
+  let equalf = equal ~prn:(sprintf "%0.4f")
+end
 

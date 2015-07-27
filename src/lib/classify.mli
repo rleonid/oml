@@ -45,14 +45,20 @@ val estimate : ?smoothing:float -> ?classes:'cls list ->
 *)
 val eval : ?bernoulli:bool -> ('cls, 'ftr) naive_bayes -> 'ftr -> 'cls probabilities
 
+(** A discrete multinomial Naive Bayes classifier of class ['cls] by
+    observing ['ftr], each 'cls represented by an integer array for each
+    of it's categories. *)
 type ('cls, 'ftr) naive_bayes_mv
 
+(** Return the class probabilities of a multinomial naive bayes. *)
 val class_probabilities_mv : ('cls, 'ftr) naive_bayes_mv -> 'cls -> ('ftr -> float * float array)
 
+(** Estimate a multinomial naive bayes. *)
 val estimate_mv : ?smoothing:float -> ?classes:'cls list ->
                   feature_sizes:int array -> ('ftr -> int array) ->
                   ('cls * 'ftr) list -> ('cls, 'ftr) naive_bayes_mv
 
+(** Evaluate a new class instance using the trained multinomial naive bayes. *)
 val eval_mv : ('cls, 'ftr) naive_bayes_mv  -> 'ftr -> 'cls probabilities
 
 
@@ -70,10 +76,13 @@ val gauss_estimate : ?classes:'cls list ->
 (** [gauss_eval classifier feature] classify the [feature] using the [classifier]. *)
 val gauss_eval : 'cls gauss_bayes -> float array -> 'cls probabilities
 
+(** A logistic regression classifier. *)
 type 'cls log_reg
 
+(** Evaluate a logistic regression classifier. *)
 val log_reg_eval : 'cls log_reg -> float array -> 'cls probabilities
 
+(** Estimate a logistic regression classifier. *)
 val log_reg_estimate : class_f:('cls -> bool) ->
                        ('cls * float array) list -> 'cls log_reg
 

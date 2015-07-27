@@ -1,7 +1,7 @@
 (** Implementations of basic functions needed to compute distributions. *)
 
 (** [ln_gamma x] compute the natural logarithm of the gamma function of [x].
-    
+
     For positive integers [exp (ln_gamma x)] approximates [(x - 1)!] *)
 val ln_gamma : float -> float
 
@@ -16,4 +16,9 @@ val erfc : float -> float
 val chi_square_less : float -> int -> float
 val chi_square_greater : float -> int -> float
 val t_lookup : float -> int -> float
-val softmax : ?temp:float -> float array -> int -> float
+
+(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
+    on [temperature].
+
+    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
+val softmax : ?temperature:float -> float array -> float array

@@ -2,8 +2,9 @@
 (** When we do not know the mean or standard deviation of a distribution
     we can still create a prediction interval based off distribution stat.
 *)
-val prediction_interval : float -> Descriptive.dist_stats -> float * float
+val prediction_interval : float -> Descriptive.commentary -> float * float
 
+(** A hypothesis test. *)
 type test =
   { standard_error     : float
   ; degrees_of_freedom : float
@@ -13,6 +14,7 @@ type test =
                                    distributions with equal means. *)
   }
 
+(** Describe a hypothesis test. *)
 val test_to_string : test -> string
 
 type null_hypothesis =
