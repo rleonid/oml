@@ -129,3 +129,10 @@ let within bp x =
   | (Closed l), (Open u)    -> l <= x && x < u
   | (Closed l), (Closed u)  -> l <= x && x <= u
 
+
+module Float = struct
+  let ( + ) x y = x +. y
+  let ( - ) x y = x -. y
+  let ( * ) x y = x *. y
+  let ( / ) x y = x /. y
+end

@@ -32,12 +32,12 @@ val normal_std : ?seed:int array -> unit -> float generator
      in [0,1). *)
 val multinomial : ?seed:int array -> float array -> int generator
 
-(** [softmax ?seed ?temp weights] creates a generator that will return an integer
+(** [softmax ?seed ?temperature weights] creates a generator that will return an integer
     representating the ith element from the softmax distribution given by
-    a [weights] vector and [temp]erature parameter which defaults to [1.0].
+    a [weights] vector and [temperature] parameter which defaults to [1.0].
 
-    @raise Invalid_argument if [weights] is empty or [temp = 0]. *)
-val softmax : ?seed:int array -> ?temp:float -> float array -> int generator
+    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
+val softmax : ?seed:int array -> ?temperature:float -> float array -> int generator
 
 (** Provides polymorphic versions that sample over arrays of any type. *)
 module Poly :
@@ -56,12 +56,12 @@ module Poly :
         the length of the [elems] and [weights] arrays are not equal. *)
     val multinomial : ?seed:int array -> 'a array -> float array -> 'a generator
 
-    (** [softmax ?seed ?temp elems weights] creates a generator that will
+    (** [softmax ?seed ?temperature elems weights] creates a generator that will
         sample from the [elems] array using the softmax distribution given by
-        a [weights] vector and [temp]erature parameter which defaults to [1.0].
+        a [weights] vector and [temperature]erature parameter which defaults to [1.0].
 
         @raise Invalid_argument if [weights] is empty or the length of the
         [elems] and [weights] arrays are not equal. *)
-    val softmax : ?seed:int array -> ?temp:float ->'a array ->
+    val softmax : ?seed:int array -> ?temperature:float ->'a array ->
       float array -> 'a generator
   end

@@ -106,3 +106,12 @@ type 'a bound = Open of 'a
     by the [bound_pair]. *)
 val within : ('a bound * 'a bound) -> 'a -> bool
 
+(** Provide operator overloads for conveniently expressing float arithmatic.*)
+module Float : sig
+  val ( + ) : float -> float -> float
+  val ( - ) : float -> float -> float
+  val ( / ) : float -> float -> float
+  val ( * ) : float -> float -> float
+
+end
+

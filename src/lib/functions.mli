@@ -17,8 +17,8 @@ val chi_square_less : float -> int -> float
 val chi_square_greater : float -> int -> float
 val t_lookup : float -> int -> float
 
-(** [softmax ?temp weights] transform [weights] into softmax weights dependent
-    on [temp]erature.
+(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
+    on [temperature].
 
-    @raise Invalid_argument if [weights] is empty or [temp = 0]. *)
-val softmax : ?temp:float -> float array -> float array
+    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
+val softmax : ?temperature:float -> float array -> float array

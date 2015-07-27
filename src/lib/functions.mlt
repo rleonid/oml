@@ -43,8 +43,8 @@ let () =
   Test.add_partial_random_test
     ~title:"Functions, softmax obeys bounds"
     Gen.(zip2 temp_opt (array (make_int 0 100) float))
-    (fun (temp, weights) ->
-      let _ = softmax ?temp weights in
+    (fun (temperature, weights) ->
+      let _ = softmax ?temperature weights in
       true)
     Spec.([ bad_spec     ==> is_exception is_invalid_arg
           ; not bad_spec ==> is_result is_true

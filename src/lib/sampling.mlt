@@ -101,7 +101,7 @@ let () =
           ; not good_weights ==> is_exception is_invalid_arg
           ]);
 
-  (* Since [Functions.softmax] does the checking on [temp] this is mostly a shell. *)
+  (* Since [Functions.softmax] does the checking on [temperature] this is mostly a shell. *)
   Test.add_partial_random_test
     ~title:"Sampling, softmax obeys bounds."
     Gen.(zip2 seed any_weights)

@@ -61,8 +61,8 @@ let multinomial ?seed weights =
             if sum' >= threshold then i else iter (i+1) sum' in
         iter 0 0.0)
 
-let softmax ?seed ?temp weights =
-  multinomial ?seed (Functions.softmax ?temp weights)
+let softmax ?seed ?temperature weights =
+  multinomial ?seed (Functions.softmax ?temperature weights)
 
 module Poly =
   struct
@@ -76,9 +76,9 @@ module Poly =
           let f = multinomial ?seed weights in
           fun () -> elems.(f())
 
-    let softmax ?seed ?temp elems weights =
+    let softmax ?seed ?temperature elems weights =
       if (Array.length elems != Array.length weights) then
         raise (Invalid_argument "weights") else
-          let f = softmax ?seed weights in
+          let f = softmax ?seed ?temperature weights in
           fun () -> elems.(f())
   end

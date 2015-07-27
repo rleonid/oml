@@ -18,16 +18,16 @@ val svd : mat -> t
     regression, when [a] is the Singular Value Decomposition. *)
 val solve_linear : ?lambda:float -> t -> vec -> vec
 
-(** [covariance_matrix a b] compute the covariance matrix [A * A^t]. *)
+(** [covariance_matrix a b] computes the covariance matrix [A * A^t]. *)
 val covariance_matrix : ?lambda:float -> t -> mat
 
-(** [looe t y] returns a function to efficiently compute the Leave-One-Out-Error
+(** [looe t y] returns a function to efficiently computes the Leave-One-Out-Error
     vector, for computing the optimal regularization parameter. *)
 val looe : t -> vec -> (float -> vec)
 
-(** [h t] compute the Hat matrix of the original matrix passed to Svd. *)
+(** [h t] computes the Hat matrix of the original matrix passed to Svd. *)
 val h : t -> mat
 
-(** [h_diag t] compute the diagonal of the Hat matrix of the original matrix
+(** [h_diag t] computes the diagonal of the Hat matrix of the original matrix
     passed to Svd. *)
 val h_diag : t -> vec

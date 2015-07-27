@@ -26,13 +26,13 @@ val var : float array -> float
     correction; ie. divinding by [n - 1]. *)
 val unbiased_var : float array -> float
 
-(** [population_var mean data] compute the variance of data when you know the
+(** [population_var mean data] computes the variance of data when you know the
   population [mean]. *)
 val population_var : float -> float array -> float
 
 (* Between two random variables.*)
 
-(** [covariance x y] compute the sample covariance of [x] and [y] where higher
+(** [covariance x y] computes the sample covariance of [x] and [y] where higher
     positive values indicate a direct relationship (larger values associate with
     larger values, smaller with smaller), a large negative value indicates an
     reverse relationship (smaller with larger and vice versa). While values
@@ -54,7 +54,7 @@ val autocorrelation : int -> float array -> float
 (** [moment k data] computes the [k]th sample central moment of [data]. *)
 val moment : int -> float array -> float
 
-(** [skew data] compute the sample skew of [data] (Fisher-Pearson's moment
+(** [skew data] computes the sample skew of [data] (Fisher-Pearson's moment
     coefficient of skewness), which is a measure of asymmetry. For unimodal
     data negative values indicate that the left tail is longer in relation
     to the right.*)
@@ -68,7 +68,7 @@ val skew : float array -> float
     skewness and kurtosis" Joanes 1997, for details.  *)
 val unbiased_skew : float array -> float
 
-(** [kurtosis data] compute the sample kurtosis of [data]. This is a
+(** [kurtosis data] computes the sample kurtosis of [data]. This is a
     measure of the 'peakedness' vs 'tailness' of a distribution. It is adjusted
     so that a normal distribution will have kurtosis of 0. *)
 val kurtosis : float array -> float
@@ -110,7 +110,7 @@ val skew_statistic : float array -> float
 val kurtosis_statistic : float array -> float
 
 type skew_classification =
-  [ `Negative | `SlightNegative | `Normal | `SlightPositive | `Positive ]
+  [ `Negative | `Slightly_negative | `Normal | `Slightly_positive | `Positive ]
 
 (** [classify_skew data] provides a terse description of the skewness of [data].
 
@@ -121,7 +121,7 @@ type skew_classification =
 val classify_skew : float array -> skew_classification
 
 type kurtosis_classification =
-  [ `Skinny | `SlightlySkinny | `Fat | `SlightlyFat | `Normal ]
+  [ `Skinny | `Slightly_skinny | `Fat | `Slightly_fat | `Normal ]
 
 (** [classify_kurtosis data] provides a terse description of the kurtosis of
     [data]. The same warning as in [classify_skew] applies. *)

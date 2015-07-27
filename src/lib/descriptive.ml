@@ -55,7 +55,7 @@ let skew arr =
 
 let unbiased_skew arr =
   let n = float (Array.length arr) in
-  (skew arr) *. (sqrt (n *. (n -. 1.0))) /. (n -. 2.0)
+  Float.(skew arr * (sqrt (n * (n - 1.0))) / (n-2.0))
 
 let kurtosis arr =
   (moment 4 arr) /. ((var arr) ** 2.0) -. 3.0
@@ -63,7 +63,7 @@ let kurtosis arr =
 let unbiased_kurtosis arr =
     let n = float (Array.length arr) in
     let k = (kurtosis arr) in
-    ((n -. 1.0) *. ((n +. 1.0) *. k +. 6.0)) /. ((n -. 2.0) *. (n -. 3.0))
+    Float.(((n - 1.0) * ((n + 1.0) * k + 6.0)) / ((n - 2.0) * (n - 3.0)))
 
 (* See "Standard errors: A review and evaluation of standard error estimators
   using Monte Carlo simulations" by Harding 2014, for a source of the standard
@@ -71,17 +71,17 @@ let unbiased_kurtosis arr =
 let var_standard_error arr =
   let n = float (Array.length arr) in
   let v = unbiased_var arr in
-  sqrt (2.0 /. (n -. 1.0)) *. v
+  Float.(sqrt (2.0 / (n - 1.0)) * v)
 
 let skew_standard_error arr =
   (* Older: sqrt ( 6.0 /. (float (Array.length arr))) *)
   let n = float (Array.length arr) in
-  sqrt ((6.0*.n*.(n-.1.0)) /. ((n-.2.0)*.(n+.1.0)*.(n+.3.0)))
+  Float.(sqrt ((6.0 * n * (n - 1.0)) / ((n - 2.0) * (n + 1.0) * (n + 3.0))))
 
 let kurtosis_standard_error arr =
   (* Older: sqrt ( 24.0 /. (float (Array.length arr))) *)
   let n = float (Array.length arr) in
-  2.0*.(skew_standard_error arr)*. sqrt ((n*.n-.1.0)/.((n-.3.0)*.(n-.5.0)))
+  Float.(2.0 * (skew_standard_error arr) * sqrt ((n * n - 1.0) / ((n - 3.0) * (n - 5.0))))
 
 let var_statistic arr =
   (unbiased_var arr) /. (var_standard_error arr)
@@ -93,25 +93,25 @@ let kurtosis_statistic arr =
   (unbiased_kurtosis arr) /. (kurtosis_standard_error arr)
 
 type skew_classification =
-  [ `Negative | `SlightNegative | `Normal | `SlightPositive | `Positive ]
+  [ `Negative | `Slightly_negative | `Normal | `Slightly_positive | `Positive ]
 
 let classify_skew arr =
   let s = skew_statistic arr in
   if s < -2.0 then `Negative
-  else if s < -1.0 then `SlightNegative
+  else if s < -1.0 then `Slightly_negative
   else if s > 2.0 then `Positive
-  else if s > 1.0 then `SlightPositive
+  else if s > 1.0 then `Slightly_positive
   else `Normal
 
 type kurtosis_classification =
-  [ `Skinny | `SlightlySkinny | `Fat | `SlightlyFat | `Normal ]
+  [ `Skinny | `Slightly_skinny | `Fat | `Slightly_fat | `Normal ]
 
 let classify_kurtosis arr =
   let s = kurtosis_statistic arr in
   if s < -2.0 then `Skinny
-  else if s < -1.0 then `SlightlySkinny
+  else if s < -1.0 then `Slightly_skinny
   else if s > 2.0 then `Fat
-  else if s > 1.0 then `SlightlyFat
+  else if s > 1.0 then `Slightly_fat
   else `Normal
 
 type commentary =
