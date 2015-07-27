@@ -10,6 +10,6 @@ let () =
       let exp = Array.map (fun x -> x *. n) exp_prob in
       let obs = [| 315.; 101.; 108.; 32.|] in
       let t   = chi obs exp in
-      Assert.equal_float 3.0 t.degrees_of_freedom;
-      Assert.equal_float 0.470023980815347686 t.stat;
-      Assert.equal_float 0.925425895134266208 t.prob_by_chance)
+      Assert.equalf 3.0 t.degrees_of_freedom;
+      Assert.equalf 0.470023980815 t.stat;
+      Assert.equalf 0.925425895104 t.prob_by_chance)

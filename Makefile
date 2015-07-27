@@ -1,6 +1,6 @@
 
 DRIVER_BUILD_DIR=_driver
-PACKAGES=ctypes ctypes.foreign lacaml lbfgs
+PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx
 PACKAGES_INSTALL=$(subst .,-,$(PACKAGES_COVERED))
@@ -13,6 +13,7 @@ all: build
 
 # This should be called something else.
 setup:
+	opam pin add ocephes https://github.com/rleonid/Ocephes.git
 	opam install $(PACKAGES_INSTALL)
 
 oml.cmxa:

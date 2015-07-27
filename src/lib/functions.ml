@@ -1,5 +1,5 @@
 
-let ln_gamma = Foreign.foreign "lgamma" Ctypes.(double @-> returning double)
+let ln_gamma = Ocephes.lgam
 
 let ln_beta, beta =
   let beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y) in
@@ -27,11 +27,11 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 log a -. log_beta) *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
-let erf = Foreign.foreign "erf" Ctypes.(double @-> returning double)
-let erfc = Foreign.foreign "erfc" Ctypes.(double @-> returning double)
+let erf = Ocephes.erf
+let erfc = Ocephes.erfc
 
-let gammap a x = failwith "Not implemented"
-let gammaq a x = failwith "Not implemented"
+let gammap = Ocephes.igam
+let gammaq = Ocephes.igamc
 
 let chi_square_less chi_square num_observations =
   gammap ((float num_observations) /. 2.0) (chi_square /. 2.0)
