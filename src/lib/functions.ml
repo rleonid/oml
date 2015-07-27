@@ -1,4 +1,5 @@
 
+let gamma = Ocephes.gamma
 let ln_gamma = Ocephes.lgam
 
 let ln_beta, beta =
