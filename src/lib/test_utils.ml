@@ -53,19 +53,18 @@ module FGen (Fp : FloatParameters) = struct
     |> String.concat "\n"
 
   let general_model_array ~max_predictors ~max_samples =
-    zip2
-          (make_int 2 max_predictors)
-          (make_int 2 max_samples)
-         (* +1 is for how we build samples models below. *)
-         |> transform (fun (p, s) -> 1 + max p s, min p s)
-         |> fun (rcg, _) ->
-             (* TODO: refactor this into a bind. *)
-             (fun random ->
-                let (rows, columns) = rcg random in
-                Array.init rows (fun _ ->
-                  Array.init columns (fun _ ->
-                    (fst float) random))),
-             print_float_array
+    zip2 (make_int 2 max_predictors)
+         (make_int 2 max_samples)
+    (* +1 is for how we build samples models below. *)
+    |> transform (fun (p, s) -> 1 + max p s, min p s)
+    |> fun (rcg, _) ->
+        (* TODO: refactor this into a bind. *)
+        (fun random ->
+          let (rows, columns) = rcg random in
+            Array.init rows (fun _ ->
+              Array.init columns (fun _ ->
+                (fst float) random))),
+        print_float_array
 
   let general_model ~max_predictors ~max_samples =
     map1 (fun m ->
