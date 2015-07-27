@@ -1,10 +1,20 @@
 
+
+(* TODO: Figure out the best bound for this and ensure the more
+  accurate method is used. I think that Cephes might already do this
+  but I need to make sure. *)
+let erf = Ocephes.erf
+let erfc = Ocephes.erfc
+
 let gamma = Ocephes.gamma
 let ln_gamma = Ocephes.lgam
 
-let ln_beta, beta =
-  let beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y) in
-  beta, fun x y -> (exp (beta x y))
+let regularized_lower_gamma = Ocephes.igam
+let regularized_upper_gamma = Ocephes.igamc
+
+let ln_beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y)
+
+let beta x y = exp (ln_beta x y)
 
 let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
   let get_b n x =
@@ -28,16 +38,11 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 log a -. log_beta) *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
-let erf = Ocephes.erf
-let erfc = Ocephes.erfc
-
-let gammap = Ocephes.igam
-let gammaq = Ocephes.igamc
-
 let chi_square_less chi_square num_observations =
-  gammap ((float num_observations) /. 2.0) (chi_square /. 2.0)
+  regularized_lower_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
+
 let chi_square_greater chi_square num_observations =
-  gammaq ((float num_observations) /. 2.0) (chi_square /. 2.0)
+  regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
 
 let t_lookup alpha_level dgf = failwith "Not implemented"
 

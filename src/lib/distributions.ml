@@ -20,7 +20,7 @@ let standard_normal_pdf =
   normal_pdf ~mean:0.0 ~std:1.0
 
 let poisson_cdf ~mean k =
-    Functions.gammaq (floor (k +. 1.0)) mean
+    Functions.regularized_upper_gamma (floor (k +. 1.0)) mean
 
 let ln_beta_pdf ~alpha ~beta =
   if alpha <= 0.0 then raise (Invalid_argument "alpha") else
