@@ -17,10 +17,24 @@ type test =
 (** Describe a hypothesis test. *)
 val test_to_string : test -> string
 
-type null_hypothesis =
-  | TwoTail
-  | OneTail
-
 (** [chi observed expected] computes Pearson's Chi squared test of drawing
   [observed] data from the the same categorical distribution as [expected]. *)
 val chi : float array -> float array -> test
+
+type null_hypothesis =
+  | TwoTail   (* the sample mean equals the population mean. *)
+  | OneTail   (* the sample mean is less than or greater than
+                 the population mean. *)
+
+val simple_t_test : null_hypothesis -> int -> float -> float -> test
+
+val mean_t_test : float -> null_hypothesis -> float array -> test
+
+val equal_means_same_variance_test : null_hypothesis -> float array
+                                      -> float array -> test
+
+val unequal_variance_test : null_hypothesis -> float array -> float array -> test
+
+val different_variances_test : float array -> float array -> test
+
+val correlation_test : float array -> float array -> test
