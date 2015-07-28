@@ -4,7 +4,7 @@ open Descriptive
 
 let prediction_interval alpha dist_stat =
   let n = dist_stat.size in
-  let t_value = Functions.t_lookup alpha n in
+  let t_value = Functions.student_t_less n alpha in
   let std = sqrt dist_stat.var in
   let m   = sqrt (1.0 +. (1.0 /. (float n))) in
   let dev = t_value *. std *. m in
@@ -29,7 +29,7 @@ let chi observed expected =
   in
   let degrees_of_freedom = float dgf in
   { degrees_of_freedom  ; stat
-  ; prob_by_chance      = Functions.chi_square_greater stat dgf
+  ; prob_by_chance      = Functions.chi_square_greater dgf stat
   ; standard_error      = sqrt (2.0 *. degrees_of_freedom)
   }
 

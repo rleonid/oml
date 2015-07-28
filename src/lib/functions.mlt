@@ -16,6 +16,7 @@ let fac i =
   in loop 1 i
 
 let () =
+  let equalfe8 = Assert.equalf ~eq:(equal_floats ~d:1e-8) in
   (* Gamma *)
   Test.add_random_test
     ~title:"Functions, gamma defined for (0+dx,1e2) positive values."
@@ -73,13 +74,21 @@ let () =
 
   (* Chi *)
   Test.add_random_test
-    ~title:"Functions, Chi less and greater should sum to 1.0"
+    ~title:"Functions, Chi less and greater should sum to 1.0."
     Gen.(zip2 (make_int 2 100) (make_float Util.dx 1e3))
     (fun (df, x) ->
-      let l = chi_square_less x df in
-      let g = chi_square_greater x df in
+      let l = chi_square_less df x in
+      let g = chi_square_greater df x in
       equal_floats ~d:1e-8 1.0 (l +.g))
     Spec.([just_postcond_pred is_true]);
+
+  (* Student T *)
+  Test.add_simple_test
+    ~title:"Functions, Student T's correct for some checked values."
+    (fun () ->
+      equalfe8 0.67427601 (student_t_less 3 0.5);
+      equalfe8 0.59617590 (student_t_less 10 0.25);
+      equalfe8 0.90170527 (student_t_less 100 1.3))
 
   (* Softmax. *)
   let temp_opt =

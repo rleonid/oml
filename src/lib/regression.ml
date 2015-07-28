@@ -74,7 +74,7 @@ let linear_regress ?pred_variance ~resp ~pred () =
   let q =
     match pred_variance with
     | None   -> None
-    | Some _ -> Some (Functions.chi_square_greater chi_square (truncate deg_of_freedom))
+    | Some _ -> Some (Functions.chi_square_greater (truncate deg_of_freedom) chi_square)
   in
   (*let n = Array.length residuals in
   let d_w = durbin_watson residuals in *)
@@ -97,7 +97,7 @@ let confidence_interval, prediction_interval =
   let interval a lrm ~alpha_level x =
     let dgf = lrm.size -. 2.0 in
     let dgi = truncate dgf in
-    let t  = Functions.t_lookup (alpha_level /. 2.0) dgi in
+    let t  = Functions.student_t_less dgi (alpha_level /. 2.0) in
     let y  = eval_lrm lrm x in
     let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
     let c  = lrm.chi_square /. (lrm.size -. 2.0) in

@@ -39,20 +39,22 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 log a -. log_beta) *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
-let chi_square_less chi_square num_observations =
-  regularized_lower_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
-
-let chi_square_greater chi_square num_observations =
-  regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
-
-let t_lookup t dgf =
-  let v = float dgf in
-  let x = Float.(v / (t * t + v)) in
-  Float.(1.0 - 0.5 * (regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
-
 let softmax ?(temperature=1.0) weights =
   if Array.length weights = 0 then raise (Invalid_argument "weights") else
   if temperature = 0.0 then raise (Invalid_argument "temperature") else
     let weights = Array.map (fun w -> exp (w /. temperature)) weights in
     let sum = Array.fold_left (+.) 0.0 weights in
     Array.map (fun w -> w /. sum) weights
+
+let chi_square_less num_observations chi_square =
+  regularized_lower_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
+
+let chi_square_greater num_observations chi_square =
+  regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
+
+let student_t_less dgf t =
+  let v = float dgf in
+  let x = Float.(v / (t * t + v)) in
+  Float.(1.0 - 0.5 * (regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
+
+
