@@ -56,3 +56,6 @@ let normal_cdf_inv = Ocephes.ndtri
 
 let student_cdf_inv = Ocephes.stdtri
 
+let f_less ~d1 ~d2 x =
+  let xr = Float.((d1 * x) / (d1 * x + d2)) in
+  regularized_beta ~alpha:(d1 /. 2.) ~beta:(d2 /. 2.) xr

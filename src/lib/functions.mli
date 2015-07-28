@@ -78,3 +78,7 @@ val normal_cdf_inv : float -> float
 (** [student_cdf_inv k x] returns the value [y] such that the integral of the
     Students T distribution with [k] degrees of freedom is [x].*)
 val student_cdf_inv : int -> float -> float
+
+(** [f_less d1 d2 x] computes the probability of seeing a value less than [x]
+    in an F-distribution parameterized by [d1] and [d2]. *)
+val f_less : d1:float -> d2:float -> float -> float
