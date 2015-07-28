@@ -57,4 +57,7 @@ let student_t_less dgf t =
   let x = Float.(v / (t * t + v)) in
   Float.(1.0 - 0.5 * (regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
 
+let f_less ~d1 ~d2 x =
+  let xr = Float.((d1 * x) / (d1 * x + d2)) in
+  regularized_beta ~alpha:(d1 /. 2.) ~beta:(d2 /. 2.) xr
 

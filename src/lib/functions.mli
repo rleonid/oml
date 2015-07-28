@@ -67,4 +67,6 @@ val chi_square_greater : int -> float -> float
     [x] in a Student t distribution with [k] degrees of freedom. *)
 val student_t_less : int -> float -> float
 
-
+(** [f_less d1 d2 x] computes the probability of seeing a value less than [x]
+    in an F-distribution parameterized by [d1] and [d2]. *)
+val f_less : d1:float -> d2:float -> float -> float
