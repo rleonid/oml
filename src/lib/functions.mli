@@ -45,15 +45,23 @@ val ln_beta : float -> float -> float
 val regularized_beta : alpha:float -> beta:float -> ?epsilon:float ->
   ?max_iterations:int -> float -> float
 
-(** [chi_square_less x k] computes the probability of
+(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
+    on [temperature].
+
+    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
+val softmax : ?temperature:float -> float array -> float array
+
+(** Distribution CDF's *)
+
+(** [chi_square_less k x] computes the probability of
     seeing a value less than [x] in a Chi-square distribution with [k] degrees
     of freedom.*)
-val chi_square_less : float -> int -> float
+val chi_square_less : int -> float -> float
 
-(** [chi_square_greater x k] computes the probability of
-    seeing a value greather than [x] in a Chi-square distribution with [k]
-    degrees of freedom.*)
-val chi_square_greater : float -> int -> float
+(** [chi_square_greater k x] computes the probability of seeing a value
+    greather than [x] in a Chi-square distribution with [k] degrees of
+    freedom.*)
+val chi_square_greater : int -> float -> float
 
 (*val t_lookup : float -> int -> float *)
 

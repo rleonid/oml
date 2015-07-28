@@ -29,7 +29,7 @@ let chi observed expected =
   in
   let degrees_of_freedom = float dgf in
   { degrees_of_freedom  ; stat
-  ; prob_by_chance      = Functions.chi_square_greater stat dgf
+  ; prob_by_chance      = Functions.chi_square_greater dgf stat
   ; standard_error      = sqrt (2.0 *. degrees_of_freedom)
   }
 

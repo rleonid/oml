@@ -74,7 +74,7 @@ let linear_regress ?pred_variance ~resp ~pred () =
   let q =
     match pred_variance with
     | None   -> None
-    | Some _ -> Some (Functions.chi_square_greater chi_square (truncate deg_of_freedom))
+    | Some _ -> Some (Functions.chi_square_greater (truncate deg_of_freedom) chi_square)
   in
   (*let n = Array.length residuals in
   let d_w = durbin_watson residuals in *)
