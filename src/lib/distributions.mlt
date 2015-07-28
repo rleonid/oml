@@ -34,4 +34,15 @@ let () =
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
 
+  (* Student T 
+  Test.add_simple_test
+    ~title:"Functions, Student T's correct for some checked values."
+    (fun () ->
+      equalfe8 0.67427601 (student_cdf ~k:3 0.5);
+      equalfe8 0.59617590 (student_cdf ~k:10 0.25);
+      equalfe8 0.90170527 (student_cdf ~k:100 1.3))
+*)
+
+
   ()
+
