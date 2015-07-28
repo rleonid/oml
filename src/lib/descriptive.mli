@@ -128,7 +128,7 @@ type kurtosis_classification =
 val classify_kurtosis : float array -> kurtosis_classification
 
 (** Common statistics that describe data. *)
-type commentary =
+type summary =
   { size     : int
   ; min      : float
   ; max      : float
@@ -139,8 +139,8 @@ type commentary =
   ; kurtosis : float * kurtosis_classification
   }
 
-(** [unbiased_commentary data] summarizes [data] into a [commentary]. *)
-val unbiased_commentary : float array -> commentary
+(** [unbiased_summary data] summarizes [data] into a [summary]. *)
+val unbiased_summary : float array -> summary
 
 (** [histogram data width_setting] group [data] into a specific number of buckets
     of given width (according to [width_setting]:

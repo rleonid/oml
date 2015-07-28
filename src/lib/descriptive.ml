@@ -114,7 +114,7 @@ let classify_kurtosis arr =
   else if s > 1.0 then `Slightly_fat
   else `Normal
 
-type commentary =
+type summary =
   { size     : int
   ; min      : float
   ; max      : float
@@ -125,16 +125,16 @@ type commentary =
   ; kurtosis : float * kurtosis_classification
   }
 
-let unbiased_commentary arr =
+let unbiased_summary arr =
   let v = unbiased_var arr in
   let s = unbiased_skew arr in
   let k = unbiased_kurtosis arr in
   let sc = classify_skew arr in
   let kc = classify_kurtosis arr in
   { size     = Array.length arr
-  ; min      = mean arr
-  ; max      = Array.min arr
-  ; mean     = Array.max arr
+  ; min      = Array.min arr
+  ; max      = Array.max arr
+  ; mean     = mean arr
   ; std      = sqrt (unbiased_var arr)
   ; var      = v
   ; skew     = s, sc

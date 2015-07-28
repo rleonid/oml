@@ -2,7 +2,7 @@
 (** When we do not know the mean or standard deviation of a distribution
     we can still create a prediction interval based off distribution stat.
 *)
-val prediction_interval : float -> Descriptive.commentary -> float * float
+val prediction_interval : float -> Descriptive.summary -> float * float
 
 (** A hypothesis test. *)
 type test =
