@@ -3,13 +3,14 @@ open Util
 open Descriptive
 open Functions
 
-let prediction_interval alpha dist_stat =
-  let k = dist_stat.size in
-  let t_value = Distributions.student_quantile k alpha in
-  let std = sqrt dist_stat.var in
-  let m   = sqrt (1.0 +. (1.0 /. (float k))) in
-  let dev = t_value *. std *. m in
-  (dist_stat.mean -. dev, dist_stat.mean +. dev)
+let prediction_interval_sub k std mean alpha =
+  let t_v = Distributions.student_quantile (k - 1) (alpha /. 2.) in
+  let fk  = float k in
+  let d   = Float.(t_v * std * sqrt (1. + (1. / fk))) in
+  (mean -. d, mean +. d)
+
+let prediction_interval dist_stat =
+  prediction_interval_sub dist_stat.size dist_stat.std dist_stat.mean
 
 type test =
   { standard_error      : float

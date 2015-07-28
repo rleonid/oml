@@ -1,8 +1,16 @@
 
-(** When we do not know the mean or standard deviation of a distribution
-    we can still create a prediction interval based off distribution stat.
-*)
-val prediction_interval : float -> Descriptive.summary -> float * float
+(** Infer probabilities from data. *)
+
+(** [prediction_interval stats alpha]
+  Creates a prediction interval for the distribution described by [stats]
+  at an [alpha] level of statistical significance; future observations
+  will fall within the bounds with probabiltiy [1.0 - alpha].
+
+  When we do not know the mean or standard deviation of a distribution
+  we can still create a prediction interval based off of basic sampled
+  statistics and Student's distribution.
+  *)
+val prediction_interval : Descriptive.summary -> float -> float * float
 
 (** A hypothesis test. *)
 type test =
