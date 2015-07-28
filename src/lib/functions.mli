@@ -38,7 +38,7 @@ val beta : float -> float -> float
 (** [ln_beta x y]  computes [log (beta x y)], for more accuracy.*)
 val ln_beta : float -> float -> float
 
-(** [regularized_beta ?epsilon ?max_iterations ~alpha ~beta x] computes 
+(** [regularized_beta ?epsilon ?max_iterations ~alpha ~beta x] computes
     the regularized (divided by [beta alpha beta]) incomplete beta function,
     which is the partial (0 to [x]) integral of the beta function paramterized
     by [alpha] and [beta]. *)
@@ -55,10 +55,18 @@ val chi_square_less : float -> int -> float
     degrees of freedom.*)
 val chi_square_greater : float -> int -> float
 
-val t_lookup : float -> int -> float
+(*val t_lookup : float -> int -> float *)
 
 (** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
     on [temperature].
 
     @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
 val softmax : ?temperature:float -> float array -> float array
+
+(** [normal_cdf_inv x] returns the value [y] such that the integral of the
+    normal cdf is [x]. *)
+val normal_cdf_inv : float -> float
+
+(** [student_cdf_inv k x] returns the value [y] such that the integral of the
+    Students T distribution with [k] degrees of freedom is [x].*)
+val student_cdf_inv : int -> float -> float

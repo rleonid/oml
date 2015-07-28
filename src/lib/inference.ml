@@ -3,10 +3,10 @@ open Util
 open Descriptive
 
 let prediction_interval alpha dist_stat =
-  let n = dist_stat.size in
-  let t_value = Functions.t_lookup alpha n in
+  let k = dist_stat.size in
+  let t_value = Distributions.student_quantile k alpha in
   let std = sqrt dist_stat.var in
-  let m   = sqrt (1.0 +. (1.0 /. (float n))) in
+  let m   = sqrt (1.0 +. (1.0 /. (float k))) in
   let dev = t_value *. std *. m in
   (dist_stat.mean -. dev, dist_stat.mean +. dev)
 
