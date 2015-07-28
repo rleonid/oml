@@ -1,10 +1,10 @@
 
 open Util
 open Descriptive
-open Functions
+open Distributions
 
 let prediction_interval_sub k std mean alpha =
-  let t_v = Distributions.student_quantile (k - 1) (alpha /. 2.) in
+  let t_v = student_quantile ~k:(k - 1) (1.0 -. alpha /. 2.) in
   let fk  = float k in
   let d   = Float.(t_v * std * sqrt (1. + (1. / fk))) in
   (mean -. d, mean +. d)
@@ -24,6 +24,7 @@ let test_to_string t =
                   stat: %.3f, probability observation by chance: %.3f"
         t.standard_error t.degrees_of_freedom t.stat t.prob_by_chance
 
+(* TODO: Refactor the Chi logic to use a cdf *)
 let chi observed expected =
   let dgf = Array.length expected - 1 in
   let stat =
@@ -32,7 +33,7 @@ let chi observed expected =
   in
   let degrees_of_freedom = float dgf in
   { degrees_of_freedom  ; stat
-  ; prob_by_chance      = chi_square_greater dgf stat
+  ; prob_by_chance      = Functions.chi_square_greater dgf stat
   ; standard_error      = sqrt (2.0 *. degrees_of_freedom)
   }
 
@@ -43,9 +44,7 @@ type null_hypothesis =
 let simple_t_test hypothesis degrees_of_freedom standard_error stat_diff =
   let stat = stat_diff /. standard_error in
   let prob_by_chance =
-    let p = 1.0 -. (student_t_less degrees_of_freedom
-      (abs_float stat))
-    in
+    let p = 1.0 -. (student_quantile ~k:degrees_of_freedom (abs_float stat)) in
     match hypothesis with
     | TwoTail -> p
     | OneTail -> p /. 2.0
@@ -65,8 +64,8 @@ let mean_t_test population_mean hypothesis arr =
   let deg_free = n -. 1.0 in
   let prob_by_chance =
     match hypothesis with
-    | TwoTail -> 1.0 -. (student_t_less (truncate deg_free) (abs_float stat))
-    | OneTail -> (1.0 -. (student_t_less (truncate deg_free) (abs_float stat))) /. 2.0
+    | TwoTail -> 1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat))
+    | OneTail -> (1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat))) /. 2.0
   in
   { standard_error = se
   ; degrees_of_freedom = deg_free
@@ -91,8 +90,8 @@ let equal_means_same_variance_test hypothesis arr1 arr2 =
   let stat = (m1 -. m2) /. se in
   let prob_by_chance =
     match hypothesis with
-    | TwoTail -> 1.0 -. (student_t_less (truncate deg_free) (abs_float stat));
-    | OneTail -> (1.0 -. (student_t_less (truncate deg_free) (abs_float stat)) /. 2.0);
+    | TwoTail -> 1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat));
+    | OneTail -> (1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat)) /. 2.0);
   in
   { standard_error = se
   ; degrees_of_freedom = deg_free
@@ -123,8 +122,8 @@ let unequal_variance_test hypothesis arr1 arr2 =
   (* this distribution according to Numerical recipes is approximately Student. *)
   let prob_by_chance =
     match hypothesis with
-    | TwoTail -> 1.0 -. (student_t_less (truncate deg_free) (abs_float stat));
-    | OneTail -> (1.0 -. (student_t_less (truncate deg_free) (abs_float stat)) /. 2.0);
+    | TwoTail -> 1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat));
+    | OneTail -> (1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat)) /. 2.0);
   in
   { standard_error = se
   ; degrees_of_freedom = deg_free
@@ -141,7 +140,7 @@ let different_variances_test arr1 arr2 =
     else
       v2 /. v1, float (Array.length arr2), float (Array.length arr1)
   in
-  let p = 2.0 *. f_less dgf1 dgf2 f in
+  let p = 2.0 *. Functions.f_less dgf1 dgf2 f in
   let p = if p > 1.0 then 2.0 -. p else p in
   { standard_error = 0.0
   ; degrees_of_freedom = dgf1 +. dgf2
@@ -157,5 +156,5 @@ let correlation_test arr1 arr2 =
   { standard_error = 0.0
   ; degrees_of_freedom = deg_free
   ; stat
-  ; prob_by_chance = 1.0 -. (student_t_less (truncate deg_free) (abs_float stat));
+  ; prob_by_chance = 1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float stat));
   }
