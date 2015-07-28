@@ -155,8 +155,23 @@ let () =
       let _ = kurtosis_standard_error data in
       let _ = classify_skew data in
       let _ = classify_kurtosis data in
-      let _ = unbiased_commentary data in
       true)
+    Spec.([just_postcond_pred is_true]);
+
+  (* Just a regression test to make sure we don't break the 1-1. *)
+  Test.add_random_test
+    ~title:"Descriptive: unbaised_summary is just that."
+    test_data
+    (fun data ->
+      let s = unbiased_summary data in
+      s.size      = Array.length data &&
+      s.min       = Array.min data &&
+      s.max       = Array.max data &&
+      s.mean      = mean data &&
+      s.std       = sqrt (unbiased_var data) &&
+      s.var       = unbiased_var data &&
+      s.skew      = (unbiased_skew data, classify_skew data) &&
+      s.kurtosis  = (unbiased_kurtosis data, classify_kurtosis data))
     Spec.([just_postcond_pred is_true]);
 
   Test.add_random_test
