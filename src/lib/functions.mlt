@@ -16,7 +16,6 @@ let fac i =
   in loop 1 i
 
 let () =
-  let equalfe8 = Assert.equalf ~eq:(equal_floats ~d:1e-8) in
   (* Gamma *)
   Test.add_random_test
     ~title:"Functions, gamma defined for (0+dx,1e2) positive values."
