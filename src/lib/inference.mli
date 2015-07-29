@@ -61,6 +61,6 @@ val means_same_variance_test : null_hypothesis -> float array
 val means_different_variance_test : null_hypothesis -> float array
                                       -> float array -> test
 
-val different_variances_test : float array -> float array -> test
-
-val correlation_test : float array -> float array -> test
+(** [variance_ratio_test sample1 sample2] tests the data in [sample1] and
+    [sample2] have the same variance based on F-test.*)
+val variance_ratio_test : float array -> float array -> test

@@ -118,30 +118,21 @@ let means_different_variance_test hypothesis arr1 arr2 =
     than rounding up! *)
   t_test hypothesis (truncate dg) ~diff ~error
 
-let different_variances_test arr1 arr2 =
-  let v1 = var arr1 in
-  let v2 = var arr2 in
+let variance_ratio_test arr1 arr2 =
+  let v1 = unbiased_var arr1 in
+  let v2 = unbiased_var arr2 in
+  let dg1 = float (Array.length arr1 - 1) in
+  let dg2 = float (Array.length arr2 - 1) in
   let f, dgf1, dgf2 =
     if v1 > v2 then
-      v1 /. v2, float (Array.length arr1), float (Array.length arr2)
+      v1 /. v2, dg1, dg2
     else
-      v2 /. v1, float (Array.length arr2), float (Array.length arr1)
+      v2 /. v1, dg2, dg1
   in
   let p = 2.0 *. Functions.f_less dgf1 dgf2 f in
   let p = if p > 1.0 then 2.0 -. p else p in
-  { standard_error = 0.0
-  ; degrees_of_freedom = dgf1 +. dgf2
+  { degrees_of_freedom = dgf1 +. dgf2
   ; statistic = f
+  ; standard_error = nan
   ; prob_by_chance = p
-  }
-
-let correlation_test arr1 arr2 =
-  let r = correlation arr1 arr2 in
-  (* test of correlation assumes that the sizes are the same. *)
-  let deg_free = float (Array.length arr1 - 2) in
-  let statistic = r *. sqrt ( deg_free /. (1.0 -. r *. r)) in
-  { standard_error = 0.0
-  ; degrees_of_freedom = deg_free
-  ; statistic
-  ; prob_by_chance = 1.0 -. (student_quantile ~k:(truncate deg_free) (abs_float statistic));
   }

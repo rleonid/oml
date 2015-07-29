@@ -3,7 +3,9 @@ open Test_utils
 
 let () =
   let equalf = Assert.equalf ~eq:(fun x y ->
-    not (Util.significantly_different_from ~d:1e-4 x y))
+    if Util.is_nan x then Util.is_nan y else
+      not (Util.is_nan y) &&
+      not (Util.significantly_different_from ~d:1e-4 x y))
   in
   (* Mendel's peas from "All of Statistics". *)
   Test.add_simple_test
@@ -71,4 +73,9 @@ let () =
       let tst = means_different_variance_test TwoSided data2 data in
       equal_test tst 16.0 1.1165 2.4063 0.2807);
 
+  Test.add_simple_test
+    ~title:"Inference, variance test."
+    (fun () ->
+      let tst = variance_ratio_test data2 data in
+      equal_test tst 18. 1.8398 nan 0.3773);
   ()
