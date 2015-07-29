@@ -3,10 +3,13 @@ open Test_utils
 
 let () =
   let equalf = Assert.equalf ~eq:(fun x y ->
-    not (Util.significantly_different_from ~d:1e-6 x y))
+    if Util.is_nan x then Util.is_nan y else
+      not (Util.is_nan y) &&
+      not (Util.significantly_different_from ~d:1e-4 x y))
   in
   (* Mendel's peas from "All of Statistics". *)
-  Test.add_simple_test ~title:"Inference, Chi test of Mendel's peas."
+  Test.add_simple_test
+    ~title:"Inference, Chi test of Mendel's peas."
     (fun () ->
       let exp_prob = [| 9./.16.; 3./.16.; 3./.16.; 1./.16.|] in
       let n   = float 556 in
@@ -14,5 +17,65 @@ let () =
       let obs = [| 315.; 101.; 108.; 32.|] in
       let t   = chi obs exp in
       equalf 3.0 t.degrees_of_freedom;
-      equalf 0.470023980815 t.stat;
-      equalf 0.925425895104 t.prob_by_chance)
+      equalf 0.470023980815 t.statistic;
+      equalf 0.925425895104 t.prob_by_chance);
+
+  let data =
+    [| 102.319612; 89.168824; 102.688238; 92.326973; 104.518277; 98.503768
+     ; 109.027087; 99.954093; 101.932342; 93.302419 |]
+  in
+  let equal_test tst df st se pc =
+    equalf tst.degrees_of_freedom df;
+    equalf tst.statistic st;
+    equalf tst.standard_error se;
+    equalf tst.prob_by_chance pc;
+  in
+  (* Tested against http://vassarstats.net/ *)
+  Test.add_simple_test
+    ~title:"Inference, simple mean test, OneSided"
+    (fun () ->
+      let tst = mean_t_test 98.0 OneSided data in
+      equal_test tst 9.0 0.70951 1.9368 0.2479915);
+
+  Test.add_simple_test
+    ~title:"Inference, simple mean test, TwoSided"
+    (fun () ->
+      let tst = mean_t_test 98.0 TwoSided data in
+      equal_test tst 9. 0.70951 1.9368 0.495983);
+
+  let data2 =
+    [| 99.231957; 100.019800; 106.494726; 99.748957; 106.593991; 108.913006
+     ; 97.565564; 95.121595; 105.271107; 101.647275;
+    |]
+  in
+  (* Also tested against http://vassarstats.net/ *)
+  Test.add_simple_test
+    ~title:"Inference, mean tests equal var, OneSided"
+    (fun () ->
+      let tst = means_same_variance_test OneSided data2 data in
+      equal_test tst 18.0 1.1164 2.4063 0.1394);
+
+  Test.add_simple_test
+    ~title:"Inference, mean tests equal var, TwoSided"
+    (fun () ->
+      let tst = means_same_variance_test TwoSided data2 data in
+      equal_test tst 18.0 1.1164 2.4063 0.2789);
+
+  Test.add_simple_test
+    ~title:"Inference, mean tests different var, OneSided"
+    (fun () ->
+      let tst = means_different_variance_test OneSided data2 data in
+      equal_test tst 16.0 1.1165 2.4063 0.1403);
+
+  Test.add_simple_test
+    ~title:"Inference, mean tests different var, TwoSided"
+    (fun () ->
+      let tst = means_different_variance_test TwoSided data2 data in
+      equal_test tst 16.0 1.1165 2.4063 0.2807);
+
+  Test.add_simple_test
+    ~title:"Inference, variance test."
+    (fun () ->
+      let tst = variance_ratio_test data2 data in
+      equal_test tst 18. 1.8398 nan 0.3773);
+  ()

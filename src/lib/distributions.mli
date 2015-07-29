@@ -3,25 +3,30 @@
 
 (** [normal_cdf mean std x] probability that a normal random
     variable with [mean] and standard deviation [std] takes a value less than
-    or equal to [x]. *)
-val normal_cdf : mean:float -> std:float -> float -> float
+    or equal to [x].  [mean] defaults to 0.0 and [std] to 1.0.
+*)
+val normal_cdf : ?mean:float -> ?std:float -> float -> float
 
 (** [normal_pdf mean std x] value of the Normal distribution
-    function (with [mean] and standard deviation [std]) at [x].*)
-val normal_pdf : mean:float -> std:float -> float -> float
+    function (with [mean] and standard deviation [std]) at [x].
+    [mean] defaults to 0.0 and [std] to 1.0.
+*)
+val normal_pdf : ?mean:float -> ?std:float -> float -> float
 
-(** [normal_quantile ~mean ~std p] computes [x] such that
-    [normal_cdf mean std x = p].
+(** [normal_quantile ?mean ?std p] computes [x] such that
+    [normal_cdf mean std x = p]. [mean] defaults to 0.0 and [std] to 1.0.
 
     @raise Invalid_argument if [p] is outside [0,1].
 *)
-val normal_quantile : mean:float -> std:float -> float -> float
+val normal_quantile : ?mean:float -> ?std:float -> float -> float
 
+(*
 (** [standard_normal_cdf x] is equivalent to [normal_cdf ~mean:0 ~std:1 x]. *)
 val standard_normal_cdf : float -> float
 
 (** [standard_normal_pdf x] is equivalent to [normal_pdf ~mean:0 ~std:1 x]. *)
 val standard_normal_pdf : float -> float
+*)
 
 (** [poisson_cdf mean x] the probability that a Poisson random variable with
     [mean] will take a value less than or equal to [x]. *)

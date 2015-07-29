@@ -39,10 +39,10 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 log a -. log_beta) *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
-let chi_square_less chi_square num_observations =
+let chi_square_less num_observations chi_square =
   regularized_lower_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
 
-let chi_square_greater chi_square num_observations =
+let chi_square_greater num_observations chi_square =
   regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
 
 let softmax ?(temperature=1.0) weights =
@@ -56,3 +56,6 @@ let normal_cdf_inv = Ocephes.ndtri
 
 let student_cdf_inv = Ocephes.stdtri
 
+let f_less ~d1 ~d2 x =
+  let xr = Float.((d1 * x) / (d1 * x + d2)) in
+  regularized_beta ~alpha:(d1 /. 2.) ~beta:(d2 /. 2.) xr
