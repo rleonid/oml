@@ -12,14 +12,14 @@
   *)
 val prediction_interval : Descriptive.summary -> float -> float * float
 
-(** A hypothesis test. *)
+(** A hypothesis test.  *)
 type test =
-  { standard_error     : float
-  ; degrees_of_freedom : float
-  ; stat               : float
-  ; prob_by_chance     : float (** the probability that |t_stat| could be this
-                                   large (or larger) by chance, for
-                                   distributions with equal means. *)
+  { degrees_of_freedom : float  (** Can be non-integer due to corrections. *)
+  ; statistic          : float  (** The value that we're testing. *)
+  ; standard_error     : float  (** The scaled version of the statistic. *)
+  ; prob_by_chance     : float  (** The probability that statistic could be
+                                    this large (or larger) by chance, for the
+                                    specified conditions of the test. *)
   }
 
 (** Describe a hypothesis test. *)
@@ -30,18 +30,36 @@ val test_to_string : test -> string
 val chi : float array -> float array -> test
 
 type null_hypothesis =
-  | TwoTail   (* the sample mean equals the population mean. *)
-  | OneTail   (* the sample mean is less than or greater than
-                 the population mean. *)
+  | TwoSided   (* the sample mean equals the population mean. *)
+  | OneSided   (* the sample mean is less than or greater than
+                  the population mean. *)
 
-val simple_t_test : null_hypothesis -> int -> float -> float -> test
+(** [t_test nh k d e] conducts a simple T test, against a [nh] null
+    hypothesis, where [d] is the difference between population parameter and
+    the observed value, [e] is the standard error of the observed value, and
+    [k] is the degrees of freedom in the statistical procedure.
+    
+    One may think of this as a principled way to test the signal (diff)
+    to noise (error) seen in a sample of data. *)
+val t_test : null_hypothesis -> int -> diff:float -> error:float -> test
 
+(** [mean_t_test population_mean nh samples] conduct a T-test to see if the
+    [sample]'s mean is different from the [population_mean] according to the
+    null hypothesis [nh].  *)
 val mean_t_test : float -> null_hypothesis -> float array -> test
 
-val equal_means_same_variance_test : null_hypothesis -> float array
+(** [means_same_variance_test nh sample1 sample2] if we can assume that
+    [sample1] and [sample2] have the same variance, test whether they have
+    the same mean given the null hypothesis [nh]. *)
+val means_same_variance_test : null_hypothesis -> float array
                                       -> float array -> test
 
-val unequal_variance_test : null_hypothesis -> float array -> float array -> test
+(** [means_different_variance_test nh sample1 sample2] when we cannot assume
+    that [sample1] and [sample2] have the same variance, test whether they
+    do indeed have the same mean given the null hypothesis [nh]. AKA Welch's
+    test.  *)
+val means_different_variance_test : null_hypothesis -> float array
+                                      -> float array -> test
 
 val different_variances_test : float array -> float array -> test
 
