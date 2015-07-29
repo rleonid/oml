@@ -1,41 +1,36 @@
 
-(** A fit linear model. *)
-type linear_model =
-  { m_pred                : float         (** Mean of predictor variable. *)
-  ; m_resp                : float         (** Mean of response variable. *)
-  ; size                  : float         (** Number of observations. *)
-  ; alpha                 : float         (** Constant term of model. *)
-  ; beta                  : float         (** Linear multiplicative term. *)
-  ; correlation           : float         (** Pearson correlation of response
-                                              to predictor.*)
-  ; chi_square            : float         (** Chi^2 of the residuals. *)
-  ; inferred_response_var : float         (** *)
-  ; goodness_of_fit       : float option  (** *)
-  ; s_xx                  : float         (** Sum of squared difference to
-                                              [m_pred] useful by interval. *)
-  }
+module type LINEAR_MODEL = sig
 
-(** [to_string lrm] returns a string representing the inferred linear model. *)
-val to_string : linear_model -> string
+  type input
+  type t
 
-(** [eval_lrm linear_model x] evaluate the [linear_model] at [x]. *)
-val eval_lrm : linear_model -> float -> float
+  (** [describe t] returns a string describing the regressed linear model.*)
+  val describe : t -> string
 
-(** [linear_regress ?pred_variance resp pred] create a linear model that
-    estimates [resp = alpha + beta * pred].
+  type spec
 
-    [pred_variance] represents the assumed variance in the [pred] elements and
-    defaults to 1 for all elements. *)
-val linear_regress : ?pred_variance:float array -> resp:float array ->
-                      pred:float array -> unit -> linear_model
+  (** [regress options pred resp ()] computes a linear model of [resp] based
+      off of the independent variables in the design matrix [pred], taking
+      into account the various method [spec]s. *)
+  val regress : spec option -> pred:input array -> resp:float array -> unit
+                  -> t
 
-(** [confidence_interval linear_model alpha_level x], given [linear_model]
-    compute the alpha (ex 0.95) confidence interval around [x]. *)
-val confidence_interval : linear_model -> alpha_level:float -> float -> float * float
+  (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
+  val eval : t -> input -> float
 
-(** [prediction_interval linear_model alpha_level x], given [linear_model]
-    compute the alpha (ex 0.95) prediction interval around [x]. *)
-val prediction_interval : linear_model -> alpha_level:float -> float -> float * float
+  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
+      construct confidence intervals at [x] at an [alpha]-level of significance.
+  *)
+  val confidence_interval : t -> alpha:float -> input -> float * float
+
+  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
+      construct prediction intervals at [x] at an [alpha]-level of significance.
+  *)
+  val prediction_interval : t -> alpha:float -> input -> float * float
+
+end
+
+module Univarite : LINEAR_MODEL
 
 (** A [general_linear_model] is a linear model over a vector space,
     allowing the user to perform multiple linear regression. *)
