@@ -37,6 +37,7 @@ end
 module Univarite = struct
 
   type input = float
+
   type t = { m_pred                : float
            ; m_resp                : float
            ; size                  : float
@@ -66,11 +67,17 @@ module Univarite = struct
 
   let regress pred_variance ~pred ~resp =
     let corr = correlation pred resp in
-    let deg_of_freedom = float (Array.length pred - 2) in (* one for the constant and one for beta *)
+    let n = Array.length pred in
+    let deg_of_freedom = float (n - 2) in (* one for the constant and one for beta *)
     let act_pv =
       match pred_variance with
       | None -> Array.init (Array.length pred) (fun _ -> 1.0)
-      | Some a -> a
+      | Some a ->
+          let an = Array.length a in
+          if an <> n then
+            invalidArg "regress: spec length %d <> d predictor size %d" an n
+          else
+            a
     in
     let s   = Array.sumf (Array.map (fun v -> 1.0 /. v) act_pv) in          (* a funny way of saying n *)
     let s_x = Array.sumf (Array.map2 (fun x v -> x /. v) pred act_pv) in
@@ -151,61 +158,15 @@ module Univarite = struct
 end
 
 type lambda_spec =
-  [ `Spec of float
-  | `From of float array
-  | `Within of float * float * float  (* lower bound, upper bound, stopping distance. *)
-  ]
+  | Spec of float
+  | From of float array
 
 type multivariate_spec =
   { add_constant_column : bool
   ; lambda_spec : lambda_spec option
   }
 
-module Multivariate = struct
-
-  type input = float array
-
-  type t = { padded                  : bool
-           ; g_m_pred                : float array
-           ; g_m_resp                : float
-           ; deg_of_freedom          : float
-           ; coefficients            : float array
-           (*; coefficient_tests     : test array *)
-           ; correlations            : float array
-           ; chi_square              : float
-           ; g_inferred_response_var : float
-           ; sum_squares             : float
-           ; cod                     : float
-           ; adj_cod                 : float
-           ; covariance              : float array array
-           ; residuals               : float array
-(*                         ; d_w                     : float
-           Durbin Watson scores. [0..4] with a mean of 2.0 lower
-           ( < 1) indicates positive correlation while
-           higher (> 3) indicates negative correlation. *)
-           ; aic                     : float
-           ; loocv                   : float array
-           }
-
-  let describe glm =
-    let coefs =
-      glm.coefficients
-      |> Array.map (sprintf "%0.4f")
-      |> Array.to_list
-      |> String.concat "; "
-    in
-    if glm.padded then
-      sprintf "%s^T * [|1;X|]" coefs
-    else
-      sprintf "%s^T * [|X|]" coefs
-
-  let eval glm vec =
-    if glm.padded then
-      let n = Array.length glm.coefficients in
-      let c = Array.sub glm.coefficients 1 (n - 1) in
-      glm.coefficients.(0) +. Vectors.dot c vec
-    else
-      Vectors.dot glm.coefficients vec
+module SolveLPViaSvd = struct
 
   open Lacaml.D
   open Lacaml_stats
@@ -213,28 +174,11 @@ module Multivariate = struct
   let to_lambda f g lambda_spec =
     let bestl =
       match lambda_spec with
-      | `Spec l -> l
-      | `From arr ->
+      | Spec l -> l
+      | From arr ->
           let loess = Array.map (fun l -> l, g (f l)) arr in
           Array.sort (fun (_,s1) (_,s2) -> compare s1 s2) loess;
           fst loess.(0)
-      | `Within (lb, ub, dl) ->
-          let e l = g (f l) in
-          let rec loop lb ub =
-            let m = midpoint lb ub in
-            if ub -. lb < dl then
-              e m
-            else
-              let m1 = midpoint lb m in
-              let m2 = midpoint m ub in
-              let fm1 = e m1 in
-              let fm2 = e m2 in
-              if fm1 < fm2 then
-                loop lb m
-              else
-                loop m ub
-          in
-          loop lb ub
     in
     bestl, f bestl
 
@@ -312,6 +256,46 @@ module Multivariate = struct
             in
             { coef ; covm ; resi ; looe }
 
+ 
+end
+
+type glm = { padded                  : bool
+           ; g_m_pred                : float array
+           ; g_m_resp                : float
+           ; deg_of_freedom          : float
+           ; coefficients            : float array
+           (*; coefficient_tests     : test array *)
+           ; correlations            : float array
+           ; chi_square              : float
+           ; g_inferred_response_var : float
+           ; sum_squares             : float
+           ; cod                     : float
+           ; adj_cod                 : float
+           ; covariance              : float array array
+           ; residuals               : float array
+  (*                         ; d_w                     : float
+            Durbin Watson scores. [0..4] with a mean of 2.0 lower
+            ( < 1) indicates positive correlation while
+            higher (> 3) indicates negative correlation. *)
+           ; aic                     : float
+           ; loocv                   : float array
+           }
+
+module type SPECTOGLM = sig 
+  type spec
+  type input
+  val regress : spec option -> pred:input array -> resp:float array -> glm
+end
+
+module MultivariateToGlm : SPECTOGLM = struct
+
+  type spec = multivariate_spec
+  type input = float array
+
+  open Lacaml.D
+  open Lacaml_stats
+  open SolveLPViaSvd
+
   let pad_design_matrix pred pad =
     let orig     = Mat.of_array pred in
     let num_obs  = Mat.dim1 orig in       (* rows *)
@@ -326,8 +310,6 @@ module Multivariate = struct
       `Padded (orig, fill), num_obs, num_pred + 1, across_pred_col
     else
       `Unpadded orig, num_obs, num_pred, across_pred_col
-
-  type spec = multivariate_spec
 
   (* Etc:
     - Should I call:
@@ -395,89 +377,148 @@ module Multivariate = struct
     ; loocv = Vec.to_array solved_lp.looe
     }
 
-  let confidence_interval glm ~alpha p = failwith "Not implemented MCI"
-  let prediction_interval glm ~alpha p = failwith "Not implemented MPI"
-
 end
 
-(*
-let gtr_to_lambda fit_model lambda_spec =
-  let g slp = Vec.ssqr slp.looe in
-  to_lambda fit_model g lambda_spec
+type tikhonov_spec =
+  { regularizer : float array array
+  ; lambda_spec : lambda_spec option (* multipliers on the regularizing matrix. *)
+  }
 
-(* TODO: This method can be optimized if we use a different decomposition. *)
-let gtk_solve_lp pred resp tik = function
-  | None ->
-      let covm = gemm ~transa:`T pred pred in
-      Mat.axpy covm tik;
-      getri tik;      (* take inverse with LU decomp, tik is overwritten. *)
-      let coef = gemv (gemm tik ~transb:`T pred) resp in
-      let resi = Vec.sub resp (gemv pred coef) in
-      let looe = full_looe covm pred resi in
-      { coef ; covm ; resi ; looe}
-  | Some lambda_spec ->
-      let covm = gemm ~transa:`T pred pred in
-      let eval l =
-        let copy = lacpy covm in
-        Mat.axpy ~alpha:l tik copy;
-        getri copy;      (* take inverse with LU decomp, tik is overwritten. *)
-        let coef = gemv (gemm copy ~transb:`T pred) resp in
+module TikhonovToGlm : SPECTOGLM = struct
+  
+  type spec = tikhonov_spec
+  type input = float array
+
+  open Lacaml.D
+  open Lacaml_stats
+  open SolveLPViaSvd
+
+  let gtr_to_lambda fit_model lambda_spec =
+    let g slp = Vec.ssqr slp.looe in
+    to_lambda fit_model g lambda_spec
+
+  (* TODO: This method can be optimized if we use a different decomposition. *)
+  let gtk_solve_lp pred resp tik = function
+    | None ->
+        let covm = gemm ~transa:`T pred pred in
+        Mat.axpy covm tik;
+        getri tik;      (* take inverse with LU decomp, tik is overwritten. *)
+        let coef = gemv (gemm tik ~transb:`T pred) resp in
         let resi = Vec.sub resp (gemv pred coef) in
         let looe = full_looe covm pred resi in
         { coef ; covm ; resi ; looe}
-      in
-      let lambda, slp = gtr_to_lambda eval lambda_spec in
-      let _ = printf "chose gtr lambda of %0.4f\n" lambda in
-      slp
+    | Some lambda_spec ->
+        let covm = gemm ~transa:`T pred pred in
+        let eval l =
+          let copy = lacpy covm in
+          Mat.axpy ~alpha:l tik copy;
+          getri copy;      (* take inverse with LU decomp, tik is overwritten. *)
+          let coef = gemv (gemm copy ~transb:`T pred) resp in
+          let resi = Vec.sub resp (gemv pred coef) in
+          let looe = full_looe covm pred resi in
+          { coef ; covm ; resi ; looe}
+        in
+        let lambda, slp = gtr_to_lambda eval lambda_spec in
+        let _ = printf "chose gtr lambda of %0.4f\n" lambda in
+        slp
 
-let general_tikhonov_regression ?lambda ~resp ~pred ~tik () =
-  let open Lacaml.D in
-  let pred = Mat.of_array pred in
-  let resp = Vec.of_array resp in
-  let num_obs  = Mat.dim1 pred in  (* rows *)
-  let num_pred = Mat.dim2 pred in  (* cols *)
-  let across_pred_col f = Array.init num_pred (fun i -> f (Mat.col pred (i + 1))) in
-  let num_obs_float = float num_obs in
-  let g_m_resp      = col_mean num_obs_float resp in
-  let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
-  let sum_squares   = sum_sq_dm resp g_m_resp in
-  let col_std c m n = sqrt (sum_sq_dm c m /. n) in
-  let g_s_resp      = col_std resp g_m_resp num_obs_float in
-  let col_corr c    =
-    let m = Vec.sum c /. num_obs_float in
-    let s = col_std c m num_obs_float in
-    let num = (dot c resp) -. num_obs_float *. m *. g_m_resp in
-    let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
-    num /. den
-  in
-  let g_m_pred      = across_pred_col (col_mean num_obs_float) in
-  let correlations  = across_pred_col col_corr in
-  (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
-  let deg_of_freedom  = float (num_obs - num_pred) in
-  let solved_lp       = gtk_solve_lp pred resp (Mat.of_array tik) lambda in
-  let chi_square      = dot solved_lp.resi solved_lp.resi in
-  let infer_resp_var  = chi_square /. deg_of_freedom in
-  let m   = (float num_obs -. 1.0) /. deg_of_freedom in
-  let aic =
-    let n = float num_obs in
-    let k = float num_pred in
-    2.0 *. k +. (log (chi_square /. n)) +. (n +. k) /. (n -. k -. 2.0)
-  in
-  { padded = false
-  ; g_m_pred = g_m_pred
-  ; g_m_resp = g_m_resp
-  ; deg_of_freedom
-  ; coefficients = Vec.to_array solved_lp.coef
-  ; correlations
-  ; chi_square
-  ; g_inferred_response_var = infer_resp_var
-  ; sum_squares
-  ; cod = 1.0 -. (chi_square /. sum_squares)
-  ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
-  ; covariance = Mat.to_array solved_lp.covm
-  ; residuals = Vec.to_array solved_lp.resi
-  ; aic = aic
-  ; loocv = Vec.to_array solved_lp.looe
-  }
+  (*let general_tikhonov_regression ?lambda ~resp ~pred ~tik () = *)
+  let regress spec ~pred ~resp =
+    let pred = Mat.of_array pred in
+    let resp = Vec.of_array resp in
+    let lambda, tik =
+      match spec with
+      | None -> None, Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)
+      | Some ts -> ts.lambda_spec, (Mat.of_array ts.regularizer)
+    in
+    let num_obs  = Mat.dim1 pred in  (* rows *)
+    let num_pred = Mat.dim2 pred in  (* cols *)
+    let across_pred_col f = Array.init num_pred (fun i -> f (Mat.col pred (i + 1))) in
+    let num_obs_float = float num_obs in
+    let g_m_resp      = col_mean num_obs_float resp in
+    let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
+    let sum_squares   = sum_sq_dm resp g_m_resp in
+    let col_std c m n = sqrt (sum_sq_dm c m /. n) in
+    let g_s_resp      = col_std resp g_m_resp num_obs_float in
+    let col_corr c    =
+      let m = Vec.sum c /. num_obs_float in
+      let s = col_std c m num_obs_float in
+      let num = (dot c resp) -. num_obs_float *. m *. g_m_resp in
+      let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
+      num /. den
+    in
+    let g_m_pred      = across_pred_col (col_mean num_obs_float) in
+    let correlations  = across_pred_col col_corr in
+    (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
+    let deg_of_freedom  = float (num_obs - num_pred) in
+    let solved_lp       = gtk_solve_lp pred resp tik lambda in
+    let chi_square      = dot solved_lp.resi solved_lp.resi in
+    let infer_resp_var  = chi_square /. deg_of_freedom in
+    let m   = (float num_obs -. 1.0) /. deg_of_freedom in
+    let aic =
+      let n = float num_obs in
+      let k = float num_pred in
+      2.0 *. k +. (log (chi_square /. n)) +. (n +. k) /. (n -. k -. 2.0)
+    in
+    { padded = false
+    ; g_m_pred = g_m_pred
+    ; g_m_resp = g_m_resp
+    ; deg_of_freedom
+    ; coefficients = Vec.to_array solved_lp.coef
+    ; correlations
+    ; chi_square
+    ; g_inferred_response_var = infer_resp_var
+    ; sum_squares
+    ; cod = 1.0 -. (chi_square /. sum_squares)
+    ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
+    ; covariance = Mat.to_array solved_lp.covm
+    ; residuals = Vec.to_array solved_lp.resi
+    ; aic = aic
+    ; loocv = Vec.to_array solved_lp.looe
+    }
 
-*)
+end
+
+module GlmToLinearModel(SpecToGlm : SPECTOGLM)
+  : (LINEAR_MODEL with type spec = SpecToGlm.spec
+                  and type input = SpecToGlm.input) = 
+
+struct
+  
+  type input = SpecToGlm.input
+  type spec = SpecToGlm.spec
+  type t = glm
+
+  let describe glm =
+    let coefs =
+      glm.coefficients
+      |> Array.map (sprintf "%0.4f")
+      |> Array.to_list
+      |> String.concat "; "
+    in
+    if glm.padded then
+      sprintf "%s^T * [|1;X|]" coefs
+    else
+      sprintf "%s^T * [|X|]" coefs
+
+  let eval _ _ = failwith "Not i"
+  (*
+  let eval glm vec =
+    if glm.padded then
+      let n = Array.length glm.coefficients in
+      let c = Array.sub glm.coefficients 1 (n - 1) in
+      glm.coefficients.(0) +. Vectors.dot c vec
+    else
+      Vectors.dot glm.coefficients vec
+      *)
+
+  let confidence_interval glm ~alpha p = failwith "Not implemented MCI"
+  let prediction_interval glm ~alpha p = failwith "Not implemented MPI"
+
+  let regress = SpecToGlm.regress
+
+end
+
+module Multivariate = GlmToLinearModel(MultivariateToGlm) 
+
+module Tikhonov = GlmToLinearModel(TikhonovToGlm)

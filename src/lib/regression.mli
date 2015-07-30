@@ -43,11 +43,8 @@ module Univarite : sig
 end
 
 type lambda_spec =
-  [ `Spec of float
-  | `From of float array
-  | `Within of float * float * float
-  ]
-
+  | Spec of float
+  | From of float array
 
 type multivariate_spec =
   { add_constant_column : bool
@@ -59,6 +56,19 @@ module Multivariate : sig
   include LINEAR_MODEL
     with type input = float array
     and type spec = multivariate_spec
+
+end
+
+type tikhonov_spec =
+  { regularizer : float array array
+  ; lambda_spec : lambda_spec option (* multipliers on the regularizing matrix. *)
+  }
+
+module Tikhonov : sig
+
+  include LINEAR_MODEL
+    with type input = float array
+    and type spec = tikhonov_spec
 
 end
 
