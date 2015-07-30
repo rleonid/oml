@@ -12,8 +12,7 @@ module type LINEAR_MODEL = sig
   (** [regress options pred resp ()] computes a linear model of [resp] based
       off of the independent variables in the design matrix [pred], taking
       into account the various method [spec]s. *)
-  val regress : spec option -> pred:input array -> resp:float array -> unit
-                  -> t
+  val regress : spec option -> pred:input array -> resp:float array -> t
 
   (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
   val eval : t -> input -> float
@@ -33,7 +32,9 @@ end
 (*module Univarite : (LINEAR_MODEL with type input = float) *)
 module Univarite : sig
 
-  include LINEAR_MODEL with type input = float
+  include LINEAR_MODEL
+    with type input = float
+    and type spec = float array
 
   val alpha : t -> float
 
@@ -41,6 +42,27 @@ module Univarite : sig
 
 end
 
+type lambda_spec =
+  [ `Spec of float
+  | `From of float array
+  | `Within of float * float * float
+  ]
+
+
+type multivariate_spec =
+  { add_constant_column : bool
+  ; lambda_spec : lambda_spec option
+  }
+
+module Multivariate : sig
+
+  include LINEAR_MODEL
+    with type input = float array
+    and type spec = multivariate_spec
+
+end
+
+(*
 (** A [general_linear_model] is a linear model over a vector space,
     allowing the user to perform multiple linear regression. *)
 type general_linear_model =
@@ -64,12 +86,6 @@ type general_linear_model =
 (** [eval_glm glm data] evaluate the general linear model [glm] over the vector
     of [data]. *)
 val eval_glm : general_linear_model -> float array -> float
-
-type lambda_spec =
-  [ `Spec of float
-  | `From of float array
-  | `Within of float * float * float
-  ]
 
 (** [general_linear_regress ?lambda ?pad resp pred unit]
   Compute a [general_linear_model] for predicting [resp] based on the design
@@ -101,3 +117,4 @@ val general_tikhonov_regression : ?lambda:lambda_spec
                                 -> tik: float array array -> unit
                                 -> general_linear_model
 
+                                *)
