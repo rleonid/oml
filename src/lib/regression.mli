@@ -30,7 +30,16 @@ module type LINEAR_MODEL = sig
 
 end
 
-module Univarite : LINEAR_MODEL
+(*module Univarite : (LINEAR_MODEL with type input = float) *)
+module Univarite : sig
+
+  include LINEAR_MODEL with type input = float
+
+  val alpha : t -> float
+
+  val beta : t -> float
+
+end
 
 (** A [general_linear_model] is a linear model over a vector space,
     allowing the user to perform multiple linear regression. *)

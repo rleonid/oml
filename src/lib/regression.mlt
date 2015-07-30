@@ -31,6 +31,7 @@ module Gen = FGen (struct
 end)
 
 let () =
+  let module U = Univarite in
   (* handy predicates *)
   let equal_floats x y = not (Util.significantly_different_from x y) in
   let roughly_equal ~order_comp x y =
@@ -43,7 +44,7 @@ let () =
   (* Short cut evaluation. *)
   let lregress (a, b, pred)  =
     let resp = Array.map (fun x -> b *. x +. a) pred in
-    linear_regress ~resp ~pred ()
+    U.regress None ~resp ~pred ()
   in
 
   (* useful generators. *)
@@ -57,8 +58,7 @@ let () =
   let random_test_array = Gen.(array (make_int 2 50) float) in
   let simple_lrm_inputs = Gen.(zip3 float non_zero_float simple_test_array) in
   let lrm_inputs        = Gen.(zip3 float non_zero_float random_test_array) in
-  (*let simple_lrm_gen    = Gen.(map1 lregress to_string simple_lrm_inputs) in *)
-  let lrm_gen           = Gen.(map1 lregress to_string lrm_inputs) in
+  let lrm_gen           = Gen.(map1 lregress U.describe lrm_inputs) in
 
   (* The tests. *)
 
@@ -67,10 +67,10 @@ let () =
   Test.add_random_test
     ~title:"Regression: lrm models evaluate like linear models"
     Gen.(zip2 non_zero_float lrm_gen)
-    (fun (x, lrm) -> eval_lrm lrm x)
+    (fun (x, lrm) -> U.eval lrm x)
     Spec.([ always =>
       (fun((x, lrm), y) ->
-        equal_floats y (lrm.alpha +. lrm.beta *. x)) ]);
+        equal_floats y (U.alpha lrm +. U.beta lrm *. x)) ]);
 
   Test.add_random_test
     ~title:"Regression: using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
@@ -80,7 +80,7 @@ let () =
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (roughly_equal a lrm.alpha) && (roughly_equal b lrm.beta))]);
+        (roughly_equal a (U.alpha lrm)) && (roughly_equal b (U.beta lrm)))]);
 
   Test.add_random_test
     ~title:"Regression: using linear regression on random float data we can recover coefficients"
@@ -90,7 +90,7 @@ let () =
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (roughly_equal a lrm.alpha) && (roughly_equal b lrm.beta))]);
+        (roughly_equal a (U.alpha lrm)) && (roughly_equal b (U.beta lrm)))]);
 
   (* TODO: clever test to react to variance in the predicted variable. *)
 

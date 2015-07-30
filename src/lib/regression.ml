@@ -34,8 +34,7 @@ module type LINEAR_MODEL = sig
 
 end
 
-
-module Univarite : LINEAR_MODEL = struct
+module Univarite = struct
 
   type input = float
   type t = { m_pred                : float
@@ -55,6 +54,9 @@ module Univarite : LINEAR_MODEL = struct
                     (*; d_w                   : float *)
                     }
 
+  let alpha lrm = lrm.alpha
+
+  let beta lrm = lrm.beta
 
   let describe lrm = Printf.sprintf "%.6f * x + %.6f" lrm.beta lrm.alpha
 
