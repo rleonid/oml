@@ -1,42 +1,92 @@
 
-(** A fit linear model. *)
-type linear_model =
-  { m_pred                : float         (** Mean of predictor variable. *)
-  ; m_resp                : float         (** Mean of response variable. *)
-  ; size                  : float         (** Number of observations. *)
-  ; alpha                 : float         (** Constant term of model. *)
-  ; beta                  : float         (** Linear multiplicative term. *)
-  ; correlation           : float         (** Pearson correlation of response
-                                              to predictor.*)
-  ; chi_square            : float         (** Chi^2 of the residuals. *)
-  ; inferred_response_var : float         (** *)
-  ; goodness_of_fit       : float option  (** *)
-  ; s_xx                  : float         (** Sum of squared difference to
-                                              [m_pred] useful by interval. *)
+module type LINEAR_MODEL = sig
+
+  (* TODO: reorder these declarations in a way that makes more sense for
+     documentation. *)
+
+  type input
+  type t
+
+  (** [describe t] returns a string describing the regressed linear model.*)
+  val describe : t -> string
+
+  type spec
+
+  (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
+  val eval : t -> input -> float
+
+  (** [regress options pred resp ()] computes a linear model of [resp] based
+      off of the independent variables in the design matrix [pred], taking
+      into account the various method [spec]s. *)
+  val regress : spec option -> pred:input array -> resp:float array -> t
+
+  (** [residuals t] returns the residuals, the difference between the observed
+      value and the estimated value for the independent, response, values. *)
+  val residuals : t -> float array
+
+  (** [coefficients t] returns the coefficients used in the linear model. *)
+  val coefficients : t -> float array
+
+end
+
+(*module Univarite : (LINEAR_MODEL with type input = float) *)
+module Univarite : sig
+
+  include LINEAR_MODEL
+    with type input = float
+    and type spec = float array
+
+  (** [alpha t] a shorthand for the constant parameter used in the regression.
+      Equivalent to [(coefficients t).(0)] *)
+  val alpha : t -> float
+
+  (** [beta t] a shorthand for the linear parameter used in the regression.
+      Equivalent to [(coefficients t).(1)] *)
+  val beta : t -> float
+
+  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
+      construct confidence intervals at [x] at an [alpha]-level of significance.
+  *)
+  val confidence_interval : t -> alpha:float -> input -> float * float
+
+  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
+      construct prediction intervals at [x] at an [alpha]-level of significance.
+  *)
+  val prediction_interval : t -> alpha:float -> input -> float * float
+
+end
+
+type lambda_spec =
+  | Spec of float
+  | From of float array
+
+type multivariate_spec =
+  { add_constant_column : bool
+  ; lambda_spec : lambda_spec option
   }
 
-(** [to_string lrm] returns a string representing the inferred linear model. *)
-val to_string : linear_model -> string
+module Multivariate : sig
 
-(** [eval_lrm linear_model x] evaluate the [linear_model] at [x]. *)
-val eval_lrm : linear_model -> float -> float
+  include LINEAR_MODEL
+    with type input = float array
+    and type spec = multivariate_spec
 
-(** [linear_regress ?pred_variance resp pred] create a linear model that
-    estimates [resp = alpha + beta * pred].
+end
 
-    [pred_variance] represents the assumed variance in the [pred] elements and
-    defaults to 1 for all elements. *)
-val linear_regress : ?pred_variance:float array -> resp:float array ->
-                      pred:float array -> unit -> linear_model
+type tikhonov_spec =
+  { regularizer : float array array
+  ; lambda_spec : lambda_spec option (* multipliers on the regularizing matrix. *)
+  }
 
-(** [confidence_interval linear_model alpha_level x], given [linear_model]
-    compute the alpha (ex 0.95) confidence interval around [x]. *)
-val confidence_interval : linear_model -> alpha_level:float -> float -> float * float
+module Tikhonov : sig
 
-(** [prediction_interval linear_model alpha_level x], given [linear_model]
-    compute the alpha (ex 0.95) prediction interval around [x]. *)
-val prediction_interval : linear_model -> alpha_level:float -> float -> float * float
+  include LINEAR_MODEL
+    with type input = float array
+    and type spec = tikhonov_spec
 
+end
+
+(*
 (** A [general_linear_model] is a linear model over a vector space,
     allowing the user to perform multiple linear regression. *)
 type general_linear_model =
@@ -60,12 +110,6 @@ type general_linear_model =
 (** [eval_glm glm data] evaluate the general linear model [glm] over the vector
     of [data]. *)
 val eval_glm : general_linear_model -> float array -> float
-
-type lambda_spec =
-  [ `Spec of float
-  | `From of float array
-  | `Within of float * float * float
-  ]
 
 (** [general_linear_regress ?lambda ?pad resp pred unit]
   Compute a [general_linear_model] for predicting [resp] based on the design
@@ -97,3 +141,4 @@ val general_tikhonov_regression : ?lambda:lambda_spec
                                 -> tik: float array array -> unit
                                 -> general_linear_model
 
+                                *)
