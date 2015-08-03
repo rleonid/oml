@@ -9,27 +9,16 @@ module type LINEAR_MODEL = sig
   type input
   type t
 
-  (** [describe t] returns a string describing the regressed linear model.*)
   val describe : t -> string
 
   type spec
 
-  (** [regress options pred resp computes a linear model of [resp] based
-      off of the independent variables in the design matrix [pred], taking
-      into account the various method [spec]s. *)
+
+  val eval : t -> input -> float
   val regress : spec option -> pred:input array -> resp:float array -> t
 
-  (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
-  val eval : t -> input -> float
-
-  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
-      construct confidence intervals at [x] at an [alpha]-level of significance.
-  *)
+  val residuals : t -> float array
   val confidence_interval : t -> alpha:float -> input -> float * float
-
-  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
-      construct prediction intervals at [x] at an [alpha]-level of significance.
-  *)
   val prediction_interval : t -> alpha:float -> input -> float * float
 
 end
@@ -52,6 +41,7 @@ module Univarite = struct
            ; inferred_response_var : float
            ; goodness_of_fit       : float option
            ; s_xx                  : float
+           ; residuals             : float array
            (*; d_w                   : float *)
            }
 
@@ -137,18 +127,21 @@ module Univarite = struct
       goodness_of_fit = q;
       s_xx = s_xx;
       (*d_w = nan; *)
+      residuals
     }
+
+  let residuals lm = lm.residuals
 
   let confidence_interval, prediction_interval =
     let interval a lrm ~alpha x =
       let dgf = lrm.size -. 2.0 in
       let dgi = truncate dgf in
       let t  = Distributions.student_quantile ~k:dgi (alpha /. 2.0) in
-      let y  = eval lrm x in
       let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
       let c  = lrm.chi_square /. (lrm.size -. 2.0) in
       let se = sqrt ((a +. b) *. c) in
       let d  = t *. se in
+      let y  = eval lrm x in
       (y -. d), (y +. d)
     in
     (fun lrm -> interval (1.0 /. lrm.size) lrm),
@@ -312,6 +305,8 @@ module EvalMultiVarite = struct
       glm.coefficients.(0) +. dot c vec
     else
       dot glm.coefficients vec
+
+  let residuals glm = glm.residuals
 
   let confidence_interval glm ~alpha p = failwith "Not implemented MCI"
   let prediction_interval glm ~alpha p = failwith "Not implemented MPI"

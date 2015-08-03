@@ -1,6 +1,9 @@
 
 module type LINEAR_MODEL = sig
 
+  (* TODO: reorder these declarations in a way that makes more sense for
+     documentation. *)
+
   type input
   type t
 
@@ -9,13 +12,17 @@ module type LINEAR_MODEL = sig
 
   type spec
 
+  (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
+  val eval : t -> input -> float
+
   (** [regress options pred resp ()] computes a linear model of [resp] based
       off of the independent variables in the design matrix [pred], taking
       into account the various method [spec]s. *)
   val regress : spec option -> pred:input array -> resp:float array -> t
 
-  (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
-  val eval : t -> input -> float
+  (** [residuals t] returns the residuals, the difference between the observed
+      value and the estimated value for the independent, response, values. *)
+  val residuals : t -> float array
 
   (** [confidence_interval linear_model alpha x] Use the [linear_model] to
       construct confidence intervals at [x] at an [alpha]-level of significance.
