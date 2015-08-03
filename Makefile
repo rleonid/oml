@@ -67,4 +67,4 @@ clean_reports:
 
 doc: oml.cmxa
 	rm -rf doc/* && \
-	ocamlfind ocamldoc -d doc -html -I _build/src/lib `cat src/lib/oml.mlpack | tr '[:upper:]' '[:lower:]' | sed -e 's|\([a-z_]*\)| _build/src/lib/\1.mli|g'`
+	ocamlfind ocamldoc $(foreach package, $(PACKAGES),-package $(package)) -d doc -html -I _build/src/lib `cat src/lib/oml.mlpack | tr '[:upper:]' '[:lower:]' | sed -e 's|\([a-z_]*\)| _build/src/lib/\1.mli|g'`

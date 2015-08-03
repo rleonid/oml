@@ -1,13 +1,17 @@
-
+(** Perform the Singular Value Decomposition via {{:https://github.com/mmottl/lacaml}Lacaml}. *)
 open Lacaml.D
 
 type t
 
-(** Accessors. *)
+(** {2 Accessors} *)
+
+(** [u t] *)
 val u : t -> Matrices.t
 
+(** [s t] singular values. *)
 val s : t -> Vectors.t
 
+(** [vt t]. *)
 val vt : t -> Matrices.t
 
 (** [svd m] separate [m] into its singular value decomposition.
