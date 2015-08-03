@@ -64,3 +64,7 @@ report: report_dir
 
 clean_reports:
 	rm -rf report_dir bisect*.out
+
+doc: oml.cmxa
+	rm -rf doc/* && \
+	ocamlfind ocamldoc -d doc -html -I _build/src/lib `cat src/lib/oml.mlpack | tr '[:upper:]' '[:lower:]' | sed -e 's|\([a-z_]*\)| _build/src/lib/\1.mli|g'`
