@@ -2,7 +2,7 @@
 
   At the present moment many functions are wrappers to the Cephes library
   (http://www.netlib.org/cephes/), via a Ctypes interface implemented in
-  the Ocephes library.
+  the {{:https://github.com/rleonid/ocephes}Ocephes} library.
  *)
 
 (** [erf x] computes the (Gauss) error function,
@@ -51,7 +51,7 @@ val regularized_beta : alpha:float -> beta:float -> ?epsilon:float ->
     @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
 val softmax : ?temperature:float -> float array -> float array
 
-(** Distribution CDF's *)
+(** {2 Distribution CDF's} *)
 
 (** [chi_square_less k x] computes the probability of
     seeing a value less than [x] in a Chi-square distribution with [k] degrees
