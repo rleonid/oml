@@ -15,7 +15,7 @@ let looe_manually lambda pred resp =
   |> Array.mapi (fun i p ->
     let p_pred, p_resp = without i in
     let ms = { add_constant_column = false
-             ; lambda_spec = Some (`Spec lambda);
+             ; lambda_spec = Some (Spec lambda);
              }
     in
     let model = M.regress (Some ms) ~pred:p_pred ~resp:p_resp in
@@ -144,7 +144,7 @@ let () =
     (fun (pred, _, resp) ->
       let glm = M.regress None ~resp ~pred in
       let m = Descriptive.mean resp in
-      let lambda = `Spec (m *. m) in    (* has to be big enough *)
+      let lambda = Spec (m *. m) in    (* has to be big enough *)
       let ms = {add_constant_column = false; lambda_spec = Some lambda } in
       let rdg = M.regress (Some ms) ~resp ~pred in
       let rd = Vectors.dot rdg.coefficients rdg.coefficients in
