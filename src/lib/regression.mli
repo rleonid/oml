@@ -24,15 +24,8 @@ module type LINEAR_MODEL = sig
       value and the estimated value for the independent, response, values. *)
   val residuals : t -> float array
 
-  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
-      construct confidence intervals at [x] at an [alpha]-level of significance.
-  *)
-  val confidence_interval : t -> alpha:float -> input -> float * float
-
-  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
-      construct prediction intervals at [x] at an [alpha]-level of significance.
-  *)
-  val prediction_interval : t -> alpha:float -> input -> float * float
+  (** [coefficients t] returns the coefficients used in the linear model. *)
+  val coefficients : t -> float array
 
 end
 
@@ -43,9 +36,23 @@ module Univarite : sig
     with type input = float
     and type spec = float array
 
+  (** [alpha t] a shorthand for the constant parameter used in the regression.
+      Equivalent to [(coefficients t).(0)] *)
   val alpha : t -> float
 
+  (** [beta t] a shorthand for the linear parameter used in the regression.
+      Equivalent to [(coefficients t).(1)] *)
   val beta : t -> float
+
+  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
+      construct confidence intervals at [x] at an [alpha]-level of significance.
+  *)
+  val confidence_interval : t -> alpha:float -> input -> float * float
+
+  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
+      construct prediction intervals at [x] at an [alpha]-level of significance.
+  *)
+  val prediction_interval : t -> alpha:float -> input -> float * float
 
 end
 

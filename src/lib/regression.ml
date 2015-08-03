@@ -18,8 +18,11 @@ module type LINEAR_MODEL = sig
   val regress : spec option -> pred:input array -> resp:float array -> t
 
   val residuals : t -> float array
+  val coefficients : t -> float array
+  (*
   val confidence_interval : t -> alpha:float -> input -> float * float
   val prediction_interval : t -> alpha:float -> input -> float * float
+  *)
 
 end
 
@@ -131,6 +134,8 @@ module Univarite = struct
     }
 
   let residuals lm = lm.residuals
+
+  let coefficients lm = [| lm.alpha; lm.beta |]
 
   let confidence_interval, prediction_interval =
     let interval a lrm ~alpha x =
@@ -307,9 +312,12 @@ module EvalMultiVarite = struct
       dot glm.coefficients vec
 
   let residuals glm = glm.residuals
+  let coefficients glm = glm.coefficients
 
+  (*
   let confidence_interval glm ~alpha p = failwith "Not implemented MCI"
   let prediction_interval glm ~alpha p = failwith "Not implemented MPI"
+  *)
 
 
 end
