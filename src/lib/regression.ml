@@ -281,16 +281,49 @@ type glm = { padded                  : bool
            ; loocv                   : float array
            }
 
-module type SPECTOGLM = sig 
-  type spec
-  type input
-  val regress : spec option -> pred:input array -> resp:float array -> glm
+(* At some point I'd like to reavaluate the construction of the final
+   Multivariate and Tikhonov modules and see if a Functor approach
+   will work. But I had a bit of difficulty with unraveling the
+   dependencies between the three types. I think this separation is fine
+   from a development perspective. *)
+
+module EvalMultiVarite = struct
+
+  type t = glm
+  type input = float array
+
+  let describe glm =
+    let coefs =
+      glm.coefficients
+      |> Array.map (sprintf "%0.4f")
+      |> Array.to_list
+      |> String.concat "; "
+    in
+    if glm.padded then
+      sprintf "%s^T * [|1;X|]" coefs
+    else
+      sprintf "%s^T * [|X|]" coefs
+
+  let eval glm vec =
+    let dot = Array.fold2 (fun s x y -> s +. x *. y) 0.0 in
+    if glm.padded then
+      let n = Array.length glm.coefficients in
+      let c = Array.sub glm.coefficients 1 (n - 1) in
+      glm.coefficients.(0) +. dot c vec
+    else
+      dot glm.coefficients vec
+
+  let confidence_interval glm ~alpha p = failwith "Not implemented MCI"
+  let prediction_interval glm ~alpha p = failwith "Not implemented MPI"
+
+
 end
 
-module MultivariateToGlm : SPECTOGLM = struct
+module Multivariate = struct
+
+  include EvalMultiVarite
 
   type spec = multivariate_spec
-  type input = float array
 
   open Lacaml.D
   open Lacaml_stats
@@ -384,10 +417,11 @@ type tikhonov_spec =
   ; lambda_spec : lambda_spec option (* multipliers on the regularizing matrix. *)
   }
 
-module TikhonovToGlm : SPECTOGLM = struct
+module Tikhonov = struct
   
+  include EvalMultiVarite
+
   type spec = tikhonov_spec
-  type input = float array
 
   open Lacaml.D
   open Lacaml_stats
@@ -478,47 +512,3 @@ module TikhonovToGlm : SPECTOGLM = struct
     }
 
 end
-
-module GlmToLinearModel(SpecToGlm : SPECTOGLM)
-  : (LINEAR_MODEL with type spec = SpecToGlm.spec
-                  and type input = SpecToGlm.input) = 
-
-struct
-  
-  type input = SpecToGlm.input
-  type spec = SpecToGlm.spec
-  type t = glm
-
-  let describe glm =
-    let coefs =
-      glm.coefficients
-      |> Array.map (sprintf "%0.4f")
-      |> Array.to_list
-      |> String.concat "; "
-    in
-    if glm.padded then
-      sprintf "%s^T * [|1;X|]" coefs
-    else
-      sprintf "%s^T * [|X|]" coefs
-
-  let eval _ _ = failwith "Not i"
-  (*
-  let eval glm vec =
-    if glm.padded then
-      let n = Array.length glm.coefficients in
-      let c = Array.sub glm.coefficients 1 (n - 1) in
-      glm.coefficients.(0) +. Vectors.dot c vec
-    else
-      Vectors.dot glm.coefficients vec
-      *)
-
-  let confidence_interval glm ~alpha p = failwith "Not implemented MCI"
-  let prediction_interval glm ~alpha p = failwith "Not implemented MPI"
-
-  let regress = SpecToGlm.regress
-
-end
-
-module Multivariate = GlmToLinearModel(MultivariateToGlm) 
-
-module Tikhonov = GlmToLinearModel(TikhonovToGlm)
