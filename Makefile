@@ -13,7 +13,6 @@ all: build
 
 # This should be called something else.
 setup:
-	opam pin add ocephes https://github.com/rleonid/Ocephes.git
 	opam install $(PACKAGES_INSTALL)
 
 oml.cmxa:
