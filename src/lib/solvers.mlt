@@ -1,0 +1,46 @@
+
+open Printf
+open Util
+open Test_utils
+
+let () =
+  let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
+
+
+  let module Gen = FGen (struct let largest_float = 1e5 end) in
+  let polynomial = Gen.(list (make_int 2 10) float) in
+  let odd_polynomial = 
+    Gen.(polynomial
+         |> transform (fun lst ->
+              (* Remember that fst is X^0 -> even number of terms = odd poly *)
+              if List.length lst mod 2 = 1 then List.tl lst else lst))
+  in
+  let poly_to_f lst =
+    fun x ->
+      List.fold_left (fun (s,i) v -> v *. (x ** (float i)) +. s, i + 1)
+        (0.0, 0) lst
+      |> fst
+  in
+  let lower_bound = -1e10 in
+  let upper_bound = 1e10 in
+  (* TODO, figure out a way to make this a partial test. *)
+  Test.add_random_test
+    ~title:"Solvers, (newton) work for odd polynomials."
+      Gen.(odd_polynomial)
+      (fun lst ->
+        let f = poly_to_f lst in
+        match newton ~init:0.1 ~lower_bound ~upper_bound f with
+        | exception IterationFailure (_, TooManyIterations _) ->
+            let _ =
+              Printf.printf "newton failed for %s with TooManyIterations\n%!"
+                (String.concat ";" (List.map (sprintf "%f") lst))
+            in
+            true
+        | rn ->
+          equal_floats ~d:1e-3 0.0 (f rn) 
+        (*let rb = bisection ~epsilon:1e-2 ~lower_bound ~upper_bound f in *)
+        (*equal_floats ~d:1e-3 0.0 (f rb)*))
+    Spec.([just_postcond_pred is_true]);
+
+  ()
+

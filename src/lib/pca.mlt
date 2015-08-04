@@ -1,0 +1,26 @@
+
+open Util
+open Test_utils
+
+module Gen = FGen (struct
+  let largest_float = 1e8
+end)
+
+let () =
+  let matrix_size = 1000 in
+  let float_matrix = Gen.(matrix (make_int 2 matrix_size) (make_int 2 matrix_size) float) in
+
+  Test.add_random_test
+    ~title:"PCA. there are size number of variances and they are decreasing ."
+    Gen.(zip4 bool bool bool float_matrix)
+    (fun (demean, scale, unbiased, m) ->
+      let r,c = Matrices.dim m in
+      let s = min r c in
+      let t = pca ~demean ~scale ~unbiased (Mat.of_array m) in
+      let v = variances t in
+      let _ = components t in
+      let _ = scalings t in
+      Array.length v = s && Array.has_order ( > ) v)
+    Spec.([ just_postcond_pred is_true ]);
+
+  ()

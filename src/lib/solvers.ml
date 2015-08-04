@@ -26,6 +26,7 @@ let newton ?init ~lower_bound ~upper_bound f =
   newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
       ~lower_bound ~upper_bound f (Estimations.second_order f)
 
+(* There is a bug in the implementation...
 let bisection ~epsilon ~lower_bound ~upper_bound f =
   let rec loop lb ub =
 (*  printf "lb %.5f ub %.5f\n" lb ub; *)
@@ -68,3 +69,4 @@ let bisection ~epsilon ~lower_bound ~upper_bound f =
                 mp *)
     in
     loop lower_bound upper_bound
+    *)

@@ -33,6 +33,14 @@ let () =
                        && not (Array.all id [| false; true |])
                        && not (Array.all id [| false; false |])));
 
+  Test.add_simple_test
+    ~title:"Array, has_order"
+    (fun () ->
+        Assert.is_true (Array.has_order ( > ) [| 3;2;1|]
+                     && Array.has_order ( < ) [| 0;2;4|]
+                && not (Array.has_order ( > ) [| 10.0; 0.0; 10.0; |])
+                && not (Array.has_order ( < ) [| 10.0; 0.0; 10.0; |])));
+
   Test.add_simple_test ~title:"Array, range simple."
     (fun () ->
       Assert.is_true (Array.range ~start:3.0 ~stop:4.0 () = [| 3.0 |]));

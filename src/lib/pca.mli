@@ -14,7 +14,12 @@ val components : t -> float array array
     divided standard deviation applied to the data before broken into PC's. *)
 val scalings : t -> (float * float) array
 
-(** [pca data] break down [data] into its principle components. *)
+(** [pca ?demean ?scale ?unbiased data] break down [data] into its principle
+    components. [demean] will subtract the mean from each column (defaults
+    to [true]). [scale] will divide each column by the standard deviation
+    (defaults to [true]) and unbiased controls whether to use the unbaised
+    standard deviation calculation (defaults to [true]).
+ *)
 val pca : ?demean:bool -> ?scale:bool -> ?unbiased:bool -> mat -> t
 
 type pca_reduction_method =

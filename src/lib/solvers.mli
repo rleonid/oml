@@ -20,8 +20,10 @@ val newton_raphson_full :
 val newton : ?init:float -> lower_bound:float ->
             upper_bound:float -> (float -> float) -> float
 
+(* Commented out because of bug
 (** [bisection epsilon lower_bound upper_bound f] iteratively
     finds the root of [f] between [lower_bound] and [upper_bound],
     or the closer bound if there is not root therein. *)
 val bisection : epsilon:float -> lower_bound:float -> upper_bound:float ->
     (float -> float) -> float
+    *)
