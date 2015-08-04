@@ -1,3 +1,9 @@
+(** {2 Utilities}
+
++ general methods that are reused in other modules.
++ overrides and 
++ extensions of standard library modules (ex. {!Array}) with useful methods (ex. {!Array.fold2} and {!Array.sumf})
+*)
 
 (** Some of the iterative routines can fail for the following reasons. *)
 type iterative_failure_reason =
@@ -16,16 +22,20 @@ val pi : float
 
 val midpoint : float -> float -> float
 
+(** Extend the [Array] module with useful functions. *) 
 module Array : sig
   include (module type of Array)
 
-  (** [Array.fold2 f x a b] computes \
+  (** [Array.fold2 f x a b] computes
        [f (... (f (f x a.(0) b.(0)) a.(1) b.(1)) ...) a.(n-1) b.(n-1)].
-       Raises [Invalid_argument] if the lengths are unequal.  *)
+
+       @raise Invalid_argument if the lengths are unequal. *)
   val fold2 : ('a -> 'b -> 'c -> 'a) -> 'a -> 'b array -> 'c array -> 'a
 
   (** [Array.map2 f a b] applies [f] to all of the aligned elements of [a] and
-      [b], Raises [Invalid_argument] if the lengths are unequal.  *)
+      [b].
+      
+      @raise Invalid_argument if the lengths are unequal. *)
   val map2 : ('a -> 'b -> 'c) -> 'a array -> 'b array -> 'c array
 
   (** [Array.sumf a] computes [a.(0) +. a.(1) +. ... a.(n-1)]. *)
@@ -34,11 +44,11 @@ module Array : sig
   (** [Array.prodf a] computes [a.(0) *. a.(1) *. ... a.(n-1)]. *)
   val prodf : float array -> float
 
-  (** [Array.max a] computes [max a.(0) (max a.(1)  ... (max a.(n-2) a.(n-1))].
+  (** [Array.max a] computes [max a.(0) (max a.(1)  ... (max a.(n-2) a.(n-1)))].
    *)
   val max : 'a array -> 'a
 
-  (** [Array.min a] computes [min a.(0) (min a.(1)  ... (min a.(n-2) a.(n-1))].
+  (** [Array.min a] computes [min a.(0) (min a.(1)  ... (min a.(n-2) a.(n-1)))].
    *)
   val min : 'a array -> 'a
 
@@ -67,7 +77,7 @@ module Array : sig
       || (p arr.(n))] *)
   val any : ('a -> bool) -> 'a array -> bool
 
-  (** [range incr start stop] create a float elements of all values in the
+  (** [range incr start stop] creates a float array of all the values in the
       interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
   val range : ?incr:float -> start:float -> stop:float -> unit -> float array
 

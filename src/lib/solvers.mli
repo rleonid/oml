@@ -7,7 +7,7 @@
     uses [df] to follow the tangent to it's root, that becomes the new point.
     Iteration continues until [f x] < [accuracy].
 
-    @raise [IterationFailure] if we escape our bounds or take longer than
+    @raise Util.IterationFailure if we escape our bounds or take longer than
       [iterations].
 *)
 val newton_raphson_full :

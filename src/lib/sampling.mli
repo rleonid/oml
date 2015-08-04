@@ -3,13 +3,13 @@
 type 'a generator = unit -> 'a
 
 (** [uniform_i ?seed n] creates a generator that will return an integer
-    with equal probabilities from the interval [0,n).
+    with equal probabilities from the interval \[[0,n]).
 
     @raise Invalid_argument if [n] is zero or negative, or above [2^30 - 1]. *)
 val uniform_i : ?seed:int array -> int -> int generator
 
 (** [uniform_f ?seed n] creates a generator that will return a float
-    with equal probabilities from the interval [0,n].
+    with equal probabilities from the interval \[[0,n]\].
 
     @raise Invalid_argument if [n] is zero or negative. *)
 val uniform_f : ?seed:int array -> float -> float generator
@@ -29,7 +29,7 @@ val normal_std : ?seed:int array -> unit -> float generator
 
     @raise Invalid_argument if [weights] do not sum to [1.0] (this is checked
      using [Util.significantly_different_from]) or any individual weight is not
-     in [0,1). *)
+     in \[[0,1]). *)
 val multinomial : ?seed:int array -> float array -> int generator
 
 (** [softmax ?seed ?temperature weights] creates a generator that will return an integer

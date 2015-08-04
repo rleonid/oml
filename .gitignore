@@ -8,3 +8,4 @@ setup.log
 *.native
 *.byte
 bisect*.out
+doc/

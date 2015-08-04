@@ -1,4 +1,6 @@
+(** {2 Regression} Construct linear models that describe (and learn from) data.*)
 
+(** The interface of the model constructed by a Regression procedure. *)
 module type LINEAR_MODEL = sig
 
   (* TODO: reorder these declarations in a way that makes more sense for
@@ -15,7 +17,7 @@ module type LINEAR_MODEL = sig
   (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
   val eval : t -> input -> float
 
-  (** [regress options pred resp ()] computes a linear model of [resp] based
+  (** [regress options pred resp] computes a linear model of [resp] based
       off of the independent variables in the design matrix [pred], taking
       into account the various method [spec]s. *)
   val regress : spec option -> pred:input array -> resp:float array -> t
@@ -29,7 +31,7 @@ module type LINEAR_MODEL = sig
 
 end
 
-(*module Univarite : (LINEAR_MODEL with type input = float) *)
+(** Simple one dimensional regress. *)
 module Univarite : sig
 
   include LINEAR_MODEL
@@ -57,14 +59,16 @@ module Univarite : sig
 end
 
 type lambda_spec =
-  | Spec of float
-  | From of float array
+  | Spec of float         (** Use this specific value. *)
+  | From of float array   (** Choose the value in the array with the lowest Leave-One-Out-Error. *)
 
 type multivariate_spec =
-  { add_constant_column : bool
-  ; lambda_spec : lambda_spec option
+  { add_constant_column : bool          (** Instructs the method to efficiently insert a colum of 1's into the
+                                            design matrix for the constant term. *)
+  ; lambda_spec : lambda_spec option    (** How to optionally determine the ridge parameter. *)
   }
 
+(** Multi-dimensional input regression, with support for Ridge regression. *)
 module Multivariate : sig
 
   include LINEAR_MODEL
@@ -74,10 +78,12 @@ module Multivariate : sig
 end
 
 type tikhonov_spec =
-  { regularizer : float array array
-  ; lambda_spec : lambda_spec option (* multipliers on the regularizing matrix. *)
+  { regularizer : float array array   (** The regularizing matrix. *)
+  ; lambda_spec : lambda_spec option  (** How to optionally determine the ridge parameter. *)
   }
 
+(** Multi-dimensional input regression with a matrix regularizer.
+  described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}. *)
 module Tikhonov : sig
 
   include LINEAR_MODEL
@@ -85,60 +91,3 @@ module Tikhonov : sig
     and type spec = tikhonov_spec
 
 end
-
-(*
-(** A [general_linear_model] is a linear model over a vector space,
-    allowing the user to perform multiple linear regression. *)
-type general_linear_model =
-  { padded                  : bool
-  ; g_m_pred                : float array   (** Means of the predicted variables. *)
-  ; g_m_resp                : float         (** Mean of the response variable. *)
-  ; deg_of_freedom          : float         (** Degree's of freedom in the regression. *)
-  ; coefficients            : float array   (** The coefficients of the determined model. *)
-  ; correlations            : float array   (** TODO. Document *)
-  ; chi_square              : float
-  ; g_inferred_response_var : float
-  ; sum_squares             : float
-  ; cod                     : float         (** coefficient of determination. r^2 *)
-  ; adj_cod                 : float         (** adjusted coefficient of determination. r^2 *)
-  ; covariance              : float array array (* Covariance matrix. *)
-  ; residuals               : float array
-  ; aic                     : float
-  ; loocv                   : float array   (* Leave-One-Out-Cross-Validation, Predicted Residuals. *)
-  }
-
-(** [eval_glm glm data] evaluate the general linear model [glm] over the vector
-    of [data]. *)
-val eval_glm : general_linear_model -> float array -> float
-
-(** [general_linear_regress ?lambda ?pad resp pred unit]
-  Compute a [general_linear_model] for predicting [resp] based on the design
-  matrix [pred].
-
-  [pad] instructs the method to efficiently insert a colum of 1's into the
-    design matrix for the constant term.
-  [lambda] specifies optional ridge regression logic.
-*)
-val general_linear_regress : ?lambda:lambda_spec
-                            -> ?pad:bool
-                            -> resp: float array
-                            -> pred: float array array -> unit
-                            -> general_linear_model
-
-(** [general_tikhonov_regression ?lambda resp pred tik unit]
-  Compute a [general_linear_model] for predicting [resp] based on the design
-  matrix [pred] and incorporating [tik] as a regularizer.
-
-  [tik] is the [T^t*T] of the Tikhonov matrix description as
-  described here https://en.wikipedia.org/wiki/Tikhonov_regularization.
-
-  [lambda] optionally specify logic for searching for an optimal multiple
-  of the [tik] based on the best Leave-One-Out-Cross-Validation.
-*)
-val general_tikhonov_regression : ?lambda:lambda_spec
-                                -> resp: float array
-                                -> pred: float array array
-                                -> tik: float array array -> unit
-                                -> general_linear_model
-
-                                *)

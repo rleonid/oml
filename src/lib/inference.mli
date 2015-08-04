@@ -1,5 +1,4 @@
-
-(** Infer probabilities from data. *)
+(** Infer probabilities from data and perform hypothesis tests. *)
 
 (** [prediction_interval stats alpha]
   Creates a prediction interval for the distribution described by [stats]
