@@ -3,6 +3,7 @@ open Test_utils
 
 module U = Univarite
 module M = Multivariate
+module T = Tikhonov
 
 let looe_manually lambda pred resp =
   let predi = Array.to_list pred |> List.mapi (fun i p -> (i, p)) in
@@ -70,7 +71,9 @@ let () =
   Test.add_random_test
     ~title:"Regression: lrm models evaluate like linear models"
     Gen.(zip2 non_zero_float lrm_gen)
-    (fun (x, lrm) -> U.eval lrm x)
+    (fun (x, lrm) ->
+      let _ = U.describe lrm in
+      U.eval lrm x)
     Spec.([ always =>
       (fun((x, lrm), y) ->
         equal_floats y (U.alpha lrm +. U.beta lrm *. x)) ]);
@@ -150,6 +153,21 @@ let () =
       let rd = Vectors.dot rdg.coefficients rdg.coefficients in
       let gd = Vectors.dot glm.coefficients glm.coefficients in
       rd < gd)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Regression: Tikhonov... doesn't crash with something sensible."
+    ~nb_runs:5 (* Limited because this example is time consuming *)
+    Gen.(general_model ~max_samples ~max_predictors)
+    (fun (pred, _, resp) ->
+      let r,c = Matrices.dim pred in
+      let reg =
+        Array.init r (fun i -> Array.init c (fun j ->
+          if i = j then 1.0 else 0.0))
+      in
+      let opt = {regularizer = reg; lambda_spec = None} in
+      let _t  = T.regress (Some opt) ~resp ~pred in
+      true)
     Spec.([just_postcond_pred is_true]);
 
   (*  Computing LOOE has a subtraction of 1/S^2 - 1/lambda so it can be

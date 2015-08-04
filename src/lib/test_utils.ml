@@ -67,7 +67,8 @@ module FGen (Fp : FloatParameters) = struct
         print_float_array
 
   let general_model ~max_predictors ~max_samples =
-    map1 (fun m ->
+    general_model_array max_predictors max_samples
+    |> map1 (fun m ->
       let data = Array.sub m 1 (Array.length m - 1) in
       let coef = m.(0) in
       let prod_column_vector m v =
@@ -89,7 +90,6 @@ module FGen (Fp : FloatParameters) = struct
           (print_float_array pred)
           (Kaputt.Utils.make_string_of_array (snd float) coef)
           (Kaputt.Utils.make_string_of_array (snd float) resp))
-      (general_model_array max_predictors max_samples)
 
 end
 
