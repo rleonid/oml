@@ -96,6 +96,13 @@ module Array = struct
     in
     loop 0
 
+  let has_order c a =
+    let n = Array.length a in
+    let rec loop i =
+      i = n || (c a.(i -1) a.(i) && loop (i + 1))
+    in
+    loop 1
+
   let range ?(incr=1.0) ~start ~stop () =
     if stop < start
     then [||]

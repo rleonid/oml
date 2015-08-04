@@ -77,6 +77,11 @@ module Array : sig
       || (p arr.(n))] *)
   val any : ('a -> bool) -> 'a array -> bool
 
+  (** [has_order c arr] equivalent to
+      [ c arr.(0) arr.(1) && c arr.(1) arr.(2) ... c arr.(n-1) arr.(n)]
+      but short circuits. *)
+  val has_order : ('a -> 'a -> bool) -> 'a array -> bool
+
   (** [range incr start stop] creates a float array of all the values in the
       interval [\[start,stop)], counting by [incr] (defaults to [1.0]). *)
   val range : ?incr:float -> start:float -> stop:float -> unit -> float array
