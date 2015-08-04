@@ -37,6 +37,12 @@ A collection of OCaml Math and Statistics functions.
   `make setup` will `opam install` these:
 
   - [Lacaml](https://github.com/mmottl/lacaml) for BLAS/LAPACK bindings.
+  - [LBFGS](https://github.com/Chris00/L-BFGS-ocaml) for bindings to LBFGS
+      optimization routines.
   - [Kaputt](http://kaputt.x9c.fr/) for testing.
-  - [Bisect](http://bisect.x9c.fr/) for coverage of tests.
+  - [Bisect_ppx](https://github.com/rleonid/bisect_ppx) for code coverage.
+      - See [Bisect](http://bisect.x9c.fr/) for initial implementation
+      - and [Ocveralls](https://github.com/sagotch/ocveralls/] for pushing to
+          [Coveralls](https://coveralls.io/).
+  - [ocephes](https://github.com/rleonid/ocephes) for special functions.
 
