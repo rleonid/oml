@@ -100,6 +100,12 @@ Extend the <code class="code">Array</code> module with useful functions.<br>
       || (p arr.(n))</code><br>
 </div>
 
+<pre><span id="VALhas_order"><span class="keyword">val</span> has_order</span> : <code class="type">('a -> 'a -> bool) -> 'a array -> bool</code></pre><div class="info ">
+<code class="code">has_order c arr</code> equivalent to
+      <code class="code"> c arr.(0) arr.(1) &amp;&amp; c arr.(1) arr.(2) ... c arr.(n-1) arr.(n)</code>
+      but short circuits.<br>
+</div>
+
 <pre><span id="VALrange"><span class="keyword">val</span> range</span> : <code class="type">?incr:float -> start:float -> stop:float -> unit -> float array</code></pre><div class="info ">
 <code class="code">range incr start stop</code> creates a float array of all the values in the
       interval <code class="code">[start,stop)</code>, counting by <code class="code">incr</code> (defaults to <code class="code">1.0</code>).<br>

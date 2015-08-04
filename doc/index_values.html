@@ -112,13 +112,6 @@
       <code class="code">c e = 0</code>.
 </div>
 </td></tr>
-<tr><td><a href="Solvers.html#VALbisection">bisection</a> [<a href="Solvers.html">Solvers</a>]</td>
-<td><div class="info">
-<code class="code">bisection epsilon lower_bound upper_bound f</code> iteratively
-    finds the root of <code class="code">f</code> between <code class="code">lower_bound</code> and <code class="code">upper_bound</code>,
-    or the closer bound if there is not root therein.
-</div>
-</td></tr>
 <tr><td align="left"><br>C</td></tr>
 <tr><td><a href="Inference.html#VALchi">chi</a> [<a href="Inference.html">Inference</a>]</td>
 <td><div class="info">
@@ -359,6 +352,13 @@ Evaluate a new class instance using the trained multinomial naive bayes.
 <td><div class="info">
 <code class="code">harmonic_mean arr</code> is the reciprocal of the arithmetic mean of the
     reciprocals of arr.
+</div>
+</td></tr>
+<tr><td><a href="Util.Array.html#VALhas_order">has_order</a> [<a href="Util.Array.html">Util.Array</a>]</td>
+<td><div class="info">
+<code class="code">has_order c arr</code> equivalent to
+      <code class="code"> c arr.(0) arr.(1) &amp;&amp; c arr.(1) arr.(2) ... c arr.(n-1) arr.(n)</code>
+      but short circuits.
 </div>
 </td></tr>
 <tr><td><a href="Descriptive.html#VALhistogram">histogram</a> [<a href="Descriptive.html">Descriptive</a>]</td>
@@ -605,7 +605,8 @@ Computes kl divergence of the normal distributions P and Q defined
 <tr><td align="left"><br>P</td></tr>
 <tr><td><a href="Pca.html#VALpca">pca</a> [<a href="Pca.html">Pca</a>]</td>
 <td><div class="info">
-<code class="code">pca data</code> break down <code class="code">data</code> into its principle components.
+<code class="code">pca ?demean ?scale ?unbiased data</code> break down <code class="code">data</code> into its principle
+    components.
 </div>
 </td></tr>
 <tr><td><a href="Util.html#VALpi">pi</a> [<a href="Util.html">Util</a>]</td>

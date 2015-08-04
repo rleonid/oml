@@ -59,10 +59,4 @@ Numerically find the roots of passed functions.<br>
     <code class="code">newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
       lower_bound upper_bound f (Estimations.second_order f)</code><br>
 </div>
-
-<pre><span id="VALbisection"><span class="keyword">val</span> bisection</span> : <code class="type">epsilon:float -><br>       lower_bound:float -> upper_bound:float -> (float -> float) -> float</code></pre><div class="info ">
-<code class="code">bisection epsilon lower_bound upper_bound f</code> iteratively
-    finds the root of <code class="code">f</code> between <code class="code">lower_bound</code> and <code class="code">upper_bound</code>,
-    or the closer bound if there is not root therein.<br>
-</div>
 </body></html>

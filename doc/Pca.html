@@ -58,7 +58,11 @@ Principle Components Analysis.<br>
 </div>
 
 <pre><span id="VALpca"><span class="keyword">val</span> pca</span> : <code class="type">?demean:bool -> ?scale:bool -> ?unbiased:bool -> Lacaml.D.mat -> <a href="Pca.html#TYPEt">t</a></code></pre><div class="info ">
-<code class="code">pca data</code> break down <code class="code">data</code> into its principle components.<br>
+<code class="code">pca ?demean ?scale ?unbiased data</code> break down <code class="code">data</code> into its principle
+    components. <code class="code">demean</code> will subtract the mean from each column (defaults
+    to <code class="code">true</code>). <code class="code">scale</code> will divide each column by the standard deviation
+    (defaults to <code class="code">true</code>) and unbiased controls whether to use the unbaised
+    standard deviation calculation (defaults to <code class="code">true</code>).<br>
 </div>
 
 <pre><code><span id="TYPEpca_reduction_method"><span class="keyword">type</span> <code class="type"></code>pca_reduction_method</span> = </code></pre><table class="typetable">
