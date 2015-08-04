@@ -1,8 +1,35 @@
+open Util
 open Test_utils
 
 let () =
   let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
   let beta_cdf = beta_cdf ~alpha:1.0 ~beta:1.0 in
+
+  (* These values easily cause erfc to underflow. *)
+  let mean_o = Gen.(option bool (make_float (-1.) 1.0)) in
+  let std_o  = Gen.(option bool (make_float (-1.) 1.0)) in
+  Test.add_random_test
+    ~title:"Distributions, normal_cdf is between 0 and 1."
+    Gen.(zip3 mean_o std_o (make_float (-1e1) (1e1)))
+    (fun (mean,std,x) ->
+      within (Closed 0.0, Closed 1.0) (normal_cdf ?mean ?std x))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Distributions, normal_df is also bounded."
+    Gen.(zip3 mean_o std_o float)
+    (fun (mean,std,x) ->
+      within (Closed 0.0, Closed 1.0) (normal_pdf ?mean ?std x))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Distributions, normal_quantile works."
+    Gen.(zip3 mean_o std_o (make_float 0.0 1.0))
+    (fun (mean,std,p) ->
+      let _ = normal_quantile ?mean ?std p in
+      true (* TODO *))
+    Spec.([just_postcond_pred is_true]);
+
   Test.add_random_test
     ~title:"Distributions: beta cdf alpha=beta=1, assert f(x)=x"
     ~nb_runs:200
