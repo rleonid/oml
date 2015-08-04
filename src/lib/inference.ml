@@ -46,8 +46,8 @@ let chi observed expected =
 (* TODO: Add Tests where the population variance is known, ie Z-tests.*)
 
 type null_hypothesis =
-  | TwoSided
-  | OneSided
+  | Two_sided
+  | One_sided
 
 let t_test hypothesis degrees_of_freedom ~diff ~error =
   let statistic = diff /. error in
@@ -55,8 +55,8 @@ let t_test hypothesis degrees_of_freedom ~diff ~error =
     let upper_ct = student_cdf ~k:degrees_of_freedom (abs_float statistic) in
     let prob_upper_tail = 1.0 -. upper_ct in
     match hypothesis with
-    | TwoSided -> prob_upper_tail *. 2.0
-    | OneSided -> prob_upper_tail
+    | Two_sided -> prob_upper_tail *. 2.0
+    | One_sided -> prob_upper_tail
   in
   { degrees_of_freedom = float_of_int degrees_of_freedom
   ; statistic
