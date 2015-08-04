@@ -23,17 +23,22 @@ let () =
     Gen.(zip2 polynomial float)
     (fun (clst, x) ->
       let f = poly_to_f clst in
-      let d = poly_to_df clst in
       let s = secant f in
       let o = second_order f in
-      (* There are so many possible overflows with these two methods,
-         perhaps it is easier to test that they're returning the 'same' thing.*)
-      let r = Array.range ~start:(x -. 10.) ~stop:(x +. 10.) () in
-      let cd = Array.map d r in
-      let cs = Array.map s r in
-      let co = Array.map o r in
-      equal_floats ~d:1e-3 1.0 (Descriptive.correlation cs cd) &&
-      equal_floats ~d:1e-3 1.0 (Descriptive.correlation co cd))
+      if List.length clst = 2 then
+        let d_everywhere = List.nth clst 1 in
+        equal_floats ~d:1e-3 d_everywhere (s x) &&
+        equal_floats ~d:1e-3 d_everywhere (o x)
+      else
+        let d = poly_to_df clst in
+        (* There are so many possible overflows with these two methods,
+          perhaps it is easier to test that they're returning the 'same' thing.*)
+        let r = Array.range ~start:(x -. 10.) ~stop:(x +. 10.) () in
+        let cd = Array.map d r in
+        let cs = Array.map s r in
+        let co = Array.map o r in
+        equal_floats ~d:1e-3 1.0 (Descriptive.correlation cs cd) &&
+        equal_floats ~d:1e-3 1.0 (Descriptive.correlation co cd))
     Spec.([just_postcond_pred is_true]);
 
   ()
