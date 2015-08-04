@@ -6,6 +6,7 @@ OCaml Math Library
 
 
 A collection of OCaml Math and Statistics functions.
+The API is available [online](http://rleonid.github.io/oml/doc/index.html).
 
 ### Goals
 
