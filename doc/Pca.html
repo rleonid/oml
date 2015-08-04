@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Measures.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Pca</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Measures.html" title="Measures">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Pca.html">Pca</a></h1>
+
+<pre><span class="keyword">module</span> Pca: <code class="code">sig</code> <a href="Pca.html">..</a> <code class="code">end</code></pre><div class="info module top">
+Principle Components Analysis.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+
+
+<pre><span id="VALvariances"><span class="keyword">val</span> variances</span> : <code class="type"><a href="Pca.html#TYPEt">t</a> -> float array</code></pre><div class="info ">
+<code class="code">variances t</code> returns a vector of the amount of variance explained by each
+    PC in <code class="code">t</code>.<br>
+</div>
+
+<pre><span id="VALcomponents"><span class="keyword">val</span> components</span> : <code class="type"><a href="Pca.html#TYPEt">t</a> -> float array array</code></pre><div class="info ">
+<code class="code">components t</code><br>
+</div>
+
+<pre><span id="VALscalings"><span class="keyword">val</span> scalings</span> : <code class="type"><a href="Pca.html#TYPEt">t</a> -> (float * float) array</code></pre><div class="info ">
+<code class="code">scalings t</code> returns an array of tuples representing the subtracted mean and
+    divided standard deviation applied to the data before broken into PC's.<br>
+</div>
+
+<pre><span id="VALpca"><span class="keyword">val</span> pca</span> : <code class="type">?demean:bool -> ?scale:bool -> ?unbiased:bool -> Lacaml.D.mat -> <a href="Pca.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">pca data</code> break down <code class="code">data</code> into its principle components.<br>
+</div>
+
+<pre><code><span id="TYPEpca_reduction_method"><span class="keyword">type</span> <code class="type"></code>pca_reduction_method</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTpca_reduction_method.SpecificNumberOfComponents"><span class="constructor">SpecificNumberOfComponents</span></span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Only use this many components.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTpca_reduction_method.VarianceExplained"><span class="constructor">VarianceExplained</span></span> <span class="keyword">of</span> <code class="type">float</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Choose as many components as needed to explain this much variance.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+
+
+
+<pre><span id="VALreduce"><span class="keyword">val</span> reduce</span> : <code class="type"><a href="Pca.html#TYPEt">t</a> -> <a href="Pca.html#TYPEpca_reduction_method">pca_reduction_method</a> -> <a href="Pca.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">reduce t prm</code> restrict the number of stored principle components via <code class="code">prm</code>.<br>
+</div>
+</body></html>

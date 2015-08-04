@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Svd.html">
+<link rel="next" href="Measures.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Classify</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Svd.html" title="Svd">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Measures.html" title="Measures">Next</a>
+</div>
+<h1>Module <a href="type_Classify.html">Classify</a></h1>
+
+<pre><span class="keyword">module</span> Classify: <code class="code">sig</code> <a href="Classify.html">..</a> <code class="code">end</code></pre><div class="info module top">
+The classifiers below assign a discrete probability distribution over the
+    list of class 'a in their training set.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="TYPEprobabilities"><span class="keyword">type</span> <code class="type">'a</code> probabilities</span> = <code class="type">('a * float) list</code> </pre>
+
+
+<pre><span id="VALmost_likely"><span class="keyword">val</span> most_likely</span> : <code class="type">'a <a href="Classify.html#TYPEprobabilities">probabilities</a> -> 'a</code></pre><div class="info ">
+<code class="code">most_likely probabilities</code> returns the most likely class from the
+    discrete probability distribution.<br>
+</div>
+
+<pre><span id="TYPEnaive_bayes"><span class="keyword">type</span> <code class="type">('cls, 'ftr)</code> naive_bayes</span> </pre>
+<div class="info ">
+A discrete Naive Bayes classifier of class <code class="code">'cls</code> by observing
+    features <code class="code">'ftr</code>.<br>
+</div>
+
+
+<pre><span id="VALclass_probabilities"><span class="keyword">val</span> class_probabilities</span> : <code class="type">('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes">naive_bayes</a> -> 'cls -> float * float array</code></pre><div class="info ">
+<code class="code">class_probabilities bayes class</code> returns the prior and per feature likelihood
+    probabilities learned by <code class="code">bayes</code> for <code class="code">class</code>.<br>
+<b>Raises</b> <code>Not_found</code> if <code class="code">bayes</code> never trained on <code class="code">class</code>.<br>
+</div>
+
+<pre><span id="VALestimate"><span class="keyword">val</span> estimate</span> : <code class="type">?smoothing:float -><br>       ?classes:'cls list -><br>       feature_size:int -><br>       ('ftr -> int array) -><br>       ('cls * 'ftr) list -> ('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes">naive_bayes</a></code></pre><div class="info ">
+<code class="code">estimate smoothing classes feature_size to_feature_array training_data</code>
+    trains a discrete Naive Bayes classifier based on the <code class="code">training_data</code>.
+    <code class="code">to_feature_array</code> maps a feature to an integer array of indices of in
+    the feature_space bounded by [0,feature_size\). Optionally, <code class="code">classes</code>
+    supplies all the classes to learn or they're aggregated from observations
+    in data (this is useful, for classes that may be 'missing' in the data and
+    smoothing is applied.
+<p>
+
+    Additive <code class="code">smoothing</code> can be applied to the final estimates if provided.
+    When estimating a probability distribution by counting observed instances
+    in the feature space we may want to smooth the values, particularly if our
+    training data is sparse.
+<p>
+
+    <code class="code">http://en.wikipedia.org/wiki/Additive_smoothing</code><br>
+</div>
+
+<pre><span id="VALeval"><span class="keyword">val</span> eval</span> : <code class="type">?bernoulli:bool -><br>       ('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes">naive_bayes</a> -> 'ftr -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
+<code class="code">eval bernoulli classifier feature</code> classifies <code class="code">feature</code>
+    according to <code class="code">classifier</code>. if <code class="code">bernoulli</code> is specified we treat the
+    underlying distribution as Bernoulli (as opposed to Multinomial) and
+    estimate the likelihood with (1-p_i) for features <code class="code">i</code> that are missing
+    from <code class="code">feature</code>.<br>
+</div>
+
+<pre><span id="TYPEnaive_bayes_mv"><span class="keyword">type</span> <code class="type">('cls, 'ftr)</code> naive_bayes_mv</span> </pre>
+<div class="info ">
+A discrete multinomial Naive Bayes classifier of class <code class="code">'cls</code> by
+    observing <code class="code">'ftr</code>, each 'cls represented by an integer array for each
+    of it's categories.<br>
+</div>
+
+
+<pre><span id="VALclass_probabilities_mv"><span class="keyword">val</span> class_probabilities_mv</span> : <code class="type">('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes_mv">naive_bayes_mv</a> -> 'cls -> 'ftr -> float * float array</code></pre><div class="info ">
+Return the class probabilities of a multinomial naive bayes.<br>
+</div>
+
+<pre><span id="VALestimate_mv"><span class="keyword">val</span> estimate_mv</span> : <code class="type">?smoothing:float -><br>       ?classes:'cls list -><br>       feature_sizes:int array -><br>       ('ftr -> int array) -><br>       ('cls * 'ftr) list -> ('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes_mv">naive_bayes_mv</a></code></pre><div class="info ">
+Estimate a multinomial naive bayes.<br>
+</div>
+
+<pre><span id="VALeval_mv"><span class="keyword">val</span> eval_mv</span> : <code class="type">('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes_mv">naive_bayes_mv</a> -> 'ftr -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
+Evaluate a new class instance using the trained multinomial naive bayes.<br>
+</div>
+
+<pre><span id="TYPEgauss_bayes"><span class="keyword">type</span> <code class="type">'cls</code> gauss_bayes</span> </pre>
+<div class="info ">
+A continuous Gaussian Naive Bayes classifier of class <code class="code">'cls</code>. The
+    feature space is assumed to be a float array.<br>
+</div>
+
+
+<pre><span id="VALgauss_estimate"><span class="keyword">val</span> gauss_estimate</span> : <code class="type">?classes:'cls list -> ('cls * float array) list -> 'cls <a href="Classify.html#TYPEgauss_bayes">gauss_bayes</a></code></pre><div class="info ">
+<code class="code">gauss_estimate training_data</code> trains a Gaussian Naive Bayes classifier from
+    <code class="code">training_data</code>, where all of the data are of the same length; feature size.
+    Optionally, <code class="code">classes</code> supplies all the classes to learn or they're
+    aggregated from observations in data.<br>
+</div>
+
+<pre><span id="VALgauss_eval"><span class="keyword">val</span> gauss_eval</span> : <code class="type">'cls <a href="Classify.html#TYPEgauss_bayes">gauss_bayes</a> -> float array -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
+<code class="code">gauss_eval classifier feature</code> classify the <code class="code">feature</code> using the <code class="code">classifier</code>.<br>
+</div>
+
+<pre><span id="TYPElog_reg"><span class="keyword">type</span> <code class="type">'cls</code> log_reg</span> </pre>
+<div class="info ">
+A logistic regression classifier.<br>
+</div>
+
+
+<pre><span id="VALlog_reg_eval"><span class="keyword">val</span> log_reg_eval</span> : <code class="type">'cls <a href="Classify.html#TYPElog_reg">log_reg</a> -> float array -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
+Evaluate a logistic regression classifier.<br>
+</div>
+
+<pre><span id="VALlog_reg_estimate"><span class="keyword">val</span> log_reg_estimate</span> : <code class="type">class_f:('cls -> bool) -> ('cls * float array) list -> 'cls <a href="Classify.html#TYPElog_reg">log_reg</a></code></pre><div class="info ">
+Estimate a logistic regression classifier.<br>
+</div>
+
+<pre><code><span id="TYPEbinary"><span class="keyword">type</span> <code class="type"></code>binary</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbinary.predicted">predicted</span>&nbsp;: <code class="type">bool</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbinary.probability">probability</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbinary.actual">actual</span>&nbsp;: <code class="type">bool</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+A two class prediction.<br>
+</div>
+
+
+<pre><code><span id="TYPEdescriptive_statistics"><span class="keyword">type</span> <code class="type"></code>descriptive_statistics</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdescriptive_statistics.sensitivity">sensitivity</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdescriptive_statistics.specificity">specificity</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdescriptive_statistics.positive_predictive">positive_predictive</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdescriptive_statistics.negative_predictive">negative_predictive</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdescriptive_statistics.accuracy">accuracy</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTdescriptive_statistics.area_under_curve">area_under_curve</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+Common statistics that describe performance of a two state classifier.<br>
+</div>
+
+
+<pre><span id="VALevaluate_performance"><span class="keyword">val</span> evaluate_performance</span> : <code class="type"><a href="Classify.html#TYPEbinary">binary</a> list -> <a href="Classify.html#TYPEdescriptive_statistics">descriptive_statistics</a></code></pre>
+<pre><span id="VALcross_validated_auc"><span class="keyword">val</span> cross_validated_auc</span> : <code class="type">(float * float) array -> float</code></pre></body></html>

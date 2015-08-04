@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Solvers.html">
+<link rel="next" href="Svd.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Running</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Solvers.html" title="Solvers">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Svd.html" title="Svd">Next</a>
+</div>
+<h1>Module <a href="type_Running.html">Running</a></h1>
+
+<pre><span class="keyword">module</span> Running: <code class="code">sig</code> <a href="Running.html">..</a> <code class="code">end</code></pre><div class="info module top">
+Compute running statitics using recurrence equations.<br>
+</div>
+<hr width="100%">
+
+<pre><code><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.size">size</span>&nbsp;: <code class="type">int</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Number of observations.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.last">last</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Last observation.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.max">max</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Maxiumum.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.min">min</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Minimum.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.sum">sum</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Sum .<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.sum_sq">sum_sq</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Sum of squares.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.mean">mean</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Mean.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.var">var</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+_Unbiased_ variance.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+}
+
+
+
+<pre><span id="TYPEmean_update"><span class="keyword">type</span> <code class="type"></code>mean_update</span> = <code class="type">size:int -><br>       n_sum:float -> n_sum_sq:float -> n_size:float -> <a href="Running.html#TYPEt">t</a> -> float -> float</code> </pre>
+<div class="info ">
+Defines a mean update function. Given an existing running statistic <code class="code">t</code>,
+    number of samples <code class="code">size</code>, the already computed updated statistics
+    <code class="code">n_sum</code>, <code class="code">n_sum_sq</code>, <code class="code">n_size</code>, and the newly observed value, return
+    a new estimate of the mean.<br>
+</div>
+
+
+<pre><span id="TYPEvar_update"><span class="keyword">type</span> <code class="type"></code>var_update</span> = <code class="type">n_mean:float -><br>       n_sum:float -> n_sum_sq:float -> n_size:float -> <a href="Running.html#TYPEt">t</a> -> float</code> </pre>
+<div class="info ">
+Defines a variance update function. Given an existing running
+    statistic <code class="code">t</code>, the already computed updated statistics <code class="code">n_mean</code>
+    <code class="code">n_sum</code>, <code class="code">n_sum_sq</code>, and <code class="code">n_size</code>, return a new estimate of the variance.<br>
+</div>
+
+
+<pre><span id="VALempty"><span class="keyword">val</span> empty</span> : <code class="type"><a href="Running.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">empty</code> an empty <code class="code">t</code>, useful for initializing the fold.<br>
+</div>
+
+<pre><span id="VALinit"><span class="keyword">val</span> init</span> : <code class="type">?size:int -> float -> <a href="Running.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">init ?size x</code> initializes a <code class="code">t</code> with <code class="code">x</code> and initial <code class="code">size</code>
+    which defaults to <code class="code">1</code>.<br>
+</div>
+
+<pre><span id="VALupdate"><span class="keyword">val</span> update</span> : <code class="type">?size:int -><br>       ?mean_update:<a href="Running.html#TYPEmean_update">mean_update</a> -><br>       ?var_update:<a href="Running.html#TYPEvar_update">var_update</a> -> <a href="Running.html#TYPEt">t</a> -> float -> <a href="Running.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">update ?size ?mean_update ?var_update t x</code> incorporate <code class="code">x</code> with given <code class="code">size</code>
+    (defaulting to <code class="code">1</code>) and update rules <code class="code">mean_update</code>, <code class="code">var_update</code> (defaulting
+    to unbiased) into the statistics tracked in <code class="code">t</code>.<br>
+</div>
+
+<pre><span id="VALjoin"><span class="keyword">val</span> join</span> : <code class="type">?mean_update:<a href="Running.html#TYPEmean_update">mean_update</a> -><br>       ?var_update:<a href="Running.html#TYPEvar_update">var_update</a> -> <a href="Running.html#TYPEt">t</a> -> <a href="Running.html#TYPEt">t</a> -> <a href="Running.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">join ?mean_update ?var_update t1 t2</code> return a <code class="code">Running.t</code> if you had
+    first observed the elements by <code class="code">t1</code> and then <code class="code">t2</code> using update rules
+    <code class="code">mean_update</code> and <code class="code">var_update</code> (defaulting to unbiased)<br>
+</div>
+</body></html>

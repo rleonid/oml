@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="Up" href="Regression.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Regression.LINEAR_MODEL</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="Regression.html" title="Regression">Up</a>
+&nbsp;</div>
+<h1>Module type <a href="type_Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a></h1>
+
+<pre><span class="keyword">module type</span> LINEAR_MODEL = <code class="code">sig</code> <a href="Regression.LINEAR_MODEL.html">..</a> <code class="code">end</code></pre><div class="info modtype top">
+The interface of the model constructed by a Regression procedure.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="TYPEinput"><span class="keyword">type</span> <code class="type"></code>input</span> </pre>
+
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+
+
+<pre><span id="VALdescribe"><span class="keyword">val</span> describe</span> : <code class="type"><a href="Regression.LINEAR_MODEL.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<code class="code">describe t</code> returns a string describing the regressed linear model.<br>
+</div>
+
+<pre><span id="TYPEspec"><span class="keyword">type</span> <code class="type"></code>spec</span> </pre>
+
+
+<pre><span id="VALeval"><span class="keyword">val</span> eval</span> : <code class="type"><a href="Regression.LINEAR_MODEL.html#TYPEt">t</a> -> <a href="Regression.LINEAR_MODEL.html#TYPEinput">input</a> -> float</code></pre><div class="info ">
+<code class="code">eval linear_model x</code> Evaluate a the <code class="code">linear_model</code> at <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALregress"><span class="keyword">val</span> regress</span> : <code class="type"><a href="Regression.LINEAR_MODEL.html#TYPEspec">spec</a> option -><br>       pred:<a href="Regression.LINEAR_MODEL.html#TYPEinput">input</a> array -><br>       resp:float array -> <a href="Regression.LINEAR_MODEL.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">regress options pred resp</code> computes a linear model of <code class="code">resp</code> based
+      off of the independent variables in the design matrix <code class="code">pred</code>, taking
+      into account the various method <code class="code">spec</code>s.<br>
+</div>
+
+<pre><span id="VALresiduals"><span class="keyword">val</span> residuals</span> : <code class="type"><a href="Regression.LINEAR_MODEL.html#TYPEt">t</a> -> float array</code></pre><div class="info ">
+<code class="code">residuals t</code> returns the residuals, the difference between the observed
+      value and the estimated value for the independent, response, values.<br>
+</div>
+
+<pre><span id="VALcoefficients"><span class="keyword">val</span> coefficients</span> : <code class="type"><a href="Regression.LINEAR_MODEL.html#TYPEt">t</a> -> float array</code></pre><div class="info ">
+<code class="code">coefficients t</code> returns the coefficients used in the linear model.<br>
+</div>
+</body></html>

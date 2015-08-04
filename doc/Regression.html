@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Inference.html">
+<link rel="next" href="Sampling.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Regression</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Inference.html" title="Inference">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Sampling.html" title="Sampling">Next</a>
+</div>
+<h1>Module <a href="type_Regression.html">Regression</a></h1>
+
+<pre><span class="keyword">module</span> Regression: <code class="code">sig</code> <a href="Regression.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<h2 id="2_Regression">Regression</h2> Construct linear models that describe (and learn from) data.<br>
+</div>
+<hr width="100%">
+
+<pre><span class="keyword">module type</span> <a href="Regression.LINEAR_MODEL.html">LINEAR_MODEL</a> = <code class="code">sig</code> <a href="Regression.LINEAR_MODEL.html">..</a> <code class="code">end</code></pre><div class="info">
+The interface of the model constructed by a Regression procedure.
+</div>
+
+<pre><span class="keyword">module</span> <a href="Regression.Univarite.html">Univarite</a>: <code class="code">sig</code> <a href="Regression.Univarite.html">..</a> <code class="code">end</code></pre><div class="info">
+Simple one dimensional regress.
+</div>
+
+<pre><code><span id="TYPElambda_spec"><span class="keyword">type</span> <code class="type"></code>lambda_spec</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTlambda_spec.Spec"><span class="constructor">Spec</span></span> <span class="keyword">of</span> <code class="type">float</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Use this specific value.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTlambda_spec.From"><span class="constructor">From</span></span> <span class="keyword">of</span> <code class="type">float array</code></code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Choose the value in the array with the lowest Leave-One-Out-Error.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+
+
+
+<pre><code><span id="TYPEmultivariate_spec"><span class="keyword">type</span> <code class="type"></code>multivariate_spec</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultivariate_spec.add_constant_column">add_constant_column</span>&nbsp;: <code class="type">bool</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Instructs the method to efficiently insert a colum of 1's into the
+                                            design matrix for the constant term.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultivariate_spec.lambda_spec">lambda_spec</span>&nbsp;: <code class="type"><a href="Regression.html#TYPElambda_spec">lambda_spec</a> option</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+How to optionally determine the ridge parameter.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+}
+
+
+
+<pre><span class="keyword">module</span> <a href="Regression.Multivariate.html">Multivariate</a>: <code class="code">sig</code> <a href="Regression.Multivariate.html">..</a> <code class="code">end</code></pre><div class="info">
+Multi-dimensional input regression, with support for Ridge regression.
+</div>
+
+<pre><code><span id="TYPEtikhonov_spec"><span class="keyword">type</span> <code class="type"></code>tikhonov_spec</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTtikhonov_spec.regularizer">regularizer</span>&nbsp;: <code class="type">float array array</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The regularizing matrix.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTtikhonov_spec.lambda_spec">lambda_spec</span>&nbsp;: <code class="type"><a href="Regression.html#TYPElambda_spec">lambda_spec</a> option</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+How to optionally determine the ridge parameter.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+}
+
+
+
+<pre><span class="keyword">module</span> <a href="Regression.Tikhonov.html">Tikhonov</a>: <code class="code">sig</code> <a href="Regression.Tikhonov.html">..</a> <code class="code">end</code></pre><div class="info">
+Multi-dimensional input regression with a matrix regularizer.
+</div>
+</body></html>

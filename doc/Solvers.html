@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Sampling.html">
+<link rel="next" href="Running.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Solvers</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Sampling.html" title="Sampling">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Running.html" title="Running">Next</a>
+</div>
+<h1>Module <a href="type_Solvers.html">Solvers</a></h1>
+
+<pre><span class="keyword">module</span> Solvers: <code class="code">sig</code> <a href="Solvers.html">..</a> <code class="code">end</code></pre><div class="info module top">
+Numerically find the roots of passed functions.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="VALnewton_raphson_full"><span class="keyword">val</span> newton_raphson_full</span> : <code class="type">?init:float -><br>       accuracy:float -><br>       iterations:int -><br>       lower_bound:float -><br>       upper_bound:float -> (float -> float) -> (float -> float) -> float</code></pre><div class="info ">
+<code class="code">newton_raphson_full ?init accuracy iterations lower_bound upper_bound f df</code>
+    uses the Newton Raphson method to iteratively solve <code class="code">f</code>.
+<p>
+
+    Starting at mid point of <code class="code">lower_bound</code> and <code class="code">upper_bound</code>, the method
+    uses <code class="code">df</code> to follow the tangent to it's root, that becomes the new point.
+    Iteration continues until <code class="code">f x</code> &lt; <code class="code">accuracy</code>.<br>
+<b>Raises</b> <code>Util.IterationFailure</code> if we escape our bounds or take longer than
+      <code class="code">iterations</code>.<br>
+</div>
+
+<pre><span id="VALnewton"><span class="keyword">val</span> newton</span> : <code class="type">?init:float -><br>       lower_bound:float -> upper_bound:float -> (float -> float) -> float</code></pre><div class="info ">
+<code class="code">newton ?init lower_bound upper_bound f</code> is equivalent to
+    <code class="code">newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
+      lower_bound upper_bound f (Estimations.second_order f)</code><br>
+</div>
+
+<pre><span id="VALbisection"><span class="keyword">val</span> bisection</span> : <code class="type">epsilon:float -><br>       lower_bound:float -> upper_bound:float -> (float -> float) -> float</code></pre><div class="info ">
+<code class="code">bisection epsilon lower_bound upper_bound f</code> iteratively
+    finds the root of <code class="code">f</code> between <code class="code">lower_bound</code> and <code class="code">upper_bound</code>,
+    or the closer bound if there is not root therein.<br>
+</div>
+</body></html>

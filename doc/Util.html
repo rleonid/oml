@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Vectors.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Util</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Vectors.html" title="Vectors">Next</a>
+</div>
+<h1>Module <a href="type_Util.html">Util</a></h1>
+
+<pre><span class="keyword">module</span> Util: <code class="code">sig</code> <a href="Util.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<h2 id="2_Utilities">Utilities</h2>
+<p>
+<OL>
+<li>general methods that are reused in other modules.</li>
+<li>overrides and </li>
+<li>extensions of standard library modules (ex. <a href="Util.Array.html"><code class="code">Util.Array</code></a>) with useful methods (ex. <a href="Util.Array.html#VALfold2"><code class="code">Util.Array.fold2</code></a> and <a href="Util.Array.html#VALsumf"><code class="code">Util.Array.sumf</code></a>)</li>
+</OL>
+<br>
+</div>
+<hr width="100%">
+
+<pre><code><span id="TYPEiterative_failure_reason"><span class="keyword">type</span> <code class="type"></code>iterative_failure_reason</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.OutOfBounds"><span class="constructor">OutOfBounds</span></span> <span class="keyword">of</span> <code class="type">float</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.NoConvergence"><span class="constructor">NoConvergence</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.TooManyIterations"><span class="constructor">TooManyIterations</span></span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.TooFewIterations"><span class="constructor">TooFewIterations</span></span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr></table>
+
+<div class="info ">
+Some of the iterative routines can fail for the following reasons.<br>
+</div>
+
+
+<pre><span id="EXCEPTIONIterationFailure"><span class="keyword">exception</span> IterationFailure</span> <span class="keyword">of</span> <code class="type">string * <a href="Util.html#TYPEiterative_failure_reason">iterative_failure_reason</a></code></pre>
+<div class="info ">
+The exception raised when an iterative function fails to converge.<br>
+</div>
+
+<pre><span id="VALinvalidArg"><span class="keyword">val</span> invalidArg</span> : <code class="type">('a, unit, string, 'b) Pervasives.format4 -> 'a</code></pre>
+<pre><span id="VALpi"><span class="keyword">val</span> pi</span> : <code class="type">float</code></pre><div class="info ">
+3.14159265358979312<br>
+</div>
+
+<pre><span id="VALmidpoint"><span class="keyword">val</span> midpoint</span> : <code class="type">float -> float -> float</code></pre>
+<pre><span class="keyword">module</span> <a href="Util.Array.html">Array</a>: <code class="code">sig</code> <a href="Util.Array.html">..</a> <code class="code">end</code></pre><div class="info">
+Extend the <code class="code">Array</code> module with useful functions.
+</div>
+
+<pre><span id="VALdx"><span class="keyword">val</span> dx</span> : <code class="type">float</code></pre><div class="info ">
+A really small value. Also known as the machine epsilon, the smallest
+    distance between two representable floats.<br>
+</div>
+
+<pre><span id="VALsignificantly_different_from"><span class="keyword">val</span> significantly_different_from</span> : <code class="type">?d:float -> float -> float -> bool</code></pre><div class="info ">
+<code class="code">significantly_different_from ?d x y</code> will check if <code class="code">y</code> is more than <code class="code">d</code>
+    (defaults to <code class="code">dx</code>) away from <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALis_nan"><span class="keyword">val</span> is_nan</span> : <code class="type">float -> bool</code></pre><div class="info ">
+<code class="code">is_nan x</code> robustly determine if a float represents NaN (aka Not a number).<br>
+</div>
+
+<pre><span id="VALis_degenerate"><span class="keyword">val</span> is_degenerate</span> : <code class="type">float -> bool</code></pre><div class="info ">
+<code class="code">is_degenerate x</code> determine if a value is <code class="code">nan</code> or <code class="code">neg_infinity</code> or
+    <code class="code">infinity</code>.<br>
+</div>
+
+<pre><code><span id="TYPEbound"><span class="keyword">type</span> <code class="type">'a</code> bound</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbound.Open"><span class="constructor">Open</span></span> <span class="keyword">of</span> <code class="type">'a</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbound.Closed"><span class="constructor">Closed</span></span> <span class="keyword">of</span> <code class="type">'a</code></code></td>
+
+</tr></table>
+
+
+
+<pre><span id="VALwithin"><span class="keyword">val</span> within</span> : <code class="type">'a <a href="Util.html#TYPEbound">bound</a> * 'a <a href="Util.html#TYPEbound">bound</a> -> 'a -> bool</code></pre><div class="info ">
+<code class="code">within bound_pair x</code> evaluates whether <code class="code">x</code> is inside the interval described
+    by the <code class="code">bound_pair</code>.<br>
+</div>
+
+<pre><span class="keyword">module</span> <a href="Util.Float.html">Float</a>: <code class="code">sig</code> <a href="Util.Float.html">..</a> <code class="code">end</code></pre><div class="info">
+Provide operator overloads for conveniently expressing float arithmatic.
+</div>
+</body></html>

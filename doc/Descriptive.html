@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Estimations.html">
+<link rel="next" href="Inference.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Descriptive</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Estimations.html" title="Estimations">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Inference.html" title="Inference">Next</a>
+</div>
+<h1>Module <a href="type_Descriptive.html">Descriptive</a></h1>
+
+<pre><span class="keyword">module</span> Descriptive: <code class="code">sig</code> <a href="Descriptive.html">..</a> <code class="code">end</code></pre><div class="info module top">
+Compute statistics (aka estimators) and other methods <a href="Descriptive.html#VALhistogram"><code class="code">Descriptive.histogram</code></a> that
+    describe data stored in a float array.
+<p>
+
+    Testing against statistics is found in <code class="code">Inference</code>. These algorithms are
+    not necessarily tailored for the most accurate algorithms that try to
+    minimize truncating (see <code class="code">Running</code> for online algorithms) but for having a
+    simple function(al) interface with good runtime performance.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="VALmean"><span class="keyword">val</span> mean</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">mean data</code> returns the sample mean of <code class="code">data</code>.<br>
+</div>
+
+<pre><span id="VALmedian"><span class="keyword">val</span> median</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">median data</code> returns the number that separates <code class="code">data</code> into two halfs of
+    equal number where the lower half is less than the <code class="code">median</code> and the higher
+    half are greater.<br>
+</div>
+<br>
+Spread.<br>
+
+<pre><span id="VALvar"><span class="keyword">val</span> var</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">var data</code> returns the sample variance of <code class="code">data</code>.<br>
+</div>
+
+<pre><span id="VALunbiased_var"><span class="keyword">val</span> unbiased_var</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">unbiased_var</code> returns the unbiased variance of <code class="code">data</code> via Bessel's
+    correction; ie. divinding by <code class="code">n - 1</code>.<br>
+</div>
+
+<pre><span id="VALpopulation_var"><span class="keyword">val</span> population_var</span> : <code class="type">float -> float array -> float</code></pre><div class="info ">
+<code class="code">population_var mean data</code> computes the variance of data when you know the
+  population <code class="code">mean</code>.<br>
+</div>
+
+<pre><span id="VALcovariance"><span class="keyword">val</span> covariance</span> : <code class="type">float array -> float array -> float</code></pre><div class="info ">
+<code class="code">covariance x y</code> computes the sample covariance of <code class="code">x</code> and <code class="code">y</code> where higher
+    positive values indicate a direct relationship (larger values associate with
+    larger values, smaller with smaller), a large negative value indicates an
+    reverse relationship (smaller with larger and vice versa). While values
+    close to 0.0 indicate no relationship.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the size of <code class="code">x</code> doesn't equal the size of <code class="code">y</code>.<br>
+</div>
+
+<pre><span id="VALcorrelation"><span class="keyword">val</span> correlation</span> : <code class="type">float array -> float array -> float</code></pre><div class="info ">
+<code class="code">correlation x y</code> returns the Pearson correlation coefficient of <code class="code">x</code> and
+    <code class="code">y</code>. This is normalized sample covariance.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the size of <code class="code">x</code> doesn't equal the size of <code class="code">y</code>.<br>
+</div>
+
+<pre><span id="VALautocorrelation"><span class="keyword">val</span> autocorrelation</span> : <code class="type">int -> float array -> float</code></pre><div class="info ">
+<code class="code">autocorrelation lag data</code> computes the correlation of <code class="code">data</code> with itself
+  offset by <code class="code">lag</code>.<br>
+</div>
+
+<pre><span id="VALmoment"><span class="keyword">val</span> moment</span> : <code class="type">int -> float array -> float</code></pre><div class="info ">
+<code class="code">moment k data</code> computes the <code class="code">k</code>th sample central moment of <code class="code">data</code>.<br>
+</div>
+
+<pre><span id="VALskew"><span class="keyword">val</span> skew</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">skew data</code> computes the sample skew of <code class="code">data</code> (Fisher-Pearson's moment
+    coefficient of skewness), which is a measure of asymmetry. For unimodal
+    data negative values indicate that the left tail is longer in relation
+    to the right.<br>
+</div>
+
+<pre><span id="VALunbiased_skew"><span class="keyword">val</span> unbiased_skew</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">unbiased_skew data</code> adjusts the skew calculation to take into account
+    sample size.
+<p>
+
+    The adjustments are chosen to prefer smaller mean squared error for small
+    samples on non-normal distributions. See "Comparing measures of sample
+    skewness and kurtosis" Joanes 1997, for details.<br>
+</div>
+
+<pre><span id="VALkurtosis"><span class="keyword">val</span> kurtosis</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">kurtosis data</code> computes the sample kurtosis of <code class="code">data</code>. This is a
+    measure of the 'peakedness' vs 'tailness' of a distribution. It is adjusted
+    so that a normal distribution will have kurtosis of 0.<br>
+</div>
+
+<pre><span id="VALunbiased_kurtosis"><span class="keyword">val</span> unbiased_kurtosis</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">unbiased_kurtosis data</code> adjusts the kurtosis calculation to take into
+    account sample size.
+<p>
+
+    The adjustments are chosen to prefer smaller mean squared error for small
+    samples on non-normal distributions. See "Comparing measures of sample
+    skewness and kurtosis" Joanes 1997, for details.<br>
+</div>
+
+<pre><span id="VALvar_standard_error"><span class="keyword">val</span> var_standard_error</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">var_standard_error data</code> computes the standard error of the variance
+    of <code class="code">data</code>. The standard error of a statistic (in this case variance)
+    is the estimated standard deviation of that statistic.<br>
+</div>
+
+<pre><span id="VALskew_standard_error"><span class="keyword">val</span> skew_standard_error</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">skew_standard_error data</code> computes the standard error of the sample
+    (unbiased) skew statistic.<br>
+</div>
+
+<pre><span id="VALkurtosis_standard_error"><span class="keyword">val</span> kurtosis_standard_error</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">kurtosis_standard_error data</code> computes the standard error of the sample
+    (unbiased) kurtosis statistic.<br>
+</div>
+
+<pre><span id="VALvar_statistic"><span class="keyword">val</span> var_statistic</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">var_statistic data</code> computes the test statistic of the sample variance of
+    <code class="code">data</code>. This normalizes the variance measurement.<br>
+</div>
+
+<pre><span id="VALskew_statistic"><span class="keyword">val</span> skew_statistic</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">skew_statistic data</code> computes the test statistic of the sample skew of
+    <code class="code">data</code>. This normalizes the skew so that jjjj<br>
+</div>
+
+<pre><span id="VALkurtosis_statistic"><span class="keyword">val</span> kurtosis_statistic</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">kurtosis_statistic data</code> computes the test statistic of the sample
+    kurtosis of <code class="code">data</code>.<br>
+</div>
+
+<pre><span id="TYPEskew_classification"><span class="keyword">type</span> <code class="type"></code>skew_classification</span> = <code class="type">[ `Negative | `Normal | `Positive | `Slightly_negative | `Slightly_positive ]</code> </pre>
+
+
+<pre><span id="VALclassify_skew"><span class="keyword">val</span> classify_skew</span> : <code class="type">float array -> <a href="Descriptive.html#TYPEskew_classification">skew_classification</a></code></pre><div class="info ">
+<code class="code">classify_skew data</code> provides a terse description of the skewness of <code class="code">data</code>.
+<p>
+
+    Please note, even though a (polymorphic) variant is returned, caution must
+    be taken when creating algorithms based upon these classification. These
+    methods are brittle in the face of non-normal data and small sample size,
+    although effort has been made to choose good practices.<br>
+</div>
+
+<pre><span id="TYPEkurtosis_classification"><span class="keyword">type</span> <code class="type"></code>kurtosis_classification</span> = <code class="type">[ `Fat | `Normal | `Skinny | `Slightly_fat | `Slightly_skinny ]</code> </pre>
+
+
+<pre><span id="VALclassify_kurtosis"><span class="keyword">val</span> classify_kurtosis</span> : <code class="type">float array -> <a href="Descriptive.html#TYPEkurtosis_classification">kurtosis_classification</a></code></pre><div class="info ">
+<code class="code">classify_kurtosis data</code> provides a terse description of the kurtosis of
+    <code class="code">data</code>. The same warning as in <code class="code">classify_skew</code> applies.<br>
+</div>
+
+<pre><code><span id="TYPEsummary"><span class="keyword">type</span> <code class="type"></code>summary</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.size">size</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.min">min</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.max">max</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.mean">mean</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.std">std</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.var">var</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.skew">skew</span>&nbsp;: <code class="type">float * <a href="Descriptive.html#TYPEskew_classification">skew_classification</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTsummary.kurtosis">kurtosis</span>&nbsp;: <code class="type">float * <a href="Descriptive.html#TYPEkurtosis_classification">kurtosis_classification</a></code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+Common statistics that describe data.<br>
+</div>
+
+
+<pre><span id="VALunbiased_summary"><span class="keyword">val</span> unbiased_summary</span> : <code class="type">float array -> <a href="Descriptive.html#TYPEsummary">summary</a></code></pre><div class="info ">
+<code class="code">unbiased_summary data</code> summarizes <code class="code">data</code> into a <code class="code">summary</code>.<br>
+</div>
+
+<pre><span id="VALhistogram"><span class="keyword">val</span> histogram</span> : <code class="type">[ `Buckets of int | `Specific of float array | `Width of float ] -><br>       float array -> (float * int) array</code></pre><div class="info ">
+<code class="code">histogram data width_setting</code> group <code class="code">data</code> into a specific number of buckets
+    of given width (according to <code class="code">width_setting</code>:
+<p>
+<ul>
+<li><code class="code">`Buckets n</code> create <code class="code">n</code> equally sized bucketes to fit all the data.</li>
+<li><code class="code">`Specific bkts</code> use <code class="code">bkts</code> as lower boundaries on buckets.</li>
+<li><code class="code">`Width w</code> create buckets of size <code class="code">w</code> to fit all the data.</li>
+</ul>
+<br>
+</div>
+
+<pre><span id="VALgeometric_mean"><span class="keyword">val</span> geometric_mean</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">geometric_mean arr</code> is the product of the elements of <code class="code">arr</code> raised to the
+    power of the reciprocal of the length.<br>
+</div>
+
+<pre><span id="VALharmonic_mean"><span class="keyword">val</span> harmonic_mean</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">harmonic_mean arr</code> is the reciprocal of the arithmetic mean of the
+    reciprocals of arr.<br>
+</div>
+
+<pre><span id="VALspearman"><span class="keyword">val</span> spearman</span> : <code class="type">float array -> float array -> float</code></pre><div class="info ">
+<code class="code">spearman x y</code> returns the Spearman rank correlation coefficient.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the size of <code class="code">x</code> doesn't equal the size of <code class="code">y</code>.<br>
+</div>
+</body></html>
