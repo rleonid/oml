@@ -1,4 +1,4 @@
-(** Compute statistics (aka estimators) and other methods [ex. histogram] that
+(** Compute statistics (aka estimators) and other methods {!histogram} that
     describe data stored in a float array.
 
     Testing against statistics is found in [Inference]. These algorithms are
@@ -42,7 +42,9 @@ val population_var : float -> float array -> float
 val covariance : float array -> float array -> float
 
 (** [correlation x y] returns the Pearson correlation coefficient of [x] and
-    [y]. This is normalized sample covariance. *)
+    [y]. This is normalized sample covariance.
+
+    @raise Invalid_argument if the size of [x] doesn't equal the size of [y]. *)
 val correlation : float array -> float array -> float
 
 (** [autocorrelation lag data] computes the correlation of [data] with itself
@@ -161,5 +163,7 @@ val geometric_mean : float array -> float
     reciprocals of arr. *)
 val harmonic_mean : float array -> float
 
-(** [spearman x y] returns the Spearman rank correlation coefficient. *)
+(** [spearman x y] returns the Spearman rank correlation coefficient.
+ 
+    @raise Invalid_argument if the size of [x] doesn't equal the size of [y]. *)
 val spearman : float array -> float array -> float

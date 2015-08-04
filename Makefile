@@ -1,6 +1,6 @@
 
 DRIVER_BUILD_DIR=_driver
-PACKAGES=ctypes ctypes.foreign lacaml lbfgs
+PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx
 PACKAGES_INSTALL=$(subst .,-,$(PACKAGES_COVERED))
@@ -63,3 +63,7 @@ report: report_dir
 
 clean_reports:
 	rm -rf report_dir bisect*.out
+
+doc: oml.cmxa
+	rm -rf doc/* && \
+	ocamlfind ocamldoc $(foreach package, $(PACKAGES),-package $(package)) -d doc -html -I _build/src/lib `cat src/lib/oml.mlpack | tr '[:upper:]' '[:lower:]' | sed -e 's|\([a-z_]*\)| _build/src/lib/\1.mli|g'`

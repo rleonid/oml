@@ -1,6 +1,9 @@
 
 open Test_utils
 
+module U = Univarite
+module M = Multivariate
+
 let looe_manually lambda pred resp =
   let predi = Array.to_list pred |> List.mapi (fun i p -> (i, p)) in
   let respi = Array.to_list resp |> List.mapi (fun i r -> (i, r)) in
@@ -11,11 +14,12 @@ let looe_manually lambda pred resp =
   pred
   |> Array.mapi (fun i p ->
     let p_pred, p_resp = without i in
-    let model =
-      general_linear_regress ~lambda:(`Spec lambda)
-        ~pred:p_pred ~resp:p_resp ()
+    let ms = { add_constant_column = false
+             ; lambda_spec = Some (Spec lambda);
+             }
     in
-    resp.(i) -. eval_glm model p)
+    let model = M.regress (Some ms) ~pred:p_pred ~resp:p_resp in
+    resp.(i) -. M.eval model p)
 
 
 (* Testing the accuracy of numerical algorithms is hard (and fun).
@@ -43,7 +47,7 @@ let () =
   (* Short cut evaluation. *)
   let lregress (a, b, pred)  =
     let resp = Array.map (fun x -> b *. x +. a) pred in
-    linear_regress ~resp ~pred ()
+    U.regress None ~resp ~pred
   in
 
   (* useful generators. *)
@@ -57,8 +61,7 @@ let () =
   let random_test_array = Gen.(array (make_int 2 50) float) in
   let simple_lrm_inputs = Gen.(zip3 float non_zero_float simple_test_array) in
   let lrm_inputs        = Gen.(zip3 float non_zero_float random_test_array) in
-  (*let simple_lrm_gen    = Gen.(map1 lregress to_string simple_lrm_inputs) in *)
-  let lrm_gen           = Gen.(map1 lregress to_string lrm_inputs) in
+  let lrm_gen           = Gen.(map1 lregress U.describe lrm_inputs) in
 
   (* The tests. *)
 
@@ -67,10 +70,10 @@ let () =
   Test.add_random_test
     ~title:"Regression: lrm models evaluate like linear models"
     Gen.(zip2 non_zero_float lrm_gen)
-    (fun (x, lrm) -> eval_lrm lrm x)
+    (fun (x, lrm) -> U.eval lrm x)
     Spec.([ always =>
       (fun((x, lrm), y) ->
-        equal_floats y (lrm.alpha +. lrm.beta *. x)) ]);
+        equal_floats y (U.alpha lrm +. U.beta lrm *. x)) ]);
 
   Test.add_random_test
     ~title:"Regression: using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
@@ -80,7 +83,7 @@ let () =
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (roughly_equal a lrm.alpha) && (roughly_equal b lrm.beta))]);
+        (roughly_equal a (U.alpha lrm)) && (roughly_equal b (U.beta lrm)))]);
 
   Test.add_random_test
     ~title:"Regression: using linear regression on random float data we can recover coefficients"
@@ -90,7 +93,7 @@ let () =
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (roughly_equal a lrm.alpha) && (roughly_equal b lrm.beta))]);
+        (roughly_equal a (U.alpha lrm)) && (roughly_equal b (U.beta lrm)))]);
 
   (* TODO: clever test to react to variance in the predicted variable. *)
 
@@ -123,26 +126,27 @@ let () =
     ~title:"Regression: general can recover coefficients."
     Gen.(general_model ~max_samples ~max_predictors)
     (fun (pred, coef, resp) ->
-      let glm = general_linear_regress ~resp ~pred () in
+      let glm = M.regress None ~resp ~pred in
       Vectors.equal ~d:1e-2 glm.coefficients coef)
     Spec.([just_postcond_pred is_true]);
 
   Test.add_random_test
-    ~title:"Regression: residuals are just the difference between eval_glm and resp"
+    ~title:"Regression: residuals are just the difference between M.eval and resp"
     Gen.(general_model ~max_samples ~max_predictors)
     (fun (pred, _, resp) ->
-      let glm = general_linear_regress ~resp ~pred () in
-      equal_floats glm.residuals.(0) (resp.(0) -. eval_glm glm pred.(0)))
+      let glm = M.regress None ~resp ~pred in
+      equal_floats glm.residuals.(0) (resp.(0) -. M.eval glm pred.(0)))
     Spec.([just_postcond_pred is_true]);
 
   Test.add_random_test
     ~title:"Regression: ridge coefficients are smaller."
     Gen.(general_model ~max_samples ~max_predictors)
     (fun (pred, _, resp) ->
-      let glm = general_linear_regress ~resp ~pred () in
+      let glm = M.regress None ~resp ~pred in
       let m = Descriptive.mean resp in
-      let lambda = `Spec (m *. m) in    (* has to be big enough *)
-      let rdg = general_linear_regress ~lambda ~resp ~pred () in
+      let lambda = Spec (m *. m) in    (* has to be big enough *)
+      let ms = {add_constant_column = false; lambda_spec = Some lambda } in
+      let rdg = M.regress (Some ms) ~resp ~pred in
       let rd = Vectors.dot rdg.coefficients rdg.coefficients in
       let gd = Vectors.dot glm.coefficients glm.coefficients in
       rd < gd)

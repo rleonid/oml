@@ -1,9 +1,21 @@
 
-let ln_gamma = Foreign.foreign "lgamma" Ctypes.(double @-> returning double)
+open Util
 
-let ln_beta, beta =
-  let beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y) in
-  beta, fun x y -> (exp (beta x y))
+(* TODO: Figure out the best bound for this and ensure the more
+  accurate method is used. I think that Cephes might already do this
+  but I need to make sure. *)
+let erf = Ocephes.erf
+let erfc = Ocephes.erfc
+
+let gamma = Ocephes.gamma
+let ln_gamma = Ocephes.lgam
+
+let regularized_lower_gamma = Ocephes.igam
+let regularized_upper_gamma = Ocephes.igamc
+
+let ln_beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y)
+
+let beta x y = exp (ln_beta x y)
 
 let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
   let get_b n x =
@@ -27,18 +39,11 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 log a -. log_beta) *.
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
-let erf = Foreign.foreign "erf" Ctypes.(double @-> returning double)
-let erfc = Foreign.foreign "erfc" Ctypes.(double @-> returning double)
+let chi_square_less num_observations chi_square =
+  regularized_lower_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
 
-let gammap a x = failwith "Not implemented"
-let gammaq a x = failwith "Not implemented"
-
-let chi_square_less chi_square num_observations =
-  gammap ((float num_observations) /. 2.0) (chi_square /. 2.0)
-let chi_square_greater chi_square num_observations =
-  gammaq ((float num_observations) /. 2.0) (chi_square /. 2.0)
-
-let t_lookup alpha_level dgf = failwith "Not implemented"
+let chi_square_greater num_observations chi_square =
+  regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
 
 let softmax ?(temperature=1.0) weights =
   if Array.length weights = 0 then raise (Invalid_argument "weights") else
@@ -46,3 +51,11 @@ let softmax ?(temperature=1.0) weights =
     let weights = Array.map (fun w -> exp (w /. temperature)) weights in
     let sum = Array.fold_left (+.) 0.0 weights in
     Array.map (fun w -> w /. sum) weights
+
+let normal_cdf_inv = Ocephes.ndtri
+
+let student_cdf_inv = Ocephes.stdtri
+
+let f_less ~d1 ~d2 x =
+  let xr = Float.((d1 * x) / (d1 * x + d2)) in
+  regularized_beta ~alpha:(d1 /. 2.) ~beta:(d2 /. 2.) xr
