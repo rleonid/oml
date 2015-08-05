@@ -28,11 +28,11 @@
 <body>
 <code class="code"><span class="keyword">sig</span><br>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;iterative_failure_reason&nbsp;=<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">OutOfBounds</span>&nbsp;<span class="keyword">of</span>&nbsp;float<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">NoConvergence</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">TooManyIterations</span>&nbsp;<span class="keyword">of</span>&nbsp;int<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">TooFewIterations</span>&nbsp;<span class="keyword">of</span>&nbsp;int<br>
-&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">IterationFailure</span>&nbsp;<span class="keyword">of</span>&nbsp;string&nbsp;*&nbsp;<span class="constructor">Util</span>.iterative_failure_reason<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Out_of_bounds</span>&nbsp;<span class="keyword">of</span>&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">No_convergence</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Too_many_iterations</span>&nbsp;<span class="keyword">of</span>&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">Too_few_iterations</span>&nbsp;<span class="keyword">of</span>&nbsp;int<br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">Iteration_failure</span>&nbsp;<span class="keyword">of</span>&nbsp;string&nbsp;*&nbsp;<span class="constructor">Util</span>.iterative_failure_reason<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;invalidArg&nbsp;:&nbsp;(<span class="keywordsign">'</span>a,&nbsp;unit,&nbsp;string,&nbsp;<span class="keywordsign">'</span>b)&nbsp;<span class="constructor">Pervasives</span>.format4&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;pi&nbsp;:&nbsp;float<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;midpoint&nbsp;:&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>

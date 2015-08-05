@@ -36,7 +36,7 @@
 &nbsp;&nbsp;}<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;test_to_string&nbsp;:&nbsp;<span class="constructor">Inference</span>.test&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;chi&nbsp;:&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Inference</span>.test<br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;null_hypothesis&nbsp;=&nbsp;<span class="constructor">TwoSided</span>&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">OneSided</span><br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;null_hypothesis&nbsp;=&nbsp;<span class="constructor">Two_sided</span>&nbsp;<span class="keywordsign">|</span>&nbsp;<span class="constructor">One_sided</span><br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;t_test&nbsp;:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Inference</span>.null_hypothesis&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;diff:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;error:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Inference</span>.test<br>
