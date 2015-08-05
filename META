@@ -1,5 +1,5 @@
 description="OCaml Math Library"
-requires="lacaml"
+requires="lacaml lbfgs ocephes"
 version="0.0.1"
 directory="."
 archive(byte)="oml.cma"
