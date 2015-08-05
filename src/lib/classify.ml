@@ -346,17 +346,17 @@ type descriptive_statistics =
 module BinaryClassificationPerformance = struct
 
   type t =
-    | TruePositive
-    | FalseNegative
-    | FalsePositive
-    | TrueNegative
+    | True_positive
+    | False_negative
+    | False_positive
+    | True_negative
 
   let datum_to_t d =
     match d.actual, d.predicted with
-    | true, true    -> TruePositive
-    | true, false   -> FalseNegative
-    | false, true   -> FalsePositive
-    | false, false  -> TrueNegative
+    | true, true    -> True_positive
+    | true, false   -> False_negative
+    | false, true   -> False_positive
+    | false, false  -> True_negative
 
   type classification_record =
     { true_positive   : int
@@ -374,10 +374,10 @@ module BinaryClassificationPerformance = struct
 
   let update_classification_record cr d =
     match datum_to_t d with
-    | TruePositive  -> { cr with true_positive  = cr.true_positive + 1}
-    | FalseNegative -> { cr with false_negative = cr.false_negative + 1}
-    | FalsePositive -> { cr with false_positive = cr.false_positive + 1}
-    | TrueNegative  -> { cr with true_negative  = cr.true_negative + 1}
+    | True_positive  -> { cr with true_positive  = cr.true_positive + 1}
+    | False_negative -> { cr with false_negative = cr.false_negative + 1}
+    | False_positive -> { cr with false_positive = cr.false_positive + 1}
+    | True_negative  -> { cr with true_negative  = cr.true_negative + 1}
 
   (* From "A Simple Generalisation of the Area Under the ROC Curve for Multiple
      Class Classification Problems" by Hand and Till 2001. *)

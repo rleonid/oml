@@ -7,13 +7,13 @@
 
 (** Some of the iterative routines can fail for the following reasons. *)
 type iterative_failure_reason =
-  | OutOfBounds of float
-  | NoConvergence
-  | TooManyIterations of int
-  | TooFewIterations of int
+  | Out_of_bounds of float
+  | No_convergence
+  | Too_many_iterations of int
+  | Too_few_iterations of int
 
 (** The exception raised when an iterative function fails to converge. *)
-exception IterationFailure of string * iterative_failure_reason
+exception Iteration_failure of string * iterative_failure_reason
 
 val invalidArg : ('a, unit, string, 'b) format4 -> 'a
 

@@ -34,13 +34,13 @@ let () =
   Test.add_simple_test
     ~title:"Inference, simple mean test, OneSided"
     (fun () ->
-      let tst = mean_t_test 98.0 OneSided data in
+      let tst = mean_t_test 98.0 One_sided data in
       equal_test tst 9.0 0.70951 1.9368 0.2479915);
 
   Test.add_simple_test
     ~title:"Inference, simple mean test, TwoSided"
     (fun () ->
-      let tst = mean_t_test 98.0 TwoSided data in
+      let tst = mean_t_test 98.0 Two_sided data in
       equal_test tst 9. 0.70951 1.9368 0.495983);
 
   let data2 =
@@ -52,25 +52,25 @@ let () =
   Test.add_simple_test
     ~title:"Inference, mean tests equal var, OneSided"
     (fun () ->
-      let tst = means_same_variance_test OneSided data2 data in
+      let tst = means_same_variance_test One_sided data2 data in
       equal_test tst 18.0 1.1164 2.4063 0.1394);
 
   Test.add_simple_test
     ~title:"Inference, mean tests equal var, TwoSided"
     (fun () ->
-      let tst = means_same_variance_test TwoSided data2 data in
+      let tst = means_same_variance_test Two_sided data2 data in
       equal_test tst 18.0 1.1164 2.4063 0.2789);
 
   Test.add_simple_test
     ~title:"Inference, mean tests different var, OneSided"
     (fun () ->
-      let tst = means_different_variance_test OneSided data2 data in
+      let tst = means_different_variance_test One_sided data2 data in
       equal_test tst 16.0 1.1165 2.4063 0.1403);
 
   Test.add_simple_test
     ~title:"Inference, mean tests different var, TwoSided"
     (fun () ->
-      let tst = means_different_variance_test TwoSided data2 data in
+      let tst = means_different_variance_test Two_sided data2 data in
       equal_test tst 16.0 1.1165 2.4063 0.2807);
 
   Test.add_simple_test

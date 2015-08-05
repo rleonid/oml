@@ -29,9 +29,9 @@ val test_to_string : test -> string
 val chi : float array -> float array -> test
 
 type null_hypothesis =
-  | TwoSided   (* the sample mean equals the population mean. *)
-  | OneSided   (* the sample mean is less than or greater than
-                  the population mean. *)
+  | Two_sided   (** the sample mean equals the population mean. *)
+  | One_sided   (** the sample mean is less than or greater than
+                    the population mean. *)
 
 (** [t_test nh k d e] conducts a simple T test, against a [nh] null
     hypothesis, where [d] is the difference between population parameter and

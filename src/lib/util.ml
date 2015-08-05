@@ -1,11 +1,11 @@
 
 type iterative_failure_reason =
-    | OutOfBounds of float
-    | NoConvergence
-    | TooManyIterations of int
-    | TooFewIterations of int
+    | Out_of_bounds of float
+    | No_convergence
+    | Too_many_iterations of int
+    | Too_few_iterations of int
 
-exception IterationFailure of string * iterative_failure_reason
+exception Iteration_failure of string * iterative_failure_reason
 
 let invalidArg fmt = Printf.ksprintf (fun s -> raise (Invalid_argument s)) fmt
 let pi = 4. *. atan 1.

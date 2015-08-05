@@ -1,4 +1,4 @@
-(** {2 Regression} Construct linear models that describe (and learn from) data.*)
+(** Construct linear models that describe (and learn from) data.*)
 
 (** The interface of the model constructed by a Regression procedure. *)
 module type LINEAR_MODEL = sig
