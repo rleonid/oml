@@ -30,9 +30,9 @@ let () =
       (fun lst ->
         let f = poly_to_f lst in
         match newton ~init:0.1 ~lower_bound ~upper_bound f with
-        | exception IterationFailure (_, TooManyIterations _) ->
+        | exception Iteration_failure (_, Too_many_iterations _) ->
             let _ =
-              Printf.printf "newton failed for %s with TooManyIterations\n%!"
+              Printf.printf "newton failed for %s with Too_many_iterations\n%!"
                 (String.concat ";" (List.map (sprintf "%f") lst))
             in
             true

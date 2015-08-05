@@ -26,13 +26,13 @@ let pca ?(demean=true) ?(scale=true) ?(unbiased=true) data =
 
 (* how to reduce the components. *)
 type pca_reduction_method =
-    | SpecificNumberOfComponents of int
-    | VarianceExplained of float
+    | Num_comp of int
+    | Varience_exp of float
 
 let reduce t = function
-  | SpecificNumberOfComponents n ->
+  | Num_comp n ->
       { t with variances = copy ~n t.variances; components = lacpy ~n t.components }
-  | VarianceExplained th ->
+  | Varience_exp th ->
       let totalv = Vec.sum t.variances in
       let (_, n) =
         Vec.fold (fun (s,i as ss) v ->

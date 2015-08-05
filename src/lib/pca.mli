@@ -23,8 +23,8 @@ val scalings : t -> (float * float) array
 val pca : ?demean:bool -> ?scale:bool -> ?unbiased:bool -> mat -> t
 
 type pca_reduction_method =
-  | SpecificNumberOfComponents of int     (** Only use this many components. *)
-  | VarianceExplained of float            (** Choose as many components as needed to explain this much variance. *)
+  | Num_comp of int       (** Only use this many components. *)
+  | Varience_exp of float (** Choose as many components as needed to explain this much variance. *)
 
 (** [reduce t prm] restrict the number of stored principle components via [prm].*)
 val reduce : t -> pca_reduction_method -> t

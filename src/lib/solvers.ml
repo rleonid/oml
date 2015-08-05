@@ -5,11 +5,11 @@ let newton_raphson_full ?init ~accuracy ~iterations ~lower_bound ~upper_bound f 
   let rec loop x i =
 (*  printf "i %d: x %f\n" i x; *)
     if x < lower_bound then
-      raise (IterationFailure ("newton raphson", OutOfBounds lower_bound))
+      raise (Iteration_failure ("newton raphson", Out_of_bounds lower_bound))
     else if x > upper_bound then
-      raise (IterationFailure ("newton raphson", OutOfBounds upper_bound))
+      raise (Iteration_failure ("newton raphson", Out_of_bounds upper_bound))
     else if i > iterations then
-      raise (IterationFailure ("newton raphson", TooManyIterations i))
+      raise (Iteration_failure ("newton raphson", Too_many_iterations i))
     else
       let y = f x in
       if abs_float y < accuracy then
