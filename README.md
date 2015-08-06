@@ -1,12 +1,12 @@
 OCaml Math Library
 ------------------
 
-[![Build Status](https://travis-ci.org/rleonid/oml.svg)](https://travis-ci.org/rleonid/oml.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/rleonid/oml/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/rleonid/oml?branch=HEAD)
+[![Build Status](https://travis-ci.org/hammerlab/oml.svg)](https://travis-ci.org/hammerlab/oml.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/hammerlab/oml/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/hammerlab/oml?branch=HEAD)
 
 
 A collection of OCaml Math and Statistics functions.
-The API is available [online](http://rleonid.github.io/oml/doc/index.html).
+The API is available [online](http://hammerlab.github.io/oml/doc/index.html).
 
 ### Goals
 
