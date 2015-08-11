@@ -35,7 +35,7 @@ val vt : t -> Matrices.t
   [mat] is destroyed in the process. *)
 val svd : mat -> t
 
-(** [solve_linear a b] solve for [x] in [a x = b] using principle components
+(** [solve_linear a b] solve for [x] in [a x = b] using principal components
     regression, when [a] is the Singular Value Decomposition. *)
 val solve_linear : ?lambda:float -> t -> vec -> vec
 

@@ -9,3 +9,6 @@ setup.log
 *.byte
 bisect*.out
 doc/
+
+# emacs
+*~
