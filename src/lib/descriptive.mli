@@ -121,17 +121,19 @@ val kurtosis_standard_error : float array -> float
 val var_statistic : float array -> float
 
 (** [skew_statistic data] computes the test statistic of the sample skew of
-    [data]. This normalizes the skew so that jjjj *)
+    [data]. This normalizes the skew so that it is scale invariant. *)
 val skew_statistic : float array -> float
 
 (** [kurtosis_statistic data] computes the test statistic of the sample
-    kurtosis of [data]. *)
+    kurtosis of [data]. This normalizes the kurtosis so that it is scale
+    invariant. *)
 val kurtosis_statistic : float array -> float
 
 type skew_classification =
   [ `Negative | `Slightly_negative | `Normal | `Slightly_positive | `Positive ]
 
-(** [classify_skew data] provides a terse description of the skewness of [data].
+(** [classify_skew data] provides a terse description of the skewness of [data],
+    using [-2;-1;1;2] as cut off for the {!skew_classification}.
 
     Please note, even though a (polymorphic) variant is returned, caution must
     be taken when creating algorithms based upon these classification. These
@@ -143,7 +145,8 @@ type kurtosis_classification =
   [ `Skinny | `Slightly_skinny | `Fat | `Slightly_fat | `Normal ]
 
 (** [classify_kurtosis data] provides a terse description of the kurtosis of
-    [data]. The same warning as in [classify_skew] applies. *)
+    [data], using [-2;-1;1;2] as cut off for the {!kurtosis_classification}.
+    The same warning as in [classify_skew] applies. *)
 val classify_kurtosis : float array -> kurtosis_classification
 
 (** Common statistics that describe data. *)
