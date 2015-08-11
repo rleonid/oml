@@ -155,19 +155,21 @@ Spread.<br>
 
 <pre><span id="VALskew_statistic"><span class="keyword">val</span> skew_statistic</span> : <code class="type">float array -> float</code></pre><div class="info ">
 <code class="code">skew_statistic data</code> computes the test statistic of the sample skew of
-    <code class="code">data</code>. This normalizes the skew so that jjjj<br>
+    <code class="code">data</code>. This normalizes the skew so that it is scale invariant.<br>
 </div>
 
 <pre><span id="VALkurtosis_statistic"><span class="keyword">val</span> kurtosis_statistic</span> : <code class="type">float array -> float</code></pre><div class="info ">
 <code class="code">kurtosis_statistic data</code> computes the test statistic of the sample
-    kurtosis of <code class="code">data</code>.<br>
+    kurtosis of <code class="code">data</code>. This normalizes the kurtosis so that it is scale
+    invariant.<br>
 </div>
 
 <pre><span id="TYPEskew_classification"><span class="keyword">type</span> <code class="type"></code>skew_classification</span> = <code class="type">[ `Negative | `Normal | `Positive | `Slightly_negative | `Slightly_positive ]</code> </pre>
 
 
 <pre><span id="VALclassify_skew"><span class="keyword">val</span> classify_skew</span> : <code class="type">float array -> <a href="Descriptive.html#TYPEskew_classification">skew_classification</a></code></pre><div class="info ">
-<code class="code">classify_skew data</code> provides a terse description of the skewness of <code class="code">data</code>.
+<code class="code">classify_skew data</code> provides a terse description of the skewness of <code class="code">data</code>,
+    using <code class="code">-2;-1;1;2</code> as cut off for the <a href="Descriptive.html#TYPEskew_classification"><code class="code">Descriptive.skew_classification</code></a>.
 <p>
 
     Please note, even though a (polymorphic) variant is returned, caution must
@@ -181,7 +183,8 @@ Spread.<br>
 
 <pre><span id="VALclassify_kurtosis"><span class="keyword">val</span> classify_kurtosis</span> : <code class="type">float array -> <a href="Descriptive.html#TYPEkurtosis_classification">kurtosis_classification</a></code></pre><div class="info ">
 <code class="code">classify_kurtosis data</code> provides a terse description of the kurtosis of
-    <code class="code">data</code>. The same warning as in <code class="code">classify_skew</code> applies.<br>
+    <code class="code">data</code>, using <code class="code">-2;-1;1;2</code> as cut off for the <a href="Descriptive.html#TYPEkurtosis_classification"><code class="code">Descriptive.kurtosis_classification</code></a>.
+    The same warning as in <code class="code">classify_skew</code> applies.<br>
 </div>
 
 <pre><code><span id="TYPEsummary"><span class="keyword">type</span> <code class="type"></code>summary</span> = {</code></pre><table class="typetable">
