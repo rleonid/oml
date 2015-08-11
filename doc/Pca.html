@@ -36,7 +36,7 @@
 <h1>Module <a href="type_Pca.html">Pca</a></h1>
 
 <pre><span class="keyword">module</span> Pca: <code class="code">sig</code> <a href="Pca.html">..</a> <code class="code">end</code></pre><div class="info module top">
-Principle Components Analysis.<br>
+Principal Components Analysis.<br>
 </div>
 <hr width="100%">
 
@@ -58,7 +58,7 @@ Principle Components Analysis.<br>
 </div>
 
 <pre><span id="VALpca"><span class="keyword">val</span> pca</span> : <code class="type">?demean:bool -> ?scale:bool -> ?unbiased:bool -> Lacaml.D.mat -> <a href="Pca.html#TYPEt">t</a></code></pre><div class="info ">
-<code class="code">pca ?demean ?scale ?unbiased data</code> break down <code class="code">data</code> into its principle
+<code class="code">pca ?demean ?scale ?unbiased data</code> break down <code class="code">data</code> into its principal
     components. <code class="code">demean</code> will subtract the mean from each column (defaults
     to <code class="code">true</code>). <code class="code">scale</code> will divide each column by the standard deviation
     (defaults to <code class="code">true</code>) and unbiased controls whether to use the unbaised
@@ -90,6 +90,6 @@ Choose as many components as needed to explain this much variance.<br>
 
 
 <pre><span id="VALreduce"><span class="keyword">val</span> reduce</span> : <code class="type"><a href="Pca.html#TYPEt">t</a> -> <a href="Pca.html#TYPEpca_reduction_method">pca_reduction_method</a> -> <a href="Pca.html#TYPEt">t</a></code></pre><div class="info ">
-<code class="code">reduce t prm</code> restrict the number of stored principle components via <code class="code">prm</code>.<br>
+<code class="code">reduce t prm</code> restrict the number of stored principal components via <code class="code">prm</code>.<br>
 </div>
 </body></html>
