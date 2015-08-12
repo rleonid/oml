@@ -43,7 +43,7 @@ The API is available [online](http://hammerlab.github.io/oml/doc/index.html).
   - [Kaputt](http://kaputt.x9c.fr/) for testing.
   - [Bisect_ppx](https://github.com/rleonid/bisect_ppx) for code coverage.
       - See [Bisect](http://bisect.x9c.fr/) for initial implementation
-      - and [Ocveralls](https://github.com/sagotch/ocveralls/] for pushing to
+      - and [Ocveralls](https://github.com/sagotch/ocveralls/) for pushing to
           [Coveralls](https://coveralls.io/).
   - [ocephes](https://github.com/rleonid/ocephes) for special functions.
 
