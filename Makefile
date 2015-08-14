@@ -2,8 +2,8 @@
 DRIVER_BUILD_DIR=_driver
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt
-PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=$(subst .,-,$(PACKAGES_COVERED))
+PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx.fast
+PACKAGES_INSTALL=$(PACKAGES_TEST) bisect_ppx
 
 .PHONY: all clean build install uninstall setup default
 

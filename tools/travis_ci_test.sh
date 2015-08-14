@@ -65,7 +65,6 @@ git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
 echo Installing Libraries
-opam install oasis  # needed for LBFGS
 make setup
 
 echo Compiling
@@ -75,7 +74,6 @@ echo Testing
 make covered_test
 
 echo PostingCoverage
-opam pin add ocveralls https://github.com/rleonid/ocveralls.git
 opam install ocveralls
 
 cd _driver
