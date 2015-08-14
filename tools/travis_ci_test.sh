@@ -65,7 +65,6 @@ git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
 echo Installing Libraries
-opam pin add bisect_ppx https://github.com/rleonid/bisect_ppx.git#fast_works_again
 make setup
 
 echo Compiling
