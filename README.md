@@ -1,7 +1,7 @@
 OCaml Math Library
 ------------------
 
-[![Build Status](https://travis-ci.org/hammerlab/oml.svg)](https://travis-ci.org/hammerlab/oml.svg?branch=master)
+[![Build Status](https://travis-ci.org/hammerlab/oml.svg?branch=master)](https://travis-ci.org/hammerlab/oml.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/hammerlab/oml/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/hammerlab/oml?branch=HEAD)
 
 
