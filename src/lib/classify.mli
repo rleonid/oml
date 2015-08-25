@@ -24,15 +24,67 @@ type 'a probabilities = ('a * float) list
     discrete probability distribution. *)
 val most_likely : 'a probabilities -> 'a
 
+
+module type Data_intf = sig
+  type clas
+  type feature
+end
+
+module type Dummy_encoded_data_intf = sig
+  include Data_intf
+  val encoding : feature -> int array
+  val size : int
+end
+
+module type Estimate_optional_arg_intf = sig
+  type spec
+  val default : spec
+end
+
+module type Classifier_intf = sig
+  include Data_intf
+  include Estimate_optional_arg_intf
+
+  type t
+
+  val eval : t -> feature -> clas probabilities
+
+  type samples = (clas * feature) list
+  val estimate : ?spec:spec -> ?classes:clas list -> samples -> t
+
+  (** [class_probabilities bayes class] returns the prior and per feature
+      likelihood probabilities learned by [bayes] for [class].
+      @raise Not_found if [bayes] never trained on [class]. *)
+  (* TODO: refactor the end type here to be something like feature pdf type *)
+  val class_probabilities : t -> clas -> float * (feature -> float array)
+
+end
+
+module BinomialNaiveBayes(D: Dummy_encoded_data_intf) : Classifier_intf
+
+module type Category_encoded_data_intf = sig
+  include Data_intf
+  val encoding : feature -> int array
+  val encoding_sizes : int array
+end
+
+module CategoricalNaiveBayes(D: Category_encoded_data_intf) : Classifier_intf
+
+module type Continuous_encoded_data_intf = sig
+  include Data_intf
+  val encoding : feature -> float array
+  val size : int
+end
+
+module GaussianNaiveBayes(D: Continuous_encoded_data_intf) : Classifier_intf
+
+module LogisticRegression(D: Continuous_encoded_data_intf) : Classifier_intf
+
+(*
+
 (** A discrete Naive Bayes classifier of class ['cls] by observing
     features ['ftr]. *)
 type ('cls, 'ftr) naive_bayes
-
-(** [class_probabilities bayes class] returns the prior and per feature likelihood
-    probabilities learned by [bayes] for [class].
-
-    @raise Not_found if [bayes] never trained on [class]. *)
-val class_probabilities : ('cls, 'ftr) naive_bayes -> 'cls -> float * float array
 
 (** [estimate smoothing classes feature_size to_feature_array training_data]
     trains a discrete Naive Bayes classifier based on the [training_data].
@@ -41,7 +93,7 @@ val class_probabilities : ('cls, 'ftr) naive_bayes -> 'cls -> float * float arra
     supplies all the classes to learn or they're aggregated from observations
     in data (this is useful, for classes that may be 'missing' in the data and
     smoothing is applied.
-    
+
     Additive [smoothing] can be applied to the final estimates if provided.
     When estimating a probability distribution by counting observed instances
     in the feature space we may want to smooth the values, particularly if our
@@ -61,7 +113,9 @@ val estimate : ?smoothing:float -> ?classes:'cls list ->
     from [feature].
 *)
 val eval : ?bernoulli:bool -> ('cls, 'ftr) naive_bayes -> 'ftr -> 'cls probabilities
+*)
 
+(*
 (** A discrete multinomial Naive Bayes classifier of class ['cls] by
     observing ['ftr], each 'cls represented by an integer array for each
     of it's categories. *)
@@ -103,6 +157,7 @@ val log_reg_eval : 'cls log_reg -> float array -> 'cls probabilities
 val log_reg_estimate : class_f:('cls -> bool) ->
                        ('cls * float array) list -> 'cls log_reg
 
+                       *)
 (** A two class prediction. *)
 type binary =
   { predicted   : bool
@@ -127,4 +182,5 @@ val evaluate_performance : binary list -> descriptive_statistics
 (* For a list of false positive rates and true positive rates, estimate the
    AUC by trapezoid integration. End points are added by default. *)
 val cross_validated_auc : (float * float) array -> float
+
 
