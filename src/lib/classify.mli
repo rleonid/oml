@@ -51,16 +51,27 @@ module type Classifier_intf = sig
 
   type samples = (clas * feature) list
   val estimate : ?spec:spec -> ?classes:clas list -> samples -> t
+end
 
-  (** [class_probabilities bayes class] returns the prior and per feature
-      likelihood probabilities learned by [bayes] for [class].
-      @raise Not_found if [bayes] never trained on [class]. *)
+module type Generative_intf = sig
+  include Classifier_intf
+
+  (** [class_probabilities t class] returns the prior and per feature
+      likelihood probabilities learned by [t] for [class].
+
+      @raise Not_found if [t] never trained on [class]. *)
   (* TODO: refactor the end type here to be something like feature pdf type *)
   val class_probabilities : t -> clas -> float * (feature -> float array)
 
 end
 
-module BinomialNaiveBayes(D: Dummy_encoded_data_intf) : Classifier_intf
+type binomial_spec =
+  { smoothing : float
+  ; bernoulli : bool
+  }
+
+module BinomialNaiveBayes(D: Dummy_encoded_data_intf) :
+  Generative_intf with type spec := binomial_spec
 
 module type Category_encoded_data_intf = sig
   include Data_intf
@@ -68,7 +79,10 @@ module type Category_encoded_data_intf = sig
   val encoding_sizes : int array
 end
 
-module CategoricalNaiveBayes(D: Category_encoded_data_intf) : Classifier_intf
+type smoothing = float
+
+module CategoricalNaiveBayes(D: Category_encoded_data_intf) :
+  Generative_intf with type spec := smoothing
 
 module type Continuous_encoded_data_intf = sig
   include Data_intf
@@ -76,9 +90,11 @@ module type Continuous_encoded_data_intf = sig
   val size : int
 end
 
-module GaussianNaiveBayes(D: Continuous_encoded_data_intf) : Classifier_intf
+module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
+  Generative_intf with type spec := unit
 
-module LogisticRegression(D: Continuous_encoded_data_intf) : Classifier_intf
+module LogisticRegression(D: Continuous_encoded_data_intf) :
+  Classifier_intf with type spec := unit
 
 (*
 

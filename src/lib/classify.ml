@@ -62,6 +62,10 @@ module type Classifier_intf = sig
 
   type samples = (clas * feature) list
   val estimate : ?spec:spec -> ?classes:clas list -> samples -> t
+end
+
+module type Generative_intf = sig
+  include Classifier_intf
 
   val class_probabilities : t -> clas -> float * (feature -> float array)
 
@@ -77,9 +81,15 @@ let smoothing_to_prob = function
       (fun count bkgrnd space_size ->
         (count +. sf) /. (bkgrnd +. sf *. space_size))
 
+type binomial_spec =
+  { smoothing : float
+  ; bernoulli : bool
+  }
+
 module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
-  : (Classifier_intf with type feature = Data.feature
-                     and type clas = Data.clas)
+  : (Generative_intf with type feature = Data.feature
+                     and type clas = Data.clas
+                     and type spec := binomial_spec)
   = struct
 
   type feature = Data.feature
@@ -118,11 +128,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
     in
     List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
 
-  type spec =
-    { smoothing : float
-    ; bernoulli : bool
-    }
-
+  type spec = binomial_spec
   let default = { smoothing = 0.0; bernoulli = false }
 
   let estimate ?(spec=default) ?(classes=[]) data =
@@ -197,9 +203,12 @@ module type Category_encoded_data_intf = sig
   val encoding_sizes : int array
 end
 
+type smoothing = float
+
 module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
-  : (Classifier_intf with type feature = Data.feature
-                     and type clas = Data.clas)
+  : (Generative_intf with type feature = Data.feature
+                     and type clas = Data.clas
+                     and type spec := smoothing)
 
   = struct
 
@@ -231,7 +240,7 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
     in
     List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
 
-  type spec = float
+  type spec = smoothing
   let default = 0.0
 
   let estimate ?(spec=default) ?(classes=[]) data =
@@ -285,8 +294,9 @@ module type Continuous_encoded_data_intf = sig
 end
 
 module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
-  : (Classifier_intf with type feature = Data.feature
-                     and type clas = Data.clas)
+  : (Generative_intf with type feature = Data.feature
+                     and type clas = Data.clas
+                     and type spec := unit)
 
   = struct
 
@@ -374,7 +384,8 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
 
 module LogisticRegression(Data: Continuous_encoded_data_intf)
   : (Classifier_intf with type feature = Data.feature
-                     and type clas = Data.clas)
+                     and type clas = Data.clas
+                     and type spec := unit)
 
   = struct
 
@@ -418,9 +429,11 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
     ; classes : (clas * float) list
     }
 
+  let proba w x y = Float.(1. / (1. + exp(-. y * dot w x)))
+
   let eval lr feature =
-    let proba w x y = Float.(1. / (1. + exp(-. y * dot w x))) in
-    let m = Vec.of_array (Data.encoding feature) in
+    let a = Data.encoding feature in
+    let m = Vec.init (Data.size + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
     List.map (fun (c,c_i) -> c, proba lr.weights m c_i) lr.classes
 
   type spec = unit
@@ -464,8 +477,6 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
         { weights
         ; classes = !assigned_cls_assoc
         }
-
-  let class_probabilities lr cls = failwith "Not implemented"
 
   end
 

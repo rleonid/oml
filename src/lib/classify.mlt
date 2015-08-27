@@ -50,20 +50,38 @@ let () =
         ]
       in
       let to_feature_arr l = l |> List.map ~f:feature_map |> Array.of_list in
-      let naiveb = estimate ~feature_size:5 to_feature_arr data in
+      let module NB = BinomialNaiveBayes(
+        struct
+          type feature = [ `shortbread | `lager | `whiskey | `porridge | `football ] list
+          type clas = [ `English | `Scottish]
+          let encoding = to_feature_arr
+          let size = 5
+        end)
+      in
+      let naiveb = NB.estimate ~spec:{NB.default with bernoulli = true } data in
       let sample = [ `shortbread ; `whiskey; `porridge  ] in
-      let result = eval ~bernoulli:true naiveb sample in
+      let result = NB.eval naiveb sample in
       let expect =
         [(`Scottish, 0.807627593942793); (`English, 0.192372406057206957)]
       in
       Assert.is_true (expect = result));
 
+  let module IrisEncoding =
+    struct
+      type feature = float array
+      type clas = [ `setosa | `versicolor | `virginica ]
+      let encoding x = x
+      let size = 4
+    end
+  in
+
   add_simple_test ~title:"Naive Gaussian Bayes."
     (fun () ->
       let iris    = Data.Iris.iris in
-      let iris_gb = gauss_estimate iris in
+      let module GB = GaussianNaiveBayes(IrisEncoding) in
+      let iris_gb = GB.estimate iris in
       let result  =
-        List.map ~f:(fun (v, d) -> gauss_eval iris_gb d |> most_likely, v) iris
+        List.map ~f:(fun (v, d) -> GB.eval iris_gb d |> most_likely, v) iris
       in
       let different =
         List.fold_left result ~f:(fun s (x,y) -> if x = y then s else s + 1)
@@ -78,13 +96,11 @@ let () =
         List.filter ~f:(fun (c,_) -> match c with | `setosa -> false | _ -> true)
           iris
       in
-      let to_clas   =
-        function | `versicolor -> true | `virginica -> false
-        | _ -> invalid_arg "for the love of dependent types"
-      in
-      let iris_lr   = log_reg_estimate to_clas no_setosa in
+      let module LR = LogisticRegression(IrisEncoding) in
+      let classes   = [`versicolor; `virginica] in
+      let iris_lr   = LR.estimate ~classes no_setosa in
       let result    =
-        List.map ~f:(fun (v, d) -> log_reg_eval iris_lr d |> most_likely, v) no_setosa
+        List.map ~f:(fun (v, d) -> LR.eval iris_lr d |> most_likely, v) no_setosa
       in
       let different =
         List.fold_left result ~f:(fun s (x,y) -> if x = y then s else s + 1)
