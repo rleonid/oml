@@ -28,6 +28,9 @@ let most_likely = function
     |> fst
 
 let multiply_ref = ref true
+
+(* How we choose to multiply large arrays of small probabilities.
+  TODO: develop a smart heuristic for switching to log transformed addition. *)
 let prod_arr, prod_arr2 =
   if !multiply_ref then
     (fun f x -> Array.fold_left (fun p x -> p *. f x) 1.0 x),
@@ -87,6 +90,17 @@ type binomial_spec =
   ; bernoulli : bool
   }
 
+(* Simplify the evaluate code by keeping track of the evidence.*)
+let eval_naive_bayes ~to_prior ~to_likelihood cls_assoc =
+  let evidence = ref 0.0 in
+  List.map cls_assoc ~f:(fun (c, e) ->
+    let prior = to_prior e in
+    let likelihood = to_likelihood e in
+    let prob = prior *. likelihood in
+    evidence := !evidence +. prob;
+    (c, prob))
+  |> List.map ~f:(fun (c, p) -> (c, p /. !evidence))
+
 module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
@@ -105,7 +119,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
     }
 
   let eval nb b =
-    let evidence = ref 0.0 in
+    let to_prior class_probs = class_probs.(Data.size) in
     let to_likelihood class_probs =
       let idx = Data.encoding b in
       if nb.e_bernoulli then
@@ -119,15 +133,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
       else
         prod_arr (fun i -> class_probs.(i)) idx
     in
-    let byc =
-      List.map nb.table ~f:(fun (c, class_probs) ->
-        let prior = class_probs.(Data.size) in
-        let likelihood = to_likelihood class_probs in
-        let prob  = prior *. likelihood in
-        evidence := !evidence +. prob;
-        (c, prob))
-    in
-    List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
+    eval_naive_bayes to_prior to_likelihood nb.table
 
   type spec = binomial_spec
   let default = { smoothing = 0.0; bernoulli = false }
@@ -241,17 +247,12 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
       Array.map2 (fun i lk_arr -> lk_arr.(i)) (safe_encoding ftr) likelihood_arr)
 
   let eval table feature =
-    let evidence = ref 0.0 in
-    let indices = safe_encoding feature in
-    let to_likelihood arr = prod_arr2 (fun i lk_arr -> lk_arr.(i)) indices arr in
-    let byc =
-      List.map table ~f:(fun (c, (prior, class_probs)) ->
-        let likelihood = to_likelihood class_probs in
-        let prob  = prior *. likelihood in
-        evidence := !evidence +. prob;
-        (c, prob))
+    let to_prior (prior, _) = prior in
+    let to_likelihood (_, ftr_prob) =
+      let indices = safe_encoding feature in
+      prod_arr2 (fun i lk_arr -> lk_arr.(i)) indices ftr_prob
     in
-    List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
+    eval_naive_bayes to_prior to_likelihood table
 
   type spec = smoothing
   let default = 0.0
@@ -335,22 +336,13 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
         dist_params (safe_encoding ftr))
 
   let eval table feature =
-    (*
-    if Array.length features <> table.features then
-      invalidArg "Classify:eval: Expected a features array of %d features."
-        table.features; *)
-    let prod =
+    let to_prior (prior, _) = prior in
+    let to_likelihood (_, lkhd) =
+      let indices = safe_encoding feature in
       prod_arr2 (fun (mean,std) y -> Distributions.normal_pdf ~mean ~std y)
+        lkhd indices
     in
-    let evidence = ref 0.0 in
-    let byc =
-      List.map table ~f:(fun (c, (prior, class_params)) ->
-        let likelihood = prod class_params (safe_encoding feature) in
-        let prob       = prior *. likelihood in
-        evidence := !evidence +. prob;
-        (c, prob))
-    in
-    List.map byc ~f:(fun (c, prob) -> (c, prob /. !evidence))
+    eval_naive_bayes to_prior to_likelihood table
 
   type spec = unit
   let default = ()
