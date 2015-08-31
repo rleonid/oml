@@ -43,6 +43,7 @@ end
 
 module type Dummy_encoded_data_intf = sig
   include Data_intf
+
   val encoding : feature -> int array
   val size : int
 end
@@ -217,22 +218,34 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
 
   type samples = (clas * feature) list
 
-  type t =
-    { table         : (clas * (float * float array array)) list
-    }
+  type t = (clas * (float * float array array)) list
+
+  let safe_encoding f =
+    let e = Data.encoding f in
+    let same_size = Array.length e = Array.length Data.encoding_sizes in
+    let constrained =
+      Array.map2 (fun v s -> v < s) e Data.encoding_sizes
+      |> Array.all (fun x -> x)
+    in
+    if same_size && constrained then
+      e
+    else
+      invalidArg
+        "Category_encoded_data_intf.encoding: same size %b, constrained: %b"
+          same_size constrained
 
   let class_probabilities t cls =
-    let (prior, likelihood_arr) = List.assoc cls t.table in
+    let (prior, likelihood_arr) = List.assoc cls t in
     prior,
     (fun ftr ->
-      Array.map2 (fun i lk_arr -> lk_arr.(i)) (Data.encoding ftr) likelihood_arr)
+      Array.map2 (fun i lk_arr -> lk_arr.(i)) (safe_encoding ftr) likelihood_arr)
 
-  let eval mvnb feature =
+  let eval table feature =
     let evidence = ref 0.0 in
-    let indices = Data.encoding feature in
+    let indices = safe_encoding feature in
     let to_likelihood arr = prod_arr2 (fun i lk_arr -> lk_arr.(i)) indices arr in
     let byc =
-      List.map mvnb.table ~f:(fun (c, (prior, class_probs)) ->
+      List.map table ~f:(fun (c, (prior, class_probs)) ->
         let likelihood = to_likelihood class_probs in
         let prob  = prior *. likelihood in
         evidence := !evidence +. prob;
@@ -248,7 +261,7 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
       invalidArg "Classify.estimate: Nothing to train on"
     else
       let update arr feature =
-        let ftr_arr = Data.encoding feature in
+        let ftr_arr = safe_encoding feature in
         Array.iteri (fun i j -> arr.(i).(j) <- arr.(i).(j) + 1) ftr_arr
       in
       let new_arr () = Array.map (fun i -> Array.make i 0) Data.encoding_sizes in
@@ -269,21 +282,17 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
       let to_prob = smoothing_to_prob spec in
       let totalf = float total in
       let numcls = float (List.length all) in
-      let table =
-        List.map all ~f:(fun (cl, (class_count, attr_count)) ->
-          let prior      = to_prob (float class_count) totalf numcls in
-          let likelihood =
-            Array.map (fun arr ->
-              let farr = Array.map float arr in
-              let lsum = Array.sumf farr in
-              let fssf = float (Array.length arr) in
-              Array.map (fun c -> to_prob c lsum fssf) farr)
-              attr_count
-          in
-          cl, (prior, likelihood))
-      in
-      { table
-      }
+      List.map all ~f:(fun (cl, (class_count, attr_count)) ->
+        let prior      = to_prob (float class_count) totalf numcls in
+        let likelihood =
+          Array.map (fun arr ->
+            let farr = Array.map float arr in
+            let lsum = Array.sumf farr in
+            let fssf = float (Array.length arr) in
+            Array.map (fun c -> to_prob c lsum fssf) farr)
+            attr_count
+        in
+        cl, (prior, likelihood))
 
   end
 
@@ -292,6 +301,15 @@ module type Continuous_encoded_data_intf = sig
   val encoding : feature -> float array
   val size : int
 end
+
+let to_safe_continuous_encoding size encoding f =
+  let e = encoding f in
+  let l = Array.length e in
+  if l = size then
+    e
+  else
+    invalidArg
+      "Continuous_encoded_data_intf.encoding: size %d actual %d" size l
 
 module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
@@ -305,29 +323,29 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
 
   type samples = (clas * feature) list
 
-  type t =
-    { table     : (clas * (float * (float * float) array)) list
-    }
+  type t = (clas * (float * (float * float) array)) list
+
+  let safe_encoding = to_safe_continuous_encoding Data.size Data.encoding
 
   let class_probabilities t cls =
-    let (prior, dist_params) = List.assoc cls t.table in
+    let (prior, dist_params) = List.assoc cls t in
     prior,
     (fun ftr ->
       Array.map2 (fun (mean,std) y -> Distributions.normal_pdf ~mean ~std y)
-        dist_params (Data.encoding ftr))
+        dist_params (safe_encoding ftr))
 
-  let eval gb feature =
+  let eval table feature =
     (*
-    if Array.length features <> gb.features then
+    if Array.length features <> table.features then
       invalidArg "Classify:eval: Expected a features array of %d features."
-        gb.features; *)
+        table.features; *)
     let prod =
       prod_arr2 (fun (mean,std) y -> Distributions.normal_pdf ~mean ~std y)
     in
     let evidence = ref 0.0 in
     let byc =
-      List.map gb.table ~f:(fun (c, (prior, class_params)) ->
-        let likelihood = prod class_params (Data.encoding feature) in
+      List.map table ~f:(fun (c, (prior, class_params)) ->
+        let likelihood = prod class_params (safe_encoding feature) in
         let prob       = prior *. likelihood in
         evidence := !evidence +. prob;
         (c, prob))
@@ -352,7 +370,7 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
       let total, by_class =
         List.fold_left data
           ~f:(fun (t, acc) (cls, ftr) ->
-            let attr = Data.encoding ftr in
+            let attr = safe_encoding ftr in
             try
               let (cf, rsar) = List.assoc cls acc in
               let acc'       = List.remove_assoc cls acc in
@@ -367,19 +385,17 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
           ~init:(0, init_cl)
       in
       let totalf = float total in
-        (* A lot of the literature in estimating Naive Bayes focuses on estimating
-          the parameters using Maximum Likelihood. The Running estimate of variance
-          computes the unbiased form. Not certain if we should implement the
-          n/(n-1) conversion below. *)
-      let table =
-        let select rs = rs.Running.mean, (sqrt rs.Running.var) in
-        by_class
-        |> List.map ~f:(fun (c, (cf, rsarr)) ->
-            let class_prior = (float cf) /. totalf in
-            let attr_params = Array.map select rsarr in
-            (c, (class_prior, attr_params)))
-      in
-      { table }
+      (* A lot of the literature in estimating Naive Bayes focuses on estimating
+         the parameters using Maximum Likelihood. The Running estimate of variance
+         computes the unbiased form. Not certain if we should implement the
+         n/(n-1) conversion below. *)
+      let select rs = rs.Running.mean, (sqrt rs.Running.var) in
+      by_class
+      |> List.map ~f:(fun (c, (cf, rsarr)) ->
+          let class_prior = (float cf) /. totalf in
+          let attr_params = Array.map select rsarr in
+          (c, (class_prior, attr_params)))
+
   end
 
 module LogisticRegression(Data: Continuous_encoded_data_intf)
@@ -411,6 +427,7 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
         done;
         -. !s -. 0.5 *. lambda *. dot w w)
 
+    (* TODO. expose lambda as possible [spec]. *)
     let log_reg ?(lambda=0.1) x y =
       let w = Vec.make0 (Vec.dim x.(0)) in
       ignore(Lbfgs.F.max (*~print:(Lbfgs.Every 10) *)
@@ -429,10 +446,12 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
     ; classes : (clas * float) list
     }
 
+  let safe_encoding = to_safe_continuous_encoding Data.size Data.encoding
+
   let proba w x y = Float.(1. / (1. + exp(-. y * dot w x)))
 
   let eval lr feature =
-    let a = Data.encoding feature in
+    let a = safe_encoding feature in
     let m = Vec.init (Data.size + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
     List.map (fun (c,c_i) -> c, proba lr.weights m c_i) lr.classes
 
@@ -470,7 +489,7 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
         (*let fs      = Array.length (snd (List.hd data)) in *)
         (* Fortran destination so 1 based. *)
         let to_f a  = Vec.init (Data.size + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
-        let ftrs    = List.map (fun (_, f) -> to_f (Data.encoding f)) data
+        let ftrs    = List.map (fun (_, f) -> to_f (safe_encoding f)) data
                       |> Array.of_list
         in
         let weights = Log_reg.log_reg ftrs classes in
