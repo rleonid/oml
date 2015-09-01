@@ -62,7 +62,8 @@ let () =
       let sample = [ `shortbread ; `whiskey; `porridge  ] in
       let result = NB.eval naiveb sample in
       let expect =
-        [(`Scottish, 0.807627593942793); (`English, 0.192372406057206957)]
+        List.sort ~cmp:compare
+          [(`Scottish, 0.807627593942793); (`English, 0.192372406057206957)]
       in
       Assert.is_true (expect = result));
 
