@@ -131,6 +131,7 @@ module type Classifier_intf = sig
 
       @raise Invalid_argument if [classes] are specified and new ones are
       found in the training [samples].
+      @raise Invalid_argument if [samples] is empty.
   *)
   val estimate : ?spec:spec -> ?classes:clas list -> samples -> t
 end
@@ -180,14 +181,18 @@ type binomial_spec =
   classifier on data encoded using
   {{!modtype:Dummy_encoded_data_intf}Dummy variables.} *)
 module BinomialNaiveBayes(D: Dummy_encoded_data_intf) :
-  Generative_intf with type spec := binomial_spec
+  Generative_intf with type spec = binomial_spec
+                  and type feature = D.feature
+                  and type clas = D.clas
 
 (** Train a
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
   {{!modtype:Category_encoded_data_intf}Categorical variables.} *)
 module CategoricalNaiveBayes(D: Category_encoded_data_intf) :
-  Generative_intf with type spec := smoothing
+  Generative_intf with type spec = smoothing
+                  and type feature = D.feature
+                  and type clas = D.clas
 
 (** Train a
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes}
@@ -195,7 +200,9 @@ module CategoricalNaiveBayes(D: Category_encoded_data_intf) :
   for each of the quantitative features in the
   {{!modtype:Continuous_encoded_data_intf}encoded data}. *)
 module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
-  Generative_intf with type spec := unit
+  Generative_intf with type spec = unit
+                  and type feature = D.feature
+                  and type clas = D.clas
 
 (** Use
   {{:https://en.wikipedia.org/wiki/Logistic_regression}
@@ -204,7 +211,9 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
   {{!modtype:Continuous_encoded_data_intf}encoded data},
   per class*)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
-  Classifier_intf with type spec := unit
+  Classifier_intf with type spec = unit
+                  and type feature = D.feature
+                  and type clas = D.clas
 
 (** A two class prediction. *)
 type binary =
