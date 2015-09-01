@@ -19,6 +19,13 @@ open Util
 open Test_utils
 
 let () =
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Estimations"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
 
   let module Gen = FGen (struct let largest_float = 1e5 end) in
@@ -31,12 +38,12 @@ let () =
   in
   let poly_to_df lst =
     List.tl lst
-    |> List.mapi (fun i c -> (float (i + 1)) *. c) 
-    |> poly_to_f 
+    |> List.mapi (fun i c -> (float (i + 1)) *. c)
+    |> poly_to_f
   in
   (* These values easily cause erfc to underflow. *)
-  Test.add_random_test
-    ~title:"Estimations, work on polynomials."
+  add_random_test
+    ~title:"Work on polynomials."
     Gen.(zip2 polynomial float)
     (fun (clst, x) ->
       let f = poly_to_f clst in
@@ -59,4 +66,4 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   ()
- 
+

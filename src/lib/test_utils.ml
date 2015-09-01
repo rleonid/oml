@@ -122,9 +122,53 @@ module Spec = struct
   include Kaputt.Abbreviations.Spec
 end
 
-module Test = Kaputt.Abbreviations.Test
 module Assert = struct
   include Kaputt.Abbreviations.Assert
   let equalf = equal ~prn:(sprintf "%0.4f")
 end
 
+module TestMap = Map.Make(
+  struct
+    type t = string
+    let compare = compare
+  end)
+
+module Test = struct
+  include Kaputt.Abbreviations.Test
+
+  let test_holder = ref TestMap.empty
+
+  let add_simple_test_group group ?title f =
+    let t = make_simple_test ?title f in
+    let tests = try TestMap.find group !test_holder with Not_found -> [] in
+    test_holder := TestMap.add group (t :: tests) !test_holder
+
+  let add_random_test_group group ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    let t = make_random_test ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+    in
+    let tests = try TestMap.find group !test_holder with Not_found -> [] in
+    test_holder := TestMap.add group (t :: tests) !test_holder
+
+  let add_partial_random_test_group group ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    let t = make_partial_random_test ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+    in
+    let tests = try TestMap.find group !test_holder with Not_found -> [] in
+    test_holder := TestMap.add group (t :: tests) !test_holder
+
+
+
+  let launch_tests () =
+    TestMap.bindings !test_holder
+    |> List.iter (fun (group, tests) ->
+        Printf.printf "--%s--\n" group;
+        List.rev tests |> run_tests)
+
+  let launch_test group =
+    try run_tests (TestMap.find group !test_holder)
+    with Not_found -> ()
+
+end

@@ -18,7 +18,8 @@
 open Test_utils
 
 let () =
-  Test.add_simple_test ~title:"Classify: Naive Multinomial Bayes."
+  let add_simple_test = Test.add_simple_test_group "Classify" in
+  add_simple_test ~title:"Naive Multinomial Bayes."
     (fun () ->
       (** This example comes from
           Bayesian Reasoning and Machine Learning by David Barber
@@ -57,7 +58,7 @@ let () =
       in
       Assert.is_true (expect = result));
 
-  Test.add_simple_test ~title:"Classify: Naive Gaussian Bayes."
+  add_simple_test ~title:"Naive Gaussian Bayes."
     (fun () ->
       let iris    = Data.Iris.iris in
       let iris_gb = gauss_estimate iris in
@@ -70,10 +71,10 @@ let () =
       in
       Assert.is_true (different = 6));
 
-  Test.add_simple_test ~title:"Classify: Logistic Regression on Iris."
+  add_simple_test ~title:"Logistic Regression on Iris."
     (fun () ->
       let iris      = Data.Iris.iris in
-      let no_setosa = 
+      let no_setosa =
         List.filter ~f:(fun (c,_) -> match c with | `setosa -> false | _ -> true)
           iris
       in
@@ -82,7 +83,7 @@ let () =
         | _ -> invalid_arg "for the love of dependent types"
       in
       let iris_lr   = log_reg_estimate to_clas no_setosa in
-      let result    = 
+      let result    =
         List.map ~f:(fun (v, d) -> log_reg_eval iris_lr d |> most_likely, v) no_setosa
       in
       let different =

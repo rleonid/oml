@@ -23,8 +23,15 @@ module Gen = FGen (struct
 end)
 
 let () =
-  Test.add_random_test
-    ~title:"Measures: normal kl divergence approaches infinity as means diverge"
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Measures"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+  add_random_test
+    ~title:"Normal kl divergence approaches infinity as means diverge"
     Gen.(zip2 (make_float 0.0 1e8) (make_float 0.0 1e8))
     (fun (p_mean, q_mean) ->
       let p_sigma = max 0.1 (sqrt @@ abs_float p_mean) in
@@ -41,8 +48,8 @@ let () =
         List.for_all (fun (res, kl, kl') -> kl' <= kl) l)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Measures: normal kl divergence approaches infinity as sigmas diverge"
+  add_random_test
+    ~title:"Normal kl divergence approaches infinity as sigmas diverge"
     Gen.(zip2 (make_float 0.01 1e8) (make_float 0.01 1e8))
     (fun (p_sigma, q_sigma) ->
       let p_mean = p_sigma *. p_sigma in

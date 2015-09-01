@@ -25,9 +25,16 @@ end)
 let () =
   let matrix_size = 1000 in
   let float_matrix = Gen.(matrix (make_int 2 matrix_size) (make_int 2 matrix_size) float) in
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "PCA"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
 
-  Test.add_random_test
-    ~title:"PCA. there are size number of variances and they are decreasing ."
+  add_random_test
+    ~title:"There are size number of variances and they are decreasing ."
     Gen.(zip4 bool bool bool float_matrix)
     (fun (demean, scale, unbiased, m) ->
       let r,c = Matrices.dim m in

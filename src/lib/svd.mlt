@@ -22,9 +22,16 @@ module Gen = FGen (struct
 end)
 
 let () =
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Svd"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let max_matrix_size = 10 in
-  Test.add_random_test
-    ~title:"Svd, we can."
+  add_random_test
+    ~title:"We can."
     Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) float)
     (fun m ->
       let open Lacaml.D in
@@ -33,8 +40,8 @@ let () =
       Matrices.equal ~d:(Util.dx *. 1e9) m m_rec)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Svd, can find a solution to linear problems."
+  add_random_test
+    ~title:"Can find a solution to linear problems."
     Gen.(matrix (make_int 2 max_matrix_size) (make_int 1 max_matrix_size) float)
     (fun m ->
       let x = m.(0) in

@@ -15,10 +15,11 @@
    limitations under the License.
 *)
 
-open Kaputt.Abbreviations
 open Oml
+open Test_utils
 
 let () =
-  Printf.printf "Running test!\n";
-  Test.launch_tests ();
-  Printf.printf "Finished running linked tests!\n"
+  if Array.length Sys.argv > 1 then
+    Test.launch_test Sys.argv.(1)
+  else
+    Test.launch_tests ();

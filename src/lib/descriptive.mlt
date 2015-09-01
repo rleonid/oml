@@ -22,18 +22,26 @@ module Gen = FGen (struct
 end)
 
 let () =
+  let add_simple_test = Test.add_simple_test_group "Descriptive" in
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Descriptive"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let sample_data = Array.range ~start:1. ~stop:6. () in
   let max_array_size = 1000 in
   let test_data = Gen.(array (make_int 2 max_array_size) float) in
 
-  Test.add_simple_test ~title:"Descriptive, mean for small data set."
+  add_simple_test ~title:"Mean for small data set."
     (fun () -> Assert.equalf (mean sample_data) 3.0);
 
-  Test.add_simple_test ~title:"Descriptive, median for small data set."
+  add_simple_test ~title:"Median for small data set."
     (fun () -> Assert.equalf (median sample_data) 3.0);
 
-  Test.add_random_test
-    ~title:"Descriptive: mean and median are bounded by the array."
+  add_random_test
+    ~title:"Mean and median are bounded by the array."
     test_data
     (fun data ->
       let x = Array.max data in
@@ -44,25 +52,25 @@ let () =
       n <= md && md <= x)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_simple_test ~title:"Descriptive, population var for small data set."
+  add_simple_test ~title:"Population var for small data set."
     (fun () -> Assert.equalf (population_var 3.0 sample_data) 2.0);
 
-  Test.add_simple_test ~title:"Descriptive, var for small data set."
+  add_simple_test ~title:"Var for small data set."
     (fun () -> Assert.equalf (var sample_data) 2.0);
 
-  Test.add_random_test
-    ~title:"Descriptive: population_var is just mean var."
+  add_random_test
+    ~title:"Population_var is just mean var."
     test_data
     (fun data ->
       let m = mean data in
       (population_var m data) = var data)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_simple_test ~title:"Descriptive, unbiased_var for small data set."
+  add_simple_test ~title:"Unbiased_var for small data set."
     (fun () -> Assert.equalf (unbiased_var sample_data) 2.5);
 
-  Test.add_random_test
-    ~title:"Descriptive: unbiased_var is bigger than var."
+  add_random_test
+    ~title:"Unbiased_var is bigger than var."
     Gen.(array (make_int 2 max_array_size) float)
     (fun data -> unbiased_var data > var data)
     Spec.([just_postcond_pred is_true]);
@@ -72,8 +80,8 @@ let () =
          |> map1 (fun m -> m.(0), m.(1))
           (fun (x,_) -> Printf.sprintf "Arrays of length %d" (Array.length x)))
   in
-  Test.add_random_test
-    ~title:"Descriptive: correlation and covariance are order invariant."
+  add_random_test
+    ~title:"Correlation and covariance are order invariant."
     two_arrays_same_size
     (fun (d1, d2) ->
       let co1 = covariance d1 d2 in
@@ -83,8 +91,8 @@ let () =
       co1 = co2 && cr1 = cr2)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: correlation and covariance have the same sign"
+  add_random_test
+    ~title:"Correlation and covariance have the same sign"
     two_arrays_same_size
     (fun (d1, d2) ->
       let co = covariance d1 d2 in
@@ -93,35 +101,35 @@ let () =
       s co = s cr)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: autocorrelation without lag is 1.0"
+  add_random_test
+    ~title:"Autocorrelation without lag is 1.0"
     test_data
     (fun data -> autocorrelation 0 data)
     Spec.([always ==> (fun x -> x = 1.0)]);
 
   (* TODO: this sometimes fails *)
-  Test.add_random_test
-    ~title:"Descriptive: moment 2 is just var."
+  add_random_test
+    ~title:"Moment 2 is just var."
     test_data
     (fun data -> moment 2 data = var data)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_simple_test ~title:"Descriptive, skew for small data set."
+  add_simple_test ~title:"Skew for small data set."
     (fun () -> Assert.equalf (skew sample_data) 0.0);
 
-  Test.add_simple_test ~title:"Descriptive, unbiased_skew for small data set."
+  add_simple_test ~title:"Unbiased_skew for small data set."
     (fun () -> Assert.equalf (unbiased_skew sample_data) 0.0);
 
-  Test.add_simple_test ~title:"Descriptive, kurtosis for small data set."
+  add_simple_test ~title:"Kurtosis for small data set."
     (fun () -> Assert.equalf (kurtosis sample_data) (-1.3));
 
   let float_eq d = fun x y -> not (Util.significantly_different_from ~d x y) in
-  Test.add_simple_test ~title:"Descriptive, unbiased_kurtosis for small data set."
+  add_simple_test ~title:"Unbiased_kurtosis for small data set."
     (fun () -> Assert.equalf ~eq:(float_eq 1e-15) (* rounding error :( *)
                 (unbiased_kurtosis sample_data) (-1.2));
 
-  Test.add_random_test
-    ~title:"Descriptive: variance scales by square."
+  add_random_test
+    ~title:"Variance scales by square."
     test_data
     (fun data ->
       let cdata = Array.map (fun x -> x /. 10.0) data in
@@ -130,8 +138,8 @@ let () =
       float_eq 1e1 v1 (v2 *. 100.0))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: variance statistic is scale invariant."
+  add_random_test
+    ~title:"Variance statistic is scale invariant."
     test_data
     (fun data ->
       let cdata = Array.map (fun x -> x /. 10.0) data in
@@ -141,8 +149,8 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   (* This test is kind of bulky and might be better separated? *)
-  Test.add_random_test
-    ~title:"Descriptive: skew and kurtosis (and their statistics) are scale invariant."
+  add_random_test
+    ~title:"Skew and kurtosis (and their statistics) are scale invariant."
     test_data
     (fun data ->
       let std   = sqrt (var data) in
@@ -162,8 +170,8 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   (* TODO: definitely need something better than this*)
-  Test.add_random_test
-    ~title:"Descriptive: we can compute standard errors and other stats."
+  add_random_test
+    ~title:"We can compute standard errors and other stats."
     test_data
     (fun data ->
       let _ = var_standard_error data in
@@ -175,8 +183,8 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   (* Just a regression test to make sure we don't break the 1-1. *)
-  Test.add_random_test
-    ~title:"Descriptive: unbaised_summary is just that."
+  add_random_test
+    ~title:"Unbaised_summary is just that."
     test_data
     (fun data ->
       let s = unbiased_summary data in
@@ -190,8 +198,8 @@ let () =
       s.kurtosis  = (unbiased_kurtosis data, classify_kurtosis data))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: a histograms buckets have all the elements."
+  add_random_test
+    ~title:"A histograms buckets have all the elements."
     Gen.(zip2 pos_float test_data)
     (fun (w, data) ->
       let hist = histogram (`Width w) data in
@@ -199,8 +207,8 @@ let () =
       Array.length data = nume)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: a histograms buckets have all the elements, 2."
+  add_random_test
+    ~title:"A histograms buckets have all the elements, 2."
     Gen.(zip2 (make_int 1 (10 * max_array_size)) test_data)
     (fun (b, data) ->
       let hist = histogram (`Buckets b) data in
@@ -208,8 +216,8 @@ let () =
       Array.length data = nume)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: one mean inequality to rule them all!"
+  add_random_test
+    ~title:"One mean inequality to rule them all!"
     test_data
     (fun data ->
       let data = Array.map abs_float data in
@@ -219,16 +227,16 @@ let () =
       m >= g && g >= h)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: spearman is bounded by -1 and 1"
+  add_random_test
+    ~title:"Spearman is bounded by -1 and 1"
     Gen.(zip2 (array_float max_array_size) (array_float max_array_size))
     (fun (arr1, arr2) ->
       let s = spearman arr1 arr2 in
       -1.0 <= s && s <= 1.0)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Descriptive: spearman is 1 for monotonic transformations"
+  add_random_test
+    ~title:"Spearman is 1 for monotonic transformations"
     Gen.(array_float max_array_size)
     (fun arr1 ->
       let arr1 = Array.map abs_float arr1 in
@@ -237,7 +245,7 @@ let () =
       s = 1.0)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_simple_test ~title:"Descriptive, spearman exmaple"
+  add_simple_test ~title:"Spearman exmaple"
     (fun () ->
       (* From wikipedia *)
       let data =

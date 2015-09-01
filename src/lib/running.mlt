@@ -27,6 +27,13 @@ module Gen = FGen (struct
 end)
 
 let () =
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Running"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let equal_floats ?d x y = not (Util.significantly_different_from ?d x y) in
   let max_array_size = 10000 in (* tested up to 100000 *)
   let not_degenerate rs =
@@ -68,8 +75,8 @@ let () =
     equal_floats ~d:(Util.dx*.1e13) rs1.mean rs2.mean &&
     roughly_equal ~order_comp:1e13 rs1.var rs2.var
   in
-  Test.add_random_test
-    ~title:"Running: analysis is not degenerate."
+  add_random_test
+    ~title:"Analysis is not degenerate."
     ~nb_runs:1000
     Gen.(array (make_int 1 max_array_size) float)
     (fun data ->
@@ -81,8 +88,8 @@ let () =
       not_degenerate rs1 && not_degenerate rs2)
       Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Running: works as well as Descriptive."
+  add_random_test
+    ~title:"Works as well as Descriptive."
     (* This is really a test of Descriptive ...  as the point of Running is to
        be more accurate. How to encode the higher accuracy though? We're
        essentially comparing the difference between the two. *)
@@ -98,8 +105,8 @@ let () =
       compare_against_descriptive rs2 data)
       Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Running: we can also join!"
+  add_random_test
+    ~title:"We can also join!"
     ~nb_runs:1000
     Gen.(zip2 (make_int 1 max_array_size) (array_float max_array_size))
     (fun (index, data) ->
@@ -112,8 +119,8 @@ let () =
       compare_rs rs_data rs_joined)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Running: variable sizes using update"
+  add_random_test
+    ~title:"Variable sizes using update"
     ~nb_runs:1000
     Gen.(array_float 10)
     (fun data ->

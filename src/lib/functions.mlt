@@ -32,64 +32,78 @@ let fac i =
   in loop 1 i
 
 let () =
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Functions"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+  let add_partial_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_partial_random_test_group "Functions"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   (* Gamma *)
-  Test.add_random_test
+  add_random_test
     ~title:"Functions, gamma defined for (0+dx,1e2) positive values."
     Gen.(make_float Util.dx 1e2)
     gamma
     Spec.([ just_postcond_pred is_nonzero_float]);
 
-  Test.add_random_test
-    ~title:"Functions, gamma is equivalent to factorial for manageable ints."
+  add_random_test
+    ~title:"Gamma is equivalent to factorial for manageable ints."
     ~nb_runs:14
     Gen.(make_int 1 10)
     (fun i -> (float (fac (i - 1)), (gamma (float i))))
     Spec.([ just_postcond_pred (fun (x, y) -> roughly_equal 1e12 x y)]);
 
   (* Log gamma *)
-  Test.add_random_test
-    ~title:"Functions, log gamma defined for positive values."
+  add_random_test
+    ~title:"Log gamma defined for positive values."
     Gen.pos_float
     ln_gamma
     Spec.([ just_postcond_pred is_nonzero_float ]);
 
-  Test.add_random_test
-    ~title:"Functions, (log)-gamma is equivalent to factorial for manageable ints."
+  add_random_test
+    ~title:"(Log)-gamma is equivalent to factorial for manageable ints."
     ~nb_runs:14
     Gen.(make_int 1 10)
     (fun i -> (float (fac (i - 1)), exp (ln_gamma (float i))))
     Spec.([ just_postcond_pred (fun (x, y) -> roughly_equal 1e12 x y)]);
 
-  Test.add_random_test
-    ~title:"Functions, (log) gamma function statisfies multiplicative recurrence (aka Bohr-Mollerup 2)."
+  add_random_test
+    ~title:"(Log) gamma function statisfies multiplicative recurrence (aka Bohr-Mollerup 2)."
     ~nb_runs:1000
     Gen.pos_float
     (fun x -> log x +. ln_gamma x, ln_gamma (x +. 1.0))
     Spec.([just_postcond_pred (fun (x, y) -> roughly_equal 1e300 x y)]);
 
   (* Beta. *)
-  Test.add_random_test
-    ~title:"Functions, beta function is symmetric."
+  add_random_test
+    ~title:"Beta function is symmetric."
     Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
     (fun (x, y) -> beta x y = beta y x)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Functions, adding one to x in beta function is like scaling."
+  add_random_test
+    ~title:"Adding one to x in beta function is like scaling."
     Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
     (fun (x, y) -> beta x y = (beta (x +. 1.0) y) *. (x/. (x+.y)))
     Spec.([just_postcond_pred is_true]);
 
   (* Log beta *)
-  Test.add_random_test
-    ~title:"Functions, log beta function is symmetric."
+  add_random_test
+    ~title:"Log beta function is symmetric."
     Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
     (fun (x, y) -> ln_beta x y = ln_beta y x)
     Spec.([just_postcond_pred is_true]);
 
   (* Chi *)
-  Test.add_random_test
-    ~title:"Functions, Chi less and greater should sum to 1.0."
+  add_random_test
+    ~title:"Chi less and greater should sum to 1.0."
     Gen.(zip2 (make_int 2 100) (make_float Util.dx 1e3))
     (fun (df, x) ->
       let l = chi_square_less df x in
@@ -103,8 +117,8 @@ let () =
          |> option bool)
   in
   let bad_spec (t_opt, arr) = t_opt = Some 0.0 || arr = [||] in
-  Test.add_partial_random_test
-    ~title:"Functions, softmax obeys bounds"
+  add_partial_random_test
+    ~title:"Softmax obeys bounds"
     Gen.(zip2 temp_opt (array (make_int 0 100) float))
     (fun (temperature, weights) ->
       let _ = softmax ?temperature weights in

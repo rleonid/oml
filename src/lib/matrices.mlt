@@ -26,68 +26,76 @@ let () =
   let mv  = Array.init 3 (fun _ -> Array.copy v) in
   let vr  = [|3.0; 2.0; 1.0 |] in
   let mvr = Array.init 3 (fun _ -> Array.copy vr) in
-  Test.add_simple_test ~title:"we can test matrices for equality 1"
+  let add_simple_test = Test.add_simple_test_group "Matrices" in
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Matrices"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+  add_simple_test ~title:"We can test matrices for equality 1"
     (fun () -> Assert.is_true (equal mv mv));
-  Test.add_simple_test ~title:"we can test matrices for equality 2"
+  add_simple_test ~title:"We can test matrices for equality 2"
     (fun () -> Assert.is_false (equal mv mvr));
 
   let mts = 10 in  (* matrix test size *)
   let pair_of_matrices =
     Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
   in
-  Test.add_random_test
-    ~title:"Matrix addition is commutative."
+  add_random_test
+    ~title:"Addition is commutative."
     pair_of_matrices
     (fun (m1, m2) -> equal (add m1 m2) (add m2 m1))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Matrix scalar multiplication is additive."
+  add_random_test
+    ~title:"Scalar multiplication is additive."
     Gen.(zip3 float float (matrix_float mts mts))
                             (* on order of 1e-10 *)
     (fun (a, b, m) -> equal ~d:(Util.dx *. 1e6) (mult (a +. b) m) (add (mult a m) (mult b m)))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Matrix subtraction is like adding a negative multiple."
+  add_random_test
+    ~title:"Subtraction is like adding a negative multiple."
     Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
     (fun (m1, m2) -> equal (sub m1 m2) (add m1 (mult (-1.0) m2)))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_simple_test ~title:"Matrix dimensions."
+  add_simple_test ~title:"Dimensions."
     (fun () -> Assert.is_true (dim mv = (3,3)));
 
-  Test.add_simple_test ~title:"Matrix has an identity function."
+  add_simple_test ~title:"Has an identity function."
     (fun () -> Assert.is_true (identity 3 = [| [| 1.0; 0.0; 0.0|]
                                              ; [| 0.0; 1.0; 0.0|]
                                              ; [| 0.0; 0.0; 1.0|]|]));
 
-  Test.add_simple_test ~title:"Matrix multiplication."
+  add_simple_test ~title:"Multiplication."
     (fun () -> Assert.is_true ((prod mv mv) = [| [| 6.0; 12.0; 18.0 |]
                                                ; [| 6.0; 12.0; 18.0 |]
                                                ; [| 6.0; 12.0; 18.0 |]|]));
 
-  Test.add_simple_test ~title:"Matrix transpose works."
+  add_simple_test ~title:"Transpose works."
     (fun () -> Assert.is_true ((prod mv mv) = transpose (
                                               [| [| 6.0;   6.0;  6.0 |]
                                                ; [| 12.0; 12.0; 12.0 |]
                                                ; [| 18.0; 18.0; 18.0 |]|])));
 
-  Test.add_random_test
-    ~title:"Matrix products against identity are commutative."
+  add_random_test
+    ~title:"Products against identity are commutative."
     Gen.(matrix_float mts mts)
     (fun m -> let i = identity mts in prod m i = prod i m)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Matrix products are not effected by scaling."
+  add_random_test
+    ~title:"Products are not effected by scaling."
     Gen.(zip3 float (matrix_float mts mts) (matrix_float mts mts))
     (fun (s, m1, m2) ->
       equal ~d:(Util.dx *. 1e10) (prod m1 (mult s m2)) (prod (mult s m1) m2))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Matrix product is like mapping row products from the left."
+  add_random_test
+    ~title:"Product is like mapping row products from the left."
     Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
     (fun (m1, m2) ->
       let p1 = prod m1 m2
@@ -95,8 +103,8 @@ let () =
       p1 = p2)
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Matrix product is also like mapping column products from the right."
+  add_random_test
+    ~title:"Product is also like mapping column products from the right."
     Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
     (fun (m1, m2) ->
       let p1 = prod m1 m2
