@@ -101,10 +101,44 @@ let eval_naive_bayes ~to_prior ~to_likelihood cls_assoc =
     (c, prob))
   |> List.map ~f:(fun (c, p) -> (c, p /. !evidence))
 
+(* init - init per class data
+   update - update per class data
+   incorporate - convert class assoc to final shape *)
+let estimate_naive_bayes modulename (type c) init update incorporate
+  (module Cm : Map.S with type key = c) ?(classes=[]) (data : (c * 'a) list) =
+  let ia = invalidArg "Classify.%s.estimate: %s" modulename in
+  if data = [] then
+    ia "Nothing to train on"
+  else
+    let error_on_new = classes <> [] in
+    let init_map =
+      List.fold_left classes
+        ~f:(fun m c -> Cm.add c (init c) m)
+        ~init:Cm.empty
+    in
+    let total, first_pass =
+      List.fold_left data
+        ~f:(fun (total, m) (cls, ftr) ->
+          let m' =
+            try
+              let a = Cm.find cls m in
+              Cm.add cls (update a ftr) m
+            with Not_found ->
+              if error_on_new then
+                ia (Printf.sprintf "Unexpected class at datum %d" total)
+              else
+                Cm.add cls (update (init cls) ftr) m
+          in
+          (total + 1, m'))
+        ~init:(0, init_map)
+    in
+    let num_classes = Cm.cardinal first_pass in
+    incorporate (Cm.bindings first_pass) num_classes (float total)
+
 module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec := binomial_spec)
+                     and type spec = binomial_spec)
   = struct
 
   type feature = Data.feature
@@ -118,10 +152,17 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
     ; e_bernoulli : bool
     }
 
+  let safe_encoding f =
+    let e = Data.encoding f in
+    if Array.any (fun i -> i >= Data.size) e then
+      invalidArg "BinomialNaiveBayes.encoding: index beyond the encoding size."
+    else
+      e
+
   let eval nb b =
     let to_prior class_probs = class_probs.(Data.size) in
     let to_likelihood class_probs =
-      let idx = Data.encoding b in
+      let idx = safe_encoding b in
       if nb.e_bernoulli then
         let set = Array.to_list idx in
         prod_arr (fun i ->
@@ -138,55 +179,36 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
   type spec = binomial_spec
   let default = { smoothing = 0.0; bernoulli = false }
 
-  let estimate ?(spec=default) ?(classes=[]) data =
-    if data = [] then
-      invalidArg "Classify.estimate: Nothing to train on"
-    else
-      let aa = Data.size + 1 in
-      let update arr idx =
-        Array.iter (fun i -> arr.(i) <- arr.(i) + 1) idx;
-        (* keep track of the class count at the end of array. *)
-        arr.(Data.size) <- arr.(Data.size) + 1;
-      in
-      let error_on_new = classes <> [] in
-      let init_class_lst = List.map classes ~f:(fun c -> (c, Array.make aa 0)) in
-      let (total, all) =
-        List.fold_left data
-          ~f:(fun (total, asc) (label, feature) ->
-            let n_asc =
-              try
-                let fr = List.assoc label asc in
-                update fr (Data.encoding feature);
-                asc
-              with Not_found ->
-                if error_on_new then
-                  invalidArg "Found a new (unexpected) class at datum %d" total
-                else
-                  let fr = Array.make aa 0 in
-                  update fr (Data.encoding feature);
-                  (label, fr) :: asc
-            in
-            total + 1, n_asc)
-          ~init:(0, init_class_lst)
-      in
-      let totalf = float total in
-      let cls_sz = float (List.length all) in
+  module Cm = Map.Make(struct type t = clas let compare = compare end)
+
+  let estimate ?(spec=default) ?classes data =
+    let aa = Data.size + 1 in
+    let init cls = Array.make aa 0 in
+    let update arr ftr =
+      let en = safe_encoding ftr in
+      Array.iter (fun i -> arr.(i) <- arr.(i) + 1) en;
+      (* keep track of the class count at the end of array. *)
+      arr.(Data.size) <- arr.(Data.size) + 1;
+      arr
+    in
+    let incorporate all num_classes totalf =
       let to_prob = smoothing_to_prob spec.smoothing in
-      let table =
-        List.map all ~f:(fun (cl, attr_count) ->
-          let prior_count = float attr_count.(Data.size) in
-          let likelihood =
-            Array.init aa (fun i ->
-              if i = Data.size then    (* Store the prior at the end. *)
-                to_prob prior_count totalf cls_sz
-              else
-                to_prob (float attr_count.(i)) prior_count 2.0)   (* Binary. *)
-          in
-          cl, likelihood)
-      in
-      { table
-      ; e_bernoulli = spec.bernoulli
-      }
+      List.map all ~f:(fun (cl, attr_count) ->
+        let prior_count = float attr_count.(Data.size) in
+        let likelihood =
+          Array.init aa (fun i ->
+            if i = Data.size then    (* Store the prior at the end. *)
+              to_prob prior_count totalf (float num_classes)
+            else
+              to_prob (float attr_count.(i)) prior_count 2.0)   (* Binary. *)
+        in
+        cl, likelihood)
+    in
+    let table =
+      estimate_naive_bayes "BinomialNaiveBayes"
+        init update incorporate (module Cm) ?classes data
+    in
+    {table ; e_bernoulli = spec.bernoulli}
 
   let class_probabilities nb cls =
     let arr = List.assoc cls nb.table in
@@ -215,7 +237,7 @@ type smoothing = float
 module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec := smoothing)
+                     and type spec = smoothing)
 
   = struct
 
@@ -257,34 +279,19 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
   type spec = smoothing
   let default = 0.0
 
-  let estimate ?(spec=default) ?(classes=[]) data =
-    if data = [] then
-      invalidArg "Classify.estimate: Nothing to train on"
-    else
-      let update arr feature =
-        let ftr_arr = safe_encoding feature in
-        Array.iteri (fun i j -> arr.(i).(j) <- arr.(i).(j) + 1) ftr_arr
-      in
-      let new_arr () = Array.map (fun i -> Array.make i 0) Data.encoding_sizes in
-      let init_lst, default =
-        match classes with
-        | [] -> [], (fun () -> 0, new_arr ())
-        | cl -> List.map (fun c -> c, (0, new_arr ())) cl,
-                fun () -> invalidArg "Classify.estimate classes have been specified."
-      in
-      let (total, all) =
-        List.fold_left data
-          ~f:(fun (total, asc) (label, feature) ->
-            let (p, fr), n_asc = assoc_opt ~default label asc in
-            update fr feature;
-            total + 1, ((label, (p + 1, fr)) :: n_asc))
-          ~init:(0, init_lst)
-      in
+  module Cm = Map.Make(struct type t = clas let compare = compare end)
+
+  let estimate ?(spec=default) =
+    let init _ = (0, Array.map (fun i -> Array.make i 0) Data.encoding_sizes) in
+    let update (c, arr) ftr =
+      let ftr_arr = safe_encoding ftr in
+      Array.iteri (fun i j -> arr.(i).(j) <- arr.(i).(j) + 1) ftr_arr;
+      (c + 1, arr)
+    in
+    let incorporate all num_classes totalf =
       let to_prob = smoothing_to_prob spec in
-      let totalf = float total in
-      let numcls = float (List.length all) in
       List.map all ~f:(fun (cl, (class_count, attr_count)) ->
-        let prior      = to_prob (float class_count) totalf numcls in
+        let prior      = to_prob (float class_count) totalf (float num_classes) in
         let likelihood =
           Array.map (fun arr ->
             let farr = Array.map float arr in
@@ -294,6 +301,9 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
             attr_count
         in
         cl, (prior, likelihood))
+    in
+    estimate_naive_bayes "CategoricalNaiveBayes" init update incorporate
+      (module Cm)
 
   end
 
@@ -303,19 +313,18 @@ module type Continuous_encoded_data_intf = sig
   val size : int
 end
 
-let to_safe_continuous_encoding size encoding f =
+let to_safe_encoding_size_checked interfacename size encoding f =
   let e = encoding f in
   let l = Array.length e in
   if l = size then
     e
   else
-    invalidArg
-      "Continuous_encoded_data_intf.encoding: size %d actual %d" size l
+    invalidArg "%s.encoding: size %d actual %d" interfacename size l
 
 module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec := unit)
+                     and type spec = unit)
 
   = struct
 
@@ -326,7 +335,9 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
 
   type t = (clas * (float * (float * float) array)) list
 
-  let safe_encoding = to_safe_continuous_encoding Data.size Data.encoding
+  let safe_encoding =
+    to_safe_encoding_size_checked "Continuous_encoded_data_intf"
+      Data.size Data.encoding
 
   let class_probabilities t cls =
     let (prior, dist_params) = List.assoc cls t in
@@ -347,53 +358,35 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
   type spec = unit
   let default = ()
 
-  let estimate ?(spec=default) ?(classes=[]) data =
-    if data = [] then
-      invalidArg "Classify.estimate: Nothing to train on!"
-    else
-      let update = Array.map2 Running.update in
-      let init   = Array.map Running.init in
-      (*let features = Array.length (snd (List.hd data)) in*)
-      let init_cl  =
-        let empty () = Array.make Data.size Running.empty in
-        List.map classes ~f:(fun c -> (c, (0, empty ())))
-      in
-      let error_on_new = classes <> [] in
-      let total, by_class =
-        List.fold_left data
-          ~f:(fun (t, acc) (cls, ftr) ->
-            let attr = safe_encoding ftr in
-            try
-              let (cf, rsar) = List.assoc cls acc in
-              let acc'       = List.remove_assoc cls acc in
-              let nrs        = update rsar attr in
-              let cf'        = cf + 1 in
-              (t + 1, (cls, (cf', nrs)) :: acc')
-            with Not_found ->
-              if error_on_new then
-                invalidArg "Found a new (unexpected) class at datum %d" t
-              else
-                (t + 1, (cls, (1, (init attr))) :: acc))
-          ~init:(0, init_cl)
-      in
-      let totalf = float total in
+  module Cm = Map.Make(struct type t = clas let compare = compare end)
+
+  let estimate ?(spec=default) =
+    let init c = (0, Array.make Data.size Running.empty) in
+    let update (c, rs_arr) ftr =
+      let attr = safe_encoding ftr in
+      (c + 1, Array.map2 Running.update rs_arr attr)
+    in
+    let incorporate rs_lst _ totalf =
       (* A lot of the literature in estimating Naive Bayes focuses on estimating
          the parameters using Maximum Likelihood. The Running estimate of variance
          computes the unbiased form. Not certain if we should implement the
          n/(n-1) conversion below. *)
       let select rs = rs.Running.mean, (sqrt rs.Running.var) in
-      by_class
+      rs_lst
       |> List.map ~f:(fun (c, (cf, rsarr)) ->
           let class_prior = (float cf) /. totalf in
           let attr_params = Array.map select rsarr in
           (c, (class_prior, attr_params)))
+    in
+    estimate_naive_bayes "GaussianNaiveBayes"
+      init update incorporate (module Cm)
 
   end
 
 module LogisticRegression(Data: Continuous_encoded_data_intf)
   : (Classifier_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec := unit)
+                     and type spec = unit)
 
   = struct
 
@@ -438,7 +431,9 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
     ; classes : (clas * float) list
     }
 
-  let safe_encoding = to_safe_continuous_encoding Data.size Data.encoding
+  let safe_encoding =
+    to_safe_encoding_size_checked "Continuous_encoded_data_intf"
+      Data.size Data.encoding
 
   let proba w x y = Float.(1. / (1. + exp(-. y * dot w x)))
 
