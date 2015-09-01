@@ -33,8 +33,8 @@ travis_install_on_osx () {
     brew update
     brew install homebrew/dupes/lapack
     brew install gcc  # for gfortran
-    brew install opam --HEAD
-    brew install libffi
+    brew install opam 
+    brew install libffi # for ocephes
     export opam_init_options="--comp=$OCAML_VERSION"
     export opam_pin_add="add"
 }
