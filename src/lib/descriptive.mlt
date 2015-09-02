@@ -18,7 +18,7 @@
 open Test_utils
 
 module Gen = FGen (struct
-  let largest_float = 1e8
+  let largest_float = 1e100
 end)
 
 let () =
@@ -31,18 +31,17 @@ let () =
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
   let sample_data = Array.range ~start:1. ~stop:6. () in
-  let max_array_size = 1000 in
-  let test_data = Gen.(array (make_int 2 max_array_size) float) in
-
   add_simple_test ~title:"Mean for small data set."
     (fun () -> Assert.equalf (mean sample_data) 3.0);
 
   add_simple_test ~title:"Median for small data set."
     (fun () -> Assert.equalf (median sample_data) 3.0);
 
+  let max_array_size = 1000 in
+  let test_data b = Gen.(array (make_int 2 max_array_size) (bfloat b)) in
   add_random_test
     ~title:"Mean and median are bounded by the array."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let x = Array.max data in
       let n = Array.min data in
@@ -60,7 +59,7 @@ let () =
 
   add_random_test
     ~title:"Population_var is just mean var."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let m = mean data in
       (population_var m data) = var data)
@@ -71,18 +70,18 @@ let () =
 
   add_random_test
     ~title:"Unbiased_var is bigger than var."
-    Gen.(array (make_int 2 max_array_size) float)
+    Gen.(array (make_int 2 max_array_size) (bfloat 1e8))
     (fun data -> unbiased_var data > var data)
     Spec.([just_postcond_pred is_true]);
-  (*let module Gen = FGen (struct let largest_float = 1e3 end) in *)
-  let two_arrays_same_size =
-    Gen.(matrix (lift 2 "2") (make_int 2 max_array_size) float
+
+  let two_arrays_same_size b =
+    Gen.(matrix (lift 2 "2") (make_int 2 max_array_size) (bfloat b)
          |> map1 (fun m -> m.(0), m.(1))
           (fun (x,_) -> Printf.sprintf "Arrays of length %d" (Array.length x)))
   in
   add_random_test
     ~title:"Correlation and covariance are order invariant."
-    two_arrays_same_size
+    (two_arrays_same_size 1e8)
     (fun (d1, d2) ->
       let co1 = covariance d1 d2 in
       let co2 = covariance d2 d1 in
@@ -93,7 +92,7 @@ let () =
 
   add_random_test
     ~title:"Correlation and covariance have the same sign"
-    two_arrays_same_size
+    (two_arrays_same_size 1e8)
     (fun (d1, d2) ->
       let co = covariance d1 d2 in
       let cr = correlation d1 d2 in
@@ -103,14 +102,14 @@ let () =
 
   add_random_test
     ~title:"Autocorrelation without lag is 1.0"
-    test_data
+    (test_data 1e8)
     (fun data -> autocorrelation 0 data)
     Spec.([always ==> (fun x -> x = 1.0)]);
 
   (* TODO: this sometimes fails *)
   add_random_test
     ~title:"Moment 2 is just var."
-    test_data
+    (test_data 1e8)
     (fun data -> moment 2 data = var data)
     Spec.([just_postcond_pred is_true]);
 
@@ -130,7 +129,7 @@ let () =
 
   add_random_test
     ~title:"Variance scales by square."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let cdata = Array.map (fun x -> x /. 10.0) data in
       let v1 = var data in
@@ -140,7 +139,7 @@ let () =
 
   add_random_test
     ~title:"Variance statistic is scale invariant."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let cdata = Array.map (fun x -> x /. 10.0) data in
       let sv1 = var_statistic data in
@@ -151,7 +150,7 @@ let () =
   (* This test is kind of bulky and might be better separated? *)
   add_random_test
     ~title:"Skew and kurtosis (and their statistics) are scale invariant."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let std   = sqrt (var data) in
       let sk    = skew data in
@@ -172,7 +171,7 @@ let () =
   (* TODO: definitely need something better than this*)
   add_random_test
     ~title:"We can compute standard errors and other stats."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let _ = var_standard_error data in
       let _ = skew_standard_error data in
@@ -185,7 +184,7 @@ let () =
   (* Just a regression test to make sure we don't break the 1-1. *)
   add_random_test
     ~title:"Unbaised_summary is just that."
-    test_data
+    (test_data 1e8)
     (fun data ->
       let s = unbiased_summary data in
       s.size      = Array.length data &&
@@ -200,7 +199,7 @@ let () =
 
   add_random_test
     ~title:"A histograms buckets have all the elements."
-    Gen.(zip2 pos_float test_data)
+    Gen.(zip2 pos_float (test_data 1e8))
     (fun (w, data) ->
       let hist = histogram (`Width w) data in
       let nume = Array.map snd hist |> Array.fold_left (+) 0 in
@@ -209,7 +208,7 @@ let () =
 
   add_random_test
     ~title:"A histograms buckets have all the elements, 2."
-    Gen.(zip2 (make_int 1 (10 * max_array_size)) test_data)
+    Gen.(zip2 (make_int 1 (10 * max_array_size)) (test_data 1e8))
     (fun (b, data) ->
       let hist = histogram (`Buckets b) data in
       let nume = Array.map snd hist |> Array.fold_left (+) 0 in
@@ -218,7 +217,7 @@ let () =
 
   add_random_test
     ~title:"One mean inequality to rule them all!"
-    test_data
+    (test_data 1e8)
     (fun data ->
       let data = Array.map abs_float data in
       let m = mean data in

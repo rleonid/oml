@@ -37,6 +37,17 @@ module FGen (Fp : FloatParameters) = struct
   let neg_float = filter ((>=) 0.0) float
   let non_zero_float = filter ((<>) 0.0) float
 
+  (* Bounded *)
+  let bfloat m = (fun r ->
+    let s = Random.State.bool r in
+    let x = Random.State.float r m in
+    if s then x else -.x),
+    string_of_float
+
+  let bpos_float m = filter ((<=) 0.0) (bfloat m)
+  let bneg_float m = filter ((>=) 0.0) (bfloat m)
+  let bnon_zero_float m = filter ((<>) 0.0) (bfloat m)
+
   (* Fixed length *)
   let fixed_length_array n  =
     let msg = "array length " ^ (string_of_int n) in
@@ -60,8 +71,10 @@ module FGen (Fp : FloatParameters) = struct
       |> String.concat "\n")
 
   let array_float n = fixed_length_array n float
+  let barray_float m n = fixed_length_array n (bfloat m)
   let matrix_float r c = fixed_length_matrix r c float
-  let sq_float_matrix s = matrix_float s s
+  let bmatrix_float m r c = fixed_length_matrix r c (bfloat m)
+  (*let sq_float_matrix s = matrix_float s s *)
 
   let print_float_array m =
     m
