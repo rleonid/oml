@@ -17,13 +17,13 @@
 
 open Util
 
-let newton_raphson_full ?init ~accuracy ~iterations ~lower_bound ~upper_bound f df =
+let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper f df =
   let rec loop x i =
 (*  printf "i %d: x %f\n" i x; *)
-    if x < lower_bound then
-      raise (Iteration_failure ("newton raphson", Out_of_bounds lower_bound))
-    else if x > upper_bound then
-      raise (Iteration_failure ("newton raphson", Out_of_bounds upper_bound))
+    if x < lower then
+      raise (Iteration_failure ("newton raphson", Out_of_bounds lower))
+    else if x > upper then
+      raise (Iteration_failure ("newton raphson", Out_of_bounds upper))
     else if i > iterations then
       raise (Iteration_failure ("newton raphson", Too_many_iterations i))
     else
@@ -35,12 +35,14 @@ let newton_raphson_full ?init ~accuracy ~iterations ~lower_bound ~upper_bound f 
         loop x_n (i + 1)
   in
   match init with
-  | None   -> loop (midpoint upper_bound lower_bound) 0
+  | None   -> loop (midpoint upper lower) 0
   | Some i -> loop i 0
 
-let newton ?init ~lower_bound ~upper_bound f =
+let newton ?init ~lower ~upper f =
   newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
-      ~lower_bound ~upper_bound f (Estimations.second_order f)
+      ~lower ~upper f (Estimations.second_order f)
+
+let debug_ref = ref false
 
 let bisection_explicit ~epsilon ~lower ~upper f =
   let rec loop lb ub =
@@ -52,7 +54,8 @@ let bisection_explicit ~epsilon ~lower ~upper f =
     else
       let flb = f lb in
       let fub = f ub in
-      (*Printf.printf "lb %.16f ub %.16f flb %.16f fub %.16f \n%!" lb ub flb fub; *)
+      if !debug_ref then
+        Printf.printf "lb %.16f ub %.16f flb %.16f fub %.16f \n%!" lb ub flb fub;
       (* Are we lucky? *)
       if eq_zero flb then
         `EqZero lb
@@ -76,3 +79,13 @@ let bisection_explicit ~epsilon ~lower ~upper f =
           `IntermediateValueTheoremViolated mp
   in
   loop lower upper
+
+let bisection ~epsilon ~lower ~upper f =
+  match bisection_explicit ~epsilon ~lower ~upper f with
+  | `EqZero v
+  | `CloseEnough v -> v
+  | `Outside _     ->
+      invalidArg "Function does not take oppositely signed values at bounds"
+  | `IntermediateValueTheoremViolated v ->
+      invalidArg "Intermediate Value Theorem has been violated: %f" v
+
