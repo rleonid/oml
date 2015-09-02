@@ -42,47 +42,37 @@ let newton ?init ~lower_bound ~upper_bound f =
   newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
       ~lower_bound ~upper_bound f (Estimations.second_order f)
 
-(* There is a bug in the implementation...
-let bisection ~epsilon ~lower_bound ~upper_bound f =
+let bisection_explicit ~epsilon ~lower ~upper f =
   let rec loop lb ub =
-(*  printf "lb %.5f ub %.5f\n" lb ub; *)
-    let inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
+    let eq_zero v = not (significantly_different_from ~d:epsilon 0.0 v) in
+    let root_inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
     let mp = midpoint lb ub in
-      if (abs_float (ub -. lb)) < 2.0 *. epsilon then (* fin *)
-        mp
+    if (abs_float (ub -. lb)) < 2.0 *. epsilon then (* fin *)
+      `CloseEnough mp
+    else
+      let flb = f lb in
+      let fub = f ub in
+      (*Printf.printf "lb %.16f ub %.16f flb %.16f fub %.16f \n%!" lb ub flb fub; *)
+      (* Are we lucky? *)
+      if eq_zero flb then
+        `EqZero lb
+      else if eq_zero fub then
+        `EqZero ub
+      (* if the user does not provide an interval
+          where the function has an intersection. *)
+      else if flb < 0.0 && fub < 0.0 then
+        `Outside ub
+      else if flb > 0.0 && fub > 0.0 then
+        `Outside lb
       else
-        let flb = f lb in
         let fmp = f mp in
-        let fub = f ub in
-        if flb = 0.0 then
-          lb
-        else if fmp = 0.0 then
-          mp
-        else if fub = 0.0 then
-          ub
-        else if inside flb fmp then (* go left! *)
+        if eq_zero fmp then
+          `EqZero mp
+        else if root_inside flb fmp then (* go left! *)
           loop lb mp
-        else if inside fmp fub then (* go right! *)
+        else if root_inside fmp fub then (* go right! *)
           loop mp ub
-        (* if the user does not provide an interval
-            where the function has an intersection. *)
-        else if flb < 0.0 && fub < 0.0 then
-          lb
-        (* if the user does not provide an interval
-           where the function has an intersection. *)
-        else if flb > 0.0 && fub > 0.0 then
-          ub
-        else (* close enough. *)
-          mp
-        (*  this method is commented out because flb * fmp
-            might be unstable, better to compare directly.
-            let fmp = f mp in
-            if ((f lb) * fmp) < 0.0 then (* go left! *)
-                loop lb mp
-            else if (fmp * (f ub)) < 0.0 then (* go right! *)
-                loop mp ub
-            else (* got it *)
-                mp *)
-    in
-    loop lower_bound upper_bound
-    *)
+        else
+          `IntermediateValueTheoremViolated mp
+  in
+  loop lower upper

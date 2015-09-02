@@ -49,7 +49,22 @@ let () =
   let upper_bound = 1e10 in
   (* TODO, figure out a way to make this a partial test. *)
   add_random_test
-    ~title:"(Newton) work for odd polynomials."
+    ~title:"Solvers, (bisection) works for odd polynomials."
+      Gen.(odd_polynomial)
+      (fun lst ->
+        let f = poly_to_f lst in
+        match bisection_explicit ~epsilon:1e-10 ~lower:lower_bound ~upper:upper_bound f with
+        | `EqZero f       -> true
+        | `CloseEnough f  -> true
+        | `Outside _      -> false
+        | `IntermediateValueTheoremViolated _ ->
+            Printf.printf "WOW IVTV: %s\n"
+                (String.concat ";" (List.map (sprintf "%f") lst));
+                false)
+    Spec.([just_postcond_pred is_true]);
+      
+  add_random_test
+    ~title:"Solvers, (newton) work for odd polynomials."
       Gen.(odd_polynomial)
       (fun lst ->
         let f = poly_to_f lst in
