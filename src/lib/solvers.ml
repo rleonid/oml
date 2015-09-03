@@ -45,11 +45,13 @@ let newton ?init ~lower ~upper f =
 let debug_ref = ref false
 
 let bisection_explicit ~epsilon ~lower ~upper f =
+  let eq_zero v = not (significantly_different_from ~d:epsilon 0.0 v) in
+  let root_inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
   let rec loop lb ub =
-    let eq_zero v = not (significantly_different_from ~d:epsilon 0.0 v) in
-    let root_inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
     let mp = midpoint lb ub in
-    if (abs_float (ub -. lb)) < 2.0 *. epsilon then (* fin *)
+    if (abs_float (ub -. lb)) < 2.0 *. epsilon ||
+       (* use exact comparison to detect when rounding is dropping precision*)
+       mp = lb || mp = ub then
       `CloseEnough mp
     else
       let flb = f lb in

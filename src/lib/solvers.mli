@@ -44,3 +44,5 @@ val newton : ?init:float -> lower:float ->
       supplied bounds.  *)
 val bisection : epsilon:float -> lower:float -> upper:float ->
     (float -> float) -> float
+
+val debug_ref : bool ref 
