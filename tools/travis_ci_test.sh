@@ -30,11 +30,17 @@ travis_install_on_osx () {
     #sudo hdiutil attach XQuartz-2.7.6.dmg
     #sudo installer -verbose -pkg /Volumes/XQuartz-2.7.6/XQuartz.pkg -target /
 
+    echo "updating brew"
     brew update
+    echo "brew install lapack"
     brew install homebrew/dupes/lapack
+    echo "brew install gcc"
     brew install gcc  # for gfortran
-    brew install opam 
+    echo "brew install libffi"
     brew install libffi # for ocephes
+    echo "brew install opam"
+    brew install opam
+    echo "brew install finished!"
     export opam_init_options="--comp=$OCAML_VERSION"
     export opam_pin_add="add"
 }
