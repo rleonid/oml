@@ -183,7 +183,7 @@ let () =
 
   (* Just a regression test to make sure we don't break the 1-1. *)
   add_random_test
-    ~title:"Unbaised_summary is just that."
+    ~title:"Unbiased_summary is just that."
     (test_data 1e8)
     (fun data ->
       let s = unbiased_summary data in
