@@ -23,3 +23,20 @@ let correlated r ar1 ar2 =
 val correlated : float -> float array -> float array -> float
             array
             *)
+
+(* Horner's method  *)
+let poly_to_f = function
+  | []      -> fun _ -> 0.0
+  | h :: tl -> fun x -> List.fold_left (fun p v -> (p *. x) +. v) h tl
+
+let poly_lst_to_string_as_func lst =
+  let n = List.length lst - 1 in
+  lst
+  |> List.mapi (fun i v -> sprintf "%f * x**%d." v (n - i))
+  |> String.concat " + "
+  |> sprintf "f(x) = %s"
+
+let poly_lst_to_string lst =
+  lst
+  |> List.map (fun v -> sprintf "%.25f" v)
+  |> String.concat "; "

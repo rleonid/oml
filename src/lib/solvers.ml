@@ -17,13 +17,13 @@
 
 open Util
 
-let newton_raphson_full ?init ~accuracy ~iterations ~lower_bound ~upper_bound f df =
+let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper f df =
   let rec loop x i =
 (*  printf "i %d: x %f\n" i x; *)
-    if x < lower_bound then
-      raise (Iteration_failure ("newton raphson", Out_of_bounds lower_bound))
-    else if x > upper_bound then
-      raise (Iteration_failure ("newton raphson", Out_of_bounds upper_bound))
+    if x < lower then
+      raise (Iteration_failure ("newton raphson", Out_of_bounds lower))
+    else if x > upper then
+      raise (Iteration_failure ("newton raphson", Out_of_bounds upper))
     else if i > iterations then
       raise (Iteration_failure ("newton raphson", Too_many_iterations i))
     else
@@ -35,54 +35,59 @@ let newton_raphson_full ?init ~accuracy ~iterations ~lower_bound ~upper_bound f 
         loop x_n (i + 1)
   in
   match init with
-  | None   -> loop (midpoint upper_bound lower_bound) 0
+  | None   -> loop (midpoint upper lower) 0
   | Some i -> loop i 0
 
-let newton ?init ~lower_bound ~upper_bound f =
+let newton ?init ~lower ~upper f =
   newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
-      ~lower_bound ~upper_bound f (Estimations.second_order f)
+      ~lower ~upper f (Estimations.second_order f)
 
-(* There is a bug in the implementation...
-let bisection ~epsilon ~lower_bound ~upper_bound f =
+let debug_ref = ref false
+
+let bisection_explicit ~epsilon ~lower ~upper f =
+  let eq_zero v = not (significantly_different_from ~d:epsilon 0.0 v) in
+  let root_inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
   let rec loop lb ub =
-(*  printf "lb %.5f ub %.5f\n" lb ub; *)
-    let inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
     let mp = midpoint lb ub in
-      if (abs_float (ub -. lb)) < 2.0 *. epsilon then (* fin *)
-        mp
+    if (abs_float (ub -. lb)) < 2.0 *. epsilon ||
+       (* use exact comparison to detect when rounding is dropping precision*)
+       mp = lb || mp = ub then
+      `CloseEnough mp
+    else
+      let flb = f lb in
+      let fub = f ub in
+      if !debug_ref then
+        Printf.printf "lb %.16f ub %.16f flb %.16f fub %.16f \n%!" lb ub flb fub;
+      (* Are we lucky? *)
+      if eq_zero flb then
+        `EqZero lb
+      else if eq_zero fub then
+        `EqZero ub
+      (* if the user does not provide an interval
+          where the function has an intersection. *)
+      else if flb < 0.0 && fub < 0.0 then
+        `Outside ub
+      else if flb > 0.0 && fub > 0.0 then
+        `Outside lb
       else
-        let flb = f lb in
         let fmp = f mp in
-        let fub = f ub in
-        if flb = 0.0 then
-          lb
-        else if fmp = 0.0 then
-          mp
-        else if fub = 0.0 then
-          ub
-        else if inside flb fmp then (* go left! *)
+        if eq_zero fmp then
+          `EqZero mp
+        else if root_inside flb fmp then (* go left! *)
           loop lb mp
-        else if inside fmp fub then (* go right! *)
+        else if root_inside fmp fub then (* go right! *)
           loop mp ub
-        (* if the user does not provide an interval
-            where the function has an intersection. *)
-        else if flb < 0.0 && fub < 0.0 then
-          lb
-        (* if the user does not provide an interval
-           where the function has an intersection. *)
-        else if flb > 0.0 && fub > 0.0 then
-          ub
-        else (* close enough. *)
-          mp
-        (*  this method is commented out because flb * fmp
-            might be unstable, better to compare directly.
-            let fmp = f mp in
-            if ((f lb) * fmp) < 0.0 then (* go left! *)
-                loop lb mp
-            else if (fmp * (f ub)) < 0.0 then (* go right! *)
-                loop mp ub
-            else (* got it *)
-                mp *)
-    in
-    loop lower_bound upper_bound
-    *)
+        else
+          `IntermediateValueTheoremViolated mp
+  in
+  loop lower upper
+
+let bisection ~epsilon ~lower ~upper f =
+  match bisection_explicit ~epsilon ~lower ~upper f with
+  | `EqZero v
+  | `CloseEnough v -> v
+  | `Outside _     ->
+      invalidArg "Function does not take oppositely signed values at bounds"
+  | `IntermediateValueTheoremViolated v ->
+      invalidArg "Intermediate Value Theorem has been violated: %f" v
+
