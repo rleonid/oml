@@ -27,8 +27,7 @@ let () =
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
 
-  let module Gen = FGen (struct let largest_float = 1e5 end) in
-  let polynomial = Gen.(list (make_int 2 10) float) in
+  let polynomial b = Gen.(list (make_int 2 10) (bfloat b)) in
   let poly_to_f = function
     | []      -> fun _ -> 0.0
     | h :: tl -> fun x -> List.fold_left (fun p v -> (p *. x) +. v) h tl
@@ -45,7 +44,7 @@ let () =
   add_random_test
     ~title:"Work on polynomials."
     ~nb_runs:10000
-    Gen.(zip2 polynomial float)
+    Gen.(zip2 (polynomial 1e5) (bfloat 1e5))
     (fun (clst, x) ->
       let f = poly_to_f clst in
       let s = secant f in

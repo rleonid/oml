@@ -18,10 +18,6 @@
 
 open Test_utils
 
-module Gen = FGen (struct
-  let largest_float = 1e8
-end)
-
 let () =
   let add_random_test
     ?title ?nb_runs ?nb_tries ?classifier

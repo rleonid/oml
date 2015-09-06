@@ -18,13 +18,11 @@
 open Util
 open Test_utils
 
-module Gen = FGen (struct
-  let largest_float = 1e8
-end)
-
 let () =
   let matrix_size = 1000 in
-  let float_matrix = Gen.(matrix (make_int 2 matrix_size) (make_int 2 matrix_size) float) in
+  let float_matrix =
+    Gen.(matrix (make_int 2 matrix_size) (make_int 2 matrix_size) (bfloat 1e8))
+  in
   let add_random_test
     ?title ?nb_runs ?nb_tries ?classifier
     ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =

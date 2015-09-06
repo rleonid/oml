@@ -17,10 +17,6 @@
 
 open Test_utils
 
-module Gen = FGen (struct
-  let largest_float = 1e100
-end)
-
 let () =
   let add_simple_test = Test.add_simple_test_group "Descriptive" in
   let add_random_test
@@ -144,7 +140,7 @@ let () =
 
   add_random_test
     ~title:"Variance scales by square."
-    (test_data 1e8)
+    (test_data 1e7)
     (fun data ->
       let cdata = Array.map (fun x -> x /. 10.0) data in
       let v1 = var data in
@@ -214,7 +210,7 @@ let () =
 
   add_random_test
     ~title:"A histograms buckets have all the elements."
-    Gen.(zip2 pos_float (test_data 1e8))
+    Gen.(zip2 (bpos_float max_float) (test_data 1e8))
     (fun (w, data) ->
       let hist = histogram (`Width w) data in
       let nume = Array.map snd hist |> Array.fold_left (+) 0 in
@@ -243,7 +239,7 @@ let () =
 
   add_random_test
     ~title:"Spearman is bounded by -1 and 1"
-    Gen.(zip2 (array_float max_array_size) (array_float max_array_size))
+    Gen.(zip2 (barray_float 1e8 max_array_size) (barray_float 1e8 max_array_size))
     (fun (arr1, arr2) ->
       let s = spearman arr1 arr2 in
       -1.0 <= s && s <= 1.0)
@@ -251,7 +247,7 @@ let () =
 
   add_random_test
     ~title:"Spearman is 1 for monotonic transformations"
-    Gen.(array_float max_array_size)
+    Gen.(barray_float 1e8 max_array_size)
     (fun arr1 ->
       let arr1 = Array.map abs_float arr1 in
       let arr2 = Array.map log arr1 in

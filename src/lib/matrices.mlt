@@ -17,10 +17,6 @@
 
 open Test_utils
 
-module Gen = FGen (struct
-  let largest_float = 1e3
-end)
-
 let () =
   let v   = [|1.0; 2.0; 3.0 |] in
   let mv  = Array.init 3 (fun _ -> Array.copy v) in
@@ -41,7 +37,7 @@ let () =
 
   let mts = 10 in  (* matrix test size *)
   let pair_of_matrices =
-    Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
+    Gen.(zip2 (bmatrix_float 1e3 mts mts) (bmatrix_float 1e3 mts mts))
   in
   add_random_test
     ~title:"Addition is commutative."
@@ -51,14 +47,14 @@ let () =
 
   add_random_test
     ~title:"Scalar multiplication is additive."
-    Gen.(zip3 float float (matrix_float mts mts))
+    Gen.(zip3 (bfloat 1e3) (bfloat 1e3) (bmatrix_float 1e3 mts mts))
                             (* on order of 1e-10 *)
     (fun (a, b, m) -> equal ~d:(Util.dx *. 1e6) (mult (a +. b) m) (add (mult a m) (mult b m)))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
     ~title:"Subtraction is like adding a negative multiple."
-    Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
+    Gen.(zip2 (bmatrix_float 1e3 mts mts) (bmatrix_float 1e3 mts mts))
     (fun (m1, m2) -> equal (sub m1 m2) (add m1 (mult (-1.0) m2)))
     Spec.([just_postcond_pred is_true]);
 
@@ -83,20 +79,20 @@ let () =
 
   add_random_test
     ~title:"Products against identity are commutative."
-    Gen.(matrix_float mts mts)
+    Gen.(bmatrix_float 1e3 mts mts)
     (fun m -> let i = identity mts in prod m i = prod i m)
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
     ~title:"Products are not effected by scaling."
-    Gen.(zip3 float (matrix_float mts mts) (matrix_float mts mts))
+    Gen.(zip3 (bfloat 1e3) (bmatrix_float 1e3 mts mts) (bmatrix_float 1e3 mts mts))
     (fun (s, m1, m2) ->
       equal ~d:(Util.dx *. 1e10) (prod m1 (mult s m2)) (prod (mult s m1) m2))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
     ~title:"Product is like mapping row products from the left."
-    Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
+    Gen.(zip2 (bmatrix_float 1e3 mts mts) (bmatrix_float 1e3 mts mts))
     (fun (m1, m2) ->
       let p1 = prod m1 m2
       and p2 = Array.map (fun r -> prod_row_vector r m2) m1 in
@@ -105,7 +101,7 @@ let () =
 
   add_random_test
     ~title:"Product is also like mapping column products from the right."
-    Gen.(zip2 (matrix_float mts mts) (matrix_float mts mts))
+    Gen.(zip2 (bmatrix_float 1e3 mts mts) (bmatrix_float 1e3 mts mts))
     (fun (m1, m2) ->
       let p1 = prod m1 m2
       and p2 = Array.init mts (fun c -> prod_column_vector m1 (column m2 c)) in

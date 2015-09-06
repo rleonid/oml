@@ -47,7 +47,7 @@ let () =
 
   add_random_test
     ~title:"Normal_df is also bounded."
-    Gen.(zip3 mean_o std_o float)
+    Gen.(zip3 mean_o std_o (bfloat max_float))
     (fun (mean,std,x) ->
       within (Closed 0.0, Closed 1.0) (normal_pdf ?mean ?std x))
     Spec.([just_postcond_pred is_true]);

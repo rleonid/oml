@@ -17,10 +17,6 @@
 
 open Test_utils
 
-module Gen = FGen (struct
-  let largest_float = 1e6
-end)
-
 let () =
   let add_random_test
     ?title ?nb_runs ?nb_tries ?classifier
@@ -32,7 +28,7 @@ let () =
   let max_matrix_size = 10 in
   add_random_test
     ~title:"We can."
-    Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) float)
+    Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) (bfloat 1e6))
     (fun m ->
       let open Lacaml.D in
       let t = svd (Mat.of_array m) in
@@ -42,7 +38,7 @@ let () =
 
   add_random_test
     ~title:"Can find a solution to linear problems."
-    Gen.(matrix (make_int 2 max_matrix_size) (make_int 1 max_matrix_size) float)
+    Gen.(matrix (make_int 2 max_matrix_size) (make_int 1 max_matrix_size) (bfloat 1e6))
     (fun m ->
       let x = m.(0) in
       let a = Array.sub m 1 (Array.length m - 1) in

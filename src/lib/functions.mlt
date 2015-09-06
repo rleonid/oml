@@ -61,7 +61,7 @@ let () =
   (* Log gamma *)
   add_random_test
     ~title:"Log gamma defined for positive values."
-    Gen.pos_float
+    Gen.(bpos_float max_float)
     ln_gamma
     Spec.([ just_postcond_pred is_nonzero_float ]);
 
@@ -75,7 +75,7 @@ let () =
   add_random_test
     ~title:"(Log) gamma function statisfies multiplicative recurrence (aka Bohr-Mollerup 2)."
     ~nb_runs:1000
-    Gen.pos_float
+    Gen.(bpos_float max_float)
     (fun x -> log x +. ln_gamma x, ln_gamma (x +. 1.0))
     Spec.([just_postcond_pred (fun (x, y) -> roughly_equal 1e300 x y)]);
 
@@ -117,7 +117,7 @@ let () =
   let bad_spec (t_opt, arr) = t_opt = Some 0.0 || arr = [||] in
   add_partial_random_test
     ~title:"Softmax obeys bounds"
-    Gen.(zip2 temp_opt (array (make_int 0 100) float))
+    Gen.(zip2 temp_opt (array (make_int 0 100) (bfloat max_float)))
     (fun (temperature, weights) ->
       let _ = softmax ?temperature weights in
       true)

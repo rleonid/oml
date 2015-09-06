@@ -18,13 +18,11 @@
 open Util
 open Test_utils
 
-module Gen = FGen (struct
-  (* In order for these tests to work well, we have to span the range of
-  acceptable floats as well. If we're uniformly sampling from [0, largest_float]
-  we'll have different characteristics if largest_float is tiny or huge:
-  this will influence the significand in the algorithms.*)
-  let largest_float = 1e10
-end)
+(* In order for these tests to work well, we have to span the range of
+   acceptable floats as well. If we're uniformly sampling from [0, largest_float]
+   we'll have different characteristics if largest_float is tiny or huge:
+   this will influence the significand in the algorithms.
+*)
 
 let () =
   let add_random_test
@@ -77,7 +75,7 @@ let () =
   add_random_test
     ~title:"Analysis is not degenerate."
     ~nb_runs:1000
-    Gen.(array (make_int 1 max_array_size) float)
+    Gen.(array (make_int 1 max_array_size) (bfloat 1e10))
     (fun data ->
       let n = Array.length data in
       let rs1 = Array.fold_left update empty data in
@@ -93,7 +91,7 @@ let () =
        be more accurate. How to encode the higher accuracy though? We're
        essentially comparing the difference between the two. *)
     ~nb_runs:1000
-    Gen.(array (make_int 1 max_array_size) float)
+    Gen.(array (make_int 1 max_array_size) (bfloat 1e10))
     (fun data ->
       let n = Array.length data in
       let rs1 = Array.fold_left update empty data in
@@ -107,7 +105,7 @@ let () =
   add_random_test
     ~title:"We can also join!"
     ~nb_runs:1000
-    Gen.(zip2 (make_int 1 max_array_size) (array_float max_array_size))
+    Gen.(zip2 (make_int 1 max_array_size) (barray_float 1e10 max_array_size))
     (fun (index, data) ->
       let left  = Array.sub data 0 index
       and right = Array.sub data index (Array.length data - index) in
@@ -121,7 +119,7 @@ let () =
   add_random_test
     ~title:"Variable sizes using update"
     ~nb_runs:1000
-    Gen.(array_float 10)
+    Gen.(barray_float 1e10 10)
     (fun data ->
       let first = Array.fold_left update empty data in
       let second = Array.fold_left update first data in
