@@ -34,20 +34,19 @@ let () =
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
-  let equal_floats ?d x y = not (Util.significantly_different_from ?d x y) in
   let max_array_size = 10000 in (* tested up to 100000 *)
   let not_degenerate rs =
-    not (Util.is_degenerate rs.last) &&
-    not (Util.is_degenerate rs.max) &&
-    not (Util.is_degenerate rs.min) &&
-    not (Util.is_degenerate rs.sum) &&
-    not (Util.is_degenerate rs.sum_sq) &&
-    not (Util.is_degenerate rs.mean) &&
-    not (Util.is_degenerate rs.var)
+    not (is_degenerate rs.last) &&
+    not (is_degenerate rs.max) &&
+    not (is_degenerate rs.min) &&
+    not (is_degenerate rs.sum) &&
+    not (is_degenerate rs.sum_sq) &&
+    not (is_degenerate rs.mean) &&
+    not (is_degenerate rs.var)
   in
   let roughly_equal ~order_comp x y =
     let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
-    not (Util.significantly_different_from ~d x y)
+    not (significantly_different_from ~d x y)
     in
   let compare_against_descriptive rs data =
     let n = Array.length data in
@@ -55,24 +54,24 @@ let () =
     let ds = data |> Array.map (fun x-> x *. x) |> Array.sumf in
     (*Printf.printf "%f vs %f \n" rs.sum_sq ds; *)
     rs.size = n &&
-    equal_floats rs.last data.(n - 1) &&
-    equal_floats rs.max (Array.max data) &&
-    equal_floats rs.min (Array.min data)  &&
-    equal_floats ~d:(Util.dx*.1e14) rs.sum (Array.sumf data) &&
+    equal_floats ~d:dx rs.last data.(n - 1) &&
+    equal_floats ~d:dx rs.max (Array.max data) &&
+    equal_floats ~d:dx rs.min (Array.min data)  &&
+    equal_floats ~d:(dx*.1e14) rs.sum (Array.sumf data) &&
     roughly_equal ~order_comp:1e14 rs.sum_sq ds &&
-    equal_floats ~d:(Util.dx*.1e10) rs.mean (Descriptive.mean data) &&
+    equal_floats ~d:(dx*.1e10) rs.mean (Descriptive.mean data) &&
     roughly_equal ~order_comp:1e13 rs.var dv
   in
   let compare_rs rs1 rs2 =
     (* Printf.printf "[mean] %f vs %f \n" rs1.mean rs2.mean; *)
     (* Printf.printf "[var] %f vs %f \n" rs1.var rs2.var; *)
     rs1.size = rs2.size &&
-    equal_floats rs1.last rs2.last &&
-    equal_floats rs1.max rs2.max &&
-    equal_floats rs1.min rs2.min &&
-    equal_floats ~d:(Util.dx*.1e14) rs1.sum rs2.sum &&
+    equal_floats ~d:dx rs1.last rs2.last &&
+    equal_floats ~d:dx rs1.max rs2.max &&
+    equal_floats ~d:dx rs1.min rs2.min &&
+    equal_floats ~d:(dx*.1e14) rs1.sum rs2.sum &&
     roughly_equal ~order_comp:1e13 rs1.sum_sq rs2.sum_sq &&
-    equal_floats ~d:(Util.dx*.1e13) rs1.mean rs2.mean &&
+    equal_floats ~d:(dx*.1e13) rs1.mean rs2.mean &&
     roughly_equal ~order_comp:1e13 rs1.var rs2.var
   in
   add_random_test

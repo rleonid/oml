@@ -22,8 +22,6 @@ let roughly_equal oc x y =
   let d = (Descriptive.geometric_mean [|x; y|]) /. oc in
   not (Util.significantly_different_from ~d x y)
 
-let equal_floats ~d x y = not (Util.significantly_different_from ~d x y)
-
 let fac i =
   let rec loop a i =
     if i = 0

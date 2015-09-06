@@ -33,7 +33,6 @@ let () =
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
-  let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
   let beta_cdf = beta_cdf ~alpha:1.0 ~beta:1.0 in
 
   (* These values easily cause erfc to underflow. *)

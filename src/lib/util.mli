@@ -124,6 +124,10 @@ val dx : float
     (defaults to [dx]) away from [x]. *)
 val significantly_different_from : ?d:float -> float -> float -> bool
 
+(** [equal_floats d x y] compares [x] and [y] too see if they are equal,
+    specifically [not (significantly_different_from ~d x y)].*)
+val equal_floats : d:float -> float -> float -> bool
+
 (** [is_nan x] robustly determine if a float represents NaN (aka Not a number). *)
 val is_nan : float -> bool
 

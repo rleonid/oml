@@ -34,7 +34,6 @@ let () =
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
-  let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
   let polynomial = Gen.(list (make_int 2 10) (bfloat 1e5)) in
     let poly_to_f = function
     | []  -> fun _ -> 0.0

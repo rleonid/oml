@@ -39,6 +39,21 @@ let () =
 
   let max_array_size = 1000 in
   let test_data b = Gen.(array (make_int 2 max_array_size) (bfloat b)) in
+
+  (*add_random_test
+    ~title:"Controllable mean"
+    ~nb_runs:100
+    (test_data 1e8)
+    (fun data ->
+      let n = Array.length data in
+      let mu_s = data.(0) in
+      let sumd = Array.sub data 1 (n - 1) |> Array.sumf in
+      let x_j  = Float.(mu_s * (float n) - sumd) in
+      data.(0) <- x_j;    (* now data has mean mu_s *)
+      (*Printf.eprintf "mu %.16f mean data %.16f\n" mu_s (mean data); *)
+      mu_s = mean data)
+    Spec.([just_postcond_pred is_true]);*)
+
   add_random_test
     ~title:"Mean and median are bounded by the array."
     (test_data 1e8)
