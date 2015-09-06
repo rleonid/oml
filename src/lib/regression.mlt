@@ -60,32 +60,19 @@ let () =
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
 
-  (* handy predicates *)
-  let roughly_equal ~order_comp x y =
-    let d = (Descriptive.geometric_mean [|x; y|]) /. order_comp in
-    not (Util.significantly_different_from ~d x y) in
-
-  let order_comp = 1e5 in (* TODO: rethink this order comparison logic *)
-  let roughly_equal = roughly_equal ~order_comp in
-
   (* Short cut evaluation. *)
   let lregress (a, b, pred)  =
     let resp = Array.map (fun x -> b *. x +. a) pred in
     U.regress None ~resp ~pred
   in
 
-  (* useful generators. *)
-  (*let grt_zer_lss_one   = Gen.make_float (0.0 +. Util.dx) 1.0 in
-  let two_ordered       = Gen.(transform (fun (x,y) -> min x y,max x y)
-                                  (zip2 grt_zer_lss_one grt_zer_lss_one))
-  in *)
   let simple_test_array =
     Gen.(lift (Array.init 100 float_of_int) "[0.;1.; ... ;99.]")
   in
-  let random_test_array = Gen.(array (make_int 2 50) float) in
-  let simple_lrm_inputs = Gen.(zip3 float non_zero_float simple_test_array) in
-  let lrm_inputs        = Gen.(zip3 float non_zero_float random_test_array) in
-  let lrm_gen           = Gen.(map1 lregress U.describe lrm_inputs) in
+  let random_test_array b = Gen.(array (make_int 2 50) (bfloat b)) in
+  let simple_lrm_inputs b = Gen.(zip3 (bfloat b) (bnon_zero_float b) simple_test_array) in
+  let lrm_inputs b      = Gen.(zip3 (bfloat b) (bnon_zero_float b) (random_test_array b)) in
+  let lrm_gen b         = Gen.(map1 lregress U.describe (lrm_inputs b)) in
 
   (* The tests. *)
 
@@ -93,7 +80,7 @@ let () =
      hidden, this guards to against an incorrect implementation. *)
   add_random_test
     ~title:"Lrm models evaluate like linear models"
-    Gen.(zip2 non_zero_float lrm_gen)
+    Gen.(zip2 (bnon_zero_float 1e8) (lrm_gen 1e8))
     (fun (x, lrm) ->
       let _ = U.describe lrm in
       U.eval lrm x)
@@ -104,22 +91,22 @@ let () =
   add_random_test
     ~title:"Using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
     ~nb_runs:1000
-    simple_lrm_inputs
+    (simple_lrm_inputs 1e8)
     lregress
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (roughly_equal a (U.alpha lrm)) && (roughly_equal b (U.beta lrm)))]);
+        (equal_floats ~d:1e-5 a (U.alpha lrm)) && (equal_floats ~d:1e-5 b (U.beta lrm)))]);
 
   add_random_test
     ~title:"Using linear regression on random float data we can recover coefficients"
     ~nb_runs:1000
-    lrm_inputs
+    (lrm_inputs 1e7)
     lregress
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (roughly_equal a (U.alpha lrm)) && (roughly_equal b (U.beta lrm)))]);
+        (equal_floats ~d:1e-1 a (U.alpha lrm)) && (equal_floats ~d:1e-1 b (U.beta lrm)))]);
 
   (* TODO: clever test to react to variance in the predicted variable. *)
 
@@ -130,7 +117,7 @@ let () =
     (fun (lrm, alpha_level, x) -> confidence_interval lrm ~alpha_level x)
     Spec.([ always =>
       (fun ((_lrm, _alpha, x), (lb, ub)) ->
-        roughly_equal x (Util.midpoint lb ub))]);
+        equal_floats ~d:1e-5 x (Util.midpoint lb ub))]);
 
   add_random_test
     ~title:"Prediction intervals grow as alpha increases."
