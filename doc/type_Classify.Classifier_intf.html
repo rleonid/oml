@@ -23,18 +23,20 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Solvers</title>
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Classify.Classifier_intf</title>
 </head>
 <body>
 <code class="code"><span class="keyword">sig</span><br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newton_raphson_full&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;?init:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;accuracy:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;iterations:int&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newton&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;?init:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;bisection&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;epsilon:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;clas<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;feature<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;default&nbsp;:&nbsp;spec<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Classify</span>.<span class="constructor">Classifier_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;<span class="constructor">Classify</span>.probabilities<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;samples&nbsp;=&nbsp;(clas&nbsp;*&nbsp;feature)&nbsp;list<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;estimate&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;?classes:clas&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Classify</span>.<span class="constructor">Classifier_intf</span>.samples&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Classify</span>.<span class="constructor">Classifier_intf</span>.t<br>
 <span class="keyword">end</span></code></body></html>

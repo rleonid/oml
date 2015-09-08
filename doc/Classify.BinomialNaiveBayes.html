@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Classify.CategoricalNaiveBayes.html">
+<link rel="Up" href="Classify.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Vectors" rel="Chapter" href="Vectors.html">
+<link title="Matrices" rel="Chapter" href="Matrices.html">
+<link title="Functions" rel="Chapter" href="Functions.html">
+<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
+<link title="Distributions" rel="Chapter" href="Distributions.html">
+<link title="Estimations" rel="Chapter" href="Estimations.html">
+<link title="Descriptive" rel="Chapter" href="Descriptive.html">
+<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Sampling" rel="Chapter" href="Sampling.html">
+<link title="Solvers" rel="Chapter" href="Solvers.html">
+<link title="Running" rel="Chapter" href="Running.html">
+<link title="Svd" rel="Chapter" href="Svd.html">
+<link title="Classify" rel="Chapter" href="Classify.html">
+<link title="Measures" rel="Chapter" href="Measures.html">
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Classify.BinomialNaiveBayes</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="Classify.html" title="Classify">Up</a>
+&nbsp;<a class="post" href="Classify.CategoricalNaiveBayes.html" title="Classify.CategoricalNaiveBayes">Next</a>
+</div>
+<h1>Functor <a href="type_Classify.BinomialNaiveBayes.html">Classify.BinomialNaiveBayes</a></h1>
+
+<pre><span class="keyword">module</span> BinomialNaiveBayes: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Dummy_encoded_data_intf.html">Dummy_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="type"><a href="Classify.Generative_intf.html">Generative_intf</a></code><code class="type">  with type spec = binomial_spec
+                  and type feature = D.feature
+                  and type clas = D.clas</code></div></pre><div class="info module top">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
+  classifier on data encoded using
+  <a href="Classify.Dummy_encoded_data_intf.html">Dummy variables.</a><br>
+</div>
+<table border="0" cellpadding="3" width="100%">
+<tr>
+<td align="left" valign="top" width="1%%"><b>Parameters: </b></td>
+<td>
+<table class="paramstable">
+<tr>
+<td align="center" valign="top" width="15%">
+<code>D</code></td>
+<td align="center" valign="top">:</td>
+<td><code class="type"><a href="Classify.Dummy_encoded_data_intf.html">Dummy_encoded_data_intf</a></code>
+</table>
+</td>
+</tr>
+</table>
+<hr width="100%">
+
+<pre><span class="keyword">include</span> <a href="Classify.Classifier_intf.html">Classify.Classifier_intf</a></pre>
+
+<pre><span id="VALclass_probabilities"><span class="keyword">val</span> class_probabilities</span> : <code class="type">t -> clas -> float * (feature -> float array)</code></pre><div class="info ">
+<code class="code">class_probabilities t class</code> returns the prior and per feature
+      likelihood probabilities learned by <code class="code">t</code> for <code class="code">class</code>.<br>
+<b>Raises</b> <code>Not_found</code> if <code class="code">t</code> never trained on <code class="code">class</code>.<br>
+</div>
+</body></html>

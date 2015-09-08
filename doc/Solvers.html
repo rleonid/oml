@@ -42,21 +42,28 @@ Numerically find the roots of passed functions.<br>
 </div>
 <hr width="100%">
 
-<pre><span id="VALnewton_raphson_full"><span class="keyword">val</span> newton_raphson_full</span> : <code class="type">?init:float -><br>       accuracy:float -><br>       iterations:int -><br>       lower_bound:float -><br>       upper_bound:float -> (float -> float) -> (float -> float) -> float</code></pre><div class="info ">
-<code class="code">newton_raphson_full ?init accuracy iterations lower_bound upper_bound f df</code>
+<pre><span id="VALnewton_raphson_full"><span class="keyword">val</span> newton_raphson_full</span> : <code class="type">?init:float -><br>       accuracy:float -><br>       iterations:int -><br>       lower:float -> upper:float -> (float -> float) -> (float -> float) -> float</code></pre><div class="info ">
+<code class="code">newton_raphson_full ?init accuracy iterations lower upper f df</code>
     uses the Newton Raphson method to iteratively solve <code class="code">f</code>.
 <p>
 
-    Starting at mid point of <code class="code">lower_bound</code> and <code class="code">upper_bound</code>, the method
+    Starting at mid point of <code class="code">lower</code> and <code class="code">upper</code>, the method
     uses <code class="code">df</code> to follow the tangent to it's root, that becomes the new point.
     Iteration continues until <code class="code">f x</code> &lt; <code class="code">accuracy</code>.<br>
 <b>Raises</b> <code>Util.IterationFailure</code> if we escape our bounds or take longer than
       <code class="code">iterations</code>.<br>
 </div>
 
-<pre><span id="VALnewton"><span class="keyword">val</span> newton</span> : <code class="type">?init:float -><br>       lower_bound:float -> upper_bound:float -> (float -> float) -> float</code></pre><div class="info ">
-<code class="code">newton ?init lower_bound upper_bound f</code> is equivalent to
+<pre><span id="VALnewton"><span class="keyword">val</span> newton</span> : <code class="type">?init:float -> lower:float -> upper:float -> (float -> float) -> float</code></pre><div class="info ">
+<code class="code">newton ?init lower upper f</code> is equivalent to
     <code class="code">newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
-      lower_bound upper_bound f (Estimations.second_order f)</code><br>
+      lower upper f (Estimations.second_order f)</code><br>
+</div>
+
+<pre><span id="VALbisection"><span class="keyword">val</span> bisection</span> : <code class="type">epsilon:float -> lower:float -> upper:float -> (float -> float) -> float</code></pre><div class="info ">
+<code class="code">bisection epsilon lower upper f</code> iteratively finds the root of <code class="code">f</code> between
+    <code class="code">lower</code> and <code class="code">upper</code> using the bisection method.<br>
+<b>Raises</b> <code>Invalid_arg</code> If the function does not take opposite signs at the
+      supplied bounds.<br>
 </div>
 </body></html>

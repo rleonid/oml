@@ -31,6 +31,56 @@
 &nbsp;</div>
 <h1>Index of module types</h1>
 <table>
+<tr><td align="left"><br>C</td></tr>
+<tr><td><a href="Classify.Category_encoded_data_intf.html">Category_encoded_data_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Data where features are encoded using a set of
+    <a href="https://en.wikipedia.org/wiki/Categorical_variable">Category variables</a>.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Classifier_intf.html">Classifier_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+A <a href="Classify.Classifier_intf.html#TYPEt">classifier</a>, once <a href="Classify.Classifier_intf.html#VALestimate"> estimated</a> from
+    the <a href="Classify.Data_intf.html#TYPEfeature">features</a> found in
+    <a href="Classify.Classifier_intf.html#TYPEsamples">samples</a> of data, assigns
+    <a href="Classify.html#TYPEprobabilities">probabilities</a> to
+    <a href="Classify.Data_intf.html#TYPEclas">classes</a>
+    on future samples when <a href="Classify.Classifier_intf.html#VALeval">evaluated</a>.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Data where features are encoded using a set of quantitative variables.
+</div>
+</td></tr>
+<tr><td align="left"><br>D</td></tr>
+<tr><td><a href="Classify.Data_intf.html">Data_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+From the perspective of classification there are two types of data:
+  <a href="Classify.Data_intf.html#TYPEclas">classes</a> and <a href="Classify.Data_intf.html#TYPEfeature">features</a>.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Dummy_encoded_data_intf.html">Dummy_encoded_data_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Data where features are encoded using
+    <a href="https://en.wikipedia.org/wiki/Dummy_variable_%28statistics%29">Dummy Variables</a>
+    (aka <a href="https://en.wikipedia.org/wiki/One-hot">one-hot encoding</a>).
+</div>
+</td></tr>
+<tr><td align="left"><br>E</td></tr>
+<tr><td><a href="Classify.Estimate_optional_arg_intf.html">Estimate_optional_arg_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+When passing optional arguments to the esimate procudure of a classifier.
+</div>
+</td></tr>
+<tr><td align="left"><br>G</td></tr>
+<tr><td><a href="Classify.Generative_intf.html">Generative_intf</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+A generative classifier builds models of the form
+    P(<a href="Classify.Data_intf.html#TYPEclas">class</a>,
+      <a href="Classify.Data_intf.html#TYPEfeature">feature</a>).
+</div>
+</td></tr>
 <tr><td align="left"><br>L</td></tr>
 <tr><td><a href="Regression.LINEAR_MODEL.html">LINEAR_MODEL</a> [<a href="Regression.html">Regression</a>]</td>
 <td><div class="info">

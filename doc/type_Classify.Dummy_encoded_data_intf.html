@@ -23,18 +23,12 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Solvers</title>
+<link title="Pca" rel="Chapter" href="Pca.html"><title>Classify.Dummy_encoded_data_intf</title>
 </head>
 <body>
 <code class="code"><span class="keyword">sig</span><br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newton_raphson_full&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;?init:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;accuracy:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;iterations:int&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newton&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;?init:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;bisection&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;epsilon:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;clas<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;feature<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;encoding&nbsp;:&nbsp;feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;size&nbsp;:&nbsp;int<br>
 <span class="keyword">end</span></code></body></html>

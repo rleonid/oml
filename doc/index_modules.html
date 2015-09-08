@@ -37,7 +37,24 @@
 Extend the <code class="code">Array</code> module with useful functions.
 </div>
 </td></tr>
+<tr><td align="left"><br>B</td></tr>
+<tr><td><a href="Classify.BinomialNaiveBayes.html">BinomialNaiveBayes</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
+  classifier on data encoded using
+  <a href="Classify.Dummy_encoded_data_intf.html">Dummy variables.</a>
+</div>
+</td></tr>
 <tr><td align="left"><br>C</td></tr>
+<tr><td><a href="Classify.CategoricalNaiveBayes.html">CategoricalNaiveBayes</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
+  classifier on data encoded using
+  <a href="Classify.Category_encoded_data_intf.html">Categorical variables.</a>
+</div>
+</td></tr>
 <tr><td><a href="Classify.html">Classify</a> </td>
 <td><div class="info">
 The classifiers below assign a discrete probability distribution over the
@@ -78,10 +95,31 @@ Provide operator overloads for conveniently expressing float arithmatic.
 Implementations of basic functions needed to compute distributions.
 </div>
 </td></tr>
+<tr><td align="left"><br>G</td></tr>
+<tr><td><a href="Classify.GaussianNaiveBayes.html">GaussianNaiveBayes</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">
+  Gaussian Naive Bayes</a> by estimating mean and standard deviations
+  for each of the quantitative features in the
+  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>.
+</div>
+</td></tr>
 <tr><td align="left"><br>I</td></tr>
 <tr><td><a href="Inference.html">Inference</a> </td>
 <td><div class="info">
 Infer probabilities from data and perform hypothesis tests.
+</div>
+</td></tr>
+<tr><td align="left"><br>L</td></tr>
+<tr><td><a href="Classify.LogisticRegression.html">LogisticRegression</a> [<a href="Classify.html">Classify</a>]</td>
+<td><div class="info">
+Use
+  <a href="https://en.wikipedia.org/wiki/Logistic_regression">
+  Logistic Regression</a> to estimate log-odds
+  for each of the quantitative features in the
+  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
+  per class
 </div>
 </td></tr>
 <tr><td align="left"><br>M</td></tr>

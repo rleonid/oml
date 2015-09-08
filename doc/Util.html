@@ -41,7 +41,9 @@
 <OL>
 <li>general methods that are reused in other modules.</li>
 <li>overrides and </li>
-<li>extensions of standard library modules (ex. <a href="Util.Array.html"><code class="code">Util.Array</code></a>) with useful methods (ex. <a href="Util.Array.html#VALfold2"><code class="code">Util.Array.fold2</code></a> and <a href="Util.Array.html#VALsumf"><code class="code">Util.Array.sumf</code></a>)</li>
+<li>extensions of standard library modules
+    (ex. <a href="http://caml.inria.fr/pub/docs/manual-ocaml/libref/Array.html">Array</a>)
+    with useful methods (ex. <a href="Util.Array.html#VALfold2"><code class="code">Util.Array.fold2</code></a> and <a href="Util.Array.html#VALsumf"><code class="code">Util.Array.sumf</code></a>)</li>
 </OL>
 <br>
 </div>
@@ -105,6 +107,11 @@ A really small value. Also known as the machine epsilon, the smallest
 <pre><span id="VALsignificantly_different_from"><span class="keyword">val</span> significantly_different_from</span> : <code class="type">?d:float -> float -> float -> bool</code></pre><div class="info ">
 <code class="code">significantly_different_from ?d x y</code> will check if <code class="code">y</code> is more than <code class="code">d</code>
     (defaults to <code class="code">dx</code>) away from <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALequal_floats"><span class="keyword">val</span> equal_floats</span> : <code class="type">d:float -> float -> float -> bool</code></pre><div class="info ">
+<code class="code">equal_floats d x y</code> compares <code class="code">x</code> and <code class="code">y</code> too see if they are equal,
+    specifically <code class="code">not (significantly_different_from ~d x y)</code>.<br>
 </div>
 
 <pre><span id="VALis_nan"><span class="keyword">val</span> is_nan</span> : <code class="type">float -> bool</code></pre><div class="info ">

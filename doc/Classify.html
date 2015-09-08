@@ -49,98 +49,128 @@ The classifiers below assign a discrete probability distribution over the
 <pre><span id="VALmost_likely"><span class="keyword">val</span> most_likely</span> : <code class="type">'a <a href="Classify.html#TYPEprobabilities">probabilities</a> -> 'a</code></pre><div class="info ">
 <code class="code">most_likely probabilities</code> returns the most likely class from the
     discrete probability distribution.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">probabilities</code> is empty.<br>
 </div>
 
-<pre><span id="TYPEnaive_bayes"><span class="keyword">type</span> <code class="type">('cls, 'ftr)</code> naive_bayes</span> </pre>
+<pre><span class="keyword">module type</span> <a href="Classify.Data_intf.html">Data_intf</a> = <code class="code">sig</code> <a href="Classify.Data_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+From the perspective of classification there are two types of data:
+  <a href="Classify.Data_intf.html#TYPEclas">classes</a> and <a href="Classify.Data_intf.html#TYPEfeature">features</a>.
+</div>
+<br>
+TODO Encoding data.<br>
+
+<pre><span class="keyword">module type</span> <a href="Classify.Dummy_encoded_data_intf.html">Dummy_encoded_data_intf</a> = <code class="code">sig</code> <a href="Classify.Dummy_encoded_data_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+Data where features are encoded using
+    <a href="https://en.wikipedia.org/wiki/Dummy_variable_%28statistics%29">Dummy Variables</a>
+    (aka <a href="https://en.wikipedia.org/wiki/One-hot">one-hot encoding</a>).
+</div>
+
+<pre><span class="keyword">module type</span> <a href="Classify.Category_encoded_data_intf.html">Category_encoded_data_intf</a> = <code class="code">sig</code> <a href="Classify.Category_encoded_data_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+Data where features are encoded using a set of
+    <a href="https://en.wikipedia.org/wiki/Categorical_variable">Category variables</a>.
+</div>
+
+<pre><span class="keyword">module type</span> <a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a> = <code class="code">sig</code> <a href="Classify.Continuous_encoded_data_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+Data where features are encoded using a set of quantitative variables.
+</div>
+
+<pre><span class="keyword">module type</span> <a href="Classify.Estimate_optional_arg_intf.html">Estimate_optional_arg_intf</a> = <code class="code">sig</code> <a href="Classify.Estimate_optional_arg_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+When passing optional arguments to the esimate procudure of a classifier.
+</div>
+
+<pre><span class="keyword">module type</span> <a href="Classify.Classifier_intf.html">Classifier_intf</a> = <code class="code">sig</code> <a href="Classify.Classifier_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+A <a href="Classify.Classifier_intf.html#TYPEt">classifier</a>, once <a href="Classify.Classifier_intf.html#VALestimate"> estimated</a> from
+    the <a href="Classify.Data_intf.html#TYPEfeature">features</a> found in
+    <a href="Classify.Classifier_intf.html#TYPEsamples">samples</a> of data, assigns
+    <a href="Classify.html#TYPEprobabilities">probabilities</a> to
+    <a href="Classify.Data_intf.html#TYPEclas">classes</a>
+    on future samples when <a href="Classify.Classifier_intf.html#VALeval">evaluated</a>.
+</div>
+
+<pre><span class="keyword">module type</span> <a href="Classify.Generative_intf.html">Generative_intf</a> = <code class="code">sig</code> <a href="Classify.Generative_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+A generative classifier builds models of the form
+    P(<a href="Classify.Data_intf.html#TYPEclas">class</a>,
+      <a href="Classify.Data_intf.html#TYPEfeature">feature</a>).
+</div>
+
+<pre><span id="TYPEsmoothing"><span class="keyword">type</span> <code class="type"></code>smoothing</span> = <code class="type">float</code> </pre>
 <div class="info ">
-A discrete Naive Bayes classifier of class <code class="code">'cls</code> by observing
-    features <code class="code">'ftr</code>.<br>
-</div>
-
-
-<pre><span id="VALclass_probabilities"><span class="keyword">val</span> class_probabilities</span> : <code class="type">('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes">naive_bayes</a> -> 'cls -> float * float array</code></pre><div class="info ">
-<code class="code">class_probabilities bayes class</code> returns the prior and per feature likelihood
-    probabilities learned by <code class="code">bayes</code> for <code class="code">class</code>.<br>
-<b>Raises</b> <code>Not_found</code> if <code class="code">bayes</code> never trained on <code class="code">class</code>.<br>
-</div>
-
-<pre><span id="VALestimate"><span class="keyword">val</span> estimate</span> : <code class="type">?smoothing:float -><br>       ?classes:'cls list -><br>       feature_size:int -><br>       ('ftr -> int array) -><br>       ('cls * 'ftr) list -> ('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes">naive_bayes</a></code></pre><div class="info ">
-<code class="code">estimate smoothing classes feature_size to_feature_array training_data</code>
-    trains a discrete Naive Bayes classifier based on the <code class="code">training_data</code>.
-    <code class="code">to_feature_array</code> maps a feature to an integer array of indices of in
-    the feature_space bounded by [0,feature_size\). Optionally, <code class="code">classes</code>
-    supplies all the classes to learn or they're aggregated from observations
-    in data (this is useful, for classes that may be 'missing' in the data and
-    smoothing is applied.
+<a href="http://en.wikipedia.org/wiki/Additive_smoothing">Additive smoothing</a>
+    can be applied to the final estimate of Naive Bayes classifiers.
 <p>
 
-    Additive <code class="code">smoothing</code> can be applied to the final estimates if provided.
     When estimating a probability distribution by counting observed instances
     in the feature space we may want to smooth the values, particularly if our
-    training data is sparse.
+    training data is sparse.<br>
+</div>
+
+
+<pre><code><span id="TYPEbinomial_spec"><span class="keyword">type</span> <code class="type"></code>binomial_spec</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbinomial_spec.smoothing">smoothing</span>&nbsp;: <code class="type"><a href="Classify.html#TYPEsmoothing">smoothing</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbinomial_spec.bernoulli">bernoulli</span>&nbsp;: <code class="type">bool</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+The optional configuration of a
+    <a href="Classify.BinomialNaiveBayes.html">Binomial Naive Bayes</a> classifier.
 <p>
 
-    <code class="code">http://en.wikipedia.org/wiki/Additive_smoothing</code><br>
-</div>
-
-<pre><span id="VALeval"><span class="keyword">val</span> eval</span> : <code class="type">?bernoulli:bool -><br>       ('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes">naive_bayes</a> -> 'ftr -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
-<code class="code">eval bernoulli classifier feature</code> classifies <code class="code">feature</code>
-    according to <code class="code">classifier</code>. if <code class="code">bernoulli</code> is specified we treat the
-    underlying distribution as Bernoulli (as opposed to Multinomial) and
-    estimate the likelihood with (1-p_i) for features <code class="code">i</code> that are missing
-    from <code class="code">feature</code>.<br>
-</div>
-
-<pre><span id="TYPEnaive_bayes_mv"><span class="keyword">type</span> <code class="type">('cls, 'ftr)</code> naive_bayes_mv</span> </pre>
-<div class="info ">
-A discrete multinomial Naive Bayes classifier of class <code class="code">'cls</code> by
-    observing <code class="code">'ftr</code>, each 'cls represented by an integer array for each
-    of it's categories.<br>
+  If <code class="code">bernoulli</code> is specified we treat the underlying distribution as Bernoulli
+  (as opposed to Multinomial) and estimate the likelihood with (1-p_i) for
+  features <code class="code">i</code> that are missing from a feature when
+  <a href="Classify.Classifier_intf.html#VALeval">evaluated</a>.<br>
 </div>
 
 
-<pre><span id="VALclass_probabilities_mv"><span class="keyword">val</span> class_probabilities_mv</span> : <code class="type">('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes_mv">naive_bayes_mv</a> -> 'cls -> 'ftr -> float * float array</code></pre><div class="info ">
-Return the class probabilities of a multinomial naive bayes.<br>
+<pre><span class="keyword">module</span> <a href="Classify.BinomialNaiveBayes.html">BinomialNaiveBayes</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Dummy_encoded_data_intf.html">Dummy_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="type"><a href="Classify.Generative_intf.html">Generative_intf</a></code><code class="type">  with type spec = binomial_spec
+                  and type feature = D.feature
+                  and type clas = D.clas</code></div></pre><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
+  classifier on data encoded using
+  <a href="Classify.Dummy_encoded_data_intf.html">Dummy variables.</a>
 </div>
 
-<pre><span id="VALestimate_mv"><span class="keyword">val</span> estimate_mv</span> : <code class="type">?smoothing:float -><br>       ?classes:'cls list -><br>       feature_sizes:int array -><br>       ('ftr -> int array) -><br>       ('cls * 'ftr) list -> ('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes_mv">naive_bayes_mv</a></code></pre><div class="info ">
-Estimate a multinomial naive bayes.<br>
+<pre><span class="keyword">module</span> <a href="Classify.CategoricalNaiveBayes.html">CategoricalNaiveBayes</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Category_encoded_data_intf.html">Category_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="type"><a href="Classify.Generative_intf.html">Generative_intf</a></code><code class="type">  with type spec = smoothing
+                  and type feature = D.feature
+                  and type clas = D.clas</code></div></pre><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
+  classifier on data encoded using
+  <a href="Classify.Category_encoded_data_intf.html">Categorical variables.</a>
 </div>
 
-<pre><span id="VALeval_mv"><span class="keyword">val</span> eval_mv</span> : <code class="type">('cls, 'ftr) <a href="Classify.html#TYPEnaive_bayes_mv">naive_bayes_mv</a> -> 'ftr -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
-Evaluate a new class instance using the trained multinomial naive bayes.<br>
+<pre><span class="keyword">module</span> <a href="Classify.GaussianNaiveBayes.html">GaussianNaiveBayes</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="type"><a href="Classify.Generative_intf.html">Generative_intf</a></code><code class="type">  with type spec = unit
+                  and type feature = D.feature
+                  and type clas = D.clas</code></div></pre><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">
+  Gaussian Naive Bayes</a> by estimating mean and standard deviations
+  for each of the quantitative features in the
+  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>.
 </div>
 
-<pre><span id="TYPEgauss_bayes"><span class="keyword">type</span> <code class="type">'cls</code> gauss_bayes</span> </pre>
-<div class="info ">
-A continuous Gaussian Naive Bayes classifier of class <code class="code">'cls</code>. The
-    feature space is assumed to be a float array.<br>
-</div>
-
-
-<pre><span id="VALgauss_estimate"><span class="keyword">val</span> gauss_estimate</span> : <code class="type">?classes:'cls list -> ('cls * float array) list -> 'cls <a href="Classify.html#TYPEgauss_bayes">gauss_bayes</a></code></pre><div class="info ">
-<code class="code">gauss_estimate training_data</code> trains a Gaussian Naive Bayes classifier from
-    <code class="code">training_data</code>, where all of the data are of the same length; feature size.
-    Optionally, <code class="code">classes</code> supplies all the classes to learn or they're
-    aggregated from observations in data.<br>
-</div>
-
-<pre><span id="VALgauss_eval"><span class="keyword">val</span> gauss_eval</span> : <code class="type">'cls <a href="Classify.html#TYPEgauss_bayes">gauss_bayes</a> -> float array -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
-<code class="code">gauss_eval classifier feature</code> classify the <code class="code">feature</code> using the <code class="code">classifier</code>.<br>
-</div>
-
-<pre><span id="TYPElog_reg"><span class="keyword">type</span> <code class="type">'cls</code> log_reg</span> </pre>
-<div class="info ">
-A logistic regression classifier.<br>
-</div>
-
-
-<pre><span id="VALlog_reg_eval"><span class="keyword">val</span> log_reg_eval</span> : <code class="type">'cls <a href="Classify.html#TYPElog_reg">log_reg</a> -> float array -> 'cls <a href="Classify.html#TYPEprobabilities">probabilities</a></code></pre><div class="info ">
-Evaluate a logistic regression classifier.<br>
-</div>
-
-<pre><span id="VALlog_reg_estimate"><span class="keyword">val</span> log_reg_estimate</span> : <code class="type">class_f:('cls -> bool) -> ('cls * float array) list -> 'cls <a href="Classify.html#TYPElog_reg">log_reg</a></code></pre><div class="info ">
-Estimate a logistic regression classifier.<br>
+<pre><span class="keyword">module</span> <a href="Classify.LogisticRegression.html">LogisticRegression</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="type"><a href="Classify.Classifier_intf.html">Classifier_intf</a></code><code class="type">  with type spec = unit
+                  and type feature = D.feature
+                  and type clas = D.clas</code></div></pre><div class="info">
+Use
+  <a href="https://en.wikipedia.org/wiki/Logistic_regression">
+  Logistic Regression</a> to estimate log-odds
+  for each of the quantitative features in the
+  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
+  per class
 </div>
 
 <pre><code><span id="TYPEbinary"><span class="keyword">type</span> <code class="type"></code>binary</span> = {</code></pre><table class="typetable">

@@ -112,6 +112,12 @@
       <code class="code">c e = 0</code>.
 </div>
 </td></tr>
+<tr><td><a href="Solvers.html#VALbisection">bisection</a> [<a href="Solvers.html">Solvers</a>]</td>
+<td><div class="info">
+<code class="code">bisection epsilon lower upper f</code> iteratively finds the root of <code class="code">f</code> between
+    <code class="code">lower</code> and <code class="code">upper</code> using the bisection method.
+</div>
+</td></tr>
 <tr><td align="left"><br>C</td></tr>
 <tr><td><a href="Inference.html#VALchi">chi</a> [<a href="Inference.html">Inference</a>]</td>
 <td><div class="info">
@@ -139,15 +145,10 @@
     of freedom.
 </div>
 </td></tr>
-<tr><td><a href="Classify.html#VALclass_probabilities">class_probabilities</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classify.Generative_intf.html#VALclass_probabilities">class_probabilities</a> [<a href="Classify.Generative_intf.html">Classify.Generative_intf</a>]</td>
 <td><div class="info">
-<code class="code">class_probabilities bayes class</code> returns the prior and per feature likelihood
-    probabilities learned by <code class="code">bayes</code> for <code class="code">class</code>.
-</div>
-</td></tr>
-<tr><td><a href="Classify.html#VALclass_probabilities_mv">class_probabilities_mv</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-Return the class probabilities of a multinomial naive bayes.
+<code class="code">class_probabilities t class</code> returns the prior and per feature
+      likelihood probabilities learned by <code class="code">t</code> for <code class="code">class</code>.
 </div>
 </td></tr>
 <tr><td><a href="Descriptive.html#VALclassify_kurtosis">classify_kurtosis</a> [<a href="Descriptive.html">Descriptive</a>]</td>
@@ -205,6 +206,11 @@ Return the class probabilities of a multinomial naive bayes.
 <tr><td><a href="Classify.html#VALcross_validated_auc">cross_validated_auc</a> [<a href="Classify.html">Classify</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>D</td></tr>
+<tr><td><a href="Classify.Estimate_optional_arg_intf.html#VALdefault">default</a> [<a href="Classify.Estimate_optional_arg_intf.html">Classify.Estimate_optional_arg_intf</a>]</td>
+<td><div class="info">
+A default value used when not specified.
+</div>
+</td></tr>
 <tr><td><a href="Regression.LINEAR_MODEL.html#VALdescribe">describe</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
 <td><div class="info">
 <code class="code">describe t</code> returns a string describing the regressed linear model.
@@ -236,6 +242,28 @@ A really small value.
 <code class="code">empty</code> an empty <code class="code">t</code>, useful for initializing the fold.
 </div>
 </td></tr>
+<tr><td><a href="Classify.Continuous_encoded_data_intf.html#VALencoding">encoding</a> [<a href="Classify.Continuous_encoded_data_intf.html">Classify.Continuous_encoded_data_intf</a>]</td>
+<td><div class="info">
+<code class="code">encoding f</code> returns an array where each element <code class="code">e</code> at position <code class="code">i</code>
+      describes the <code class="code">i</code>th variable with value <code class="code">e</code>.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Category_encoded_data_intf.html#VALencoding">encoding</a> [<a href="Classify.Category_encoded_data_intf.html">Classify.Category_encoded_data_intf</a>]</td>
+<td><div class="info">
+<code class="code">encoding f</code> returns an array where each element <code class="code">e</code> at position <code class="code">i</code>
+      describes the category value <code class="code">e</code> of the <code class="code">i</code>th category variables.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Dummy_encoded_data_intf.html#VALencoding">encoding</a> [<a href="Classify.Dummy_encoded_data_intf.html">Classify.Dummy_encoded_data_intf</a>]</td>
+<td><div class="info">
+<code class="code">encoding f</code> returns indices into an array.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Category_encoded_data_intf.html#VALencoding_sizes">encoding_sizes</a> [<a href="Classify.Category_encoded_data_intf.html">Classify.Category_encoded_data_intf</a>]</td>
+<td><div class="info">
+<code class="code">encoding_sizes</code> the number of categories for each variable.
+</div>
+</td></tr>
 <tr><td><a href="Matrices.html#VALequal">equal</a> [<a href="Matrices.html">Matrices</a>]</td>
 <td><div class="info">
 <code class="code">equal d x y</code> two matrices are equal if they have the same dimensions
@@ -249,6 +277,12 @@ A really small value.
   pairwise elements are not <code class="code">Util.significantly_different_from ?d</code> .
 </div>
 </td></tr>
+<tr><td><a href="Util.html#VALequal_floats">equal_floats</a> [<a href="Util.html">Util</a>]</td>
+<td><div class="info">
+<code class="code">equal_floats d x y</code> compares <code class="code">x</code> and <code class="code">y</code> too see if they are equal,
+    specifically <code class="code">not (significantly_different_from ~d x y)</code>.
+</div>
+</td></tr>
 <tr><td><a href="Functions.html#VALerf">erf</a> [<a href="Functions.html">Functions</a>]</td>
 <td><div class="info">
 <code class="code">erf x</code> computes the (Gauss) error function,
@@ -260,31 +294,21 @@ A really small value.
 <code class="code">erfc x</code> computes <code class="code">1.0 - erfc x</code>.
 </div>
 </td></tr>
-<tr><td><a href="Classify.html#VALestimate">estimate</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classify.Classifier_intf.html#VALestimate">estimate</a> [<a href="Classify.Classifier_intf.html">Classify.Classifier_intf</a>]</td>
 <td><div class="info">
-<code class="code">estimate smoothing classes feature_size to_feature_array training_data</code>
-    trains a discrete Naive Bayes classifier based on the <code class="code">training_data</code>.
+<code class="code">estimate spec classes samples</code> estimates a classifier based upon the
+      training <code class="code">samples</code>.
 </div>
 </td></tr>
-<tr><td><a href="Classify.html#VALestimate_mv">estimate_mv</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classify.Classifier_intf.html#VALeval">eval</a> [<a href="Classify.Classifier_intf.html">Classify.Classifier_intf</a>]</td>
 <td><div class="info">
-Estimate a multinomial naive bayes.
-</div>
-</td></tr>
-<tr><td><a href="Classify.html#VALeval">eval</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-<code class="code">eval bernoulli classifier feature</code> classifies <code class="code">feature</code>
-    according to <code class="code">classifier</code>.
+<code class="code">eval classifier feature</code> assign <a href="Classify.html#TYPEprobabilities">probabilities</a> to the
+      possible <a href="Classify.Data_intf.html#TYPEclas">classes</a> based upon <code class="code">feature</code>.
 </div>
 </td></tr>
 <tr><td><a href="Regression.LINEAR_MODEL.html#VALeval">eval</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
 <td><div class="info">
 <code class="code">eval linear_model x</code> Evaluate a the <code class="code">linear_model</code> at <code class="code">x</code>.
-</div>
-</td></tr>
-<tr><td><a href="Classify.html#VALeval_mv">eval_mv</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-Evaluate a new class instance using the trained multinomial naive bayes.
 </div>
 </td></tr>
 <tr><td><a href="Continued_fraction.html#VALevaluate">evaluate</a> [<a href="Continued_fraction.html">Continued_fraction</a>]</td>
@@ -318,17 +342,6 @@ Evaluate a new class instance using the trained multinomial naive bayes.
 <tr><td><a href="Functions.html#VALgamma">gamma</a> [<a href="Functions.html">Functions</a>]</td>
 <td><div class="info">
 <code class="code">gamma x</code> computes the gamma function of <code class="code">x</code>.
-</div>
-</td></tr>
-<tr><td><a href="Classify.html#VALgauss_estimate">gauss_estimate</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-<code class="code">gauss_estimate training_data</code> trains a Gaussian Naive Bayes classifier from
-    <code class="code">training_data</code>, where all of the data are of the same length; feature size.
-</div>
-</td></tr>
-<tr><td><a href="Classify.html#VALgauss_eval">gauss_eval</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-<code class="code">gauss_eval classifier feature</code> classify the <code class="code">feature</code> using the <code class="code">classifier</code>.
 </div>
 </td></tr>
 <tr><td><a href="Descriptive.html#VALgeometric_mean">geometric_mean</a> [<a href="Descriptive.html">Descriptive</a>]</td>
@@ -443,16 +456,6 @@ Evaluate a new class instance using the trained multinomial naive bayes.
 <code class="code">ln_gamma x</code> compute the natural logarithm of the gamma function of <code class="code">x</code>.
 </div>
 </td></tr>
-<tr><td><a href="Classify.html#VALlog_reg_estimate">log_reg_estimate</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-Estimate a logistic regression classifier.
-</div>
-</td></tr>
-<tr><td><a href="Classify.html#VALlog_reg_eval">log_reg_eval</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-Evaluate a logistic regression classifier.
-</div>
-</td></tr>
 <tr><td><a href="Svd.html#VALlooe">looe</a> [<a href="Svd.html">Svd</a>]</td>
 <td><div class="info">
 <code class="code">looe t y</code> returns a function to efficiently computes the Leave-One-Out-Error
@@ -549,14 +552,14 @@ Evaluate a logistic regression classifier.
 <tr><td align="left"><br>N</td></tr>
 <tr><td><a href="Solvers.html#VALnewton">newton</a> [<a href="Solvers.html">Solvers</a>]</td>
 <td><div class="info">
-<code class="code">newton ?init lower_bound upper_bound f</code> is equivalent to
+<code class="code">newton ?init lower upper f</code> is equivalent to
     <code class="code">newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
-      lower_bound upper_bound f (Estimations.second_order f)</code>
+      lower upper f (Estimations.second_order f)</code>
 </div>
 </td></tr>
 <tr><td><a href="Solvers.html#VALnewton_raphson_full">newton_raphson_full</a> [<a href="Solvers.html">Solvers</a>]</td>
 <td><div class="info">
-<code class="code">newton_raphson_full ?init accuracy iterations lower_bound upper_bound f df</code>
+<code class="code">newton_raphson_full ?init accuracy iterations lower upper f df</code>
     uses the Newton Raphson method to iteratively solve <code class="code">f</code>.
 </div>
 </td></tr>
@@ -747,6 +750,16 @@ Multiply a row vector against a matrix.
 <td><div class="info">
 <code class="code">significantly_different_from ?d x y</code> will check if <code class="code">y</code> is more than <code class="code">d</code>
     (defaults to <code class="code">dx</code>) away from <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Continuous_encoded_data_intf.html#VALsize">size</a> [<a href="Classify.Continuous_encoded_data_intf.html">Classify.Continuous_encoded_data_intf</a>]</td>
+<td><div class="info">
+The number of quantitative variables needed to describe the features.
+</div>
+</td></tr>
+<tr><td><a href="Classify.Dummy_encoded_data_intf.html#VALsize">size</a> [<a href="Classify.Dummy_encoded_data_intf.html">Classify.Dummy_encoded_data_intf</a>]</td>
+<td><div class="info">
+The number of dummy variables to track.
 </div>
 </td></tr>
 <tr><td><a href="Descriptive.html#VALskew">skew</a> [<a href="Descriptive.html">Descriptive</a>]</td>
