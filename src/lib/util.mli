@@ -19,7 +19,9 @@
 
 + general methods that are reused in other modules.
 + overrides and 
-+ extensions of standard library modules (ex. {!Array}) with useful methods (ex. {!Array.fold2} and {!Array.sumf})
++ extensions of standard library modules
+    (ex. {{:http://caml.inria.fr/pub/docs/manual-ocaml/libref/Array.html}Array})
+    with useful methods (ex. {!Array.fold2} and {!Array.sumf})
 *)
 
 (** Some of the iterative routines can fail for the following reasons. *)

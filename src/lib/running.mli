@@ -23,7 +23,7 @@ type t = { size : int         (** Number of observations. *)
          ; sum : float        (** Sum . *)
          ; sum_sq : float     (** Sum of squares. *)
          ; mean : float       (** Mean. *)
-         ; var : float        (** _Unbiased_ variance. *)
+         ; var : float        (** {i Unbiased} variance. *)
          }
 
 (** Defines a mean update function. Given an existing running statistic [t],
