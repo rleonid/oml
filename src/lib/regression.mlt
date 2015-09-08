@@ -94,6 +94,19 @@ let () =
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
         (equal_floats ~d:1e-5 a (U.alpha lrm)) && (equal_floats ~d:1e-5 b (U.beta lrm)))]);
 
+  let t1 tc =
+    Test.make_random_test
+      ~title:"Using linear regression on random float data we can recover coefficients"
+      ~nb_runs:tc.nb_runs
+      (lrm_inputs (enot tc.float_range))
+      lregress
+      Spec.([ always =>
+        (fun ((a, b, _), lrm) ->
+          (equal_floats ~d:(enot tc.accuracy) a (U.alpha lrm)) && 
+          (equal_floats ~d:(enot tc.accuracy) b (U.beta lrm)))])
+  in
+  add_constrained "lrm1" t1;
+ 
   add_random_test
     ~title:"Using linear regression on random float data we can recover coefficients"
     ~nb_runs:1000
@@ -101,7 +114,6 @@ let () =
     lregress
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
-      (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
         (equal_floats ~d:1e-1 a (U.alpha lrm)) && (equal_floats ~d:1e-1 b (U.beta lrm)))]);
 
   (* TODO: clever test to react to variance in the predicted variable. *)

@@ -178,3 +178,138 @@ module Test = struct
     with Not_found -> ()
 
 end
+
+type test_const =
+  { float_range : int
+  ; accuracy    : int
+  ; nb_runs     : int
+  ; pass_rate   : float
+  }
+
+let tc float_range accuracy nb_runs pass_rate =
+  { float_range; accuracy; nb_runs; pass_rate }
+
+let enot i = 10. ** (float i)
+
+type constrained_test = test_const -> Test.t
+
+let constrained_map = ref TestMap.empty
+
+let add_constrained name (t : constrained_test) =
+  constrained_map := TestMap.add name t !constrained_map
+
+let f t =
+  let cache = ref (Hashtbl.create 20) in
+  (fun tc ->
+    try Hashtbl.find !cache tc  
+    with Not_found ->
+      match Test.exec_test (t tc) with
+      | Test.Report (passed, _total, _ , _, _) ->
+          let y = (float passed) /. (float tc.nb_runs) -. tc.pass_rate in
+          Hashtbl.add !cache tc y;
+          y
+      | Test.Passed
+      | Test.Failed _
+      | Test.Uncaught _
+      | Test.Exit_code _ -> raise (Invalid_argument "What am I testing?"))
+
+let iteration_limit = ref 10
+let debug_ref = ref false 
+
+let bisection_int ~epsilon ~lower ~upper f =
+  let eq_zero v = abs_float v < epsilon in
+  let root_inside l u = (l < 0.0 && u > 0.0) || (l > 0.0 && u < 0.0) in
+  let midpoint lb ub = (lb + ub) / 2 in
+  let rec loop lb ub =
+    let mp = midpoint lb ub in
+    if mp = lb || mp = ub then
+      `CloseEnough mp
+    else
+      let flb = f lb in
+      let fub = f ub in
+      if !debug_ref then
+        Printf.printf "lb %d ub %d flb %.16f fub %.16f \n%!" lb ub flb fub;
+      (* Are we lucky? *)
+      if eq_zero flb then
+        `EqZero lb
+      else if eq_zero fub then
+        `EqZero ub
+      (* if the user does not provide an interval
+          where the function has an intersection. *)
+      else if flb < 0.0 && fub < 0.0 then
+        `Outside ub
+      else if flb > 0.0 && fub > 0.0 then
+        `Outside lb
+      else
+        let fmp = f mp in
+        if eq_zero fmp then
+          `EqZero mp
+        else if root_inside flb fmp then (* go left! *)
+          loop lb mp
+        else if root_inside fmp fub then (* go right! *)
+          loop mp ub
+        else
+          `IntermediateValueTheoremViolated mp
+  in
+  loop lower upper
+
+let bisection_i ~epsilon ~lower ~upper f =
+  match bisection_int ~epsilon ~lower ~upper f with
+  | `CloseEnough v | `EqZero v -> v
+  | `Outside o ->
+      raise (Invalid_argument "outside")
+  | `IntermediateValueTheoremViolated _ ->
+      failwith "ivtv"
+
+let range ?(incr=1) ~start ~stop () =
+    if stop < start
+    then [||]
+    else
+      Array.init (stop - start) (fun i -> i + start)
+
+let solvei1 f ~start ~stop =
+  let rec loop iter stop =
+    if iter > !iteration_limit then
+      let () = 
+        if !debug_ref then
+          Printf.eprintf "passed iteration limit %d stop: %d" !iteration_limit stop
+        in
+      0
+    else
+      try 
+        let r = bisection_i ~epsilon:1e-9 ~lower:start ~upper:stop f in
+        let () = if !debug_ref then Printf.eprintf "solved %d %d %d\n%!" start stop r in
+        r
+      with Invalid_argument _ ->
+        loop (iter + 1) (stop * 2)
+  in
+  loop 0 stop
+
+let solvei2 f ~start ~stop =
+  let start1,start2 = start in
+  let stop1,stop2 = stop in
+  range ~start:start1 ~stop:stop1 () 
+  |> Array.map (fun x -> x, solvei1 ~start:start2 ~stop:stop2 (f x))
+ (* 
+let solve3 f ~start ~stop =
+  let start1,start2,start3 = start in
+  let stop1,stop2,stop3 = stop in
+  range ~start:start1 ~stop:stop1 () 
+  |> Array.map (fun x ->
+      solve2 ~start:(start2,start3) ~stop:(stop2,stop3) (f x)
+      |> Array.map (fun (y,z) -> (x,y,z)))
+  |> Array.to_list
+  |> Array.concat
+  *)
+ 
+let opt2 t ~nb_runs ~fr_start ~fr_stop ~a_start ~a_stop pr =
+  let f = f t in
+  let tc1 = { float_range = fr_start
+            ; accuracy = a_start
+            ; nb_runs
+            ; pass_rate = pr
+            }
+  in
+  solvei2 (fun float_range accuracy -> f {tc1 with float_range; accuracy})
+    ~start:(fr_start,a_start) ~stop:(fr_stop,a_stop)
+
