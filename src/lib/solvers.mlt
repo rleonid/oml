@@ -20,32 +20,55 @@ open Util
 open Test_utils
 
 let () =
-  let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Solvers"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+  let add_partial_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_partial_random_test_group "Solvers"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+  let polynomial = Gen.(list (make_int 2 10) (bfloat 1e5)) in
+    let poly_to_f = function
+    | []  -> fun _ -> 0.0
+    | lst -> fun x -> List.fold_left (fun p r -> p *. (x -. r)) 1.0 lst
+  in
+  let lower = -1e10 in
+  let upper = 1e10 in
+  let even_length lst = List.length lst mod 2 = 0 in
+  add_partial_random_test
+    ~title:"Bisection works for odd polynomials."
+    ~nb_runs:10000
+      Gen.(polynomial)
+      (fun lst ->
+        bisection ~epsilon:1e-12 ~lower ~upper (poly_to_f lst))
+      Spec.([ even_length       ==> is_exception is_invalid_arg
+            ; (not even_length) => (fun (lst,r) ->
+              match r with
+              | Kaputt.Specification.Result v -> List.exists (equal_floats ~d:1e-9 v) lst
+              | Kaputt.Specification.Exception _ -> false)
+            ]);
 
-
-  let module Gen = FGen (struct let largest_float = 1e5 end) in
-  let polynomial = Gen.(list (make_int 2 10) float) in
-  let odd_polynomial = 
+  let odd_poly   =
     Gen.(polynomial
-         |> transform (fun lst ->
-              (* Remember that fst is X^0 -> even number of terms = odd poly *)
-              if List.length lst mod 2 = 1 then List.tl lst else lst))
+      |> transform (fun lst ->
+        (* Remember that fst is X^0 -> even number of terms = odd poly *)
+        if List.length lst mod 2 = 0 then List.tl lst else lst))
   in
-  let poly_to_f lst =
-    fun x ->
-      List.fold_left (fun (s,i) v -> v *. (x ** (float i)) +. s, i + 1)
-        (0.0, 0) lst
-      |> fst
-  in
-  let lower_bound = -1e10 in
-  let upper_bound = 1e10 in
+
   (* TODO, figure out a way to make this a partial test. *)
-  Test.add_random_test
-    ~title:"Solvers, (newton) work for odd polynomials."
-      Gen.(odd_polynomial)
+  add_random_test
+    ~title:"Newton work for odd polynomials."
+      Gen.(odd_poly)
       (fun lst ->
         let f = poly_to_f lst in
-        match newton ~init:0.1 ~lower_bound ~upper_bound f with
+        match newton ~init:0.1 ~lower ~upper f with
         | exception Iteration_failure (_, Too_many_iterations _) ->
             let _ =
               Printf.printf "newton failed for %s with Too_many_iterations\n%!"
@@ -53,8 +76,8 @@ let () =
             in
             true
         | rn ->
-          equal_floats ~d:1e-3 0.0 (f rn) 
-        (*let rb = bisection ~epsilon:1e-2 ~lower_bound ~upper_bound f in *)
+          equal_floats ~d:1e-3 0.0 (f rn)
+        (*let rb = bisection ~epsilon:1e-2 ~lower ~upper f in *)
         (*equal_floats ~d:1e-3 0.0 (f rb)*))
     Spec.([just_postcond_pred is_true]);
 

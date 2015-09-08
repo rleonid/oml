@@ -18,8 +18,15 @@
 open Test_utils
 
 let () =
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Rank"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+
   let max_array_size = 400 in  (* arbitrary *)
-  let module Gen = FGen (struct let largest_float = 1000.0 end) in
   let ordered_array =
     Gen.(make_int 1 max_array_size
          |> map1 (fun s -> Array.init s (fun i -> float_of_int i))
@@ -31,22 +38,22 @@ let () =
   let array_with_duplicates size =
     Gen.(array (make_int 1 10) floats_from_small_set)
   in
-  Test.add_random_test
-    ~title:"Ranks, on arrays from [0,n] are identical."
+  add_random_test
+    ~title:"On arrays from [0,n] are identical."
     ordered_array
     (fun arr -> arr = (ranks ~start:0 arr))
     Spec.([just_postcond_pred is_true]);
-  Test.add_random_test
-    ~title:"Ranks, summing the ranks should equal sum of numbers"
-    Gen.(array_float max_array_size)
+  add_random_test
+    ~title:"Summing the ranks should equal sum of numbers"
+    Gen.(barray_float max_float max_array_size)
     (fun arr ->
       let ranks_nn = ranks arr in (* only true if ~start is 1 *)
       let sum = Array.fold_left (+.) 0.0 ranks_nn in
       let size = float (Array.length arr) in
       sum = 0.5 *. size *. (size +. 1.0))
     Spec.([just_postcond_pred is_true]);
-  Test.add_random_test
-    ~title:"Ranks, averaging works for duplicates too"
+  add_random_test
+    ~title:"Averaging works for duplicates too"
     Gen.(array_with_duplicates max_array_size)
     (fun arr ->
       let ranks_nn = ranks ~average_ties:true arr in

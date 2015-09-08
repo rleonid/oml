@@ -19,36 +19,49 @@ open Util
 open Test_utils
 
 let () =
-  let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Distributions"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
+  let add_partial_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_partial_random_test_group "Distributions"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let beta_cdf = beta_cdf ~alpha:1.0 ~beta:1.0 in
 
   (* These values easily cause erfc to underflow. *)
   let mean_o = Gen.(option bool (make_float (-1.) 1.0)) in
   let std_o  = Gen.(option bool (make_float (-1.) 1.0)) in
-  Test.add_random_test
-    ~title:"Distributions, normal_cdf is between 0 and 1."
+  add_random_test
+    ~title:"Normal_cdf is between 0 and 1."
     Gen.(zip3 mean_o std_o (make_float (-1e1) (1e1)))
     (fun (mean,std,x) ->
       within (Closed 0.0, Closed 1.0) (normal_cdf ?mean ?std x))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Distributions, normal_df is also bounded."
-    Gen.(zip3 mean_o std_o float)
+  add_random_test
+    ~title:"Normal_df is also bounded."
+    Gen.(zip3 mean_o std_o (bfloat max_float))
     (fun (mean,std,x) ->
       within (Closed 0.0, Closed 1.0) (normal_pdf ?mean ?std x))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Distributions, normal_quantile works."
+  add_random_test
+    ~title:"Normal_quantile works."
     Gen.(zip3 mean_o std_o (make_float 0.0 1.0))
     (fun (mean,std,p) ->
       let _ = normal_quantile ?mean ?std p in
       true (* TODO *))
     Spec.([just_postcond_pred is_true]);
 
-  Test.add_random_test
-    ~title:"Distributions: beta cdf alpha=beta=1, assert f(x)=x"
+  add_random_test
+    ~title:"Beta cdf alpha=beta=1, assert f(x)=x"
     ~nb_runs:200
     Gen.(make_float 0. 1.)
     (fun weight ->
@@ -57,8 +70,8 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   let prob f = Spec.(zip3 f always always) in
-  Test.add_partial_random_test
-    ~title:"Distributions: normal_cdf and normal_quantile are inverses."
+  add_partial_random_test
+    ~title:"Normal_cdf and normal_quantile are inverses."
     Gen.(zip3 (make_float (-0.5) 1.5) (make_float (-100.) 100.) (make_float (-100.) 100.))
     (fun (p, mean, std) ->
       let pp = normal_cdf ~mean ~std (normal_quantile ~mean ~std p) in
@@ -68,8 +81,8 @@ let () =
           ]);
 
   let prob f = Spec.(zip2 f always) in
-  Test.add_partial_random_test
-    ~title:"Distributions: student_cdf and student_quantile are inverses."
+  add_partial_random_test
+    ~title:"Student_cdf and student_quantile are inverses."
     Gen.(zip2 (make_float (-0.5) 1.5) (make_int 1 1000))
     (fun (p, k) ->
       let pp = student_cdf ~k (student_quantile ~k p) in

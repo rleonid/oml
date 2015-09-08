@@ -92,12 +92,14 @@ let () =
               output_string temp_chan (join_guard ^ first_line);
               output_char temp_chan '\n';
               copy source_chan temp_chan;
-              (* Not certain where this enters the chain,
-                 but bisect seems to pipe this to a different file! *)
-              let directive = Printf.sprintf "# 1 %S\n" test_file in
+              (* 0 will align the original .mlt source file because
+                 we insert the IGNORE warning as the first line. *)
+              let directive = Printf.sprintf "# 0 %S\n" test_file in
               output_string temp_chan directive;
+              output_string temp_chan "(*BISECT-IGNORE-BEGIN*)\n";
               let test_chan = open_in test_file in
               copy test_chan temp_chan;
+              output_string temp_chan "\n(*BISECT-IGNORE-END*)\n";
               close_in_noerr source_chan;
               close_in_noerr test_chan;
               close_out_noerr temp_chan;

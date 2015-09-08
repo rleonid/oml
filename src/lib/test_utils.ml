@@ -28,14 +28,22 @@ module FGen (Fp : FloatParameters) = struct
   include Kaputt.Abbreviations.Gen
   let nlarge  = -1.0 *. Fp.largest_float
   let float   = (fun r ->
+      let _ = failwith "Do not use unbounded float generator!" in
       let s = Random.State.bool r in
       let x = Random.State.float r Fp.largest_float in
-      if s then x else -.x),
-      string_of_float
+      if s then x else -.x)
+      , string_of_float
 
-  let pos_float = filter ((<=) 0.0) float
-  let neg_float = filter ((>=) 0.0) float
-  let non_zero_float = filter ((<>) 0.0) float
+  (* Bounded *)
+  let bfloat m = (fun r ->
+    let s = Random.State.bool r in
+    let x = Random.State.float r m in
+    if s then x else -.x),
+    string_of_float
+
+  let bpos_float m = filter ((<=) 0.0) (bfloat m)
+  let bneg_float m = filter ((>=) 0.0) (bfloat m)
+  let bnon_zero_float m = filter ((<>) 0.0) (bfloat m)
 
   (* Fixed length *)
   let fixed_length_array n  =
@@ -59,17 +67,16 @@ module FGen (Fp : FloatParameters) = struct
       |> Array.to_list
       |> String.concat "\n")
 
-  let array_float n = fixed_length_array n float
-  let matrix_float r c = fixed_length_matrix r c float
-  let sq_float_matrix s = matrix_float s s
+  let barray_float b n = fixed_length_array n (bfloat b)
+  let bmatrix_float b r c = fixed_length_matrix r c (bfloat b)
 
   let print_float_array m =
     m
-    |> Array.map (Kaputt.Utils.make_string_of_array (snd float))
+    |> Array.map (Kaputt.Utils.make_string_of_array string_of_float)
     |> Array.to_list
     |> String.concat "\n"
 
-  let general_model_array ~max_predictors ~max_samples =
+  let general_model_array b ~max_predictors ~max_samples =
     zip2 (make_int 2 max_predictors)
          (make_int 2 max_samples)
     (* +1 is for how we build samples models below. *)
@@ -80,11 +87,11 @@ module FGen (Fp : FloatParameters) = struct
           let (rows, columns) = rcg random in
             Array.init rows (fun _ ->
               Array.init columns (fun _ ->
-                (fst float) random))),
+                (fst (bfloat b)) random))),
         print_float_array
 
-  let general_model ~max_predictors ~max_samples =
-    general_model_array max_predictors max_samples
+  let general_model b ~max_predictors ~max_samples =
+    general_model_array b max_predictors max_samples
     |> map1 (fun m ->
       let data = Array.sub m 1 (Array.length m - 1) in
       let coef = m.(0) in
@@ -105,8 +112,8 @@ module FGen (Fp : FloatParameters) = struct
       (fun (pred, coef, resp) ->
         sprintf "predictors: %s\n coefficients: %s\n response: %s\n"
           (print_float_array pred)
-          (Kaputt.Utils.make_string_of_array (snd float) coef)
-          (Kaputt.Utils.make_string_of_array (snd float) resp))
+          (Kaputt.Utils.make_string_of_array string_of_float coef)
+          (Kaputt.Utils.make_string_of_array string_of_float resp))
 
 end
 
@@ -122,9 +129,52 @@ module Spec = struct
   include Kaputt.Abbreviations.Spec
 end
 
-module Test = Kaputt.Abbreviations.Test
 module Assert = struct
   include Kaputt.Abbreviations.Assert
   let equalf = equal ~prn:(sprintf "%0.4f")
 end
 
+module TestMap = Map.Make(
+  struct
+    type t = string
+    let compare = compare
+  end)
+
+module Test = struct
+  include Kaputt.Abbreviations.Test
+
+  let test_holder = ref TestMap.empty
+
+  let add_simple_test_group group ?title f =
+    let t = make_simple_test ?title f in
+    let tests = try TestMap.find group !test_holder with Not_found -> [] in
+    test_holder := TestMap.add group (t :: tests) !test_holder
+
+  let add_random_test_group group ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    let t = make_random_test ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+    in
+    let tests = try TestMap.find group !test_holder with Not_found -> [] in
+    test_holder := TestMap.add group (t :: tests) !test_holder
+
+  let add_partial_random_test_group group ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    let t = make_partial_random_test ?title ?nb_runs ?nb_tries ?classifier
+       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+    in
+    let tests = try TestMap.find group !test_holder with Not_found -> [] in
+    test_holder := TestMap.add group (t :: tests) !test_holder
+
+  let launch_tests () =
+    TestMap.bindings !test_holder
+    |> List.sort compare
+    |> List.iter (fun (group, tests) ->
+        Printf.printf "--%s--\n%!" group;
+        List.rev tests |> run_tests)
+
+  let launch_test group =
+    try run_tests (TestMap.find group !test_holder)
+    with Not_found -> ()
+
+end

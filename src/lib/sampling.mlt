@@ -22,11 +22,14 @@
 open Test_utils
 open Printf
 
-module Gen = FGen (struct
-  let largest_float = 1e8
-end)
-
 let () =
+  let add_partial_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_partial_random_test_group "Sampling"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let msas = 100 in   (* max seed array size *)
   let seed = Gen.(array (make_int 1 msas) int |> option bool) in
   let samples = 1000 in
@@ -35,8 +38,8 @@ let () =
     loop 0
   in
   let bound f = Spec.(zip2 always f) in
-  Test.add_partial_random_test
-    ~title:"Sampling, uniform int obeys bounds."
+  add_partial_random_test
+    ~title:"Uniform int obeys bounds."
     Gen.(zip2 seed int)
     (fun (seed, b) ->
       let int_maker = uniform_i ?seed b in
@@ -47,9 +50,9 @@ let () =
           ; bound is_zero_int ==> is_exception is_invalid_arg
           ]);
 
-  Test.add_partial_random_test
-    ~title:"Sampling, uniform float obeys bounds."
-    Gen.(zip2 seed float)
+  add_partial_random_test
+    ~title:"Uniform float obeys bounds."
+    Gen.(zip2 seed (bfloat 1e8))
     (fun (seed, b) ->
       let float_maker = uniform_f ?seed b in
       test (fun () -> let f = float_maker () in 0.0 <= f && f <= b))
@@ -59,8 +62,8 @@ let () =
           ]);
 
   let mean_g = Gen.make_float (-10.0) 10.0 in
-  Test.add_partial_random_test
-    ~title:"Sampling, normal obeys bounds."
+  add_partial_random_test
+    ~title:"Normal obeys bounds."
     Gen.(zip2 seed (zip2 mean_g (make_float (-1.0) 1.0)))
     (fun (seed, (mean, std)) ->
       let _ = normal ?seed ~mean ~std () in
@@ -68,8 +71,8 @@ let () =
     Spec.([ zip2 always (zip2 always (fun x -> x < 0.0)) ==> is_exception is_invalid_arg
           ; zip2 always (zip2 always (fun x -> x >= 0.0)) ==> is_result is_true]);
 
-  Test.add_partial_random_test
-    ~title:"Sampling, normal zero std gives you back the mean."
+  add_partial_random_test
+    ~title:"Normal zero std gives you back the mean."
     Gen.(zip2 seed mean_g)
     (fun (seed, mean) ->
       let gauss = normal ?seed ~mean ~std:0.0 () in
@@ -78,8 +81,8 @@ let () =
 
   let samples_f = float samples in
   let std_g     = Gen.make_float (0.0 +. dx) 10.0 in
-  Test.add_partial_random_test
-    ~title:"Sampling, normal obeys Chebyshev."
+  add_partial_random_test
+    ~title:"Normal obeys Chebyshev."
     (* This forms such a wide bound that k closer to 1.0 are the worthwhile cases. *)
     Gen.(zip3 seed (zip2 mean_g std_g) (make_float 1.0 2.0))
     (fun (seed, (mean, std), k) ->
@@ -108,8 +111,8 @@ let () =
   let good_weights = Spec.(zip2 always (fun (b, w) -> b && Array.length w > 0)) in
   (* I think with P=0.998 this test passes, but occasionally the restriction
      that sum = 1.0 might trip, especially if the size of the array grows. *)
-  Test.add_partial_random_test
-    ~title:"Sampling, multinomial obeys bounds."
+  add_partial_random_test
+    ~title:"Multinomial obeys bounds."
     Gen.(zip2 seed sometimes_good_weights)
     (fun (seed, (_, weights)) ->
       let mm = multinomial ?seed weights in
@@ -120,8 +123,8 @@ let () =
           ]);
 
   (* Since [Functions.softmax] does the checking on [temperature] this is mostly a shell. *)
-  Test.add_partial_random_test
-    ~title:"Sampling, softmax obeys bounds."
+  add_partial_random_test
+    ~title:"Softmax obeys bounds."
     Gen.(zip2 seed any_weights)
     (fun (seed, weights) ->
       let mm = softmax ?seed weights in

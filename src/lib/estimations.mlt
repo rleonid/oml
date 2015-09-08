@@ -19,31 +19,38 @@ open Util
 open Test_utils
 
 let () =
-  let equal_floats ~d x y = not (Util.significantly_different_from ~d x y) in
+  let add_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_random_test_group "Estimations"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
 
-  let module Gen = FGen (struct let largest_float = 1e5 end) in
-  let polynomial = Gen.(list (make_int 2 10) float) in
-  let poly_to_f lst =
-    fun x ->
-      List.fold_left (fun (s,i) v -> v *. (x ** (float i)) +. s, i + 1)
-        (0.0, 0) lst
-      |> fst
+  let polynomial b = Gen.(list (make_int 2 10) (bfloat b)) in
+  let poly_to_f = function
+    | []      -> fun _ -> 0.0
+    | h :: tl -> fun x -> List.fold_left (fun p v -> (p *. x) +. v) h tl
   in
   let poly_to_df lst =
-    List.tl lst
-    |> List.mapi (fun i c -> (float (i + 1)) *. c) 
-    |> poly_to_f 
+    List.rev lst
+    |> List.tl
+    |> List.rev
+    |> List.mapi (fun i c -> (float (i + 1)) *. c)
+    |> poly_to_f
   in
-  (* These values easily cause erfc to underflow. *)
-  Test.add_random_test
-    ~title:"Estimations, work on polynomials."
-    Gen.(zip2 polynomial float)
+  (* TODO: Separate this into 2 cases, one where we know the derivative
+    (ex, list of length 2) and not. *)
+  add_random_test
+    ~title:"Work on polynomials."
+    ~nb_runs:10000
+    Gen.(zip2 (polynomial 1e5) (bfloat 1e5))
     (fun (clst, x) ->
       let f = poly_to_f clst in
       let s = secant f in
       let o = second_order f in
       if List.length clst = 2 then
-        let d_everywhere = List.nth clst 1 in
+        let d_everywhere = List.nth clst 0 in
         equal_floats ~d:1e-3 d_everywhere (s x) &&
         equal_floats ~d:1e-3 d_everywhere (o x)
       else
@@ -59,4 +66,4 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   ()
- 
+
