@@ -1,0 +1,11 @@
+#require "ocephes"
+#require "lacaml"
+#require "lbfgs"
+#require "bisect_ppx"
+#require "kaputt"
+#directory "_driver/src/lib" ;;
+#directory "_driver/src/lib/datasets" ;;
+#load_rec "oml.cma";;
+#load_rec "data.cmo";;
+open Oml
+open Oml.Util

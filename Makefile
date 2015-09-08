@@ -34,6 +34,10 @@ covered_test: joiner.native
 test_environment: joiner.native
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib/datasets -I src/lib -I src/test oml.cma driver.test
 
+const: joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test oml.cma const.test
+
+
 clean:
 	ocamlbuild -clean
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -clean
