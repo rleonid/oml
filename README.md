@@ -27,11 +27,13 @@ The API is available [online](http://hammerlab.github.io/oml/doc/index.html).
 
   - `make` will compile source.
   - `make test` for tests.
-        We use [Kaputt](http://kaputt.x9c.fr/) as the testing framework. Tests
+        - We use [Kaputt](http://kaputt.x9c.fr/) as the testing framework. Tests
         are found in `*.mlt` files and are joined with their respective source
         files only when we build a test target.
-  - `make covered_test` for [Bisect](http://bisect.x9c.fr/) instrumented test
-      coverage.
+        - `make TEST={ModuleName} test` will run the test in `ModuleName`,
+           ex `make TEST=Descriptive test`
+  - `make covered_test` for [Bisect_ppx](https://github.com/rleonid/bisect_ppx)
+    instrumented test coverage.
 
 ### Dependencies
 
