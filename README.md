@@ -47,3 +47,15 @@ The API is available [online](http://hammerlab.github.io/oml/doc/index.html).
           [Coveralls](https://coveralls.io/).
   - [ocephes](https://github.com/rleonid/ocephes) for special functions.
 
+### Contributing
+
+Anything within the problem domain is welcome.
+
+#### Questions, Bugs, Issues
+
+The best place to discuss Oml is within Github's
+[issues](https://github.com/hammerlab/ketrew/issues) (even for questions).
+
+#### Guideline
+
+"Favor readers over writers" and _Favor users over readers_.
