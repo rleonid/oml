@@ -15,6 +15,7 @@
    limitations under the License.
 *)
 
+open Util
 
 (** The classifiers below assign a discrete probability distribution over the
     list of class 'a in their training set. *)
@@ -91,13 +92,6 @@ module type Continuous_encoded_data_intf = sig
   val size : int
 end
 
-(** When passing optional arguments to the esimate procudure of a classifier. *)
-module type Estimate_optional_arg_intf = sig
-
-  type spec             (** type of default argument. *)
-  val default : spec    (** A default value used when not specified.*)
-end
-
 (** A {{!type:t}classifier}, once {{!val:estimate} estimated} from
     the {{!type:Classify.Data_intf.feature}features} found in
     {{!type:samples}samples} of data, assigns
@@ -106,7 +100,8 @@ end
     on future samples when {{!val:eval}evaluated}. *)
 module type Classifier_intf = sig
   include Data_intf
-  include Estimate_optional_arg_intf
+  include Optional_arg_intf
+
 
   (** The classifier. *)
   type t
