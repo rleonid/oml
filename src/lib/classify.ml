@@ -90,6 +90,9 @@ type binomial_spec =
   ; bernoulli : bool
   }
 
+(* likelihood refers to the conditional probability of observing a feature f_i
+for class C_k : P(f_i|C_k) *)
+
 (* Simplify the evaluate code by keeping track of the evidence.*)
 let eval_naive_bayes ~to_prior ~to_likelihood cls_assoc =
   let evidence = ref 0.0 in
