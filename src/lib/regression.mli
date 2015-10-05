@@ -15,10 +15,13 @@
    limitations under the License.
 *)
 
+open Util
+
 (** Construct linear models that describe (and learn from) data.*)
 
 (** The interface of the model constructed by a Regression procedure. *)
-module type LINEAR_MODEL = sig
+module type Linear_model_intf = sig
+  include Optional_arg_intf
 
   (* TODO: reorder these declarations in a way that makes more sense for
      documentation. *)
@@ -29,15 +32,13 @@ module type LINEAR_MODEL = sig
   (** [describe t] returns a string describing the regressed linear model.*)
   val describe : t -> string
 
-  type spec
-
   (** [eval linear_model x] Evaluate a the [linear_model] at [x].*)
   val eval : t -> input -> float
 
   (** [regress options pred resp] computes a linear model of [resp] based
       off of the independent variables in the design matrix [pred], taking
       into account the various method [spec]s. *)
-  val regress : spec option -> pred:input array -> resp:float array -> t
+  val regress : ?spec:spec -> input array -> resp:float array -> t
 
   (** [residuals t] returns the residuals, the difference between the observed
       value and the estimated value for the independent, response, values. *)
@@ -49,9 +50,9 @@ module type LINEAR_MODEL = sig
 end
 
 (** Simple one dimensional regress. *)
-module Univarite : sig
+module Univariate : sig
 
-  include LINEAR_MODEL
+  include Linear_model_intf
     with type input = float
     and type spec = float array
 
@@ -88,7 +89,7 @@ type multivariate_spec =
 (** Multi-dimensional input regression, with support for Ridge regression. *)
 module Multivariate : sig
 
-  include LINEAR_MODEL
+  include Linear_model_intf
     with type input = float array
     and type spec = multivariate_spec
 
@@ -103,7 +104,7 @@ type tikhonov_spec =
   described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}. *)
 module Tikhonov : sig
 
-  include LINEAR_MODEL
+  include Linear_model_intf
     with type input = float array
     and type spec = tikhonov_spec
 

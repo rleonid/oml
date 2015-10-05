@@ -51,14 +51,9 @@ module type Dummy_encoded_data_intf = sig
   val size : int
 end
 
-module type Estimate_optional_arg_intf = sig
-  type spec
-  val default : spec
-end
-
 module type Classifier_intf = sig
   include Data_intf
-  include Estimate_optional_arg_intf
+  include Optional_arg_intf
 
   type t
 

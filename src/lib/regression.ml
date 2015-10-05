@@ -20,18 +20,16 @@ open Printf
 open Inference
 open Descriptive
 
-module type LINEAR_MODEL = sig
+module type Linear_model_intf = sig
+  include Optional_arg_intf
 
   type input
   type t
 
   val describe : t -> string
 
-  type spec
-
-
   val eval : t -> input -> float
-  val regress : spec option -> pred:input array -> resp:float array -> t
+  val regress : ?spec:spec -> input array -> resp:float array -> t
 
   val residuals : t -> float array
   val coefficients : t -> float array
@@ -42,7 +40,7 @@ module type LINEAR_MODEL = sig
 
 end
 
-module Univarite = struct
+module Univariate = struct
 
   type input = float
 
@@ -74,12 +72,14 @@ module Univarite = struct
 
   type spec = float array
 
-  let regress pred_variance ~pred ~resp =
+  let default = [||]
+
+  let regress ?spec pred ~resp =
     let corr = correlation pred resp in
     let n = Array.length pred in
     let deg_of_freedom = float (n - 2) in (* one for the constant and one for beta *)
     let act_pv =
-      match pred_variance with
+      match spec with
       | None -> Array.init (Array.length pred) (fun _ -> 1.0)
       | Some a ->
           let an = Array.length a in
@@ -127,7 +127,7 @@ module Univarite = struct
     in
     *)
     let q =
-      match pred_variance with
+      match spec with
       | None   -> None
       | Some _ -> Some (Functions.chi_square_greater (truncate deg_of_freedom) chi_square)
     in
@@ -270,7 +270,6 @@ module SolveLPViaSvd = struct
             in
             { coef ; covm ; resi ; looe }
 
- 
 end
 
 type glm = { padded                  : bool
@@ -344,6 +343,11 @@ module Multivariate = struct
 
   type spec = multivariate_spec
 
+  let default =
+    { add_constant_column = false
+    ; lambda_spec = None
+    }
+
   open Lacaml.D
   open Lacaml_stats
   open SolveLPViaSvd
@@ -373,13 +377,13 @@ module Multivariate = struct
     - work through these covariance matrix calculations, they're probably not right
     - once that's done we can expose the hypothesis testing
   *)
-  (*let general_linear_regress ?lambda ?(pad=false) ~resp ~pred () = *)
-  let regress spec ~pred ~resp =
+  (*let general_linear_regress ?lambda ?(pad=false) ~resp pred () = *)
+  let regress ?(spec=default) pred ~resp =
     let resp = Vec.of_array resp in
-    let pad =
-      match spec with
+    let pad = spec.add_constant_column
+      (*match spec with
       | None -> false
-      | Some s -> s.add_constant_column
+      | Some s -> s.add_constant_column *)
     in
     let pred, num_obs, num_pred, across_pred_col = pad_design_matrix pred pad in
     (* TODO: replace with folds, across the matrix in Lacaml. *)
@@ -398,9 +402,9 @@ module Multivariate = struct
     let correlations  = across_pred_col col_corr in
     (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
     let deg_of_freedom  = float (num_obs - num_pred) in
-    let lambda =
-      match spec with | None -> None
-      | Some s -> s.lambda_spec
+    let lambda = spec.lambda_spec
+      (*match spec with | None -> None
+      | Some s -> s.lambda_spec *)
     in
     let solved_lp       = solve_lp pred resp lambda in
     let chi_square      = dot solved_lp.resi solved_lp.resi in
@@ -437,10 +441,15 @@ type tikhonov_spec =
   }
 
 module Tikhonov = struct
-  
+
   include EvalMultiVarite
 
   type spec = tikhonov_spec
+
+  let default =
+    { regularizer = [|[||]|]
+    ; lambda_spec = None
+    }
 
   open Lacaml.D
   open Lacaml_stats
@@ -475,15 +484,21 @@ module Tikhonov = struct
         let _ = printf "chose gtr lambda of %0.4f\n" lambda in
         slp
 
-  (*let general_tikhonov_regression ?lambda ~resp ~pred ~tik () = *)
-  let regress spec ~pred ~resp =
+  (*let general_tikhonov_regression ?lambda ~resp pred ~tik () = *)
+  let regress ?(spec=default) pred ~resp =
     let pred = Mat.of_array pred in
     let resp = Vec.of_array resp in
-    let lambda, tik =
+    let lambda = spec.lambda_spec in
+    let tik =
+      match spec.regularizer with
+      | [|[||]|] -> Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)
+      | tm       -> Mat.of_array tm
+    in
+    (*let lambda, tik =
       match spec with
       | None -> None, Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)
       | Some ts -> ts.lambda_spec, (Mat.of_array ts.regularizer)
-    in
+    in*)
     let num_obs  = Mat.dim1 pred in  (* rows *)
     let num_pred = Mat.dim2 pred in  (* cols *)
     let across_pred_col f = Array.init num_pred (fun i -> f (Mat.col pred (i + 1))) in
