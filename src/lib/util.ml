@@ -168,4 +168,7 @@ module type Optional_arg_intf = sig
   val default : spec    (** A default value used when not specified.*)
 end
 
+let fst3 (x,_,_) = x
+let snd3 (_,x,_) = x
+let thr3 (_,_,x) = x
 

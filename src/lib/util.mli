@@ -75,7 +75,7 @@ module Array : sig
       [f a.(i)] is true *)
   val find_index : ('a -> bool) -> 'a array -> int
 
-  (** [Array.binary_search c a], find the index of element [e] in [a] where
+  (** [binary_search c a], find the index of element [e] in [a] where
       [c e = 0]. Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e].
 
       If no element is found where [c e = 0] then the largest index such that
@@ -160,4 +160,8 @@ module type Optional_arg_intf = sig
   val default : spec    (** A default value used when not specified.*)
 end
 
+
+val fst3 : ('a * 'b * 'c) -> 'a
+val snd3 : ('a * 'b * 'c) -> 'b
+val thr3 : ('a * 'b * 'c) -> 'c
 
