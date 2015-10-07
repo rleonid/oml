@@ -2,11 +2,11 @@
 open Util
 
 let linear (ax, ay) (bx, by) =
-  (* might be zero, so caveat emptor *)
-  let slope = Float.((by - ay) / (bx - ax)) in
-  fun x ->
-    Float.(slope * (x - ax) + ay)
-
+  if ax = bx then
+    invalidArg "equal x values %f" ax
+  else
+    let slope = Float.((by - ay) / (bx - ax)) in
+    fun x -> Float.(slope * (x - ax) + ay)
    
 (* Solve a system of eqautions of the form
    a_i*x_{i-1} + b_i*x_i + c_i*x_{i+1} = d_i, where a_1 = c_n = 0
