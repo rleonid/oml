@@ -20,13 +20,41 @@
 val linear : float * float -> float * float -> (float -> float)
 
 (** Cubic splines provide piecewise polynomial to fit the data that is smooth
-    at the fit data points. *)
+    at the fit data points (aka knots). This is achieved by requiring that the
+    polynomials on the two sides of a knot have the same first and second
+    derivative at that point. *)
 module Spline : sig
-  type cubic_spline_boundary_condition = NaturalCubic | Clamped
+
+  type boundary_condition =
+    | Natural   (** The 2nd derivatives at the end points are 0,
+                    [y''(x_0) = y''(x_n) = 0] leading to straight lines
+                    based off of the cubics fit on the inside. *)
+    | Clamped of float * float
+                (** The 2nd derivatives at the end points of the
+                    spline are equal to the passed functions.
+                    S'(x_0) = f'(x_0) && S'(x_n) = f'(x_n). *)
+ 
+
   type t (*= float * float * float * float * float) array *)
-  val eval_at : t -> int -> float -> float
+
+  (** [knots t] return the points used to originally fit the spline. *)
+  val knots : t -> (float * float) array 
+
+  (** [fit ~bc data]
+
+    @param bc defaults to [Natural]
+    @param data is sorted during the fit.
+   *)
+  val fit : ?bc:boundary_condition -> (float * float) array -> t
+
+  (*val eval_at : t -> int -> float -> float *)
+  (** [eval spline x] evalute [spline] at [x].
+   
+    Note that if [x] is outside the original points used to fit the spline,
+    the fit to the closest knot is used. *)
   val eval : t -> float -> float
   val eval_arr : t -> float array -> float array
-  val fit : ?sorted:bool -> 'a -> (float * float) array -> t
-  val lagrange : (float * float) array -> float -> float
+
 end
+
+val lagrange : (float * float) array -> float -> float

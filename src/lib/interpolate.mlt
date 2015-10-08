@@ -15,6 +15,7 @@
    limitations under the License.
 *)
 
+open Printf
 open Test_utils
 
 let () =
@@ -28,7 +29,6 @@ let () =
   in
   let point b = Gen.(zip2 (bfloat b) (bfloat b)) in
   add_random_test
-    ~nb_runs:1000
     ~title:"Linear arguments can be specified in any order \
                   (aka, two points determine a line"
     Gen.(zip3 (point 1e8) (point 1e8) (bfloat 1e8))
@@ -36,6 +36,26 @@ let () =
       let y1 = linear p1 p2 x in
       let y2 = linear p2 p1 x in
       equal_floats ~d:1e-6 y1 y2)
+    Spec.([just_postcond_pred is_true]);
+
+  let random_test_array b = Gen.(array (make_int 2 50) (bfloat b)) in
+  let spline b =
+    Gen.(matrix (make_int 2 50) (lift 2 "2")(bfloat b)
+         |> map1 (fun matrix ->
+              let n = Array.length matrix in
+              Array.init n (fun i -> matrix.(i).(0), matrix.(i).(1)))
+              (array_to_string (fun (x,y) -> sprintf "(%f,%f)" x y)) 
+         |> map1 (Spline.fit) (fun s ->
+              array_to_string (fun (x,y) -> sprintf "(%f,%f)" x y) 
+                (Spline.knots s)))
+  in
+  add_random_test
+    ~title:"Evaluating as an array is equivalent to mapping across array."
+    Gen.(zip2 (spline 1e8) (random_test_array 1e8))
+    (fun (t, d) ->
+      let f1 = Array.map (Spline.eval t) d in
+      let f2 = Spline.eval_arr t d in
+      f1 = f2)
     Spec.([just_postcond_pred is_true]);
 
   ()
