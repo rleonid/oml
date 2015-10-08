@@ -19,6 +19,14 @@
     given an x value one can get the y along that line with [l x]. *)
 val linear : float * float -> float * float -> (float -> float)
 
+module Tri_Diagonal : sig
+
+  val solve : (float * float * float) array -> float array -> float array
+
+  val mult : (float * float * float) array -> float array -> float array
+
+end 
+
 (** Cubic splines provide piecewise polynomial to fit the data that is smooth
     at the fit data points (aka knots). This is achieved by requiring that the
     polynomials on the two sides of a knot have the same first and second
@@ -30,29 +38,33 @@ module Spline : sig
                     [y''(x_0) = y''(x_n) = 0] leading to straight lines
                     based off of the cubics fit on the inside. *)
     | Clamped of float * float
-                (** The 2nd derivatives at the end points of the
-                    spline are equal to the passed functions.
-                    S'(x_0) = f'(x_0) && S'(x_n) = f'(x_n). *)
+                (** The 1st derivatives at the end points of the
+                    spline are equal to the passed values. *)
  
-
-  type t (*= float * float * float * float * float) array *)
+  type t
 
   (** [knots t] return the points used to originally fit the spline. *)
   val knots : t -> (float * float) array 
+
+  (** [coefficients t] returns an array of the fit spline coefficients. *)
+  val coefficients: t -> (float * float * float * float) array
 
   (** [fit ~bc data]
 
     @param bc defaults to [Natural]
     @param data is sorted during the fit.
-   *)
+
+    @raise Invalid_argument if [data] is less than 3 data points. *)
   val fit : ?bc:boundary_condition -> (float * float) array -> t
 
-  (*val eval_at : t -> int -> float -> float *)
   (** [eval spline x] evalute [spline] at [x].
    
     Note that if [x] is outside the original points used to fit the spline,
     the fit to the closest knot is used. *)
   val eval : t -> float -> float
+
+  (** [eval_arr t data] if [data] is sorted in increasing order
+      equivalent to [Array.map (eval spline) data] but a wee bit faster. *)
   val eval_arr : t -> float array -> float array
 
 end
