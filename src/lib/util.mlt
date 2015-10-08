@@ -78,6 +78,13 @@ let () =
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
+  let add_partial_random_test
+    ?title ?nb_runs ?nb_tries ?classifier
+    ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
+    Test.add_partial_random_test_group "Array"
+      ?title ?nb_runs ?nb_tries ?classifier
+      ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
+  in
   let open Array in
   let id b = b in
   add_simple_test ~title:"Any works."
@@ -138,6 +145,13 @@ let () =
       bsidx >= -1 && bsidx < 100 && notfound)
     Spec.([just_postcond_pred is_true]);
 
-
+  let equal_arrays = (fun (x, y) -> Array.length x = Array.length y) in
+  add_partial_random_test
+    ~title:"zip and unzip"
+    Gen.(zip2 (array (make_int 1 3) int) (array (make_int 1 3) char))
+    (fun (z1, z2) -> (z1, z2) = unzip (zip z1 z2))
+    Spec.([ equal_arrays       ==> is_result is_true
+          ; (not equal_arrays) ==> is_exception is_invalid_arg
+          ]);
 
   ()
