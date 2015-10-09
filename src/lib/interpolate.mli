@@ -43,6 +43,9 @@ module Spline : sig
  
   type t
 
+  (*val setup_tridiagonal: boundary_condition -> (float * float) array ->
+    (float * float * float) array * float array *)
+
   (** [knots t] return the points used to originally fit the spline. *)
   val knots : t -> (float * float) array 
 
@@ -69,4 +72,4 @@ module Spline : sig
 
 end
 
-val lagrange : (float * float) array -> float -> float
+(*TODO: val lagrange : (float * float) array -> float -> float*)

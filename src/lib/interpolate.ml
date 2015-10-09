@@ -97,8 +97,8 @@ module Spline = struct
         | Some (c, b, a)  -> y, c, b, a)
 
   (* Helper functions to extract correctly indexed elements of data.
-     TODO: is this currying worthwhile?
-  *)
+     TODO: is this currying worthwhile? Does this make the code more
+     or less readable. *)
   let h arr i =
     fst arr.(i + 1) -. fst arr.(i)
 
@@ -106,26 +106,36 @@ module Spline = struct
     let h = h arr in
     (fun i -> (snd arr.(i + 1) -. snd arr.(i)) /. (h i))
 
-  let v arr = 
+  let setup_tridiagonal bc arr =
     let h = h arr in
-    (fun i -> 2. *. ((h (i-1)) +. (h i)))
-
-  let u arr =
     let s = s arr in
-    (fun i -> 6. *. ((s i) -. (s (i-1)))) 
-
-  let setup_tridiagonal arr =
-    let h = h arr in
-    let v = v arr in
-    let u = u arr in
+    let v i = 2. *. ((h (i-1)) +. (h i)) in
+    let u i = 6. *. ((s i) -. (s (i-1))) in
     let n = Array.length arr in
-    let abc_s = n - 2 in
-    let d = Array.init abc_s (fun i -> u (i + 1)) in
-    let abc = Array.init abc_s (fun i ->
-      let ip1 = i + 1 in
-      let a = if ip1 = 1 then nan else (h i) in
-      let c = if ip1 = abc_s then nan else (h ip1) in
-      a, (v ip1), c)
+    let nm1 = n - 1 in
+    let nm2 = n - 2 in
+    let ma ~first ~last ~mid =
+      Array.init n (fun i ->
+        if i = 0 then first
+        else if i = nm1 then last
+        else mid i)
+    in
+    let d =
+      let first,last =
+        match bc with
+        | Natural       -> 0.0, 0.0
+        | Clamped (l,r) -> 6. *. (s 0 -. l), 6. *. (r -. s nm2)
+      in
+      ma ~first ~last ~mid:u
+    in
+    let abc =
+      let (sb,sc), (ea,eb) =
+        match bc with
+        | Natural       -> (1.,0.),(0.,1.)
+        | Clamped (l,r) -> ((2. *. h 0), h 0), (h nm2, (2. *. h nm2))
+      in
+      ma ~first:(nan, sb, sc) ~last:(ea,eb,nan)
+          ~mid:(fun i -> h (i - 1), v i , h i)
     in
     abc, d
 
@@ -134,18 +144,8 @@ module Spline = struct
     if n < 3 then
       invalidArg "Less than 3 data points %d" n;
     Array.sort (fun (x1,_) (x2,_) -> compare x1 x2) arr;
-    let m =
-      let abc, d = setup_tridiagonal arr in
-      (* Modify the end points based upon boundary condition. *)
-      match bc with
-      | Natural ->
-        let m_nm2 = Tri_Diagonal.solve abc d in
-        let m = Array.make n 0. in
-        Array.blit m_nm2 0 m 1 (n - 2);
-        m
-      | Clamped (m_0, m_n) ->
-          failwith "Not implemented"
-    in
+    let abc, d = setup_tridiagonal bc arr in
+    let m = Tri_Diagonal.solve abc d in
     let h = h arr in
     let s = s arr in
     Array.mapi (fun i (x,y) ->
