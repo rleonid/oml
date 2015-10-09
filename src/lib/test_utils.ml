@@ -23,7 +23,7 @@ let array_to_string conv arr =
   Array.map conv arr
   |> Array.to_list
   |> String.concat ";"
-  |> sprintf "[%s]"
+  |> sprintf "[|%s|]"
 
 (* Generators *)
 module type FloatParameters = sig
