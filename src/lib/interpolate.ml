@@ -37,7 +37,7 @@ module Tri_Diagonal = struct
       else
         a *. x.(i-1) +. b *. x.(i) +. c *. x.(i+1))
 
-  (* Solve a system of eqautions of the form
+  (* Solve a system of equations of the form
     a_i*x_{i-1} + b_i*x_i + c_i*x_{i+1} = d_i, where a_1 = c_n = 0.
     The first arr of triples is of (a_i, b_i, c_i) and a_0 and c_n are ignored.
     The second arr of d.
