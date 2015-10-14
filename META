@@ -1,6 +1,6 @@
 description="OCaml Math Library"
 requires="lacaml lbfgs ocephes"
-version="0.0.1"
+version="0.0.3"
 directory="."
 archive(byte)="oml.cma"
 archive(native)="oml.cmxa"
