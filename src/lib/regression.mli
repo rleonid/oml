@@ -21,7 +21,7 @@ open Util
 
 (** The interface of the model constructed by a Regression procedure. *)
 module type Linear_model_intf = sig
-  include Optional_arg_intf
+  include Util.Optional_arg_intf
 
   (* TODO: reorder these declarations in a way that makes more sense for
      documentation. *)

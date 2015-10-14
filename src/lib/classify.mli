@@ -100,7 +100,7 @@ end
     on future samples when {{!val:eval}evaluated}. *)
 module type Classifier_intf = sig
   include Data_intf
-  include Optional_arg_intf
+  include Util.Optional_arg_intf
 
 
   (** The classifier. *)
