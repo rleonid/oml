@@ -99,16 +99,16 @@ module Spline = struct
   (* Helper functions to extract correctly indexed elements of data.
      TODO: is this currying worthwhile? Does this make the code more
      or less readable. *)
-  let h arr i =
+  let distances arr i =
     fst arr.(i + 1) -. fst arr.(i)
 
-  let s arr =
-    let h = h arr in
+  let slopes arr =
+    let h = distances arr in
     (fun i -> (snd arr.(i + 1) -. snd arr.(i)) /. (h i))
 
   let setup_tridiagonal bc arr =
-    let h = h arr in
-    let s = s arr in
+    let h = distances arr in
+    let s = slopes arr in
     let v i = 2. *. ((h (i-1)) +. (h i)) in
     let u i = 6. *. ((s i) -. (s (i-1))) in
     let n = Array.length arr in
@@ -146,8 +146,8 @@ module Spline = struct
     Array.sort (fun (x1,_) (x2,_) -> compare x1 x2) arr;
     let abc, d = setup_tridiagonal bc arr in
     let m = Tri_Diagonal.solve abc d in
-    let h = h arr in
-    let s = s arr in
+    let h = distances arr in
+    let s = slopes arr in
     Array.mapi (fun i (x,y) ->
       if i = n - 1 then
         (x,y,None)
