@@ -127,7 +127,16 @@ module Array = struct
         (fun i -> start +. incr *. (float i))
 
   let ranks = Rank.ranks
-end
+
+  let zip x y =
+    let n = Array.length x in
+    let m = Array.length y in
+    if m <> n then invalidArg "zip: array lengths not equal %d %d" n m
+    else Array.mapi (fun i x -> x, y.(i)) x
+
+  let unzip arr = Array.map fst arr, Array.map snd arr
+
+end (* Array *)
 
 let midpoint x y = (x +. y) /. 2.0
 
@@ -168,4 +177,7 @@ module type Optional_arg_intf = sig
   val default : spec    (** A default value used when not specified.*)
 end
 
+let fst3 (x,_,_) = x
+let snd3 (_,x,_) = x
+let thr3 (_,_,x) = x
 

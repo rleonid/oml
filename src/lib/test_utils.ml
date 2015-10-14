@@ -19,6 +19,12 @@
 
 open Printf
 
+let array_to_string conv arr =
+  Array.map conv arr
+  |> Array.to_list
+  |> String.concat ";"
+  |> sprintf "[|%s|]"
+
 (* Generators *)
 module type FloatParameters = sig
   val largest_float : float
@@ -71,8 +77,7 @@ module FGen (Fp : FloatParameters) = struct
   let bmatrix_float b r c = fixed_length_matrix r c (bfloat b)
 
   let print_float_array m =
-    m
-    |> Array.map (Kaputt.Utils.make_string_of_array string_of_float)
+    Array.map (Kaputt.Utils.make_string_of_array string_of_float) m
     |> Array.to_list
     |> String.concat "\n"
 
