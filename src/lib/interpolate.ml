@@ -73,13 +73,13 @@ module Tri_Diagonal = struct
         x.(i) <- dm.(i) -. cm.(i) *. x.(i+1)
       done;
       x
- 
+
 end (* Tri_Diagonal *)
- 
+
 module Spline = struct
 
   open Tri_Diagonal
- 
+
   type boundary_condition =
     | Natural
     | Clamped of float * float

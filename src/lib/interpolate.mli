@@ -25,7 +25,7 @@ module Tri_Diagonal : sig
 
   val mult : (float * float * float) array -> float array -> float array
 
-end 
+end
 
 (** Cubic splines provide piecewise polynomial to fit the data that is smooth
     at the fit data points (aka knots). This is achieved by requiring that the
@@ -40,14 +40,14 @@ module Spline : sig
     | Clamped of float * float
                 (** The 1st derivatives at the end points of the
                     spline are equal to the passed values. *)
- 
+
   type t
 
   (*val setup_tridiagonal: boundary_condition -> (float * float) array ->
     (float * float * float) array * float array *)
 
   (** [knots t] return the points used to originally fit the spline. *)
-  val knots : t -> (float * float) array 
+  val knots : t -> (float * float) array
 
   (** [coefficients t] returns an array of the fit spline coefficients. *)
   val coefficients: t -> (float * float * float * float) array
@@ -61,7 +61,7 @@ module Spline : sig
   val fit : ?bc:boundary_condition -> (float * float) array -> t
 
   (** [eval spline x] evalute [spline] at [x].
-   
+
     Note that if [x] is outside the original points used to fit the spline,
     the fit to the closest knot is used. *)
   val eval : t -> float -> float
