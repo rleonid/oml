@@ -24,17 +24,21 @@
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
 <link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Regression.Multivariate</title>
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Regression.Univariate</title>
 </head>
 <body>
 <code class="code"><span class="keyword">sig</span><br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;multivariate_spec<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;float&nbsp;array<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;default&nbsp;:&nbsp;spec<br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;input&nbsp;=&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;input&nbsp;=&nbsp;float<br>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;describe&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regress&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;resp:float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residuals&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;alpha&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;beta&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;confidence_interval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;prediction_interval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;float<br>
 <span class="keyword">end</span></code></body></html>

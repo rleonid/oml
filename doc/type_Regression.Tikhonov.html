@@ -23,16 +23,18 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Regression.Tikhonov</title>
+<link title="Pca" rel="Chapter" href="Pca.html">
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Regression.Tikhonov</title>
 </head>
 <body>
 <code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;tikhonov_spec<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;default&nbsp;:&nbsp;spec<br>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;input&nbsp;=&nbsp;float&nbsp;array<br>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;describe&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;tikhonov_spec<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regress&nbsp;:&nbsp;spec&nbsp;option&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;pred:input&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;resp:float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regress&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;resp:float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residuals&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
 <span class="keyword">end</span></code></body></html>

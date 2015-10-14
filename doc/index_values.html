@@ -24,7 +24,8 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Index of values</title>
+<link title="Pca" rel="Chapter" href="Pca.html">
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Index of values</title>
 </head>
 <body>
 <div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
@@ -57,7 +58,7 @@
       &amp;&amp; (p arr.(n))</code>
 </div>
 </td></tr>
-<tr><td><a href="Regression.Univarite.html#VALalpha">alpha</a> [<a href="Regression.Univarite.html">Regression.Univarite</a>]</td>
+<tr><td><a href="Regression.Univariate.html#VALalpha">alpha</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">alpha t</code> a shorthand for the constant parameter used in the regression.
 </div>
@@ -75,7 +76,7 @@
 </div>
 </td></tr>
 <tr><td align="left"><br>B</td></tr>
-<tr><td><a href="Regression.Univarite.html#VALbeta">beta</a> [<a href="Regression.Univarite.html">Regression.Univarite</a>]</td>
+<tr><td><a href="Regression.Univariate.html#VALbeta">beta</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">beta t</code> a shorthand for the linear parameter used in the regression.
 </div>
@@ -102,7 +103,7 @@
 </td></tr>
 <tr><td><a href="Util.Array.html#VALbinary_search">binary_search</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
-<code class="code">Array.binary_search c a</code>, find the index of element <code class="code">e</code> in <code class="code">a</code> where
+<code class="code">binary_search c a</code>, find the index of element <code class="code">e</code> in <code class="code">a</code> where
       <code class="code">c e = 0</code>.
 </div>
 </td></tr>
@@ -163,7 +164,12 @@
     using <code class="code">-2;-1;1;2</code> as cut off for the <a href="Descriptive.html#TYPEskew_classification"><code class="code">Descriptive.skew_classification</code></a>.
 </div>
 </td></tr>
-<tr><td><a href="Regression.LINEAR_MODEL.html#VALcoefficients">coefficients</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
+<tr><td><a href="Interpolate.Spline.html#VALcoefficients">coefficients</a> [<a href="Interpolate.Spline.html">Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> returns an array of the fit spline coefficients.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Linear_model_intf.html#VALcoefficients">coefficients</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">coefficients t</code> returns the coefficients used in the linear model.
 </div>
@@ -178,7 +184,7 @@
 <code class="code">components t</code>
 </div>
 </td></tr>
-<tr><td><a href="Regression.Univarite.html#VALconfidence_interval">confidence_interval</a> [<a href="Regression.Univarite.html">Regression.Univarite</a>]</td>
+<tr><td><a href="Regression.Univariate.html#VALconfidence_interval">confidence_interval</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">confidence_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
       construct confidence intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.
@@ -206,12 +212,12 @@
 <tr><td><a href="Classify.html#VALcross_validated_auc">cross_validated_auc</a> [<a href="Classify.html">Classify</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>D</td></tr>
-<tr><td><a href="Classify.Estimate_optional_arg_intf.html#VALdefault">default</a> [<a href="Classify.Estimate_optional_arg_intf.html">Classify.Estimate_optional_arg_intf</a>]</td>
+<tr><td><a href="Util.Optional_arg_intf.html#VALdefault">default</a> [<a href="Util.Optional_arg_intf.html">Util.Optional_arg_intf</a>]</td>
 <td><div class="info">
 A default value used when not specified.
 </div>
 </td></tr>
-<tr><td><a href="Regression.LINEAR_MODEL.html#VALdescribe">describe</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
+<tr><td><a href="Regression.Linear_model_intf.html#VALdescribe">describe</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">describe t</code> returns a string describing the regressed linear model.
 </div>
@@ -300,15 +306,26 @@ A really small value.
       training <code class="code">samples</code>.
 </div>
 </td></tr>
+<tr><td><a href="Interpolate.Spline.html#VALeval">eval</a> [<a href="Interpolate.Spline.html">Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">eval spline x</code> evalute <code class="code">spline</code> at <code class="code">x</code>.
+</div>
+</td></tr>
 <tr><td><a href="Classify.Classifier_intf.html#VALeval">eval</a> [<a href="Classify.Classifier_intf.html">Classify.Classifier_intf</a>]</td>
 <td><div class="info">
 <code class="code">eval classifier feature</code> assign <a href="Classify.html#TYPEprobabilities">probabilities</a> to the
       possible <a href="Classify.Data_intf.html#TYPEclas">classes</a> based upon <code class="code">feature</code>.
 </div>
 </td></tr>
-<tr><td><a href="Regression.LINEAR_MODEL.html#VALeval">eval</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
+<tr><td><a href="Regression.Linear_model_intf.html#VALeval">eval</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">eval linear_model x</code> Evaluate a the <code class="code">linear_model</code> at <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Interpolate.Spline.html#VALeval_arr">eval_arr</a> [<a href="Interpolate.Spline.html">Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">eval_arr t data</code> if <code class="code">data</code> is sorted in increasing order
+      equivalent to <code class="code">Array.map (eval spline) data</code> but a wee bit faster.
 </div>
 </td></tr>
 <tr><td><a href="Continued_fraction.html#VALevaluate">evaluate</a> [<a href="Continued_fraction.html">Continued_fraction</a>]</td>
@@ -332,12 +349,19 @@ A really small value.
       <code class="code">f a.(i)</code> is true
 </div>
 </td></tr>
+<tr><td><a href="Interpolate.Spline.html#VALfit">fit</a> [<a href="Interpolate.Spline.html">Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">fit ~bc data</code>
+</div>
+</td></tr>
 <tr><td><a href="Util.Array.html#VALfold2">fold2</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
 <code class="code">Array.fold2 f x a b</code> computes
        <code class="code">f (... (f (f x a.(0) b.(0)) a.(1) b.(1)) ...) a.(n-1) b.(n-1)</code>.
 </div>
 </td></tr>
+<tr><td><a href="Util.html#VALfst3">fst3</a> [<a href="Util.html">Util</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>G</td></tr>
 <tr><td><a href="Functions.html#VALgamma">gamma</a> [<a href="Functions.html">Functions</a>]</td>
 <td><div class="info">
@@ -422,6 +446,11 @@ A really small value.
 </div>
 </td></tr>
 <tr><td align="left"><br>K</td></tr>
+<tr><td><a href="Interpolate.Spline.html#VALknots">knots</a> [<a href="Interpolate.Spline.html">Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">knots t</code> return the points used to originally fit the spline.
+</div>
+</td></tr>
 <tr><td><a href="Descriptive.html#VALkurtosis">kurtosis</a> [<a href="Descriptive.html">Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">kurtosis data</code> computes the sample kurtosis of <code class="code">data</code>.
@@ -440,6 +469,8 @@ A really small value.
 </div>
 </td></tr>
 <tr><td align="left"><br>L</td></tr>
+<tr><td><a href="Interpolate.html#VALlinear">linear</a> [<a href="Interpolate.html">Interpolate</a>]</td>
+<td></td></tr>
 <tr><td><a href="Functions.html#VALln_beta">ln_beta</a> [<a href="Functions.html">Functions</a>]</td>
 <td><div class="info">
 <code class="code">ln_beta x y</code>  computes <code class="code">log (beta x y)</code>, for more accuracy.
@@ -525,6 +556,8 @@ A really small value.
     discrete probability distribution.
 </div>
 </td></tr>
+<tr><td><a href="Interpolate.Tri_Diagonal.html#VALmult">mult</a> [<a href="Interpolate.Tri_Diagonal.html">Interpolate.Tri_Diagonal</a>]</td>
+<td></td></tr>
 <tr><td><a href="Matrices.html#VALmult">mult</a> [<a href="Matrices.html">Matrices</a>]</td>
 <td><div class="info">
 <code class="code">mult s v</code> scalar multiplication.
@@ -630,7 +663,7 @@ Computes kl divergence of the normal distributions P and Q defined
   population <code class="code">mean</code>.
 </div>
 </td></tr>
-<tr><td><a href="Regression.Univarite.html#VALprediction_interval">prediction_interval</a> [<a href="Regression.Univarite.html">Regression.Univarite</a>]</td>
+<tr><td><a href="Regression.Univariate.html#VALprediction_interval">prediction_interval</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">prediction_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
       construct prediction intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.
@@ -682,7 +715,7 @@ Multiply a row vector against a matrix.
 <code class="code">reduce t prm</code> restrict the number of stored principal components via <code class="code">prm</code>.
 </div>
 </td></tr>
-<tr><td><a href="Regression.LINEAR_MODEL.html#VALregress">regress</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
+<tr><td><a href="Regression.Linear_model_intf.html#VALregress">regress</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">regress options pred resp</code> computes a linear model of <code class="code">resp</code> based
       off of the independent variables in the design matrix <code class="code">pred</code>, taking
@@ -709,7 +742,7 @@ Multiply a row vector against a matrix.
     <code class="code">gamma a</code>) incomplete upper (integral from <code class="code">x</code> to <code class="code">infinity</code>) function.
 </div>
 </td></tr>
-<tr><td><a href="Regression.LINEAR_MODEL.html#VALresiduals">residuals</a> [<a href="Regression.LINEAR_MODEL.html">Regression.LINEAR_MODEL</a>]</td>
+<tr><td><a href="Regression.Linear_model_intf.html#VALresiduals">residuals</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">residuals t</code> returns the residuals, the difference between the observed
       value and the estimated value for the independent, response, values.
@@ -780,6 +813,8 @@ The number of dummy variables to track.
     <code class="code">data</code>.
 </div>
 </td></tr>
+<tr><td><a href="Util.html#VALsnd3">snd3</a> [<a href="Util.html">Util</a>]</td>
+<td></td></tr>
 <tr><td><a href="Sampling.Poly.html#VALsoftmax">softmax</a> [<a href="Sampling.Poly.html">Sampling.Poly</a>]</td>
 <td><div class="info">
 <code class="code">softmax ?seed ?temperature elems weights</code> creates a generator that will
@@ -800,6 +835,8 @@ The number of dummy variables to track.
     on <code class="code">temperature</code>.
 </div>
 </td></tr>
+<tr><td><a href="Interpolate.Tri_Diagonal.html#VALsolve">solve</a> [<a href="Interpolate.Tri_Diagonal.html">Interpolate.Tri_Diagonal</a>]</td>
+<td></td></tr>
 <tr><td><a href="Svd.html#VALsolve_linear">solve_linear</a> [<a href="Svd.html">Svd</a>]</td>
 <td><div class="info">
 <code class="code">solve_linear a b</code> solve for <code class="code">x</code> in <code class="code">a x = b</code> using principal components
@@ -869,6 +906,8 @@ The number of dummy variables to track.
 Describe a hypothesis test.
 </div>
 </td></tr>
+<tr><td><a href="Util.html#VALthr3">thr3</a> [<a href="Util.html">Util</a>]</td>
+<td></td></tr>
 <tr><td><a href="Matrices.html#VALtranspose">transpose</a> [<a href="Matrices.html">Matrices</a>]</td>
 <td><div class="info">
 <code class="code">transpose m</code> returns the transpose of <code class="code">m</code>.
@@ -921,6 +960,12 @@ Describe a hypothesis test.
     with equal probabilities from the interval [<code class="code">0,n</code>).
 </div>
 </td></tr>
+<tr><td><a href="Util.Array.html#VALunzip">unzip</a> [<a href="Util.Array.html">Util.Array</a>]</td>
+<td><div class="info">
+<code class="code">unzip arr</code> split an array of tuples into an array of the first value and
+      an array of the second.
+</div>
+</td></tr>
 <tr><td><a href="Running.html#VALupdate">update</a> [<a href="Running.html">Running</a>]</td>
 <td><div class="info">
 <code class="code">update ?size ?mean_update ?var_update t x</code> incorporate <code class="code">x</code> with given <code class="code">size</code>
@@ -968,6 +1013,12 @@ Describe a hypothesis test.
 <td><div class="info">
 <code class="code">within bound_pair x</code> evaluates whether <code class="code">x</code> is inside the interval described
     by the <code class="code">bound_pair</code>.
+</div>
+</td></tr>
+<tr><td align="left"><br>Z</td></tr>
+<tr><td><a href="Util.Array.html#VALzip">zip</a> [<a href="Util.Array.html">Util.Array</a>]</td>
+<td><div class="info">
+<code class="code">zip x y</code> construct an array that stores the elements of x and y as a tuple.
 </div>
 </td></tr>
 </table>

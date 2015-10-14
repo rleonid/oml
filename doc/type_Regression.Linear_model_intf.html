@@ -24,17 +24,22 @@
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
 <link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Classify.Generative_intf</title>
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Regression.Linear_model_intf</title>
 </head>
 <body>
 <code class="code"><span class="keyword">sig</span><br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;clas<br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;feature<br>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;default&nbsp;:&nbsp;spec<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;input<br>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;probabilities<br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;samples&nbsp;=&nbsp;(clas&nbsp;*&nbsp;feature)&nbsp;list<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;estimate&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?classes:clas&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;samples&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_probabilities&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;(feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array)<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;describe&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regress&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.input&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;resp:float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residuals&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
 <span class="keyword">end</span></code></body></html>

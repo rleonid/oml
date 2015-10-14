@@ -27,7 +27,8 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Util</title>
+<link title="Pca" rel="Chapter" href="Pca.html">
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Util</title>
 </head>
 <body>
 <div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
@@ -40,7 +41,7 @@
 <p>
 <OL>
 <li>general methods that are reused in other modules.</li>
-<li>overrides and </li>
+<li>overrides and</li>
 <li>extensions of standard library modules
     (ex. <a href="http://caml.inria.fr/pub/docs/manual-ocaml/libref/Array.html">Array</a>)
     with useful methods (ex. <a href="Util.Array.html#VALfold2"><code class="code">Util.Array.fold2</code></a> and <a href="Util.Array.html#VALsumf"><code class="code">Util.Array.sumf</code></a>)</li>
@@ -149,4 +150,11 @@ A really small value. Also known as the machine epsilon, the smallest
 <pre><span class="keyword">module</span> <a href="Util.Float.html">Float</a>: <code class="code">sig</code> <a href="Util.Float.html">..</a> <code class="code">end</code></pre><div class="info">
 Provide operator overloads for conveniently expressing float arithmatic.
 </div>
-</body></html>
+
+<pre><span class="keyword">module type</span> <a href="Util.Optional_arg_intf.html">Optional_arg_intf</a> = <code class="code">sig</code> <a href="Util.Optional_arg_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+When passing optional arguments to procedures.
+</div>
+
+<pre><span id="VALfst3"><span class="keyword">val</span> fst3</span> : <code class="type">'a * 'b * 'c -> 'a</code></pre>
+<pre><span id="VALsnd3"><span class="keyword">val</span> snd3</span> : <code class="type">'a * 'b * 'c -> 'b</code></pre>
+<pre><span id="VALthr3"><span class="keyword">val</span> thr3</span> : <code class="type">'a * 'b * 'c -> 'c</code></pre></body></html>

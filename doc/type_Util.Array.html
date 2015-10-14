@@ -23,7 +23,8 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Util.Array</title>
+<link title="Pca" rel="Chapter" href="Pca.html">
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Util.Array</title>
 </head>
 <body>
 <code class="code"><span class="keyword">sig</span><br>
@@ -72,4 +73,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;?start:int&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;?average_ties:bool&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;?compare:(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;zip&nbsp;:&nbsp;<span class="keywordsign">'</span>a&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>b&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;<span class="keywordsign">'</span>b)&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;unzip&nbsp;:&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;<span class="keywordsign">'</span>b)&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;array&nbsp;*&nbsp;<span class="keywordsign">'</span>b&nbsp;array<br>
 <span class="keyword">end</span></code></body></html>

@@ -27,7 +27,8 @@
 <link title="Svd" rel="Chapter" href="Svd.html">
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html"><title>Util.Array</title>
+<link title="Pca" rel="Chapter" href="Pca.html">
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Util.Array</title>
 </head>
 <body>
 <div class="navbar">&nbsp;<a class="up" href="Util.html" title="Util">Up</a>
@@ -76,7 +77,7 @@ Extend the <code class="code">Array</code> module with useful functions.<br>
 </div>
 
 <pre><span id="VALbinary_search"><span class="keyword">val</span> binary_search</span> : <code class="type">('a -> int) -> 'a array -> int</code></pre><div class="info ">
-<code class="code">Array.binary_search c a</code>, find the index of element <code class="code">e</code> in <code class="code">a</code> where
+<code class="code">binary_search c a</code>, find the index of element <code class="code">e</code> in <code class="code">a</code> where
       <code class="code">c e = 0</code>. Where <code class="code">c e'</code> returns &lt; 0 if <code class="code">e' &lt; e</code> and <code class="code">&gt; 0</code> if <code class="code">e' &gt; e</code>.
 <p>
 
@@ -121,5 +122,15 @@ Extend the <code class="code">Array</code> module with useful functions.<br>
      be averaged together (ex. <code class="code">|1;2;3|</code> -&gt; <code class="code">|2;2;2|</code>).
      <code class="code">compare</code> can also be specified if more granularity is desired over float
      comparison.<br>
+</div>
+
+<pre><span id="VALzip"><span class="keyword">val</span> zip</span> : <code class="type">'a array -> 'b array -> ('a * 'b) array</code></pre><div class="info ">
+<code class="code">zip x y</code> construct an array that stores the elements of x and y as a tuple.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the arrays of unequal length.<br>
+</div>
+
+<pre><span id="VALunzip"><span class="keyword">val</span> unzip</span> : <code class="type">('a * 'b) array -> 'a array * 'b array</code></pre><div class="info ">
+<code class="code">unzip arr</code> split an array of tuples into an array of the first value and
+      an array of the second.<br>
 </div>
 </body></html>
