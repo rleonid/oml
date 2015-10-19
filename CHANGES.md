@@ -2,7 +2,7 @@ Version 0.0.3 (2015-10-14):
 ---------------------------
   - Clarify the Regression interface with `Optional_arg_intf`.
   - Add Cubic spline interpolation.
-  - Array.zi/unzip
+  - Array.zip/unzip
   - fst3,snd3,thr3
 
 Version 0.0.2 (2015-09-09):
