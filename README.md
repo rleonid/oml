@@ -3,6 +3,7 @@ OCaml Math Library
 
 [![Build Status](https://travis-ci.org/hammerlab/oml.svg?branch=master)](https://travis-ci.org/hammerlab/oml/)
 [![Coverage Status](https://coveralls.io/repos/hammerlab/oml/badge.svg?branch=HEAD&service=github)](https://coveralls.io/github/hammerlab/oml?branch=HEAD)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hammerlab/oml?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
 A collection of OCaml Math and Statistics functions.
