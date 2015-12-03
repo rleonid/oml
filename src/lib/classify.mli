@@ -34,8 +34,6 @@ module type Data_intf = sig
   type feature    (** Features that describe elements of a class.*)
 end
 
-(** TODO Encoding data. *)
-
 (** Data where features are encoded using
     {{:https://en.wikipedia.org/wiki/Dummy_variable_%28statistics%29}Dummy Variables}
     (aka {{:https://en.wikipedia.org/wiki/One-hot}one-hot encoding}).
@@ -204,11 +202,20 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
   Logistic Regression} to estimate log-odds
   for each of the quantitative features in the
   {{!modtype:Continuous_encoded_data_intf}encoded data},
-  per class*)
+  per class.
+
+  @param spec Specifies the step parameter in the L-BFGS optimization algorithm.
+  The default value used in [estimate] is 0.1.
+*)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
-  Classifier_intf with type spec = unit
-                  and type feature = D.feature
-                  and type clas = D.clas
+  sig
+    include Classifier_intf with type spec = float
+                            and type feature = D.feature
+                            and type clas = D.clas
+
+    (** [coefficients t] the weights assigned to the log-odds of the features. *)
+    val coefficients : t -> float array
+  end
 
 (** A two class prediction. *)
 type binary =

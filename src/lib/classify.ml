@@ -382,11 +382,14 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
   end
 
 module LogisticRegression(Data: Continuous_encoded_data_intf)
-  : (Classifier_intf with type feature = Data.feature
-                     and type clas = Data.clas
-                     and type spec = unit)
+  : sig
+    include Classifier_intf with type feature = Data.feature
+                            and type clas = Data.clas
+                            and type spec = float
 
-  = struct
+    val coefficients : t -> float array
+
+  end = struct
 
   open Lacaml_D
 
@@ -429,6 +432,8 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
     ; classes : (clas * float) list
     }
 
+  let coefficients t = Vec.to_array t.weights
+
   let safe_encoding =
     to_safe_encoding_size_checked "Continuous_encoded_data_intf"
       Data.size Data.encoding
@@ -440,8 +445,8 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
     let m = Vec.init (Data.size + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
     List.map (fun (c,c_i) -> c, proba lr.weights m c_i) lr.classes
 
-  type spec = unit
-  let default = ()
+  type spec = float
+  let default = 0.1
 
   let estimate ?(spec=default) ?(classes=[]) data =
     if data = [] then
@@ -477,7 +482,7 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
         let ftrs    = List.map (fun (_, f) -> to_f (safe_encoding f)) data
                       |> Array.of_list
         in
-        let weights = Log_reg.log_reg ftrs classes in
+        let weights = Log_reg.log_reg ~lambda:spec ftrs classes in
         { weights
         ; classes = !assigned_cls_assoc
         }
