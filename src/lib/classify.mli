@@ -204,8 +204,8 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
   {{!modtype:Continuous_encoded_data_intf}encoded data},
   per class.
 
-  @param spec Specifies the step parameter in the L-BFGS optimization algorithm.
-  The default value used in [estimate] is 0.1.
+  @param spec Specifies the regularization parameter of the cost.
+  The default value used in [estimate] is [0.0001].
 *)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
   sig
@@ -213,31 +213,36 @@ module LogisticRegression(D: Continuous_encoded_data_intf) :
                             and type feature = D.feature
                             and type clas = D.clas
 
-    (** [coefficients t] the weights assigned to the log-odds of the features. *)
+    (** [coefficients t] TODO: not exact:
+        the weights assigned to the log-odds of the features. *)
     val coefficients : t -> float array
   end
 
-(** A two class prediction. *)
-type binary =
-  { predicted   : bool
-  ; probability : float   (* Probability of the _predicted_ class. *)
-  ; actual      : bool
-  }
+module Performance : sig
 
-(** Common statistics that describe performance of a two state classifier. *)
-type descriptive_statistics =
-  { sensitivity         : float
-  ; specificity         : float
-  ; positive_predictive : float
-  ; negative_predictive : float
-  ; accuracy            : float
-  ; area_under_curve    : float   (* Area under ROC. *)
-  }
+  (** A two class prediction. *)
+  type binary =
+    { predicted   : bool
+    ; probability : float   (* Probability of the _predicted_ class. *)
+    ; actual      : bool
+    }
 
-(* For a classifier that returns associated probabilities,
-   describe it's performance. *)
-val evaluate_performance : binary list -> descriptive_statistics
+  (** Common statistics that describe performance of a two state classifier. *)
+  type descriptive_statistics =
+    { sensitivity         : float
+    ; specificity         : float
+    ; positive_predictive : float
+    ; negative_predictive : float
+    ; accuracy            : float
+    ; area_under_curve    : float   (* Area under ROC. *)
+    }
 
-(* For a list of false positive rates and true positive rates, estimate the
-   AUC by trapezoid integration. End points are added by default. *)
-val cross_validated_auc : (float * float) array -> float
+  (* For a classifier that returns associated probabilities,
+    describe it's performance. *)
+  val evaluate_performance : binary list -> descriptive_statistics
+
+  (* For a list of false positive rates and true positive rates, estimate the
+    AUC by trapezoid integration. End points are added by default. *)
+  val cross_validated_auc : (float * float) array -> float
+
+end
