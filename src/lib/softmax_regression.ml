@@ -1,32 +1,5 @@
 open Lacaml_D
 
-(* Code modified from
-  http://math.umons.ac.be/anum/fr/software/OCaml/Logistic_Regression/ *)
-
-(* [logistic_grad_n_eval] returns the value of the function to maximize
-  and store its gradient in [g]. *)
-let logistic_grad_n_eval ~lambda x y =
-  let nm1 = Array.length x - 1 in
-  (fun w g ->
-    let s = ref 0. in
-    ignore(copy ~y:g w);                   (* g ← w *)
-    scal (-. lambda) g;                    (* g = -λ w *)
-    for i = 0 to nm1 do
-      let yi = y.(i) in
-      let xi = x.(i) in
-      let e  = exp(-. yi *. dot w xi) in
-      s := !s +. log1p e;
-      axpy xi ~alpha:(yi *. e /. (1. +. e)) g;
-    done;
-    -. !s -. 0.5 *. lambda *. dot w w)
-
-(* Perform the regression. *)
-let log_reg ?(lambda=0.1) x y =
-  let w = Vec.make0 (Vec.dim x.(0)) in
-  ignore(Lbfgs.F.max (*~print:(Lbfgs.Every 10) *)
-          (logistic_grad_n_eval ~lambda x y) w);
-  w
-
 let scale_by_col_sum a =
   for j = 1 to Mat.dim2 a do
     let c = Mat.col a j in
@@ -34,7 +7,6 @@ let scale_by_col_sum a =
     let s = 1. /. Vec.sum c in
     scal s c
   done
-
 
 (* Classes in y = {1,2 ... k}
    General softmax method.
@@ -80,11 +52,12 @@ let general_eval_and_grad ~lambda k x y =
       s
   end
 
-let softmax_reg ?(lambda=1e-4) x y =
+let regress ?(lambda=1e-4) x y =
   let k = Array.fold_left max 1 y in
   let n = Mat.dim2 x in
   let w = Vec.random (n * k) in
-  ignore(Lbfgs.F.min (general_eval_and_grad ~lambda k x y) w);
+  ignore(Lbfgs.(F.min (*~print:(Every 10*)
+                    (general_eval_and_grad ~lambda k x y) w));
   Bigarray.(reshape_2 (genarray_of_array1 w) k n)
 
 let to_probs v =

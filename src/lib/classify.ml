@@ -381,15 +381,7 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
 
   end
 
-module LogisticRegression(Data: Continuous_encoded_data_intf)
-  : sig
-    include Classifier_intf with type feature = Data.feature
-                            and type clas = Data.clas
-                            and type spec = float
-
-    val coefficients : t -> float array
-
-  end = struct
+module LrCommon(Data: Continuous_encoded_data_intf) = struct
 
   open Lacaml_D
 
@@ -398,37 +390,28 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
 
   type samples = (clas * feature) list
 
-  type t =
-    { weights : vec
-    ; classes : (clas * float) list
-    }
-
-  let coefficients t = Vec.to_array t.weights
-
   let safe_encoding =
     to_safe_encoding_size_checked "Continuous_encoded_data_intf"
       Data.size Data.encoding
 
-  let proba w x y = Float.(1. / (1. + exp(-. y * dot w x)))
-
-  let eval lr feature =
-    let a = safe_encoding feature in
-    let m = Vec.init (Data.size + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
-    List.map (fun (c,c_i) -> c, proba lr.weights m c_i) lr.classes
-
   type spec = float
   let default = 1e-4
 
-  let estimate ?(spec=default) ?(classes=[]) data =
+  let copy1 arr = Array.init (Data.size + 1) (function | 0 -> 1. | i -> arr.(i - 1))
+
+  (* map classes to [1;2 ... 3], convert features to matrix and run Softmax *)
+  let estimate ~method_name ~class_bound ~to_t ?(spec=default) ?(classes=[]) data =
+    let class_bound =
+      match class_bound with
+      | None   -> fun n -> n
+      | Some b -> min b
+    in
     if data = [] then
-      invalidArg "Classify.log_reg_estimate: Nothing to train on!"
+      invalidArg "Classify.%s.estimate: Nothing to train on!" method_name
     else
       let error_on_new = classes <> [] in
-      (* convert the classes to index markers.
-         TODO: are there better choices for these? literature,practice*)
-      let itce i = float (2 * i - 1) in
       let assigned_cls_assoc =
-        ref (List.mapi ~f:(fun i c -> c, itce i) classes)
+        ref (List.mapi ~f:(fun i c -> c, class_bound (i + 1)) classes)
       in
       let classes =
         List.mapi data ~f:(fun idx (c, _) ->
@@ -438,27 +421,108 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
             if error_on_new then
               invalidArg "Found a new (unexpected) class at datum %d" idx
             else
-              let n = List.length !assigned_cls_assoc in
-              let i = itce n in
-              assigned_cls_assoc := (c, i) :: !assigned_cls_assoc;
-              i)
+              let n = class_bound (List.length !assigned_cls_assoc + 1) in
+              assigned_cls_assoc := (c, n) :: !assigned_cls_assoc;
+              n)
         |> Array.of_list
       in
       if List.length !assigned_cls_assoc < 2 then
         invalidArg "Trying to estimate Log Reg on less than 2 classes."
       else
-        (*let fs      = Array.length (snd (List.hd data)) in *)
-        (* Fortran destination so 1 based. *)
-        let to_f a  = Vec.init (Data.size + 1) (function | 1 -> 1.0 | i -> a.(i - 2)) in
-        let ftrs    = List.map (fun (_, f) -> to_f (safe_encoding f)) data
-                      |> Array.of_list
+        let ftrs =
+          List.map (fun (_, f) -> copy1 (safe_encoding f)) data
+          |> Array.of_list
+          |> Mat.of_array
         in
-        let weights = Logistic_regression.log_reg ~lambda:spec ftrs classes in
-        { weights
-        ; classes = !assigned_cls_assoc
-        }
+        let weights = Softmax_regression.regress ~lambda:spec ftrs classes in
+        let sortedc =
+          List.sort ~cmp:(fun (_, n1) (_, n2) -> compare n1 n2)
+            !assigned_cls_assoc
+          |> List.map ~f:fst
+        in
+        to_t weights sortedc
+ 
+end
 
-  end
+module LogisticRegression(Data: Continuous_encoded_data_intf)
+  : sig
+    include Classifier_intf with type feature = Data.feature
+                            and type clas = Data.clas
+                            and type spec = float
+
+    val coefficients : t -> float array
+
+    val base_class : t -> clas
+
+  end = struct
+
+  include LrCommon(Data)
+  open Lacaml_D
+
+  type t =
+    { weights    : vec
+    ; classes    : clas list
+    }
+
+  let coefficients t = Vec.to_array t.weights
+
+  let base_class t = List.hd t.classes
+
+  let proba w x = Float.(1. / (1. + exp (dot w x)))
+
+  let eval lr feature =
+    let a = safe_encoding feature in
+    let m = Vec.of_array (copy1 a) in
+    let p = proba lr.weights m in
+    (base_class lr, p) ::
+      (List.map (fun c -> c, (1. -. p)) (List.tl lr.classes))
+
+  let estimate = estimate
+      ~method_name:"LogisticRegression"
+      ~class_bound:(Some 2)
+      ~to_t:(fun weights classes ->
+              let r1 = Mat.copy_row weights 1 in
+              let r2 = Mat.copy_row weights 2 in
+              { weights = Vec.sub r2 r1; classes})
+
+end
+
+module MulticlassLogisticRegression(Data: Continuous_encoded_data_intf)
+  : sig
+    include Classifier_intf with type feature = Data.feature
+                            and type clas = Data.clas
+                            and type spec = float
+
+    val coefficients : t -> float array array
+
+    val class_order : t -> clas list
+
+  end = struct
+
+  include LrCommon(Data)
+  open Lacaml_D
+
+  type t =
+    { weights : mat
+    ; classes : clas list
+    }
+
+  let coefficients t = Mat.to_array t.weights
+
+  let class_order t = t.classes
+
+  let eval lr feature =
+    let a   = safe_encoding feature in
+    let x_i = Vec.of_array (copy1 a) in
+    let prs = Softmax_regression.classify_v lr.weights x_i in
+    List.map2 ~f:(fun c (_, p) -> (c, p)) lr.classes prs
+
+  let estimate = estimate
+      ~method_name:"MulticlassLogisticRegression"
+      ~class_bound:None
+      ~to_t:(fun weights classes -> { weights ; classes})
+
+end
 
 module Performance = struct
   include Classification_performance

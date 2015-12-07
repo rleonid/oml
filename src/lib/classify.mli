@@ -204,7 +204,13 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
   {{!modtype:Continuous_encoded_data_intf}encoded data},
   per class.
 
-  @param spec Specifies the regularization parameter of the cost.
+  Unless specified via the [classes] argument to [estimate], the first
+  class encountered will be considered the {{!base_class}base_class}. All
+  other classes will be considered as not [base_class] and [eval] will reflect
+  that, by returning the same probability. For multi-class logistic regression
+  see {{!module:MulticlassLogisticRegression}MulticlassLogisticRegression}.
+
+  @param spec Specifies the regularization parameter of the fitting cost.
   The default value used in [estimate] is [0.0001].
 *)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
@@ -213,9 +219,33 @@ module LogisticRegression(D: Continuous_encoded_data_intf) :
                             and type feature = D.feature
                             and type clas = D.clas
 
-    (** [coefficients t] TODO: not exact:
-        the weights assigned to the log-odds of the features. *)
+    (** [coefficients t] the weights assigned to the log-odds of the features.
+
+        The first coefficient is for a constant term and therefore
+        there will always be 1 more than the [size] of features.
+    *)
     val coefficients : t -> float array
+
+    (** [base_class t] returns the class C against which the log-odds
+        are computed (and hence coefficients). *)
+    val base_class : t -> clas
+  end
+
+module MulticlassLogisticRegression(D: Continuous_encoded_data_intf) :
+  sig
+    include Classifier_intf with type spec = float
+                             and type feature = D.feature
+                             and type clas = D.clas
+
+    (** [coefficients t] the weights assigned to the log-odds of the features.
+
+        The first coefficient is for a constant term and therefore
+        there will always be 1 more than the [size] of features. *)
+    val coefficients : t -> float array array
+
+    (** [class_order t] specifies the order in which coefficients are returned. *)
+    val class_order : t -> clas list
+
   end
 
 module Performance : sig
