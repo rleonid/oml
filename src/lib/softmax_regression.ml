@@ -1,20 +1,5 @@
 open Lacaml_D
 
-let remove_column_max a =
-  let one = Vec.make (Mat.dim1 a) 1. in
-  for j = 1 to Mat.dim2 a do
-    let c = Mat.col a j in
-    let mx = Vec.max c in
-    axpy ~alpha:(-1. *. mx) one c
-  done
-
-let scale_by_col_sum a =
-  for j = 1 to Mat.dim2 a do
-    let c = Mat.col a j in
-    ignore (Vec.exp ~y:c c);
-    let s = 1. /. Vec.sum c in
-    scal s c
-  done
 
 (* Classes in y = {1,2 ... k}
    General softmax method.
@@ -35,8 +20,8 @@ let general_eval_and_grad ~lambda k x y =
       let w = reshape_2 (genarray_of_array1 w_c) k n in
       let g = reshape_2 (genarray_of_array1 g_c) k n in
       let p = gemm w ~transb:`T x in
-      remove_column_max p;
-      scale_by_col_sum p;
+      Lacaml_util.remove_column_max p;
+      Lacaml_util.scale_by_col_sum p;
       let s =
         (* one could do this entirely in Fortran by
            1. convert p to a vector -> p_v
@@ -80,6 +65,6 @@ let classify_v w x_i =
 
 let classify_m w x =
   let pr = gemm ~transb:`T w x in
-  scale_by_col_sum pr;
+  Lacaml_util.scale_by_col_sum pr;
   Mat.to_col_vecs pr
   |> Array.map to_probs

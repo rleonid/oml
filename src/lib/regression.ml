@@ -183,7 +183,7 @@ type multivariate_spec =
 module SolveLPViaSvd = struct
 
   open Lacaml.D
-  open Lacaml_stats
+  open Lacaml_util
 
   let to_lambda f g lambda_spec =
     let bestl =
@@ -349,7 +349,7 @@ module Multivariate = struct
     }
 
   open Lacaml.D
-  open Lacaml_stats
+  open Lacaml_util
   open SolveLPViaSvd
 
   let pad_design_matrix pred pad =
@@ -452,7 +452,7 @@ module Tikhonov = struct
     }
 
   open Lacaml.D
-  open Lacaml_stats
+  open Lacaml_util
   open SolveLPViaSvd
 
   let gtr_to_lambda fit_model lambda_spec =
