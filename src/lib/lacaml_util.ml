@@ -59,7 +59,7 @@ let remove_column_max a =
     axpy ~alpha:(-1. *. mx) one c
   done
 
-let scale_by_col_sum a =
+let softmax_tran_by_column a =
   for j = 1 to Mat.dim2 a do
     let c = Mat.col a j in
     ignore (Vec.exp ~y:c c);
