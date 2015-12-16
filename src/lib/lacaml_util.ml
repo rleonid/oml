@@ -67,4 +67,12 @@ let softmax_tran_by_column a =
     scal s c
   done
 
-
+let softmax_tran_rem_col_max_by_column a =
+  for j = 1 to Mat.dim2 a do
+    let c = Mat.col a j in
+    let x = Vec.max c in
+    ignore (Vec.add_const (-1. *. x) ~y:c c);
+    ignore (Vec.exp ~y:c c);
+    let s = 1. /. Vec.sum c in
+    scal s c
+  done

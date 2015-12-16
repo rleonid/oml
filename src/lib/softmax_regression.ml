@@ -102,6 +102,6 @@ let classify_v w x_i =
 
 let classify_m w x =
   let pr = gemm ~transb:`T w x in
-  Lacaml_util.softmax_tran_by_column pr;
+  Lacaml_util.softmax_tran_rem_col_max_by_column pr;
   Mat.to_col_vecs pr
   |> Array.map to_probs
