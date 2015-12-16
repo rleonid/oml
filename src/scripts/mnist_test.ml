@@ -2,6 +2,10 @@
   #require "dsfo";;
   -- or --
   ocamlbuild -use-ocamlfind -pkgs dsfo,lacaml,ocephes,lbfgs -I src/scripts/ -I src/lib/ mnist_test.native
+
+   expected results:
+   train 0.934 correct
+   test 0.926 correct
 *)
 open Lacaml.D
 
