@@ -1,13 +1,6 @@
 open Lacaml.D
 
-module DefaultEncoded = struct
-  type clas = string
-  type feature = float
-  let encoding x = [| x |]
-  let size = 1
-end
-module DefaultLr = Classify.MulticlassLogisticRegression(DefaultEncoded)
-
+(* Barebones fit against just one variable using Softmax directly. *)
 let x = Data.Default.(default |> List.map (fun (_, r) -> [| 1.; r.balance |])) |> Array.of_list |> Mat.of_array
 let y = Data.Default.(default |> List.map (fun (b,_) -> if not b then 1 else 2)) |> Array.of_list
 
@@ -30,21 +23,23 @@ let pct_correct perf =
 let describe msg perf =
   Printf.printf "%s: %0.3f correct\n" msg (pct_correct perf)
 
-let w = Softmax_regression.regress x y
-let pct =
-  Softmax_regression.classify_m w x
-  |> Array.map Classify.most_likely
-  |> Array.zip y
-  |> Array.to_list
-  |> pct_correct
-
 (* Predicting 1 (aka false, no default) the more common class *)
 let baseline =
   let n = Array.fold_left (fun c i -> if i = 1 then c + 1 else c) 0 y in
   let d = Array.length y in (* 10000 *)
   (float n) /. (float d)
 
+
+let test x y =
+  let w = Softmax_regression.regress x y in
+  Softmax_regression.classify_m w x
+  |> Array.map Classify.most_likely
+  |> Array.zip y
+  |> Array.to_list
+  |> pct_correct
+
 let () =
+  let pct = test x y in
   if pct > baseline then
     Printf.printf "meaningful! %0.3f vs %0.3f\n" pct baseline
   else
@@ -63,4 +58,24 @@ let count_sorted lst =
   in
   loop [] lst
   |> List.rev
+
+(* Now let's try a full model. *)
+let x =
+  Data.Default.(default
+                |> List.map (fun (_, r) ->
+                    [| 1.; if r.student then 1. else 0. ;r.balance; r.income |]))
+  |> Array.of_list
+  |> Mat.of_array
+let y =
+  Data.Default.(default
+                |> List.map (fun (b,_) -> if not b then 1 else 2))
+  |> Array.of_list
+
+let () =
+  let pct = test x y in
+  if pct > baseline then
+    Printf.printf "meaningful! %0.3f vs %0.3f\n" pct baseline
+  else
+    Printf.printf "fail %0.3f vs %0.3f\n" pct baseline
+
 

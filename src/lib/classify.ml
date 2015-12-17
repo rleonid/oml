@@ -381,6 +381,11 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
 
   end
 
+type log_reg_spec =
+  { lambda    : float
+  ; tolerance : float
+  }
+
 module LrCommon(Data: Continuous_encoded_data_intf) = struct
 
   open Lacaml_D
@@ -390,12 +395,14 @@ module LrCommon(Data: Continuous_encoded_data_intf) = struct
 
   type samples = (clas * feature) list
 
+  type spec = log_reg_spec
+  let default = { lambda = 1e-4
+                ; tolerance = 1e4
+                }
+
   let safe_encoding =
     to_safe_encoding_size_checked "Continuous_encoded_data_intf"
       Data.size Data.encoding
-
-  type spec = float
-  let default = 1e-4
 
   let copy1 arr = Array.init (Data.size + 1) (function | 0 -> 1. | i -> arr.(i - 1))
 
@@ -434,7 +441,12 @@ module LrCommon(Data: Continuous_encoded_data_intf) = struct
           |> Array.of_list
           |> Mat.of_array
         in
-        let weights = Softmax_regression.regress ~lambda:spec ftrs classes in
+        let weights =
+          Softmax_regression.regress
+            ~lambda:spec.lambda
+            ~tolerance:spec.tolerance
+            ftrs classes
+        in
         let sortedc =
           List.sort ~cmp:(fun (_, n1) (_, n2) -> compare n1 n2)
             !assigned_cls_assoc
@@ -448,7 +460,7 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
   : sig
     include Classifier_intf with type feature = Data.feature
                             and type clas = Data.clas
-                            and type spec = float
+                            and type spec = log_reg_spec
 
     val coefficients : t -> float array
 
@@ -491,7 +503,7 @@ module MulticlassLogisticRegression(Data: Continuous_encoded_data_intf)
   : sig
     include Classifier_intf with type feature = Data.feature
                             and type clas = Data.clas
-                            and type spec = float
+                            and type spec = log_reg_spec
 
     val coefficients : t -> float array array
 

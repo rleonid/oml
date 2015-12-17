@@ -197,6 +197,22 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
                   and type feature = D.feature
                   and type clas = D.clas
 
+(** The optional configuration of the
+    {{!module:LogisticRegression}Logistic Regression} and
+    {{!module:MulticlassLogisticRegression} Multiclass Logistic Regression} 
+    classifiers.
+*)
+type log_reg_spec =
+  { lambda  : float     (* The regularization parameter of the fitting cost.
+                           The default value is [0.0001]. *)
+  ; tolerance : float   (* The accuracy tolerance of the underlying L-BFGS
+                           convergence algorithm. Convergence stops once
+                           successive evaluations of cost function (scaled)
+                           are less than [tolerance * epsilon_float].
+                           [1e4] is used by default.
+                           See the {Lbfgs.F.min} method for details. *)
+  }
+
 (** Use
   {{:https://en.wikipedia.org/wiki/Logistic_regression}
   Logistic Regression} to estimate log-odds
@@ -210,12 +226,12 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
   that, by returning the same probability. For multi-class logistic regression
   see {{!module:MulticlassLogisticRegression}MulticlassLogisticRegression}.
 
-  @param spec Specifies the regularization parameter of the fitting cost.
-  The default value used in [estimate] is [0.0001].
+  A constant [1] is added to all encoded features by [estimate],
+  there is no need to add one with {{!moduletype:Continuous_encoded_data_intf.encode}encode}.
 *)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
   sig
-    include Classifier_intf with type spec = float
+    include Classifier_intf with type spec = log_reg_spec
                             and type feature = D.feature
                             and type clas = D.clas
 
@@ -231,9 +247,19 @@ module LogisticRegression(D: Continuous_encoded_data_intf) :
     val base_class : t -> clas
   end
 
+(** Use
+  {{:https://en.wikipedia.org/wiki/Multinomial_logistic_regression}
+  Multiple Class Logistic Regression} to estimate log-odds
+  for each of the quantitative features in the
+  {{!modtype:Continuous_encoded_data_intf}encoded data},
+  per class.
+
+  A constant [1] is added to all encoded features by [estimate],
+  there is no need to add one with {{!moduletype:Continuous_encoded_data_intf.encode}encode}.
+*)
 module MulticlassLogisticRegression(D: Continuous_encoded_data_intf) :
   sig
-    include Classifier_intf with type spec = float
+    include Classifier_intf with type spec = log_reg_spec
                              and type feature = D.feature
                              and type clas = D.clas
 

@@ -40,8 +40,8 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
             |> fun s -> nmf *. s +. ld2 *. Vec.sqr_nrm2 w_c
         in
         let d =
-          Array.init m (fun j ->
-              let j = j + 1 in
+          Array.init m (fun i ->
+              let j = i + 1 in
               let c = Mat.col p j in
               let f = Vec.add_const (-1. *. logd.{j}) c |> Vec.exp in
               Vec.sub (Mat.col ind j) f)
@@ -82,13 +82,16 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
         s
     end
 
-let regress ?p ?(lambda=1e-4) ?(newmethod=true) x y =
+let regress ?(tolerance=1e5) ?(lambda=1e-4) ?(newmethod=true) x y =
   let k = Array.fold_left max 1 y in
   let n = Mat.dim2 x in
   let w = Vec.random (n * k) in
-  let () = match p with | None -> () | Some s -> scal s w in
-  ignore(Lbfgs.(F.min (*~print:(Every 10*)
-                    (general_eval_and_grad ~newmethod ~lambda k x y) w));
+  let f = general_eval_and_grad ~newmethod ~lambda k x y in
+  ignore(Lbfgs.(F.min
+                  (*~print:(Every 10*)
+                  ~factr:tolerance
+                  f
+                  w));
   Bigarray.(reshape_2 (genarray_of_array1 w) k n)
 
 let to_probs v =
