@@ -39,7 +39,15 @@ let to_samples data =
   |> Array.to_list
 
 let s_train = to_samples m_train
-let mnist_lr = MnistLr.estimate s_train
+
+let tolerance =
+  if not (!Sys.interactive) && Array.length Sys.argv = 2 then
+    float_of_string Sys.argv.(1)
+  else
+    1e7
+
+let mnist_spec = {MnistLr.default with Classify.tolerance = tolerance}
+let mnist_lr = MnistLr.estimate ~spec:mnist_spec s_train
 
 let perf =
   s_train
@@ -60,5 +68,4 @@ let total_test = List.length perf_test
 let () =
   Printf.printf "test %0.3f correct\n"
     ((float correct_test) /. (float total_test))
-
 
