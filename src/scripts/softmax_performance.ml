@@ -1,4 +1,5 @@
-(* To build exec
+(*
+To build exec
 ocamlbuild -use-ocamlfind -pkgs lacaml,ocephes,lbfgs -I src/scripts/ -I src/lib/ -I src/lib/datasets softmax_performance.native
 *)
 
@@ -44,6 +45,8 @@ let y =
 let k = 2
 let training_width = 4
 
+(* Introduce a 'newmethod' flag to this method to compare performance.
+   As of 2015-12-08 this flag has been removed. *)
 let gren = Softmax_regression.general_eval_and_grad ~newmethod:true ~lambda:0.0 k x y
 let greo = Softmax_regression.general_eval_and_grad ~newmethod:false ~lambda:0.0 k x y
 
