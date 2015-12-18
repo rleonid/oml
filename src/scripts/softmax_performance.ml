@@ -1,9 +1,5 @@
-
-(*
-  #require "dsfo"
-  -- or --
-  ocamlbuild -use-ocamlfind -pkgs dsfo,lacaml,ocephes,lbfgs -I src/scripts/ -I src/lib/ softmax_performance.native
-
+(* To build exec
+ocamlbuild -use-ocamlfind -pkgs lacaml,ocephes,lbfgs -I src/scripts/ -I src/lib/ -I src/lib/datasets softmax_performance.native
 *)
 
 open Lacaml.D
@@ -16,6 +12,10 @@ let time s f =
   r
 
 (* Use Mnist
+   if in repl
+   #require "dsfo"
+   if building
+    ocamlbuild -use-ocamlfind -pkgs dsfo
 let m_train = Mnist.data ~dir:"../dsfo" `Train
 
 let training_width = 28 * 28
@@ -28,8 +28,7 @@ let y =
     loop 1
   in
   Array.init (Mat.dim2 m_train) (fun i -> let j = i + 1 in find_index (Mat.col m_train j))
-
-   *)
+*)
 
 (* Use Default *)
 let x =
@@ -45,7 +44,6 @@ let y =
 let k = 2
 let training_width = 4
 
-
 let gren = Softmax_regression.general_eval_and_grad ~newmethod:true ~lambda:0.0 k x y
 let greo = Softmax_regression.general_eval_and_grad ~newmethod:false ~lambda:0.0 k x y
 
@@ -58,7 +56,7 @@ let test n =
   ores, nres
 
 let compare (ores, nres) =
-  Array.zip ores nres |> Array.all (fun (o, n) -> equal_floats ~d:1e-3 o n)
+  Array.zip ores nres |> Array.all (fun (o, n) -> equal_floats ~d:1e-5 o n)
 
 let () =
   if not (!Sys.interactive) then begin
