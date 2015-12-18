@@ -29,11 +29,11 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
           Vec.init m (fun j ->
             let c = Mat.col p j in
             let x = Vec.max c in
-            Vec.add_const (-1. *. x) c      (* log-sum-exp 'trick' *)
-            |> Vec.exp
-            |> Vec.sum
-            |> log
-            |> (+.) x)
+            let rec loop i a =
+              if i > k then log a +. x
+              else loop (i + 1) (a +. exp (c.{i} -. x))
+            in
+            loop 1 0.)
         in
         let s =
           r := 0.;
@@ -66,7 +66,8 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
         let g = reshape_2 (genarray_of_array1 g_c) k n in
         let p = gemm w ~transb:`T x in
         let logd =
-          (* TODO: pre-allocate work space *)
+          (* Weirdly, pre-allocating a work space for the 'add_const' and 'exp'
+             below doesn't improve performance. *)
           Vec.init m (fun j ->
             let c = Mat.col p j in
             let x = Vec.max c in
@@ -86,51 +87,20 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
           nmf *. !r +. ld2 *. Vec.sqr_nrm2 w_c
         in
         let d =
-          Array.init m (fun i ->
-              let j = i + 1 in
-              let c = Mat.col p j in
-              let f = Vec.add_const (-1. *. logd.{j}) c |> Vec.exp in
-              Vec.sub (Mat.col ind j) f)
-          |> Mat.of_col_vecs
-
+          let pv = reshape_1 (genarray_of_array2 p) vs in
+          let dv = Vec.make0 vs in
+          for i = 1 to n do
+            (* Subtract the logd from each column element *)
+            ignore (Vec.sub ~z:dv ~incz:n ~ofsz:i ~incx:n ~ofsx:i pv logd)
+          done;
+          ignore (Vec.exp ~y:dv dv);  (* overwrites *)
+          let indv = reshape_1 (genarray_of_array2 ind) vs in
+          reshape_2 (genarray_of_array1 (Vec.sub indv dv)) k m;
         in
         ignore (lacpy ~b:g w);
         ignore (gemm ~c:g ~beta:lambda ~alpha:nmf d x);
         s
     end
-
-(*
-      begin fun w_c (g_c : Lacaml_float64.vec) ->
-        (* unroll w and g *)
-        let w = reshape_2 (genarray_of_array1 w_c) k n in
-        let g = reshape_2 (genarray_of_array1 g_c) k n in
-        let p = gemm w ~transb:`T x in
-        Lacaml_util.remove_column_max p;
-        Lacaml_util.softmax_tran_by_column p;
-        let s =
-          (* one could do this entirely in "Fortran" by
-            1. convert p to a vector -> p_v
-            2. Vec.log of p_v
-            3. convert ind to a vector -> ind_v
-            4. Vec.add p_v ind_v *)
-          Array.fold_left (fun (s, j) i ->
-              let v = (Mat.col p j).{i} in
-              s +. log (max min_float v), j + 1)
-            (0.,1) y
-          |> fst
-          |> fun s -> nmf *. s +. ld2 *. Vec.sqr_nrm2 w_c
-        in
-        let d =
-          Array.init m (fun j ->
-              let j = j + 1 in
-              Vec.sub (Mat.col ind j) (Mat.col p j))
-          |> Mat.of_col_vecs
-        in
-        ignore (lacpy ~b:g w);
-        ignore (gemm ~c:g ~beta:lambda ~alpha:nmf d x);
-        s
-    end
-   *)
 
 let regress ?(tolerance=1e5) ?(lambda=1e-4) ?(newmethod=true) x y =
   let k = Array.fold_left max 1 y in
