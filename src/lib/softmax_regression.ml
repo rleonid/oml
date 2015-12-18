@@ -14,8 +14,53 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
     let nmf = -1. /. float m in
     let ld2 = lambda /. 2. in
     let ind = Mat.init_cols k m (fun r c -> if r = y.(c-1) then 1. else 0.) in
+    let r   = ref 0. in
+    let vs  = k * m in
     if newmethod then
-      begin fun w_c (g_c : Lacaml_float64.vec) ->
+      begin
+        fun w_c (g_c : Lacaml_float64.vec) ->
+        (* unroll w and g *)
+        let w = reshape_2 (genarray_of_array1 w_c) k n in
+        let g = reshape_2 (genarray_of_array1 g_c) k n in
+        let p = gemm w ~transb:`T x in
+        let logd =
+          (* Weirdly, pre-allocating a work space for the 'add_const' and 'exp'
+             below doesn't improve performance. *)
+          Vec.init m (fun j ->
+            let c = Mat.col p j in
+            let x = Vec.max c in
+            Vec.add_const (-1. *. x) c      (* log-sum-exp 'trick' *)
+            |> Vec.exp
+            |> Vec.sum
+            |> log
+            |> (+.) x)
+        in
+        let s =
+          r := 0.;
+          for j = 1 to m do
+            let c = Mat.col p j in
+            (* only for the y.(i) element is the indicator true *)
+            r := !r +. c.{y.(j-1)} -. logd.{j}
+          done;
+          nmf *. !r +. ld2 *. Vec.sqr_nrm2 w_c
+        in
+        let d =
+          let pv = reshape_1 (genarray_of_array2 p) vs in
+          let dv = Vec.make0 vs in
+          for i = 1 to n do
+            (* Subtract the logd from each column element *)
+            ignore (Vec.sub ~z:dv ~incz:n ~ofsz:i ~incx:n ~ofsx:i pv logd)
+          done;
+          ignore (Vec.exp ~y:dv dv);  (* overwrites *)
+          let indv = reshape_1 (genarray_of_array2 ind) vs in
+          reshape_2 (genarray_of_array1 (Vec.sub indv dv)) k m;
+        in
+        ignore (lacpy ~b:g w);
+        ignore (gemm ~c:g ~beta:lambda ~alpha:nmf d x);
+        s
+    end else
+      begin
+        fun w_c (g_c : Lacaml_float64.vec) ->
         (* unroll w and g *)
         let w = reshape_2 (genarray_of_array1 w_c) k n in
         let g = reshape_2 (genarray_of_array1 g_c) k n in
@@ -32,12 +77,13 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
             |> (+.) x)
         in
         let s =
-          Array.fold_left (fun (s,j) i ->
+          r := 0.;
+          for j = 1 to m do
             let c = Mat.col p j in
-            s +. c.{i} -. logd.{j}, j + 1)
-            (0.,1) y
-            |> fst
-            |> fun s -> nmf *. s +. ld2 *. Vec.sqr_nrm2 w_c
+            (* only for the y.(i) element is the indicator true *)
+            r := !r +. c.{y.(j-1)} -. logd.{j}
+          done;
+          nmf *. !r +. ld2 *. Vec.sqr_nrm2 w_c
         in
         let d =
           Array.init m (fun i ->
@@ -46,11 +92,14 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
               let f = Vec.add_const (-1. *. logd.{j}) c |> Vec.exp in
               Vec.sub (Mat.col ind j) f)
           |> Mat.of_col_vecs
+
         in
         ignore (lacpy ~b:g w);
         ignore (gemm ~c:g ~beta:lambda ~alpha:nmf d x);
         s
-    end else
+    end
+
+(*
       begin fun w_c (g_c : Lacaml_float64.vec) ->
         (* unroll w and g *)
         let w = reshape_2 (genarray_of_array1 w_c) k n in
@@ -81,6 +130,7 @@ let general_eval_and_grad ~newmethod ~lambda k x y =
         ignore (gemm ~c:g ~beta:lambda ~alpha:nmf d x);
         s
     end
+   *)
 
 let regress ?(tolerance=1e5) ?(lambda=1e-4) ?(newmethod=true) x y =
   let k = Array.fold_left max 1 y in
