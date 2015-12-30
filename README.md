@@ -16,7 +16,7 @@ The API is available [online](http://hammerlab.github.io/oml/doc/index.html).
   2. Have a descriptive, simple, and typed approach to those algorithms.
       - _descriptive_: what a function does should be easy to understand from
         the type and name.
-      - _simple_: don't worry about the corner cases of the alogrithms, until
+      - _simple_: don't worry about the corner cases of the algorithms, until
         you have to.
       - __typed__: obviously.
   3. Well tested. There are a subtle dependency between `float` capabilities
