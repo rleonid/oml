@@ -34,8 +34,6 @@ module type Data_intf = sig
   type feature    (** Features that describe elements of a class.*)
 end
 
-(** TODO Encoding data. *)
-
 (** Data where features are encoded using
     {{:https://en.wikipedia.org/wiki/Dummy_variable_%28statistics%29}Dummy Variables}
     (aka {{:https://en.wikipedia.org/wiki/One-hot}one-hot encoding}).
@@ -199,38 +197,108 @@ module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
                   and type feature = D.feature
                   and type clas = D.clas
 
+(** The optional configuration of the
+    {{!module:LogisticRegression}Logistic Regression} and
+    {{!module:MulticlassLogisticRegression} Multiclass Logistic Regression} 
+    classifiers.
+*)
+type log_reg_spec =
+  { lambda  : float     (* The regularization parameter of the fitting cost.
+                           The default value is [0.0001]. *)
+  ; tolerance : float   (* The accuracy tolerance of the underlying L-BFGS
+                           convergence algorithm. Convergence stops once
+                           successive evaluations of cost function (scaled)
+                           are less than [tolerance * epsilon_float].
+                           [1e4] is used by default.
+                           See the {Lbfgs.F.min} method for details. *)
+  }
+
 (** Use
   {{:https://en.wikipedia.org/wiki/Logistic_regression}
   Logistic Regression} to estimate log-odds
   for each of the quantitative features in the
   {{!modtype:Continuous_encoded_data_intf}encoded data},
-  per class*)
+  per class.
+
+  Unless specified via the [classes] argument to [estimate], the first
+  class encountered will be considered the {{!base_class}base_class}. All
+  other classes will be considered as not [base_class] and [eval] will reflect
+  that, by returning the same probability. For multi-class logistic regression
+  see {{!module:MulticlassLogisticRegression}MulticlassLogisticRegression}.
+
+  A constant [1] is added to all encoded features by [estimate],
+  there is no need to add one with {{!moduletype:Continuous_encoded_data_intf.encode}encode}.
+*)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
-  Classifier_intf with type spec = unit
-                  and type feature = D.feature
-                  and type clas = D.clas
+  sig
+    include Classifier_intf with type spec = log_reg_spec
+                            and type feature = D.feature
+                            and type clas = D.clas
 
-(** A two class prediction. *)
-type binary =
-  { predicted   : bool
-  ; probability : float   (* Probability of the _predicted_ class. *)
-  ; actual      : bool
-  }
+    (** [coefficients t] the weights assigned to the log-odds of the features.
 
-(** Common statistics that describe performance of a two state classifier. *)
-type descriptive_statistics =
-  { sensitivity         : float
-  ; specificity         : float
-  ; positive_predictive : float
-  ; negative_predictive : float
-  ; accuracy            : float
-  ; area_under_curve    : float   (* Area under ROC. *)
-  }
+        The first coefficient is for a constant term and therefore
+        there will always be 1 more than the [size] of features.
+    *)
+    val coefficients : t -> float array
 
-(* For a classifier that returns associated probabilities,
-   describe it's performance. *)
-val evaluate_performance : binary list -> descriptive_statistics
+    (** [base_class t] returns the class C against which the log-odds
+        are computed (and hence coefficients). *)
+    val base_class : t -> clas
+  end
 
-(* For a list of false positive rates and true positive rates, estimate the
-   AUC by trapezoid integration. End points are added by default. *)
-val cross_validated_auc : (float * float) array -> float
+(** Use
+  {{:https://en.wikipedia.org/wiki/Multinomial_logistic_regression}
+  Multiple Class Logistic Regression} to estimate log-odds
+  for each of the quantitative features in the
+  {{!modtype:Continuous_encoded_data_intf}encoded data},
+  per class.
+
+  A constant [1] is added to all encoded features by [estimate],
+  there is no need to add one with {{!moduletype:Continuous_encoded_data_intf.encode}encode}.
+*)
+module MulticlassLogisticRegression(D: Continuous_encoded_data_intf) :
+  sig
+    include Classifier_intf with type spec = log_reg_spec
+                             and type feature = D.feature
+                             and type clas = D.clas
+
+    (** [coefficients t] the weights assigned to the log-odds of the features.
+
+        The first coefficient is for a constant term and therefore
+        there will always be 1 more than the [size] of features. *)
+    val coefficients : t -> float array array
+
+    (** [class_order t] specifies the order in which coefficients are returned. *)
+    val class_order : t -> clas list
+
+  end
+
+module Performance : sig
+
+  (** A two class prediction. *)
+  type binary =
+    { predicted   : bool
+    ; probability : float   (* Probability of the _predicted_ class. *)
+    ; actual      : bool
+    }
+
+  (** Common statistics that describe performance of a two state classifier. *)
+  type descriptive_statistics =
+    { sensitivity         : float
+    ; specificity         : float
+    ; positive_predictive : float
+    ; negative_predictive : float
+    ; accuracy            : float
+    ; area_under_curve    : float   (* Area under ROC. *)
+    }
+
+  (* For a classifier that returns associated probabilities,
+    describe it's performance. *)
+  val evaluate_performance : binary list -> descriptive_statistics
+
+  (* For a list of false positive rates and true positive rates, estimate the
+    AUC by trapezoid integration. End points are added by default. *)
+  val cross_validated_auc : (float * float) array -> float
+
+end

@@ -17,7 +17,7 @@
 
 open Lacaml.D
 
-open Lacaml_stats
+open Lacaml_util
 
 type t = { variances   : vec
          ; components  : mat
