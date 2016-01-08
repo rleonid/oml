@@ -23,10 +23,10 @@ oml.cmxa:
 
 build: oml.cmxa
 
-joiner.native:
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -package str -I tools joiner.native
+#joiner.native:
+#	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -package str -I tools joiner.native
 
-driver.test: joiner.native
+driver.test:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
@@ -34,7 +34,7 @@ driver.test: joiner.native
 test: driver.test
 	time ./driver.test ${TEST}
 
-covered_driver.test: joiner.native
+covered_driver.test:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
@@ -42,7 +42,7 @@ covered_driver.test: joiner.native
 covered_test: covered_driver.test
 	time ./driver.test ${TEST}
 
-test_environment: joiner.native
+test_environment:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib -I src/test oml.cma driver.test
