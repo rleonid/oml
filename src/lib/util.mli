@@ -57,10 +57,11 @@ module Array : sig
       @raise Invalid_argument if the lengths are unequal. *)
   val map2 : ('a -> 'b -> 'c) -> 'a array -> 'b array -> 'c array
 
-  (** [Array.sumf a] computes [a.(0) +. a.(1) +. ... a.(n-1)]. *)
+  (** [Array.sumf a] computes the sum of the elements of [a] using
+      {{:https://en.wikipedia.org/wiki/Kahan_summation_algorithm}Kahan summation algorithm}. *)
   val sumf : float array -> float
 
-  (** [Array.prodf a] computes [a.(0) *. a.(1) *. ... a.(n-1)]. *)
+  (** [Array.prodf a] computes [a.(0) *. a.(1) *. ... a.(n-1)], naively. *)
   val prodf : float array -> float
 
   (** [Array.max a] computes [max a.(0) (max a.(1)  ... (max a.(n-2) a.(n-1)))].

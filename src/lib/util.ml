@@ -51,8 +51,16 @@ module Array = struct
     else
       Array.mapi (fun i a_i -> f a_i b.(i)) a
 
-  (* TODO: On the subject of heurisitcs, see Kahan's summation algorithm. *)
-  let sumf = Array.fold_left (+.) 0.0
+  let sumf a =
+    let c = ref 0. in
+    let s = ref 0. in
+    for i = 0 to Array.length a - 1 do
+      let x = a.(i) -. !c in
+      let ns = !s +. x in
+      c := (ns -. !s) -. x;
+      s := ns;
+    done;
+    !s
 
   (* TODO: Are there heuristics to consider when arrays are large? or elements
     in the array are particulary large/small. log transforms?
