@@ -154,4 +154,37 @@ let () =
           ; (not equal_arrays) ==> is_exception is_invalid_arg
           ]);
 
+  add_random_test
+    ~title:"permutes preserve elements"
+    Gen.(fixed_length_array 10 int)
+    (fun arr ->
+       let p = permute arr in
+       sort compare p;
+       sort compare arr;
+       arr = p)
+    Spec.([just_postcond_pred is_true]);
+
+  (* The idea behind this test is that with Kahan's compensation summation,
+     the order in which we add values should matter less than the naive
+     version. *)
+  let permutations = 10 in
+  let module Fs = Set.Make(struct type t = float let compare = compare end) in
+  add_random_test
+    ~title:"sumf is better than default"
+    Gen.(fixed_length_array 25 (bfloat 1e15))
+    (fun arr ->
+       let copy = false in
+       let nsum = Array.fold_left (+.) 0. in
+       let vals = Array.init permutations (fun _ ->
+           let sum_me = permute ~copy arr in
+           nsum sum_me, sumf sum_me)
+       in
+       let naive_sums, kahan_sums = Array.unzip vals in
+       let make_set   = Array.fold_left (fun s e -> Fs.add e s) Fs.empty in
+       let uniq_naive = make_set naive_sums |> Fs.cardinal in
+       let uniq_kahan = make_set kahan_sums |> Fs.cardinal in
+       (*Printf.printf "naive %d \t kahan %d \n" uniq_naive uniq_kahan; *)
+       uniq_kahan <= uniq_naive)
+    Spec.([just_postcond_pred is_true]);
+
   ()
