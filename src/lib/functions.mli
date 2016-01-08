@@ -22,12 +22,16 @@
   the {{:https://github.com/rleonid/ocephes}Ocephes} library.
  *)
 
+(** {2 Standard error functions.} *)
+
 (** [erf x] computes the (Gauss) error function,
   (2/sqrt(pi) * \int_0^x e^-t^2 dt) *)
 val erf : float -> float
 
 (** [erfc x] computes [1.0 - erfc x].*)
 val erfc : float -> float
+
+(** {2 Gamma functions.} *)
 
 (** [gamma x] computes the gamma function of [x]. For positive integers
     [gamma x] approximates [(x - 1)!]. *)
@@ -47,6 +51,8 @@ val regularized_lower_gamma : a:float -> float -> float
     [gamma a]) incomplete upper (integral from [x] to [infinity]) function. *)
 val regularized_upper_gamma : a:float -> float -> float
 
+(** {2 Beta functions.} *)
+
 (** [beta x y] computes the beta function of [x] and [y], this function is also
     known as the Euler integral of the first kind and is useful in defining
     various distributions. *)
@@ -61,6 +67,15 @@ val ln_beta : float -> float -> float
     by [alpha] and [beta]. *)
 val regularized_beta : alpha:float -> beta:float -> ?epsilon:float ->
   ?max_iterations:int -> float -> float
+
+(** [multivariate_beta arr] computes the multivariate_beta function [arr], this
+    function is also known as the Euler integral of the first kind and is useful
+    in defining various distributions. *)
+val multivariate_beta : float array -> float
+
+(** [ln_multivariate_beta x y]  computes [log (multivariate_beta x y)],
+    for better accuracy.*)
+val ln_multivariate_beta : float array -> float
 
 (** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
     on [temperature].
@@ -79,8 +94,6 @@ val chi_square_less : int -> float -> float
     greather than [x] in a Chi-square distribution with [k] degrees of
     freedom.*)
 val chi_square_greater : int -> float -> float
-
-(*val t_lookup : float -> int -> float *)
 
 (** [normal_cdf_inv x] returns the value [y] such that the integral of the
     normal cdf is [x]. *)

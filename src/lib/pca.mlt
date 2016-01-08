@@ -19,7 +19,7 @@ open Util
 open Test_utils
 
 let () =
-  let matrix_size = 1000 in
+  let matrix_size = 100 in
   let float_matrix =
     Gen.(matrix (make_int 2 matrix_size) (make_int 2 matrix_size) (bfloat 1e8))
   in

@@ -31,7 +31,13 @@ let regularized_upper_gamma = Ocephes.igamc
 
 let ln_beta x y = ln_gamma x +. ln_gamma y -. ln_gamma (x +. y)
 
+let ln_multivariate_beta arr =
+  (Array.sumf (Array.map ln_gamma arr)) -.
+  ln_gamma (Array.sumf arr)
+
 let beta x y = exp (ln_beta x y)
+
+let multivariate_beta arr = exp (ln_multivariate_beta arr)
 
 let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
   let get_b n x =
