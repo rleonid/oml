@@ -154,4 +154,14 @@ let () =
           ; (not equal_arrays) ==> is_exception is_invalid_arg
           ]);
 
+  add_random_test
+    ~title:"permutes preserve elements"
+    Gen.(fixed_length_array 10 int)
+    (fun arr ->
+       let p = permute arr in
+       sort compare p;
+       sort compare arr;
+       arr = p)
+    Spec.([just_postcond_pred is_true]);
+
   ()

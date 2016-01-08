@@ -116,15 +116,20 @@ module Array : sig
   val ranks : ?start:int -> ?average_ties:bool -> ?compare:(float -> float -> int)
               -> float array -> float array
 
-  (** [zip x y] construct an array that stores the elements of x and y as a tuple.
+  (** [zip x y] construct an array that stores the elements of x and y as a
+      tuple.
 
-    @raise Invalid_argument if the arrays of unequal length.
-  *)
+      @raise Invalid_argument if the arrays of unequal length. *)
   val zip : 'a array -> 'b array -> ('a * 'b) array
 
   (** [unzip arr] split an array of tuples into an array of the first value and
       an array of the second. *)
   val unzip : ('a * 'b) array -> ('a array * 'b array)
+
+  (** [permute arr] will permute a copy of [arr].
+
+      @param ~copy can be set to false to perform the permutation in place. *)
+  val permute : ?copy:bool -> 'a array -> 'a array
 
 end (* Array *)
 

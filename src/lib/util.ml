@@ -136,6 +136,16 @@ module Array = struct
 
   let unzip arr = Array.map fst arr, Array.map snd arr
 
+  let permute ?(copy=true) arr =
+    let a = if copy then Array.copy arr else arr in
+    for n = Array.length a - 1 downto 1 do
+      let k = Random.int (n + 1) in
+      let temp = a.(n) in
+      a.(n) <- a.(k);
+      a.(k) <- temp
+    done;
+    a
+
 end (* Array *)
 
 let midpoint x y = (x +. y) /. 2.0
