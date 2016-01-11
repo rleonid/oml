@@ -32,15 +32,19 @@ val s : t -> Vectors.t
 val vt : t -> Matrices.t
 
 (** [svd m] separate [m] into its singular value decomposition.
-  [mat] is destroyed in the process. *)
-val svd : mat -> t
+    [mat] is destroyed in the process, unless copy is set to true. *)
+val svd : ?copy:bool -> mat -> t
 
 (** [solve_linear a b] solve for [x] in [a x = b] using principal components
     regression, when [a] is the Singular Value Decomposition. *)
 val solve_linear : ?lambda:float -> t -> vec -> vec
 
-(** [covariance_matrix a b] computes the covariance matrix [A * A^t]. *)
-val covariance_matrix : ?lambda:float -> t -> mat
+(** [covariance_matrix_inv t] if [t] is the SVD transform of matrix [A],
+    computes the inverse of the covariance matrix: [A^t * A]^-1.
+  
+    @param [lambda] is an optional [lambda] is an optional value used to scale
+    the singular value inverses ala [solve_linear]. *)
+val covariance_matrix_inv : ?lambda:float -> t -> mat
 
 (** [looe t y] returns a function to efficiently computes the Leave-One-Out-Error
     vector, for computing the optimal regularization parameter. *)

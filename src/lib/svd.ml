@@ -26,10 +26,10 @@ let u t = Mat.to_array t.u
 let s t = Vec.to_array t.s
 let vt t = Mat.to_array t.vt
 
-(* Destroys [mat] !!!!! *)
-let svd mat =
+(* Destroys [mat] unless copy is set to true *)
+let svd ?(copy=false) mat =
   (* `S returns just the desired components, to avoid further copying. *)
-  let s, u, vt = gesvd ~jobu:`S ~jobvt:`S mat in
+  let s, u, vt = gesvd ~jobu:`S ~jobvt:`S (if copy then lacpy mat else mat) in
   { u; s; vt }
 
 let s_inv t = function
@@ -44,7 +44,7 @@ let solve_linear ?lambda t b =
   |> gemv s_mat
   |> gemv ~trans:`T t.vt
 
-let covariance_matrix ?lambda t =
+let covariance_matrix_inv ?lambda t =
   let s_inv = s_inv t lambda in
   gemm (Mat.of_diag (Vec.sqr s_inv)) t.vt
   |> gemm ~transa:`T t.vt
