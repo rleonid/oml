@@ -23,8 +23,10 @@ build: oml.cmxa
 joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
-test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test && \
+driver.test: joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test
+
+test: driver.test
 	time ./driver.test ${TEST}
 
 covered_test: joiner.native
