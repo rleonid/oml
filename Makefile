@@ -5,7 +5,7 @@ PACKAGES_TEST=$(PACKAGES) kaputt
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx.fast
 PACKAGES_INSTALL=$(PACKAGES_TEST) bisect_ppx
 
-.PHONY: all clean build install uninstall setup default
+.PHONY: all clean test build install uninstall setup default
 
 default: build
 
@@ -23,8 +23,10 @@ build: oml.cmxa
 joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
-test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test && \
+driver.test: joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test
+
+test: driver.test
 	time ./driver.test ${TEST}
 
 covered_test: joiner.native
