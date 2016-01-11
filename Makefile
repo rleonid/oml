@@ -5,7 +5,7 @@ PACKAGES_TEST=$(PACKAGES) kaputt
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx.fast
 PACKAGES_INSTALL=$(PACKAGES_TEST) bisect_ppx
 
-.PHONY: all clean build install uninstall setup default
+.PHONY: all clean test build install uninstall setup default
 
 default: build
 
