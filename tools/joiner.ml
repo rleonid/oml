@@ -80,15 +80,15 @@ let () =
           let source_chan = open_in source_file in
           let first_line  = input_line source_chan in
           let join_guard  = joined_header ~source_file ~test_file in
-          let temp_name, temp_chan = Filename.open_temp_file "joiner" ".ml" in
+          let temp_name = source_file ^ ".tmp" in
           if starts_with join_guard first_line then
             begin
               close_in_noerr source_chan;
-              close_out_noerr temp_chan;
               call args
             end
           else
             begin
+              let temp_chan = open_out temp_name in
               output_string temp_chan (join_guard ^ first_line);
               output_char temp_chan '\n';
               copy source_chan temp_chan;
