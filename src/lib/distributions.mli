@@ -65,16 +65,16 @@ val beta_cdf : alpha:float -> beta:float -> float -> float
     [x] in a Chi-square distribution with [k] degrees of freedom.*)
 val chi_square_cdf : k:int -> float -> float
 
-(** [student_pdf k x] computes the value of the Student T's distribution with
-    [k] degrees of freedom at [x].*)
-val student_pdf : k:int -> float -> float
+(** [student_pdf degrees_of_freedom x] computes the value of the Student T's
+    distribution with [degrees_of_freedom] at [x].*)
+val student_pdf : degrees_of_freedom:int -> float -> float
 
-(** [student_cdf k x] computest the probability that the Student T's
-    distrubtion with [k] degrees of freedom takes a value less than [x].*)
-val student_cdf : k:int -> float -> float
+(** [student_cdf degrees_of_freedom x] computest the probability that the Student T's
+    distrubtion with [degrees_of_freedom] takes a value less than [x].*)
+val student_cdf : degrees_of_freedom:int -> float -> float
 
-(** [student_quantile k p] computes [x] such that
-    [student_cdf k x = p].
+(** [student_quantile degrees_of_freedom p] computes [x] such that
+    [student_cdf degrees_of_freedom x = p].
 
     @raise Invalid_argument if [p] is outside [0,1]. *)
-val student_quantile : k:int -> float -> float
+val student_quantile : degrees_of_freedom:int -> float -> float

@@ -15,8 +15,6 @@
    limitations under the License.
 *)
 
-open Util
-
 (** Construct linear models that describe (and learn from) data.*)
 
 (** The interface of the model constructed by a Regression procedure. *)

@@ -15,13 +15,10 @@
    limitations under the License.
 *)
 
-open Util
-
 (* - The h estimation logic comes from
    http://en.wikipedia.org/wiki/Numerical_differentiation.
    - The trick to create dx2 tries to ensure that dx2 is always a numerically
-     representable number, x_i will be rounded to nearest number.
-   *)
+     representable number, x_i will be rounded to nearest number.  *)
 let secant, second_order =
   let h x = (max 1.0 (abs_float x)) *. sqrt Util.dx in
   (fun f x ->

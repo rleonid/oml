@@ -190,10 +190,10 @@ let histogram width_setting arr =
                          let width  = (mx -. mn) /. (float n) in
                          custom_h ~mx ~mn ~width arr
 
-let geometric_mean_definitional arr =
+(*let geometric_mean_definitional arr =
   let n = float (Array.length arr) in
   let p = Array.prodf arr in
-  p ** (1.0 /. n)
+  p ** (1.0 /. n) *)
 
 let geometric_mean arr =
   (* TODO: Determine a heuristic for when to do use the simpler method.*)

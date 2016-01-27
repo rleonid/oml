@@ -1,3 +1,9 @@
-true: annot, bin_annot, principal
+# warnings that are disabled:
+# 42 : Disambiguated constructor or label name.
+# 44 : Open statement shadows an already defined identifier.
+# 48 : implicit elimination of optional arguments (ex. ?n, ?c, ?ofsx, ?incx)
+# 50 : ambiguous documentation comment.
+# I'd like to get rid of 42,44 and 50
+true: annot, bin_annot, principal, warn(A-42-44-48-50), warn_error(A-42-44-48-50)
 <src/lib/*.cmx> and not <src/lib/oml.cm*> : for-pack(Oml)
 <src/lib/datasets/*.cmx> and not <src/lib/datasets/data.cm*> : for-pack(Data)

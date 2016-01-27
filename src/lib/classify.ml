@@ -172,7 +172,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
       else
         prod_arr (fun i -> class_probs.(i)) idx
     in
-    eval_naive_bayes to_prior to_likelihood nb.table
+    eval_naive_bayes ~to_prior ~to_likelihood nb.table
 
   type spec = binomial_spec
   let default = { smoothing = 0.0; bernoulli = false }
@@ -181,7 +181,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
 
   let estimate ?(spec=default) ?classes data =
     let aa = Data.size + 1 in
-    let init cls = Array.make aa 0 in
+    let init _cls = Array.make aa 0 in
     let update arr ftr =
       let en = safe_encoding ftr in
       Array.iter (fun i -> arr.(i) <- arr.(i) + 1) en;
@@ -216,13 +216,13 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
 
 end
 
-let assoc_opt ~default f lst =
+(*let assoc_opt ~default f lst =
   try
     let g = List.assoc f lst in
     let r = List.remove_assoc f lst in
     g, r
   with Not_found ->
-    default (), lst
+    default (), lst *)
 
 module type Category_encoded_data_intf = sig
   include Data_intf
@@ -272,7 +272,7 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
       let indices = safe_encoding feature in
       prod_arr2 (fun i lk_arr -> lk_arr.(i)) indices ftr_prob
     in
-    eval_naive_bayes to_prior to_likelihood table
+    eval_naive_bayes ~to_prior ~to_likelihood table
 
   type spec = smoothing
   let default = 0.0
@@ -351,7 +351,7 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
       prod_arr2 (fun (mean,std) y -> Distributions.normal_pdf ~mean ~std y)
         lkhd indices
     in
-    eval_naive_bayes to_prior to_likelihood table
+    eval_naive_bayes ~to_prior ~to_likelihood table
 
   type spec = unit
   let default = ()
@@ -359,7 +359,8 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
   module Cm = Map.Make(struct type t = clas let compare = compare end)
 
   let estimate ?(spec=default) =
-    let init c = (0, Array.make Data.size Running.empty) in
+    ignore spec;
+    let init _c = (0, Array.make Data.size Running.empty) in
     let update (c, rs_arr) ftr =
       let attr = safe_encoding ftr in
       (c + 1, Array.map2 Running.update rs_arr attr)
@@ -437,7 +438,7 @@ module LrCommon(Data: Continuous_encoded_data_intf) = struct
         invalidArg "Trying to estimate Log Reg on less than 2 classes."
       else
         let ftrs =
-          List.map (fun (_, f) -> copy1 (safe_encoding f)) data
+          List.map ~f:(fun (_, f) -> copy1 (safe_encoding f)) data
           |> Array.of_list
           |> Mat.of_array
         in
@@ -487,7 +488,7 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
     let m = Vec.of_array (copy1 a) in
     let p = proba lr.weights m in
     (base_class lr, p) ::
-      (List.map (fun c -> c, (1. -. p)) (List.tl lr.classes))
+      (List.map ~f:(fun c -> c, (1. -. p)) (List.tl lr.classes))
 
   let estimate = estimate
       ~method_name:"LogisticRegression"

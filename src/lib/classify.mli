@@ -15,8 +15,6 @@
    limitations under the License.
 *)
 
-open Util
-
 (** The classifiers below assign a discrete probability distribution over the
     list of class 'a in their training set. *)
 type 'a probabilities = ('a * float) list

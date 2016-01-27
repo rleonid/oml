@@ -56,8 +56,8 @@ module BinaryClassificationPerformance = struct
      Class Classification Problems" by Hand and Till 2001. *)
   let to_auc data =
     let to_p d = if d.predicted then d.probability else 1.0 -. d.probability in
-    let sorted = List.sort (fun d1 d2 -> compare (to_p d1) (to_p d2)) data in
-    let ranked = List.mapi (fun idx d -> idx, d) sorted in
+    let sorted = List.sort ~cmp:(fun d1 d2 -> compare (to_p d1) (to_p d2)) data in
+    let ranked = List.mapi ~f:(fun idx d -> idx, d) sorted in
     let (sr, n0, n1) =
       List.fold_left ranked
         ~f:(fun (sr,n0,n1) (i, d) ->

@@ -16,9 +16,9 @@
 *)
 
 open Util
-open Printf
-open Inference
-open Descriptive
+module P = Printf
+module Desc = Descriptive
+module Dist = Distributions
 
 module type Linear_model_intf = sig
   include Optional_arg_intf
@@ -66,7 +66,7 @@ module Univariate = struct
 
   let beta lrm = lrm.beta
 
-  let describe lrm = sprintf "%.6f * x + %.6f" lrm.beta lrm.alpha
+  let describe lrm = P.sprintf "%.6f * x + %.6f" lrm.beta lrm.alpha
 
   let eval lrm x = lrm.alpha +. lrm.beta *. x
 
@@ -75,7 +75,7 @@ module Univariate = struct
   let default = [||]
 
   let regress ?spec pred ~resp =
-    let corr = correlation pred resp in
+    let corr = Desc.correlation pred resp in
     let n = Array.length pred in
     let deg_of_freedom = float (n - 2) in (* one for the constant and one for beta *)
     let act_pv =
@@ -104,7 +104,7 @@ module Univariate = struct
     let residuals   = Array.map2 (fun x y -> y -. alpha -. beta *. x) pred resp in
     let chi_square  = Array.sumf (Array.map2 (fun r v -> (r *. r) /. v) residuals act_pv) in
     (*let rmse      = sqrt (chi_square /. deg_of_freedom) in *)
-    let m_x  = mean pred in
+    let m_x  = Desc.mean pred in
     let s_xx = Array.sumf (Array.map (fun x -> (x -. m_x) ** 2.0) pred) in
     (*
     let alpha_test =
@@ -133,8 +133,8 @@ module Univariate = struct
     in
     (*let n = Array.length residuals in
     let d_w = durbin_watson residuals in *)
-    { m_pred = mean pred;
-      m_resp = mean resp;
+    { m_pred = Desc.mean pred;
+      m_resp = Desc.mean resp;
       size = deg_of_freedom +. 2.0;
       alpha = alpha;
       (* alpha_test = alpha_test; *)
@@ -156,8 +156,8 @@ module Univariate = struct
   let confidence_interval, prediction_interval =
     let interval a lrm ~alpha x =
       let dgf = lrm.size -. 2.0 in
-      let dgi = truncate dgf in
-      let t  = Distributions.student_quantile ~k:dgi (alpha /. 2.0) in
+      let degrees_of_freedom = truncate dgf in
+      let t  = Dist.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
       let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
       let c  = lrm.chi_square /. (lrm.size -. 2.0) in
       let se = sqrt ((a +. b) *. c) in
@@ -308,14 +308,14 @@ module EvalMultiVarite = struct
   let describe glm =
     let coefs =
       glm.coefficients
-      |> Array.map (sprintf "%0.4f")
+      |> Array.map (P.sprintf "%0.4f")
       |> Array.to_list
       |> String.concat "; "
     in
     if glm.padded then
-      sprintf "%s^T * [|1;X|]" coefs
+      P.sprintf "%s^T * [|1;X|]" coefs
     else
-      sprintf "%s^T * [|X|]" coefs
+      P.sprintf "%s^T * [|X|]" coefs
 
   let eval glm vec =
     let dot = Array.fold2 (fun s x y -> s +. x *. y) 0.0 in
@@ -481,14 +481,15 @@ module Tikhonov = struct
           { coef ; covm ; resi ; looe}
         in
         let lambda, slp = gtr_to_lambda eval lambda_spec in
-        let _ = printf "chose gtr lambda of %0.4f\n" lambda in
+        let _ = P.printf "chose gtr lambda of %0.4f\n" lambda in
         slp
 
   (*let general_tikhonov_regression ?lambda ~resp pred ~tik () = *)
   let regress ?(spec=default) pred ~resp =
     let pred = Mat.of_array pred in
     let resp = Vec.of_array resp in
-    let lambda = spec.lambda_spec in
+    (* UGH, awkard! to silence 41, need to 'modularize' these *)
+    let lambda = (spec:tikhonov_spec).lambda_spec in
     let tik =
       match spec.regularizer with
       | [|[||]|] -> Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)

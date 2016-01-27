@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-open Util
+module U = Util
 open Test_utils
 
 let () =
@@ -42,14 +42,14 @@ let () =
     ~title:"Normal_cdf is between 0 and 1."
     Gen.(zip3 mean_o std_o (make_float (-1e1) (1e1)))
     (fun (mean,std,x) ->
-      within (Closed 0.0, Closed 1.0) (normal_cdf ?mean ?std x))
+      within (U.Closed 0.0, U.Closed 1.0) (normal_cdf ?mean ?std x))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
     ~title:"Normal_df is also bounded."
     Gen.(zip3 mean_o std_o (bfloat max_float))
     (fun (mean,std,x) ->
-      within (Closed 0.0, Closed 1.0) (normal_pdf ?mean ?std x))
+      within (U.Closed 0.0, U.Closed 1.0) (normal_pdf ?mean ?std x))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
@@ -84,13 +84,12 @@ let () =
   add_partial_random_test
     ~title:"Student_cdf and student_quantile are inverses."
     Gen.(zip2 (make_float (-0.5) 1.5) (make_int 1 1000))
-    (fun (p, k) ->
-      let pp = student_cdf ~k (student_quantile ~k p) in
+    (fun (p, degrees_of_freedom) ->
+      let pp = student_cdf ~degrees_of_freedom (student_quantile ~degrees_of_freedom p) in
       equal_floats ~d:1e-6 pp p)
     Spec.([ prob (fun p -> p < 0.0 || p > 1.0)   ==> is_exception is_invalid_arg
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
-
 
   ()
 

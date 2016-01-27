@@ -96,7 +96,7 @@ module FGen (Fp : FloatParameters) = struct
         print_float_array
 
   let general_model b ~max_predictors ~max_samples =
-    general_model_array b max_predictors max_samples
+    general_model_array b ~max_predictors ~max_samples
     |> map1 (fun m ->
       let data = Array.sub m 1 (Array.length m - 1) in
       let coef = m.(0) in

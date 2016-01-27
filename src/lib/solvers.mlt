@@ -15,8 +15,7 @@
    limitations under the License.
 *)
 
-open Printf
-open Util
+module P = Printf
 open Test_utils
 
 let () =
@@ -45,7 +44,7 @@ let () =
   add_partial_random_test
     ~title:"Bisection works for odd polynomials."
     ~nb_runs:10000
-      Gen.(polynomial)
+      polynomial
       (fun lst ->
         bisection ~epsilon:1e-12 ~lower ~upper (poly_to_f lst))
       Spec.([ even_length       ==> is_exception is_invalid_arg
@@ -65,14 +64,14 @@ let () =
   (* TODO, figure out a way to make this a partial test. *)
   add_random_test
     ~title:"Newton work for odd polynomials."
-      Gen.(odd_poly)
+      odd_poly
       (fun lst ->
         let f = poly_to_f lst in
         match newton ~init:0.1 ~lower ~upper f with
-        | exception Iteration_failure (_, Too_many_iterations _) ->
+        | exception Util.Iteration_failure (_, Util.Too_many_iterations _) ->
             let _ =
-              Printf.printf "newton failed for %s with Too_many_iterations\n%!"
-                (String.concat ";" (List.map (sprintf "%f") lst))
+              P.printf "newton failed for %s with Too_many_iterations\n%!"
+                (String.concat ";" (List.map (P.sprintf "%f") lst))
             in
             true
         | rn ->

@@ -15,7 +15,8 @@
    limitations under the License.
 *)
 
-open Oml
+(* Defined to link in the tests found in mlt files. *)
+module O = Oml
 open Test_utils
 
 let () =

@@ -36,36 +36,42 @@ type var_update = n_mean:float -> n_sum:float ->
   n_sum_sq:float -> n_size:float -> t -> float
 
 let default_mean_update ~size ~n_sum ~n_sum_sq ~n_size t v =
+  (* UGH: This is a hack to suppress warning 27, unused variables,
+     that is super useful. @struktured needs to functorize this code.*)
+  ignore (n_sum, n_sum_sq,t);
   let size_f = float size in
   t.mean +. size_f *. (v -. t.mean) /. n_size
   (*t.mean +. (v -. t.mean) /. n_size *)
 
 let default_var_update ~n_mean ~n_sum ~n_sum_sq ~n_size t =
+  ignore t;
   let num = n_sum_sq
     -. 2.0 *. n_mean *. n_sum
     +. n_mean *. n_mean *. n_size
-   and den = n_size -. 1.0 in num /. den
+  and den = n_size -. 1.0 in num /. den
 
 (* Mutators *)
-let empty = { size   = 0
-            ; last   = nan
-            ; max    = nan
-            ; min    = nan
-            ; sum    = nan
-            ; sum_sq = nan
-            ; mean   = nan
-            ; var    = nan
-            }
+let empty =
+  { size   = 0
+  ; last   = nan
+  ; max    = nan
+  ; min    = nan
+  ; sum    = nan
+  ; sum_sq = nan
+  ; mean   = nan
+  ; var    = nan
+  }
 
-let init ?(size=1) o = { size
-             ; last   = o
-             ; max    = o
-             ; min    = o
-             ; sum    = o *. float size
-             ; sum_sq = o *. o *. float size
-             ; mean   = o
-             ; var    = 0.0
-             }
+let init ?(size=1) o =
+  { size
+  ; last   = o
+  ; max    = o
+  ; min    = o
+  ; sum    = o *. float size
+  ; sum_sq = o *. o *. float size
+  ; mean   = o
+  ; var    = 0.0
+  }
 
 let update ?(size=1) ?(mean_update=default_mean_update)
  ?(var_update=default_var_update) t v =
@@ -78,15 +84,15 @@ let update ?(size=1) ?(mean_update=default_mean_update)
        let n_size = float n_size_i in
        let n_mean = mean_update ~size ~n_sum ~n_sum_sq ~n_size t v in
        let n_var = var_update ~n_mean ~n_sum ~n_sum_sq ~n_size t in
-      { size = n_size_i
-      ; last   = v
-      ; max    = max t.max v
-      ; min    = min t.min v
-      ; sum    = n_sum
-      ; sum_sq = n_sum_sq
-      ; mean   = n_mean
-      ; var    = n_var
-      }
+       { size = n_size_i
+       ; last   = v
+       ; max    = max t.max v
+       ; min    = min t.min v
+       ; sum    = n_sum
+       ; sum_sq = n_sum_sq
+       ; mean   = n_mean
+       ; var    = n_var
+       }
 
 let join ?(mean_update=default_mean_update) ?(var_update=default_var_update)
   rs1 rs2 =

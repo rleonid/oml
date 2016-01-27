@@ -18,7 +18,7 @@
 let average_ties_f n arr comp =
   let rec loop i p rm rn same =
     let assign j =
-      let r,v,p = arr.(j) in
+      let _r,v,p = arr.(j) in
       arr.(j) <- rm, v, p
     in
     let label_ties c = List.iter assign same; c () in

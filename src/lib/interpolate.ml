@@ -78,8 +78,6 @@ end (* Tri_Diagonal *)
 
 module Spline = struct
 
-  open Tri_Diagonal
-
   type boundary_condition =
     | Natural
     | Clamped of float * float
@@ -91,7 +89,7 @@ module Spline = struct
   let coefficients t =
     Array.init (Array.length t - 1)
       (fun i ->
-        let x, y, opt = t.(i) in
+        let _x, y, opt = t.(i) in
         match opt with
         | None -> invalidArg "Improper spline size %d" i
         | Some (c, b, a)  -> y, c, b, a)
@@ -132,7 +130,8 @@ module Spline = struct
       let (sb,sc), (ea,eb) =
         match bc with
         | Natural       -> (1.,0.),(0.,1.)
-        | Clamped (l,r) -> ((2. *. h 0), h 0), (h nm2, (2. *. h nm2))
+        (* TODO: review this! *)
+        | Clamped (_l,_r) -> ((2. *. h 0), h 0), (h nm2, (2. *. h nm2))
       in
       ma ~first:(nan, sb, sc) ~last:(ea,eb,nan)
           ~mid:(fun i -> h (i - 1), v i , h i)
@@ -201,6 +200,7 @@ module Spline = struct
 
 end (* Spline *)
 
+(*
 let lagrange arr =
   let wi_arr = Array.mapi (fun idx (x, y) -> (idx, x, y)) arr in
   (* compute the product across all of the terms, excluding a given index. *)
@@ -219,5 +219,4 @@ let lagrange arr =
   in
   (fun x ->
     Array.fold_left(fun s (y_j, l_j_f) -> Float.(x + y_j * (l_j_f x))) 0.0 l_j_arr)
-
-
+*)
