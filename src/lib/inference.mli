@@ -57,7 +57,8 @@ type null_hypothesis =
     
     One may think of this as a principled way to test the signal (diff)
     to noise (error) seen in a sample of data. *)
-val t_test : null_hypothesis -> int -> diff:float -> error:float -> test
+val t_test : null_hypothesis -> degrees_of_freedom:int -> diff:float
+              -> error:float -> test
 
 (** [mean_t_test population_mean nh samples] conduct a T-test to see if the
     [sample]'s mean is different from the [population_mean] according to the

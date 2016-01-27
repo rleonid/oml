@@ -36,7 +36,7 @@ let () =
     Gen.(select_array (Array.init 20 float_of_int) string_of_float)
   in
   let array_with_duplicates size =
-    Gen.(array (make_int 1 10) floats_from_small_set)
+    Gen.(array (make_int 1 size) floats_from_small_set)
   in
   add_random_test
     ~title:"On arrays from [0,n] are identical."
@@ -54,7 +54,7 @@ let () =
     Spec.([just_postcond_pred is_true]);
   add_random_test
     ~title:"Averaging works for duplicates too"
-    Gen.(array_with_duplicates max_array_size)
+    (array_with_duplicates max_array_size)
     (fun arr ->
       let ranks_nn = ranks ~average_ties:true arr in
       let sum = Array.fold_left (+.) 0.0 ranks_nn in

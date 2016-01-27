@@ -20,7 +20,7 @@ open Descriptive
 open Distributions
 
 let prediction_interval_sub k std mean alpha =
-  let t_v = student_quantile ~k:(k - 1) (1.0 -. alpha /. 2.) in
+  let t_v = student_quantile ~degrees_of_freedom:(k - 1) (1.0 -. alpha /. 2.) in
   let fk  = float k in
   let d   = Float.(t_v * std * sqrt (1. + (1. / fk))) in
   (mean -. d, mean +. d)
@@ -65,10 +65,10 @@ type null_hypothesis =
   | Two_sided
   | One_sided
 
-let t_test hypothesis degrees_of_freedom ~diff ~error =
+let t_test hypothesis ~degrees_of_freedom ~diff ~error =
   let statistic = diff /. error in
   let prob_by_chance =
-    let upper_ct = student_cdf ~k:degrees_of_freedom (abs_float statistic) in
+    let upper_ct = student_cdf ~degrees_of_freedom (abs_float statistic) in
     let prob_upper_tail = 1.0 -. upper_ct in
     match hypothesis with
     | Two_sided -> prob_upper_tail *. 2.0
@@ -87,7 +87,7 @@ let mean_t_test population_mean hypothesis arr =
   let sd = sqrt (unbiased_var arr) in
   let error = sd /. (sqrt nf) in
   let diff  = m -. population_mean in
-  t_test hypothesis (d - 1) ~diff ~error
+  t_test hypothesis ~degrees_of_freedom:(d - 1) ~diff ~error
 
 let means_same_variance_test hypothesis arr1 arr2 =
   let n1 = Array.length arr1 in
@@ -108,8 +108,8 @@ let means_same_variance_test hypothesis arr1 arr2 =
     let m2 = mean arr2 in
     m1 -. m2
   in
-  let df = n1 + n2 - 2 in
-  t_test hypothesis df ~diff ~error
+  let degrees_of_freedom = n1 + n2 - 2 in
+  t_test hypothesis ~degrees_of_freedom ~diff ~error
 
 (* TODO: probably easier to have one function with parameter for both? *)
 
@@ -132,22 +132,23 @@ let means_different_variance_test hypothesis arr1 arr2 =
   in
   (* Can't find a reference for why you round down the dg, but probably better
     than rounding up! *)
-  t_test hypothesis (truncate dg) ~diff ~error
+  let degrees_of_freedom = truncate dg in
+  t_test hypothesis ~degrees_of_freedom ~diff ~error
 
 let variance_ratio_test arr1 arr2 =
   let v1 = unbiased_var arr1 in
   let v2 = unbiased_var arr2 in
   let dg1 = float (Array.length arr1 - 1) in
   let dg2 = float (Array.length arr2 - 1) in
-  let f, dgf1, dgf2 =
+  let f, d1, d2 =
     if v1 > v2 then
       v1 /. v2, dg1, dg2
     else
       v2 /. v1, dg2, dg1
   in
-  let p = 2.0 *. Functions.f_less dgf1 dgf2 f in
+  let p = 2.0 *. Functions.f_less ~d1 ~d2 f in
   let p = if p > 1.0 then 2.0 -. p else p in
-  { degrees_of_freedom = dgf1 +. dgf2
+  { degrees_of_freedom = d1 +. d2
   ; statistic = f
   ; standard_error = nan
   ; prob_by_chance = p

@@ -41,11 +41,11 @@ val ln_gamma : float -> float
 
 (** [regularized_lower_gamma a x] computes regularized (normalized by
     [gamma a]) incomplete lower (integral from 0 to [x]) function. *)
-val regularized_lower_gamma : float -> float -> float
+val regularized_lower_gamma : a:float -> float -> float
 
 (** [regularized_upper_gamma a x] computes regularized (normalized by
     [gamma a]) incomplete upper (integral from [x] to [infinity]) function. *)
-val regularized_upper_gamma : float -> float -> float
+val regularized_upper_gamma : a:float -> float -> float
 
 (** [beta x y] computes the beta function of [x] and [y], this function is also
     known as the Euler integral of the first kind and is useful in defining
@@ -82,19 +82,13 @@ val chi_square_greater : int -> float -> float
 
 (*val t_lookup : float -> int -> float *)
 
-(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
-    on [temperature].
-
-    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
-val softmax : ?temperature:float -> float array -> float array
-
 (** [normal_cdf_inv x] returns the value [y] such that the integral of the
     normal cdf is [x]. *)
 val normal_cdf_inv : float -> float
 
 (** [student_cdf_inv k x] returns the value [y] such that the integral of the
     Students T distribution with [k] degrees of freedom is [x].*)
-val student_cdf_inv : int -> float -> float
+val student_cdf_inv : degrees_of_freedom:int -> float -> float
 
 (** [f_less d1 d2 x] computes the probability of seeing a value less than [x]
     in an F-distribution parameterized by [d1] and [d2]. *)

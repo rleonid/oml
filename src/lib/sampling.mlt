@@ -20,7 +20,6 @@
    module generates very good Random numbers (at-the-moment). Rather we
    want our distributions to be well behaved. *)
 open Test_utils
-open Printf
 
 let () =
   let add_partial_random_test

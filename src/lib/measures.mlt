@@ -41,7 +41,7 @@ let () =
         let kl' = kldiv res' in
         (res', kl', (res', kl, kl')::l)) (q_mean, infinity, [])
       [0.6;0.4;0.25;0.1] |> fun (_, _, l) ->
-        List.for_all (fun (res, kl, kl') -> kl' <= kl) l)
+        List.for_all (fun (_res, kl, kl') -> kl' <= kl) l)
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
@@ -59,7 +59,7 @@ let () =
         let kl' = kldiv res' in
         (res', kl', (res', kl, kl')::l)) (q_sigma, infinity, [])
       [0.6;0.4;0.25;0.1] |> fun (_, _, l) ->
-        List.for_all (fun (res, kl, kl') -> kl' <= kl) l)
+        List.for_all (fun (_res, kl, kl') -> kl' <= kl) l)
     Spec.([just_postcond_pred is_true]);
 
   ()

@@ -43,7 +43,7 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
     let m = (float n -. 1.0) /. 2.0 in
     -.((a +. m) *. (a +. b +. m) *. x) /.
                                 ((a +. (2. *. m)) *. (a +. (2. *. m) +. 1.0)) in
-  let get_a n x = 1.0 in
+  let get_a _n _x = 1.0 in
   let log_beta = ln_beta a b in
   let fraction = Continued_fraction.init ~get_a ~get_b in fun x ->
     if Util.is_nan x || Util.is_nan a || Util.is_nan b ||
@@ -56,10 +56,10 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                 1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
 let chi_square_less num_observations chi_square =
-  regularized_lower_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
+  regularized_lower_gamma ~a:((float num_observations) /. 2.0) (chi_square /. 2.0)
 
 let chi_square_greater num_observations chi_square =
-  regularized_upper_gamma ((float num_observations) /. 2.0) (chi_square /. 2.0)
+  regularized_upper_gamma ~a:((float num_observations) /. 2.0) (chi_square /. 2.0)
 
 let softmax ?(temperature=1.0) weights =
   if Array.length weights = 0 then raise (Invalid_argument "weights") else
@@ -70,7 +70,7 @@ let softmax ?(temperature=1.0) weights =
 
 let normal_cdf_inv = Ocephes.ndtri
 
-let student_cdf_inv = Ocephes.stdtri
+let student_cdf_inv ~degrees_of_freedom = Ocephes.stdtri ~k:degrees_of_freedom
 
 let f_less ~d1 ~d2 x =
   let xr = Float.((d1 * x) / (d1 * x + d2)) in
