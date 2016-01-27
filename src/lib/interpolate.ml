@@ -129,8 +129,7 @@ module Spline = struct
     let abc =
       let (sb,sc), (ea,eb) =
         match bc with
-        | Natural       -> (1.,0.),(0.,1.)
-        (* TODO: review this! *)
+        | Natural         -> (1.,0.),(0.,1.)
         | Clamped (_l,_r) -> ((2. *. h 0), h 0), (h nm2, (2. *. h nm2))
       in
       ma ~first:(nan, sb, sc) ~last:(ea,eb,nan)
