@@ -45,6 +45,29 @@ module type Linear_model_intf = sig
   (** [coefficients t] returns the coefficients used in the linear model. *)
   val coefficients : t -> float array
 
+  (** [residual_standard_error linear_model] returns an estimate, based on the
+      residuals, of the variance of the error term in the linear model.*)
+  val residual_standard_error : t -> float
+
+  (** [coeff_of_determination linear_model] returns the R^2 statistic for the
+      linear model. *)
+  val coeff_of_determination : t -> float
+
+  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
+      construct confidence intervals at [x] at an [alpha]-level of significance.
+  *)
+  val confidence_interval : t -> alpha:float -> input -> float * float
+
+  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
+      construct prediction intervals at [x] at an [alpha]-level of significance.
+  *)
+  val prediction_interval : t -> alpha:float -> input -> float * float
+
+  (** [coefficient_tests linear_model] perform hypothesis tests on the
+      models coefficients to see if they are significantly different from
+      the null. *)
+  val coefficient_tests : ?null:float -> t -> Inference.test array
+
 end
 
 (** Simple one dimensional regress. *)
@@ -67,16 +90,6 @@ module Univariate : sig
       Equivalent to [(coefficients t).(1)] *)
   val beta : t -> float
 
-  (** [confidence_interval linear_model alpha x] Use the [linear_model] to
-      construct confidence intervals at [x] at an [alpha]-level of significance.
-  *)
-  val confidence_interval : t -> alpha:float -> input -> float * float
-
-  (** [prediction_interval linear_model alpha x] Use the [linear_model] to
-      construct prediction intervals at [x] at an [alpha]-level of significance.
-  *)
-  val prediction_interval : t -> alpha:float -> input -> float * float
-
   (** [alpha_test ~null linear_model] perform a hypothesis test on the [alpha]
       coefficient of the [linear_model]. *)
   val alpha_test : ?null:float -> t -> Inference.test
@@ -84,14 +97,6 @@ module Univariate : sig
   (** [beta_test ~null linear_model] perform a hypothesis test on the [beta]
       coefficient of the [linear_model]. *)
   val beta_test : ?null:float -> t -> Inference.test
-
-  (** [residual_standard_error linear_model] returns an estimate, based on the
-      residuals, of the variance of the error term in the linear model.*)
-  val residual_standard_error : t -> float
-
-  (** [coeff_of_determination linear_model] returns the R^2 statistic for the
-      linear model. *)
-  val coeff_of_determination : t -> float
 
 end
 
@@ -130,13 +135,14 @@ type tikhonov_spec =
   }
 
 (** Multi-dimensional input regression with a matrix regularizer.
-  described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}. *)
+  described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}.
+
+  Please take care with using this method as not all of the algorithms have
+  been verified. A warning is printed to standard-error. *)
 module Tikhonov : sig
 
   include Linear_model_intf
     with type input = float array
     and type spec = tikhonov_spec
-
-  (* TODO: go through the algebra to confirm conf/pred intervals *)
 
 end

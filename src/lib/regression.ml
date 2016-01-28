@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015,2016:
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,14 @@ module type Linear_model_intf = sig
 
   val residuals : t -> float array
   val coefficients : t -> float array
+
+  val residual_standard_error : t -> float
+  val coeff_of_determination : t -> float
+
+  val confidence_interval : t -> alpha:float -> input -> float * float
+  val prediction_interval : t -> alpha:float -> input -> float * float
+
+  val coefficient_tests : ?null:float -> t -> Inference.test array
 
 end
 
@@ -158,6 +166,9 @@ module Univariate = struct
     let diff = t.beta -. null in
     Inference.(t_test Two_sided ~degrees_of_freedom ~diff ~error:(sqrt beta_var))
 
+  let coefficient_tests ?null t =
+    [| alpha_test ?null t ; beta_test ?null t |]
+
 end
 
 type lambda_spec =
@@ -256,26 +267,21 @@ module SolveLPViaSvd = struct
 
 end
 
-type glm = { padded                  : bool
-           ; g_m_pred                : float array
-           ; g_m_resp                : float
-           ; deg_of_freedom          : float
-           (*; coefficient_tests     : test array *)
-           ; correlations            : float array
-           ; chi_square              : float
-           ; g_inferred_response_var : float
-           ; sum_squares             : float
-           ; cod                     : float
-           ; adj_cod                 : float
-           (*; covariance              : float array array *)
-           (*; residuals               : float array *)
-           ; solved_lp               : solved_lp
-  (*                         ; d_w                     : float
-            Durbin Watson scores. [0..4] with a mean of 2.0 lower
-            ( < 1) indicates positive correlation while
-            higher (> 3) indicates negative correlation. *)
-           ; aic                     : float
-           }
+type glm =
+  { padded            : bool
+  ; m_pred            : float array
+  ; m_resp            : float
+  ; deg_of_freedom    : float
+  ; sum_residuals     : float
+  ; inferred_var      : float
+  ; s_yy              : float
+  ; solved_lp         : solved_lp
+  (* ; d_w            : float
+  Durbin Watson scores. [0..4] with a mean of 2.0 lower
+  ( < 1) indicates positive correlation while
+  higher (> 3) indicates negative correlation. *)
+  ; aic               : float
+  }
 
 (* At some point I'd like to reavaluate the construction of the final
    Multivariate and Tikhonov modules and see if a Functor approach
@@ -319,6 +325,46 @@ module EvalMultiVarite = struct
     else
       dot coe vec
 
+  let confidence_interval, prediction_interval =
+    let interval ~plus_one glm ~alpha x =
+      let degrees_of_freedom = truncate glm.deg_of_freedom in
+      let x_v =
+        if glm.padded
+        then Vec.of_list (1. :: (Array.to_list x))
+        else Vec.of_array x
+      in
+      let p   =
+        match glm.solved_lp.vaco with
+        | `Cov c -> dot x_v (gemv c x_v)
+        | `Svd s -> dot x_v (gemv (Svd.covariance_matrix_inv s) x_v)
+      in
+      let p' = if plus_one then 1. +. p else p in
+      let sc = sqrt (glm.inferred_var  *. p') in
+      let t  = Distributions.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
+      let d  = sc *. (abs_float t) in
+      let y  = eval glm x in
+      (y -. d), (y +. d)
+    in
+    interval ~plus_one:false, interval ~plus_one:true
+
+  let residual_standard_error glm = sqrt glm.inferred_var
+
+  let coeff_of_determination glm = 1.0 -. glm.sum_residuals /. glm.s_yy
+
+  let coefficient_tests ?(null=0.0) glm =
+    let coe = coefficients glm in
+    let n = Array.length coe in
+    let cov_dia =
+      match glm.solved_lp.vaco with
+      | `Cov c -> Mat.copy_diag c
+      | `Svd s -> Mat.copy_diag (Svd.covariance_matrix_inv s)
+    in
+    let degrees_of_freedom = truncate glm.deg_of_freedom in
+    Array.init n (fun i ->
+      let error = sqrt (glm.inferred_var *. cov_dia.{i+1}) (*FORTRAN*) in
+      let diff  = coe.(i) -. null in
+      Inference.(t_test Two_sided ~degrees_of_freedom ~diff ~error))
+
 end
 
 module Multivariate = struct
@@ -360,73 +406,37 @@ module Multivariate = struct
     - work through these covariance matrix calculations, they're probably not right
     - once that's done we can expose the hypothesis testing
   *)
-  (*let general_linear_regress ?lambda ?(pad=false) ~resp pred () = *)
   let regress ?(spec=default) pred ~resp =
     let resp = Vec.of_array resp in
     let pad = spec.add_constant_column in
     let pred, num_obs, num_pred, across_pred_col = pad_design_matrix pred pad in
     (* TODO: replace with folds, across the matrix in Lacaml. *)
     let num_obs_float = float num_obs in
-    let g_m_resp      = col_mean num_obs_float resp in
-    let sum_squares   = sum_sq_dm resp g_m_resp in
-    let g_s_resp      = col_std resp g_m_resp num_obs_float in
-    let col_corr c    =
-      let m = Vec.sum c /. num_obs_float in
-      let s = col_std c m num_obs_float in
-      let num = (dot c resp) -. num_obs_float *. m *. g_m_resp in
-      let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
-      num /. den
-    in
-    let g_m_pred      = across_pred_col (col_mean num_obs_float) in
-    let correlations  = across_pred_col col_corr in
+    let m_resp        = col_mean num_obs_float resp in
+    let s_yy          = sum_sq_dm resp m_resp in
+    let m_pred        = across_pred_col (col_mean num_obs_float) in
     (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
     let deg_of_freedom  = float (num_obs - num_pred) in
     let lambda          = spec.lambda_spec in
     let solved_lp       = solve_lp pred resp lambda in
-    let chi_square      = dot solved_lp.resi solved_lp.resi in
-    let infer_resp_var  = chi_square /. deg_of_freedom in
-    let m   = (float num_obs -. 1.0) /. deg_of_freedom in
+    let sum_residuals   = dot solved_lp.resi solved_lp.resi in
+    let inferred_var  = sum_residuals /. deg_of_freedom in
     let aic =
       let n = float num_obs in
       let k = float num_pred in
-      2.0 *. k +. (log (chi_square /. n)) +. (n +. k) /. (n -. k -. 2.0)
+      2.0 *. k +. (log (sum_residuals /. n)) +. (n +. k) /. (n -. k -. 2.0)
     in
     { padded = pad
-    ; g_m_pred = g_m_pred
-    ; g_m_resp = g_m_resp
-    ; deg_of_freedom = deg_of_freedom
-    ; correlations = correlations
-    ; chi_square
-    ; g_inferred_response_var = infer_resp_var
-    ; sum_squares
-    ; cod = 1.0 -. (chi_square /. sum_squares)
-    ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
+    ; m_pred
+    ; m_resp
+    ; deg_of_freedom
+    ; sum_residuals
+    ; inferred_var
+    ; s_yy
     ; solved_lp
     (*d_w = durbin_watson residuals *)
     ; aic = aic
     }
-
-  let confidence_interval, prediction_interval =
-    let interval ~plus_one glm ~alpha x =
-      let degrees_of_freedom = truncate glm.deg_of_freedom in
-      let x_v =
-        if glm.padded
-        then Vec.of_list (1. :: (Array.to_list x))
-        else Vec.of_array x
-      in
-      let p   =
-        match glm.solved_lp.vaco with
-        | `Cov c -> dot x_v (gemv c x_v)
-        | `Svd s -> dot x_v (gemv (Svd.covariance_matrix_inv s) x_v)
-      in
-      let p' = if plus_one then 1. +. p else p in
-      let sc = sqrt (glm.g_inferred_response_var *. p') in
-      let t  = Distributions.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
-      let d  = sc *. (abs_float t) in
-      let y  = eval glm x in
-      (y -. d), (y +. d)
-    in
-    interval ~plus_one:false, interval ~plus_one:true
 
 end
 
@@ -468,7 +478,7 @@ module Tikhonov = struct
         let eval l =
           let copy = lacpy covm in
           Mat.axpy ~alpha:l tik copy;
-          getri copy;      (* take inverse with LU decomp, tik is overwritten. *)
+          getri copy;   (* take inverse with LU decomp, tik is overwritten. *)
           let coef = gemv (gemm copy ~transb:`T pred) resp in
           let resi = Vec.sub resp (gemv pred coef) in
           let looe = full_looe covm pred resi in
@@ -478,7 +488,6 @@ module Tikhonov = struct
         let _ = P.printf "chose gtr lambda of %0.4f\n" lambda in
         slp
 
-  (*let general_tikhonov_regression ?lambda ~resp pred ~tik () = *)
   let regress ?(spec=default) pred ~resp =
     let pred = Mat.of_array pred in
     let resp = Vec.of_array resp in
@@ -489,52 +498,46 @@ module Tikhonov = struct
       | [|[||]|] -> Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)
       | tm       -> Mat.of_array tm
     in
-    (*let lambda, tik =
-      match spec with
-      | None -> None, Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)
-      | Some ts -> ts.lambda_spec, (Mat.of_array ts.regularizer)
-    in*)
     let num_obs  = Mat.dim1 pred in  (* rows *)
     let num_pred = Mat.dim2 pred in  (* cols *)
     let across_pred_col f = Array.init num_pred (fun i -> f (Mat.col pred (i + 1))) in
     let num_obs_float = float num_obs in
-    let g_m_resp      = col_mean num_obs_float resp in
+    let m_resp        = col_mean num_obs_float resp in
     let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c) in
-    let sum_squares   = sum_sq_dm resp g_m_resp in
-    let col_std c m n = sqrt (sum_sq_dm c m /. n) in
-    let g_s_resp      = col_std resp g_m_resp num_obs_float in
-    let col_corr c    =
-      let m = Vec.sum c /. num_obs_float in
-      let s = col_std c m num_obs_float in
-      let num = (dot c resp) -. num_obs_float *. m *. g_m_resp in
-      let den = (num_obs_float -. 1.0) *. g_s_resp *. s in
-      num /. den
-    in
-    let g_m_pred      = across_pred_col (col_mean num_obs_float) in
-    let correlations  = across_pred_col col_corr in
+    let s_yy          = sum_sq_dm resp m_resp in
+    let m_pred        = across_pred_col (col_mean num_obs_float) in
     (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
     let deg_of_freedom  = float (num_obs - num_pred) in
     let solved_lp       = gtk_solve_lp pred resp tik lambda in
-    let chi_square      = dot solved_lp.resi solved_lp.resi in
-    let infer_resp_var  = chi_square /. deg_of_freedom in
-    let m   = (float num_obs -. 1.0) /. deg_of_freedom in
+    let sum_residuals   = dot solved_lp.resi solved_lp.resi in
+    let inferred_var    = sum_residuals /. deg_of_freedom in
     let aic =
       let n = float num_obs in
       let k = float num_pred in
-      2.0 *. k +. (log (chi_square /. n)) +. (n +. k) /. (n -. k -. 2.0)
+      2.0 *. k +. (log (sum_residuals /. n)) +. (n +. k) /. (n -. k -. 2.0)
     in
     { padded = false
-    ; g_m_pred = g_m_pred
-    ; g_m_resp = g_m_resp
+    ; m_pred
+    ; m_resp
     ; deg_of_freedom
-    ; correlations
-    ; chi_square
-    ; g_inferred_response_var = infer_resp_var
-    ; sum_squares
-    ; cod = 1.0 -. (chi_square /. sum_squares)
-    ; adj_cod = 1.0 -. (chi_square /. sum_squares) *. m
+    ; sum_residuals
+    ; inferred_var
+    ; s_yy
     ; solved_lp
     ; aic = aic
     }
 
+  let confidence_interval t ~alpha input =
+    P.eprintf "Tikhonov confidence intervals are experimental, caution!\n";
+    confidence_interval t ~alpha input
+
+  let prediction_interval t ~alpha input =
+    P.eprintf "Tikhonov prediction intervals are experimental, caution!\n";
+    prediction_interval t ~alpha input
+
+  let coefficient_tests ?null t =
+    P.eprintf "Tikhonov coefficient tests are experimental, caution!\n";
+    coefficient_tests ?null t
+
 end
+
