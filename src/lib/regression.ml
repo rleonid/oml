@@ -374,6 +374,11 @@ module EvalMultiVarite = struct
     let n = Vec.dim t.solved_lp.coef in
     let p = if t.padded then float (n - 1) else float n in
     ((t.s_yy -. t.sum_residuals) /. p) /. (t.sum_residuals /. t.deg_of_freedom)
+
+  let aic t = t.aic
+
+  let press t = Vec.sqr_nrm2 (t.solved_lp.looe)
+
 end
 
 module Multivariate = struct

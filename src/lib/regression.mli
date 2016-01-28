@@ -121,15 +121,13 @@ module Multivariate : sig
     with type input = float array
     and type spec = multivariate_spec
 
-  (** [confidence_interval model alpha x] Use the [model] to
-      construct confidence intervals at [x] at an [alpha]-level of significance.
-  *)
-  val confidence_interval : t -> alpha:float -> input -> float * float
+  (** [aic linear_model] return the Akaike information criterion for the
+      [linear_model].*)
+  val aic : t -> float
 
-  (** [prediction_interval model alpha x] Use the [model] to
-      construct prediction intervals at [x] at an [alpha]-level of significance.
-  *)
-  val prediction_interval : t -> alpha:float -> input -> float * float
+  (** [press linear_model] return the Predicted REsidual Sum of Squares for the
+      [linear_model]. *)
+  val press : t -> float
 
 end
 
@@ -148,5 +146,13 @@ module Tikhonov : sig
   include Linear_model_intf
     with type input = float array
     and type spec = tikhonov_spec
+
+  (** [aic linear_model] return the Akaike information criterion for the
+      [linear_model].*)
+  val aic : t -> float
+
+  (** [press linear_model] return the Predicted REsidual Sum of Squares for the
+      [linear_model]. *)
+  val press : t -> float
 
 end
