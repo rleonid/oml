@@ -49,7 +49,7 @@ val init : ?size:int -> float -> t
 (** [update ?size ?mean_update ?var_update t x] incorporate [x] with given [size]
     (defaulting to [1]) and update rules [mean_update], [var_update] (defaulting
     to unbiased) into the statistics tracked in [t]. *)
-val update : ?size:int -> ?mean_update:mean_update ->  ?var_update:var_update -> t -> float -> t
+val update : ?size:int -> ?mean_update:mean_update -> ?var_update:var_update -> t -> float -> t
 
 (** [join ?mean_update ?var_update t1 t2] return a [Running.t] if you had
     first observed the elements by [t1] and then [t2] using update rules

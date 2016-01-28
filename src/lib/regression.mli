@@ -21,9 +21,6 @@
 module type Linear_model_intf = sig
   include Util.Optional_arg_intf
 
-  (* TODO: reorder these declarations in a way that makes more sense for
-     documentation. *)
-
   type input
   type t
 
@@ -45,22 +42,13 @@ module type Linear_model_intf = sig
   (** [coefficients t] returns the coefficients used in the linear model. *)
   val coefficients : t -> float array
 
-end
+  (** [residual_standard_error linear_model] returns an estimate, based on the
+      residuals, of the variance of the error term in the linear model.*)
+  val residual_standard_error : t -> float
 
-(** Simple one dimensional regress. *)
-module Univariate : sig
-
-  include Linear_model_intf
-    with type input = float
-    and type spec = float array
-
-  (** [alpha t] a shorthand for the constant parameter used in the regression.
-      Equivalent to [(coefficients t).(0)] *)
-  val alpha : t -> float
-
-  (** [beta t] a shorthand for the linear parameter used in the regression.
-      Equivalent to [(coefficients t).(1)] *)
-  val beta : t -> float
+  (** [coeff_of_determination linear_model] returns the R^2 statistic for the
+      linear model. *)
+  val coeff_of_determination : t -> float
 
   (** [confidence_interval linear_model alpha x] Use the [linear_model] to
       construct confidence intervals at [x] at an [alpha]-level of significance.
@@ -71,6 +59,45 @@ module Univariate : sig
       construct prediction intervals at [x] at an [alpha]-level of significance.
   *)
   val prediction_interval : t -> alpha:float -> input -> float * float
+
+  (** [coefficient_tests linear_model] perform hypothesis tests on the
+      models coefficients to see if they are significantly different from
+      the null. *)
+  val coefficient_tests : ?null:float -> t -> Inference.test array
+
+  (** [F_test linear_model] compute the F-statistic to assess if there is any
+      relationship between the response and predictors in the [linear_model].*)
+  val f_statistic : t -> float (*Inference.test*)
+
+end
+
+(** Simple one dimensional regress. *)
+module Univariate : sig
+
+  include Linear_model_intf
+    with type input = float
+    (** The optional [spec] for univariate regression are weights for each
+        observation. One can use them to change the model such that each
+        error (e_i) is now sampled from it's own distribution: [N(0, s/w_i)],
+        where s^2 is the error variance and w_i is the weight of the ith
+        error. *)
+    and type spec = float array
+
+  (** [alpha t] a shorthand for the constant parameter used in the regression.
+      Equivalent to [(coefficients t).(0)] *)
+  val alpha : t -> float
+
+  (** [beta t] a shorthand for the linear parameter used in the regression.
+      Equivalent to [(coefficients t).(1)] *)
+  val beta : t -> float
+
+  (** [alpha_test ~null linear_model] perform a hypothesis test on the [alpha]
+      coefficient of the [linear_model]. *)
+  val alpha_test : ?null:float -> t -> Inference.test
+
+  (** [beta_test ~null linear_model] perform a hypothesis test on the [beta]
+      coefficient of the [linear_model]. *)
+  val beta_test : ?null:float -> t -> Inference.test
 
 end
 
@@ -91,6 +118,14 @@ module Multivariate : sig
     with type input = float array
     and type spec = multivariate_spec
 
+  (** [aic linear_model] return the Akaike information criterion for the
+      [linear_model].*)
+  val aic : t -> float
+
+  (** [press linear_model] return the Predicted REsidual Sum of Squares for the
+      [linear_model]. *)
+  val press : t -> float
+
 end
 
 type tikhonov_spec =
@@ -99,11 +134,22 @@ type tikhonov_spec =
   }
 
 (** Multi-dimensional input regression with a matrix regularizer.
-  described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}. *)
+  described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}.
+
+  Please take care with using this method as not all of the algorithms have
+  been verified. A warning is printed to standard-error. *)
 module Tikhonov : sig
 
   include Linear_model_intf
     with type input = float array
     and type spec = tikhonov_spec
+
+  (** [aic linear_model] return the Akaike information criterion for the
+      [linear_model].*)
+  val aic : t -> float
+
+  (** [press linear_model] return the Predicted REsidual Sum of Squares for the
+      [linear_model]. *)
+  val press : t -> float
 
 end

@@ -51,7 +51,8 @@ module Array = struct
     else
       Array.mapi (fun i a_i -> f a_i b.(i)) a
 
-  let sumf a =
+  let sumf a = Kahan.sum (Array.fold_left Kahan.update Kahan.empty a)
+    (* Old, unrolled version:
     let c = ref 0. in
     let s = ref 0. in
     for i = 0 to Array.length a - 1 do
@@ -60,7 +61,7 @@ module Array = struct
       c := (ns -. !s) -. x;
       s := ns;
     done;
-    !s
+    !s *)
 
   (* TODO: Are there heuristics to consider when arrays are large? or elements
     in the array are particulary large/small. log transforms?
