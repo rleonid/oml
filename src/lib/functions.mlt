@@ -99,6 +99,13 @@ let () =
     (fun (x, y) -> ln_beta x y = ln_beta y x)
     Spec.([just_postcond_pred is_true]);
 
+  (* A pretty poor test. *)
+  add_random_test
+    ~title:"log of multi beta with 2 args is same as beta"
+    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    (fun (x, y) -> ln_beta x y = ln_multivariate_beta [|x;y|])
+    Spec.([just_postcond_pred is_true]);
+
   (* Chi *)
   add_random_test
     ~title:"Chi less and greater should sum to 1.0."

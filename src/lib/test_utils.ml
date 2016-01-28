@@ -179,7 +179,7 @@ module Test = struct
         List.rev tests |> run_tests)
 
   let launch_test group =
-    try run_tests (TestMap.find group !test_holder)
+    try run_tests (TestMap.find group !test_holder |> List.rev)
     with Not_found -> ()
 
 end

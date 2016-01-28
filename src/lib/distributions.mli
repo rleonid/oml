@@ -15,7 +15,9 @@
    limitations under the License.
 *)
 
-(** Probability density, cumulative and quantile functions common distributions. *)
+(** {1 Probability density, cumulative and quantile functions common distributions.} *)
+
+(** {2 Normal } *)
 
 (** [normal_cdf mean std x] is the probability that a normal random
     variable with [mean] and standard deviation [std] takes a value less than
@@ -36,18 +38,13 @@ val normal_pdf : ?mean:float -> ?std:float -> float -> float
 *)
 val normal_quantile : ?mean:float -> ?std:float -> float -> float
 
-(*
-(** [standard_normal_cdf x] is equivalent to [normal_cdf ~mean:0 ~std:1 x]. *)
-val standard_normal_cdf : float -> float
-
-(** [standard_normal_pdf x] is equivalent to [normal_pdf ~mean:0 ~std:1 x]. *)
-val standard_normal_pdf : float -> float
-*)
+(** {2 Poisson} *)
 
 (** [poisson_cdf mean x] is the probability that a Poisson random variable with
     [mean] will take a value less than or equal to [x]. *)
 val poisson_cdf : mean:float -> float -> float
 
+(** {2 Beta} *)
 (** [beta_pdf ~alpha ~beta x] natural log value of the Beta distribution
     function (with [alpha] and [beta] shape parameters) at [x].*)
 val ln_beta_pdf : alpha:float -> beta:float -> float -> float
@@ -56,14 +53,18 @@ val ln_beta_pdf : alpha:float -> beta:float -> float -> float
     function (with [alpha] and [beta] shape parameters) at [x].*)
 val beta_pdf : alpha:float -> beta:float -> float -> float
 
-(** [beta_cdf ~alpha ~beta x] probability that a beta random
-    variable with [alpha] and [beta] shape parameters takes a value less than
-    or equal to [x]. *)
+(** [beta_cdf ~alpha ~beta x] probability that a beta random variable with
+    [alpha] and [beta] shape parameters takes a value less than or equal to
+    [x]. *)
 val beta_cdf : alpha:float -> beta:float -> float -> float
+
+(** {2 Chi} *)
 
 (** [chi_square_cdf ~k x] computes the probability of seeing a value less than
     [x] in a Chi-square distribution with [k] degrees of freedom.*)
 val chi_square_cdf : k:int -> float -> float
+
+(** {2 Student} *)
 
 (** [student_pdf degrees_of_freedom x] computes the value of the Student T's
     distribution with [degrees_of_freedom] at [x].*)
@@ -78,3 +79,11 @@ val student_cdf : degrees_of_freedom:int -> float -> float
 
     @raise Invalid_argument if [p] is outside [0,1]. *)
 val student_quantile : degrees_of_freedom:int -> float -> float
+
+(** {2 Dirichlet} *)
+
+(** [ln_dirichlet_pdf] *)
+val ln_dirichlet_pdf : alphas:(float array) -> float array -> float
+
+(** [dirichlet_pdf] *)
+val dirichlet_pdf : alphas:(float array) -> float array -> float
