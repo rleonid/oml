@@ -21,9 +21,6 @@
 module type Linear_model_intf = sig
   include Util.Optional_arg_intf
 
-  (* TODO: reorder these declarations in a way that makes more sense for
-     documentation. *)
-
   type input
   type t
 
