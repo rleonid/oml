@@ -68,6 +68,10 @@ module type Linear_model_intf = sig
       the null. *)
   val coefficient_tests : ?null:float -> t -> Inference.test array
 
+  (** [F_test linear_model] compute the F-statistic to assess if there is any
+      relationship between the response and predictors in the [linear_model].*)
+  val f_statistic : t -> float (*Inference.test*)
+
 end
 
 (** Simple one dimensional regress. *)

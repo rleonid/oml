@@ -43,6 +43,8 @@ module type Linear_model_intf = sig
 
   val coefficient_tests : ?null:float -> t -> Inference.test array
 
+  val f_statistic : t -> float (*Inference.test *)
+
 end
 
 module Univariate = struct
@@ -169,6 +171,9 @@ module Univariate = struct
   let coefficient_tests ?null t =
     [| alpha_test ?null t ; beta_test ?null t |]
 
+  let f_statistic t =
+    (t.s_yy -. t.sum_residuals) /. (t.sum_residuals /. (t.size -. 2.))
+
 end
 
 type lambda_spec =
@@ -180,7 +185,7 @@ type multivariate_spec =
   ; lambda_spec : lambda_spec option
   }
 
-(* 'Solved' (via SVD) linear problem.  *)
+(* 'Solved' (via SVD) linear problem. *)
 type solved_lp =
   { coef : vec
   ; vaco : [ `Svd of Svd.t | `Cov of mat ]  (* variance-covariance rep *)
@@ -365,6 +370,10 @@ module EvalMultiVarite = struct
       let diff  = coe.(i) -. null in
       Inference.(t_test Two_sided ~degrees_of_freedom ~diff ~error))
 
+  let f_statistic t =
+    let n = Vec.dim t.solved_lp.coef in
+    let p = if t.padded then float (n - 1) else float n in
+    ((t.s_yy -. t.sum_residuals) /. p) /. (t.sum_residuals /. t.deg_of_freedom)
 end
 
 module Multivariate = struct
@@ -538,6 +547,10 @@ module Tikhonov = struct
   let coefficient_tests ?null t =
     P.eprintf "Tikhonov coefficient tests are experimental, caution!\n";
     coefficient_tests ?null t
+
+  let f_statistic t =
+    P.eprintf "Tikhonov f statistic are experimental, caution!\n";
+    f_statistic t
 
 end
 
