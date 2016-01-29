@@ -58,7 +58,7 @@ let () =
           let size = 5
         end)
       in
-      let naiveb = NB.estimate ~spec:{NB.default with bernoulli = true } data in
+      let naiveb = NB.estimate ~opt:{NB.default with bernoulli = true } data in
       let sample = [ `shortbread ; `whiskey; `porridge  ] in
       let result = NB.eval naiveb sample in
       let expect =

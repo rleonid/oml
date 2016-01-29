@@ -60,7 +60,7 @@ module type Classifier_intf = sig
   val eval : t -> feature -> clas probabilities
 
   type samples = (clas * feature) list
-  val estimate : ?spec:spec -> ?classes:clas list -> samples -> t
+  val estimate : ?opt:opt -> ?classes:clas list -> samples -> t
 end
 
 module type Generative_intf = sig
@@ -136,7 +136,7 @@ let estimate_naive_bayes modulename (type c) init update incorporate
 module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec = binomial_spec)
+                     and type opt = binomial_spec)
   = struct
 
   type feature = Data.feature
@@ -174,12 +174,12 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
     in
     eval_naive_bayes ~to_prior ~to_likelihood nb.table
 
-  type spec = binomial_spec
+  type opt = binomial_spec
   let default = { smoothing = 0.0; bernoulli = false }
 
   module Cm = Map.Make(struct type t = clas let compare = compare end)
 
-  let estimate ?(spec=default) ?classes data =
+  let estimate ?(opt=default) ?classes data =
     let aa = Data.size + 1 in
     let init _cls = Array.make aa 0 in
     let update arr ftr =
@@ -190,7 +190,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
       arr
     in
     let incorporate all num_classes totalf =
-      let to_prob = smoothing_to_prob spec.smoothing in
+      let to_prob = smoothing_to_prob opt.smoothing in
       List.map all ~f:(fun (cl, attr_count) ->
         let prior_count = float attr_count.(Data.size) in
         let likelihood =
@@ -206,7 +206,7 @@ module BinomialNaiveBayes(Data: Dummy_encoded_data_intf)
       estimate_naive_bayes "BinomialNaiveBayes"
         init update incorporate (module Cm) ?classes data
     in
-    {table ; e_bernoulli = spec.bernoulli}
+    {table ; e_bernoulli = opt.bernoulli}
 
   let class_probabilities nb cls =
     let arr = List.assoc cls nb.table in
@@ -235,7 +235,7 @@ type smoothing = float
 module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec = smoothing)
+                     and type opt = smoothing)
 
   = struct
 
@@ -274,12 +274,12 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
     in
     eval_naive_bayes ~to_prior ~to_likelihood table
 
-  type spec = smoothing
+  type opt = smoothing
   let default = 0.0
 
   module Cm = Map.Make(struct type t = clas let compare = compare end)
 
-  let estimate ?(spec=default) =
+  let estimate ?(opt=default) =
     let init _ = (0, Array.map (fun i -> Array.make i 0) Data.encoding_sizes) in
     let update (c, arr) ftr =
       let ftr_arr = safe_encoding ftr in
@@ -287,7 +287,7 @@ module CategoricalNaiveBayes(Data: Category_encoded_data_intf)
       (c + 1, arr)
     in
     let incorporate all num_classes totalf =
-      let to_prob = smoothing_to_prob spec in
+      let to_prob = smoothing_to_prob opt in
       List.map all ~f:(fun (cl, (class_count, attr_count)) ->
         let prior      = to_prob (float class_count) totalf (float num_classes) in
         let likelihood =
@@ -322,7 +322,7 @@ let to_safe_encoding_size_checked interfacename size encoding f =
 module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
   : (Generative_intf with type feature = Data.feature
                      and type clas = Data.clas
-                     and type spec = unit)
+                     and type opt = unit)
 
   = struct
 
@@ -353,13 +353,13 @@ module GaussianNaiveBayes(Data: Continuous_encoded_data_intf)
     in
     eval_naive_bayes ~to_prior ~to_likelihood table
 
-  type spec = unit
+  type opt = unit
   let default = ()
 
   module Cm = Map.Make(struct type t = clas let compare = compare end)
 
-  let estimate ?(spec=default) =
-    ignore spec;
+  let estimate ?(opt=default) =
+    ignore opt;
     let init _c = (0, Array.make Data.size Running.empty) in
     let update (c, rs_arr) ftr =
       let attr = safe_encoding ftr in
@@ -396,7 +396,7 @@ module LrCommon(Data: Continuous_encoded_data_intf) = struct
 
   type samples = (clas * feature) list
 
-  type spec = log_reg_spec
+  type opt = log_reg_spec
   let default = { lambda = 1e-4
                 ; tolerance = 1e4
                 }
@@ -408,7 +408,7 @@ module LrCommon(Data: Continuous_encoded_data_intf) = struct
   let copy1 arr = Array.init (Data.size + 1) (function | 0 -> 1. | i -> arr.(i - 1))
 
   (* map classes to [1;2 ... 3], convert features to matrix and run Softmax *)
-  let estimate ~method_name ~class_bound ~to_t ?(spec=default) ?(classes=[]) data =
+  let estimate ~method_name ~class_bound ~to_t ?(opt=default) ?(classes=[]) data =
     let class_bound =
       match class_bound with
       | None   -> fun n -> n
@@ -444,8 +444,8 @@ module LrCommon(Data: Continuous_encoded_data_intf) = struct
         in
         let weights =
           Softmax_regression.regress
-            ~lambda:spec.lambda
-            ~tolerance:spec.tolerance
+            ~lambda:opt.lambda
+            ~tolerance:opt.tolerance
             ftrs classes
         in
         let sortedc =
@@ -461,7 +461,7 @@ module LogisticRegression(Data: Continuous_encoded_data_intf)
   : sig
     include Classifier_intf with type feature = Data.feature
                             and type clas = Data.clas
-                            and type spec = log_reg_spec
+                            and type opt = log_reg_spec
 
     val coefficients : t -> float array
 
@@ -504,7 +504,7 @@ module MulticlassLogisticRegression(Data: Continuous_encoded_data_intf)
   : sig
     include Classifier_intf with type feature = Data.feature
                             and type clas = Data.clas
-                            and type spec = log_reg_spec
+                            and type opt = log_reg_spec
 
     val coefficients : t -> float array array
 

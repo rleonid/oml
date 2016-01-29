@@ -192,8 +192,8 @@ end
 
 module type Optional_arg_intf = sig
 
-  type spec             (** type of default argument. *)
-  val default : spec    (** A default value used when not specified.*)
+  type opt            (** type of default argument. *)
+  val default : opt   (** A default value used when not specified.*)
 end
 
 let fst3 (x,_,_) = x

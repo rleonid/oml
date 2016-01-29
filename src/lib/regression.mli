@@ -32,8 +32,8 @@ module type Linear_model_intf = sig
 
   (** [regress options pred resp] computes a linear model of [resp] based
       off of the independent variables in the design matrix [pred], taking
-      into account the various method [spec]s. *)
-  val regress : ?spec:spec -> input array -> resp:float array -> t
+      into account the various method [opt]s. *)
+  val regress : ?opt:opt -> input array -> resp:float array -> t
 
   (** [residuals t] returns the residuals, the difference between the observed
       value and the estimated value for the independent, response, values. *)
@@ -71,17 +71,21 @@ module type Linear_model_intf = sig
 
 end
 
-(** Simple one dimensional regress. *)
+(** Simple one dimensional regression. *)
 module Univariate : sig
+
+  (** The optional [opt] for univariate regression are weights for each
+      observation. One can use them to change the model such that each
+      error (e_i) is now sampled from it's own distribution: [N(0, s/w_i)],
+      where s^2 is the error variance and w_i is the weight of the ith
+      error. *)
+  type opt = float array
+
+  val opt : ?weights:float array -> unit -> opt
 
   include Linear_model_intf
     with type input = float
-    (** The optional [spec] for univariate regression are weights for each
-        observation. One can use them to change the model such that each
-        error (e_i) is now sampled from it's own distribution: [N(0, s/w_i)],
-        where s^2 is the error variance and w_i is the weight of the ith
-        error. *)
-    and type spec = float array
+    and type opt := opt
 
   (** [alpha t] a shorthand for the constant parameter used in the regression.
       Equivalent to [(coefficients t).(0)] *)
@@ -101,22 +105,23 @@ module Univariate : sig
 
 end
 
-type lambda_spec =
-  | Spec of float         (** Use this specific value. *)
-  | From of float array   (** Choose the value in the array with the lowest Leave-One-Out-Error. *)
-
-type multivariate_spec =
-  { add_constant_column : bool          (** Instructs the method to efficiently insert a colum of 1's into the
-                                            design matrix for the constant term. *)
-  ; lambda_spec : lambda_spec option    (** How to optionally determine the ridge parameter. *)
-  }
-
 (** Multi-dimensional input regression, with support for Ridge regression. *)
 module Multivariate : sig
 
+  type opt =
+    { add_constant_column : bool          (** Instructs the method to efficiently insert a colum of 1's into the
+                                            design matrix for the constant term. *)
+    ; l2_regularizer : [`S of float | `From of float array] option    (** How to optionally determine the ridge parameter. *)
+    }
+
+  val opt : ?l2_regularizer:[`S of float | `From of float array] ->
+            ?add_constant_column:bool ->
+            unit ->
+            opt
+
   include Linear_model_intf
     with type input = float array
-    and type spec = multivariate_spec
+    and type opt := opt
 
   (** [aic linear_model] return the Akaike information criterion for the
       [linear_model].*)
@@ -128,11 +133,6 @@ module Multivariate : sig
 
 end
 
-type tikhonov_spec =
-  { regularizer : float array array   (** The regularizing matrix. *)
-  ; lambda_spec : lambda_spec option  (** How to optionally determine the ridge parameter. *)
-  }
-
 (** Multi-dimensional input regression with a matrix regularizer.
   described {{:https://en.wikipedia.org/wiki/Tikhonov_regularization} here}.
 
@@ -140,9 +140,19 @@ type tikhonov_spec =
   been verified. A warning is printed to standard-error. *)
 module Tikhonov : sig
 
+  type opt =
+    { tik_matrix : float array array   (** The regularizing matrix. *)
+    ; l2_regularizer : [`S of float | `From of float array] option  (** How to optionally determine the ridge parameter. *)
+    }
+
+  val opt : ?tik_matrix:float array array ->
+            ?l2_regularizer:[`S of float | `From of float array] ->
+            unit ->
+            opt
+
   include Linear_model_intf
     with type input = float array
-    and type spec = tikhonov_spec
+    and type opt := opt
 
   (** [aic linear_model] return the Akaike information criterion for the
       [linear_model].*)
