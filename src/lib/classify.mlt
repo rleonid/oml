@@ -78,7 +78,7 @@ let () =
 
   add_simple_test ~title:"Naive Gaussian Bayes."
     (fun () ->
-      let iris    = Data.Iris.iris in
+      let iris    = Iris.iris in
       let module GB = GaussianNaiveBayes(IrisEncoding) in
       let iris_gb = GB.estimate iris in
       let result  =
@@ -92,7 +92,7 @@ let () =
 
   add_simple_test ~title:"Logistic Regression on Iris only 2 classes."
     (fun () ->
-      let iris      = Data.Iris.iris in
+      let iris      = Iris.iris in
       let no_setosa =
         List.filter ~f:(fun (c,_) -> match c with | `setosa -> false | _ -> true)
           iris
@@ -111,7 +111,7 @@ let () =
 
   add_simple_test ~title:"Logistic Regression on Iris all classes."
     (fun () ->
-      let iris      = Data.Iris.iris in
+      let iris      = Iris.iris in
       let module LR = MulticlassLogisticRegression(IrisEncoding) in
       let iris_lr   = LR.estimate iris in
       let result    =

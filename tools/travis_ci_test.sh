@@ -70,6 +70,9 @@ eval `opam config env`
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
+# not yet in opam
+opam pin add -y dsfo git://github.com/rleonid/dsfo
+
 echo Installing Libraries
 make setup
 
