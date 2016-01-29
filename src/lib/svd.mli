@@ -42,7 +42,7 @@ val solve_linear : ?lambda:float -> t -> vec -> vec
 (** [covariance_matrix_inv t] if [t] is the SVD transform of matrix [A],
     computes the inverse of the covariance matrix: [A^t * A]^-1.
   
-    @param [lambda] is an optional [lambda] is an optional value used to scale
+    @param lambda is an optional [lambda] is an optional value used to scale
     the singular value inverses ala [solve_linear]. *)
 val covariance_matrix_inv : ?lambda:float -> t -> mat
 

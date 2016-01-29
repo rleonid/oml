@@ -225,7 +225,8 @@ type log_reg_spec =
   see {{!module:MulticlassLogisticRegression}MulticlassLogisticRegression}.
 
   A constant [1] is added to all encoded features by [estimate],
-  there is no need to add one with {{!moduletype:Continuous_encoded_data_intf.encode}encode}.
+  there is no need to add one with
+  {{!val:Continuous_encoded_data_intf.encoding}encoding}.
 *)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
   sig
@@ -253,7 +254,8 @@ module LogisticRegression(D: Continuous_encoded_data_intf) :
   per class.
 
   A constant [1] is added to all encoded features by [estimate],
-  there is no need to add one with {{!moduletype:Continuous_encoded_data_intf.encode}encode}.
+  there is no need to add one with
+  {{!val:Continuous_encoded_data_intf.encoding}encoding}.
 *)
 module MulticlassLogisticRegression(D: Continuous_encoded_data_intf) :
   sig

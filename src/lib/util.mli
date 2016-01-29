@@ -129,7 +129,7 @@ module Array : sig
 
   (** [permute arr] will permute a copy of [arr].
 
-      @param ~copy can be set to false to perform the permutation in place. *)
+      @param copy can be set to false to perform the permutation in place. *)
   val permute : ?copy:bool -> 'a array -> 'a array
 
 end (* Array *)
