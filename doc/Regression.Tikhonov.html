@@ -38,9 +38,23 @@
 
 <pre><span class="keyword">module</span> Tikhonov: <code class="code">sig</code> <a href="Regression.Tikhonov.html">..</a> <code class="code">end</code></pre><div class="info module top">
 Multi-dimensional input regression with a matrix regularizer.
-  described <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization"> here</a>.<br>
+  described <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization"> here</a>.
+<p>
+
+  Please take care with using this method as not all of the algorithms have
+  been verified. A warning is printed to standard-error.<br>
 </div>
 <hr width="100%">
 
 <pre><span class="keyword">include</span> <a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a></pre>
+
+<pre><span id="VALaic"><span class="keyword">val</span> aic</span> : <code class="type">t -> float</code></pre><div class="info ">
+<code class="code">aic linear_model</code> return the Akaike information criterion for the
+      <code class="code">linear_model</code>.<br>
+</div>
+
+<pre><span id="VALpress"><span class="keyword">val</span> press</span> : <code class="type">t -> float</code></pre><div class="info ">
+<code class="code">press linear_model</code> return the Predicted REsidual Sum of Squares for the
+      <code class="code">linear_model</code>.<br>
+</div>
 </body></html>

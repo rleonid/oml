@@ -61,9 +61,9 @@ Perform the Singular Value Decomposition via <a href="https://github.com/mmottl/
 <code class="code">vt t</code>.<br>
 </div>
 
-<pre><span id="VALsvd"><span class="keyword">val</span> svd</span> : <code class="type">Lacaml.D.mat -> <a href="Svd.html#TYPEt">t</a></code></pre><div class="info ">
+<pre><span id="VALsvd"><span class="keyword">val</span> svd</span> : <code class="type">?copy:bool -> Lacaml.D.mat -> <a href="Svd.html#TYPEt">t</a></code></pre><div class="info ">
 <code class="code">svd m</code> separate <code class="code">m</code> into its singular value decomposition.
-  <code class="code">mat</code> is destroyed in the process.<br>
+    <code class="code">mat</code> is destroyed in the process, unless copy is set to true.<br>
 </div>
 
 <pre><span id="VALsolve_linear"><span class="keyword">val</span> solve_linear</span> : <code class="type">?lambda:float -> <a href="Svd.html#TYPEt">t</a> -> Lacaml.D.vec -> Lacaml.D.vec</code></pre><div class="info ">
@@ -71,9 +71,12 @@ Perform the Singular Value Decomposition via <a href="https://github.com/mmottl/
     regression, when <code class="code">a</code> is the Singular Value Decomposition.<br>
 </div>
 
-<pre><span id="VALcovariance_matrix"><span class="keyword">val</span> covariance_matrix</span> : <code class="type">?lambda:float -> <a href="Svd.html#TYPEt">t</a> -> Lacaml.D.mat</code></pre><div class="info ">
-<code class="code">covariance_matrix a b</code> computes the covariance matrix <code class="code">A * A^t</code>.<br>
+<pre><span id="VALcovariance_matrix_inv"><span class="keyword">val</span> covariance_matrix_inv</span> : <code class="type">?lambda:float -> <a href="Svd.html#TYPEt">t</a> -> Lacaml.D.mat</code></pre><div class="info ">
+<code class="code">covariance_matrix_inv t</code> if <code class="code">t</code> is the SVD transform of matrix <code class="code">A</code>,
+    computes the inverse of the covariance matrix: <code class="code">A^t * A</code>^-1.<br>
 </div>
+<div class="param_info"><code class="code">lambda</code> : is an optional <code class="code">lambda</code> is an optional value used to scale
+    the singular value inverses ala <code class="code">solve_linear</code>.</div>
 
 <pre><span id="VALlooe"><span class="keyword">val</span> looe</span> : <code class="type"><a href="Svd.html#TYPEt">t</a> -> Lacaml.D.vec -> float -> Lacaml.D.vec</code></pre><div class="info ">
 <code class="code">looe t y</code> returns a function to efficiently computes the Leave-One-Out-Error

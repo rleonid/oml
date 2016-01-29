@@ -52,6 +52,18 @@
 <code class="code">add x y</code> add pairwise elements.
 </div>
 </td></tr>
+<tr><td><a href="Regression.Tikhonov.html#VALaic">aic</a> [<a href="Regression.Tikhonov.html">Regression.Tikhonov</a>]</td>
+<td><div class="info">
+<code class="code">aic linear_model</code> return the Akaike information criterion for the
+      <code class="code">linear_model</code>.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Multivariate.html#VALaic">aic</a> [<a href="Regression.Multivariate.html">Regression.Multivariate</a>]</td>
+<td><div class="info">
+<code class="code">aic linear_model</code> return the Akaike information criterion for the
+      <code class="code">linear_model</code>.
+</div>
+</td></tr>
 <tr><td><a href="Util.Array.html#VALall">all</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
 <code class="code">all p arr</code> equivalent to <code class="code">true &amp;&amp; (p arr.(0)) &amp;&amp; (p arr.(1)) ...
@@ -61,6 +73,12 @@
 <tr><td><a href="Regression.Univariate.html#VALalpha">alpha</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">alpha t</code> a shorthand for the constant parameter used in the regression.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Univariate.html#VALalpha_test">alpha_test</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
+<td><div class="info">
+<code class="code">alpha_test ~null linear_model</code> perform a hypothesis test on the <code class="code">alpha</code>
+      coefficient of the <code class="code">linear_model</code>.
 </div>
 </td></tr>
 <tr><td><a href="Util.Array.html#VALany">any</a> [<a href="Util.Array.html">Util.Array</a>]</td>
@@ -76,6 +94,12 @@
 </div>
 </td></tr>
 <tr><td align="left"><br>B</td></tr>
+<tr><td><a href="Classify.LogisticRegression.html#VALbase_class">base_class</a> [<a href="Classify.LogisticRegression.html">Classify.LogisticRegression</a>]</td>
+<td><div class="info">
+<code class="code">base_class t</code> returns the class C against which the log-odds
+        are computed (and hence coefficients).
+</div>
+</td></tr>
 <tr><td><a href="Regression.Univariate.html#VALbeta">beta</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">beta t</code> a shorthand for the linear parameter used in the regression.
@@ -90,15 +114,21 @@
 </td></tr>
 <tr><td><a href="Distributions.html#VALbeta_cdf">beta_cdf</a> [<a href="Distributions.html">Distributions</a>]</td>
 <td><div class="info">
-<code class="code">beta_cdf ~alpha ~beta x</code> probability that a beta random
-    variable with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters takes a value less than
-    or equal to <code class="code">x</code>.
+<code class="code">beta_cdf ~alpha ~beta x</code> probability that a beta random variable with
+    <code class="code">alpha</code> and <code class="code">beta</code> shape parameters takes a value less than or equal to
+    <code class="code">x</code>.
 </div>
 </td></tr>
 <tr><td><a href="Distributions.html#VALbeta_pdf">beta_pdf</a> [<a href="Distributions.html">Distributions</a>]</td>
 <td><div class="info">
 <code class="code">beta_pdf ~alpha ~beta x</code> value of the Beta distribution
     function (with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters) at <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Univariate.html#VALbeta_test">beta_test</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
+<td><div class="info">
+<code class="code">beta_test ~null linear_model</code> perform a hypothesis test on the <code class="code">beta</code>
+      coefficient of the <code class="code">linear_model</code>.
 </div>
 </td></tr>
 <tr><td><a href="Util.Array.html#VALbinary_search">binary_search</a> [<a href="Util.Array.html">Util.Array</a>]</td>
@@ -146,6 +176,11 @@
     of freedom.
 </div>
 </td></tr>
+<tr><td><a href="Classify.MulticlassLogisticRegression.html#VALclass_order">class_order</a> [<a href="Classify.MulticlassLogisticRegression.html">Classify.MulticlassLogisticRegression</a>]</td>
+<td><div class="info">
+<code class="code">class_order t</code> specifies the order in which coefficients are returned.
+</div>
+</td></tr>
 <tr><td><a href="Classify.Generative_intf.html#VALclass_probabilities">class_probabilities</a> [<a href="Classify.Generative_intf.html">Classify.Generative_intf</a>]</td>
 <td><div class="info">
 <code class="code">class_probabilities t class</code> returns the prior and per feature
@@ -164,9 +199,32 @@
     using <code class="code">-2;-1;1;2</code> as cut off for the <a href="Descriptive.html#TYPEskew_classification"><code class="code">Descriptive.skew_classification</code></a>.
 </div>
 </td></tr>
+<tr><td><a href="Regression.Linear_model_intf.html#VALcoeff_of_determination">coeff_of_determination</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
+<td><div class="info">
+<code class="code">coeff_of_determination linear_model</code> returns the R^2 statistic for the
+      linear model.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Linear_model_intf.html#VALcoefficient_tests">coefficient_tests</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
+<td><div class="info">
+<code class="code">coefficient_tests linear_model</code> perform hypothesis tests on the
+      models coefficients to see if they are significantly different from
+      the null.
+</div>
+</td></tr>
 <tr><td><a href="Interpolate.Spline.html#VALcoefficients">coefficients</a> [<a href="Interpolate.Spline.html">Interpolate.Spline</a>]</td>
 <td><div class="info">
 <code class="code">coefficients t</code> returns an array of the fit spline coefficients.
+</div>
+</td></tr>
+<tr><td><a href="Classify.MulticlassLogisticRegression.html#VALcoefficients">coefficients</a> [<a href="Classify.MulticlassLogisticRegression.html">Classify.MulticlassLogisticRegression</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> the weights assigned to the log-odds of the features.
+</div>
+</td></tr>
+<tr><td><a href="Classify.LogisticRegression.html#VALcoefficients">coefficients</a> [<a href="Classify.LogisticRegression.html">Classify.LogisticRegression</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> the weights assigned to the log-odds of the features.
 </div>
 </td></tr>
 <tr><td><a href="Regression.Linear_model_intf.html#VALcoefficients">coefficients</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
@@ -184,7 +242,7 @@
 <code class="code">components t</code>
 </div>
 </td></tr>
-<tr><td><a href="Regression.Univariate.html#VALconfidence_interval">confidence_interval</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
+<tr><td><a href="Regression.Linear_model_intf.html#VALconfidence_interval">confidence_interval</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">confidence_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
       construct confidence intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.
@@ -204,12 +262,13 @@
     reverse relationship (smaller with larger and vice versa).
 </div>
 </td></tr>
-<tr><td><a href="Svd.html#VALcovariance_matrix">covariance_matrix</a> [<a href="Svd.html">Svd</a>]</td>
+<tr><td><a href="Svd.html#VALcovariance_matrix_inv">covariance_matrix_inv</a> [<a href="Svd.html">Svd</a>]</td>
 <td><div class="info">
-<code class="code">covariance_matrix a b</code> computes the covariance matrix <code class="code">A * A^t</code>.
+<code class="code">covariance_matrix_inv t</code> if <code class="code">t</code> is the SVD transform of matrix <code class="code">A</code>,
+    computes the inverse of the covariance matrix: <code class="code">A^t * A</code>^-1.
 </div>
 </td></tr>
-<tr><td><a href="Classify.html#VALcross_validated_auc">cross_validated_auc</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classify.Performance.html#VALcross_validated_auc">cross_validated_auc</a> [<a href="Classify.Performance.html">Classify.Performance</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>D</td></tr>
 <tr><td><a href="Util.Optional_arg_intf.html#VALdefault">default</a> [<a href="Util.Optional_arg_intf.html">Util.Optional_arg_intf</a>]</td>
@@ -230,6 +289,11 @@ A default value used when not specified.
 <tr><td><a href="Matrices.html#VALdim">dim</a> [<a href="Matrices.html">Matrices</a>]</td>
 <td><div class="info">
 <code class="code">dim m</code> the dimensions (row, columns) of the matrix <code class="code">m</code>.
+</div>
+</td></tr>
+<tr><td><a href="Distributions.html#VALdirichlet_pdf">dirichlet_pdf</a> [<a href="Distributions.html">Distributions</a>]</td>
+<td><div class="info">
+<code class="code">dirichlet_pdf</code>
 </div>
 </td></tr>
 <tr><td><a href="Vectors.html#VALdot">dot</a> [<a href="Vectors.html">Vectors</a>]</td>
@@ -334,13 +398,19 @@ A really small value.
     it converges.
 </div>
 </td></tr>
-<tr><td><a href="Classify.html#VALevaluate_performance">evaluate_performance</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classify.Performance.html#VALevaluate_performance">evaluate_performance</a> [<a href="Classify.Performance.html">Classify.Performance</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>F</td></tr>
 <tr><td><a href="Functions.html#VALf_less">f_less</a> [<a href="Functions.html">Functions</a>]</td>
 <td><div class="info">
 <code class="code">f_less d1 d2 x</code> computes the probability of seeing a value less than <code class="code">x</code>
     in an F-distribution parameterized by <code class="code">d1</code> and <code class="code">d2</code>.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Linear_model_intf.html#VALf_statistic">f_statistic</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
+<td><div class="info">
+<code class="code">F_test linear_model</code> compute the F-statistic to assess if there is any
+      relationship between the response and predictors in the <code class="code">linear_model</code>.
 </div>
 </td></tr>
 <tr><td><a href="Util.Array.html#VALfind_index">find_index</a> [<a href="Util.Array.html">Util.Array</a>]</td>
@@ -482,9 +552,20 @@ A really small value.
     function (with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters) at <code class="code">x</code>.
 </div>
 </td></tr>
+<tr><td><a href="Distributions.html#VALln_dirichlet_pdf">ln_dirichlet_pdf</a> [<a href="Distributions.html">Distributions</a>]</td>
+<td><div class="info">
+<code class="code">ln_dirichlet_pdf</code>
+</div>
+</td></tr>
 <tr><td><a href="Functions.html#VALln_gamma">ln_gamma</a> [<a href="Functions.html">Functions</a>]</td>
 <td><div class="info">
 <code class="code">ln_gamma x</code> compute the natural logarithm of the gamma function of <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Functions.html#VALln_multivariate_beta">ln_multivariate_beta</a> [<a href="Functions.html">Functions</a>]</td>
+<td><div class="info">
+<code class="code">ln_multivariate_beta x y</code>  computes <code class="code">log (multivariate_beta x y)</code>,
+    for better accuracy.
 </div>
 </td></tr>
 <tr><td><a href="Svd.html#VALlooe">looe</a> [<a href="Svd.html">Svd</a>]</td>
@@ -582,6 +663,13 @@ A really small value.
     a <code class="code">weights</code> vector which sums to <code class="code">1</code>.
 </div>
 </td></tr>
+<tr><td><a href="Functions.html#VALmultivariate_beta">multivariate_beta</a> [<a href="Functions.html">Functions</a>]</td>
+<td><div class="info">
+<code class="code">multivariate_beta arr</code> computes the multivariate_beta function <code class="code">arr</code>, this
+    function is also known as the Euler integral of the first kind and is useful
+    in defining various distributions.
+</div>
+</td></tr>
 <tr><td align="left"><br>N</td></tr>
 <tr><td><a href="Solvers.html#VALnewton">newton</a> [<a href="Solvers.html">Solvers</a>]</td>
 <td><div class="info">
@@ -646,6 +734,11 @@ Computes kl divergence of the normal distributions P and Q defined
     components.
 </div>
 </td></tr>
+<tr><td><a href="Util.Array.html#VALpermute">permute</a> [<a href="Util.Array.html">Util.Array</a>]</td>
+<td><div class="info">
+<code class="code">permute arr</code> will permute a copy of <code class="code">arr</code>.
+</div>
+</td></tr>
 <tr><td><a href="Util.html#VALpi">pi</a> [<a href="Util.html">Util</a>]</td>
 <td><div class="info">
 3.14159265358979312
@@ -663,7 +756,7 @@ Computes kl divergence of the normal distributions P and Q defined
   population <code class="code">mean</code>.
 </div>
 </td></tr>
-<tr><td><a href="Regression.Univariate.html#VALprediction_interval">prediction_interval</a> [<a href="Regression.Univariate.html">Regression.Univariate</a>]</td>
+<tr><td><a href="Regression.Linear_model_intf.html#VALprediction_interval">prediction_interval</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
 <td><div class="info">
 <code class="code">prediction_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
       construct prediction intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.
@@ -675,6 +768,18 @@ Computes kl divergence of the normal distributions P and Q defined
   Creates a prediction interval for the distribution described by <code class="code">stats</code>
   at an <code class="code">alpha</code> level of statistical significance; future observations
   will fall within the bounds with probabiltiy <code class="code">1.0 - alpha</code>.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Tikhonov.html#VALpress">press</a> [<a href="Regression.Tikhonov.html">Regression.Tikhonov</a>]</td>
+<td><div class="info">
+<code class="code">press linear_model</code> return the Predicted REsidual Sum of Squares for the
+      <code class="code">linear_model</code>.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Multivariate.html#VALpress">press</a> [<a href="Regression.Multivariate.html">Regression.Multivariate</a>]</td>
+<td><div class="info">
+<code class="code">press linear_model</code> return the Predicted REsidual Sum of Squares for the
+      <code class="code">linear_model</code>.
 </div>
 </td></tr>
 <tr><td><a href="Matrices.html#VALprod">prod</a> [<a href="Matrices.html">Matrices</a>]</td>
@@ -694,7 +799,7 @@ Multiply a row vector against a matrix.
 </td></tr>
 <tr><td><a href="Util.Array.html#VALprodf">prodf</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
-<code class="code">Array.prodf a</code> computes <code class="code">a.(0) *. a.(1) *. ... a.(n-1)</code>.
+<code class="code">Array.prodf a</code> computes <code class="code">a.(0) *. a.(1) *. ... a.(n-1)</code>, naively.
 </div>
 </td></tr>
 <tr><td align="left"><br>R</td></tr>
@@ -740,6 +845,12 @@ Multiply a row vector against a matrix.
 <td><div class="info">
 <code class="code">regularized_upper_gamma a x</code> computes regularized (normalized by
     <code class="code">gamma a</code>) incomplete upper (integral from <code class="code">x</code> to <code class="code">infinity</code>) function.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Linear_model_intf.html#VALresidual_standard_error">residual_standard_error</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
+<td><div class="info">
+<code class="code">residual_standard_error linear_model</code> returns an estimate, based on the
+      residuals, of the variance of the error term in the linear model.
 </div>
 </td></tr>
 <tr><td><a href="Regression.Linear_model_intf.html#VALresiduals">residuals</a> [<a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a>]</td>
@@ -850,8 +961,8 @@ The number of dummy variables to track.
 </td></tr>
 <tr><td><a href="Distributions.html#VALstudent_cdf">student_cdf</a> [<a href="Distributions.html">Distributions</a>]</td>
 <td><div class="info">
-<code class="code">student_cdf k x</code> computest the probability that the Student T's
-    distrubtion with <code class="code">k</code> degrees of freedom takes a value less than <code class="code">x</code>.
+<code class="code">student_cdf degrees_of_freedom x</code> computest the probability that the Student T's
+    distrubtion with <code class="code">degrees_of_freedom</code> takes a value less than <code class="code">x</code>.
 </div>
 </td></tr>
 <tr><td><a href="Functions.html#VALstudent_cdf_inv">student_cdf_inv</a> [<a href="Functions.html">Functions</a>]</td>
@@ -862,14 +973,14 @@ The number of dummy variables to track.
 </td></tr>
 <tr><td><a href="Distributions.html#VALstudent_pdf">student_pdf</a> [<a href="Distributions.html">Distributions</a>]</td>
 <td><div class="info">
-<code class="code">student_pdf k x</code> computes the value of the Student T's distribution with
-    <code class="code">k</code> degrees of freedom at <code class="code">x</code>.
+<code class="code">student_pdf degrees_of_freedom x</code> computes the value of the Student T's
+    distribution with <code class="code">degrees_of_freedom</code> at <code class="code">x</code>.
 </div>
 </td></tr>
 <tr><td><a href="Distributions.html#VALstudent_quantile">student_quantile</a> [<a href="Distributions.html">Distributions</a>]</td>
 <td><div class="info">
-<code class="code">student_quantile k p</code> computes <code class="code">x</code> such that
-    <code class="code">student_cdf k x = p</code>.
+<code class="code">student_quantile degrees_of_freedom p</code> computes <code class="code">x</code> such that
+    <code class="code">student_cdf degrees_of_freedom x = p</code>.
 </div>
 </td></tr>
 <tr><td><a href="Matrices.html#VALsub">sub</a> [<a href="Matrices.html">Matrices</a>]</td>
@@ -884,7 +995,8 @@ The number of dummy variables to track.
 </td></tr>
 <tr><td><a href="Util.Array.html#VALsumf">sumf</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
-<code class="code">Array.sumf a</code> computes <code class="code">a.(0) +. a.(1) +. ... a.(n-1)</code>.
+<code class="code">Array.sumf a</code> computes the sum of the elements of <code class="code">a</code> using
+      <a href="https://en.wikipedia.org/wiki/Kahan_summation_algorithm">Kahan summation algorithm</a>.
 </div>
 </td></tr>
 <tr><td><a href="Svd.html#VALsvd">svd</a> [<a href="Svd.html">Svd</a>]</td>
@@ -1018,7 +1130,8 @@ Describe a hypothesis test.
 <tr><td align="left"><br>Z</td></tr>
 <tr><td><a href="Util.Array.html#VALzip">zip</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
-<code class="code">zip x y</code> construct an array that stores the elements of x and y as a tuple.
+<code class="code">zip x y</code> construct an array that stores the elements of x and y as a
+      tuple.
 </div>
 </td></tr>
 </table>

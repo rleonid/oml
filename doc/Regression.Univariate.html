@@ -53,13 +53,13 @@ Simple one dimensional regress.<br>
       Equivalent to <code class="code">(coefficients t).(1)</code><br>
 </div>
 
-<pre><span id="VALconfidence_interval"><span class="keyword">val</span> confidence_interval</span> : <code class="type">t -> alpha:float -> input -> float * float</code></pre><div class="info ">
-<code class="code">confidence_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
-      construct confidence intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.<br>
+<pre><span id="VALalpha_test"><span class="keyword">val</span> alpha_test</span> : <code class="type">?null:float -> t -> <a href="Inference.html#TYPEtest">Inference.test</a></code></pre><div class="info ">
+<code class="code">alpha_test ~null linear_model</code> perform a hypothesis test on the <code class="code">alpha</code>
+      coefficient of the <code class="code">linear_model</code>.<br>
 </div>
 
-<pre><span id="VALprediction_interval"><span class="keyword">val</span> prediction_interval</span> : <code class="type">t -> alpha:float -> input -> float * float</code></pre><div class="info ">
-<code class="code">prediction_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
-      construct prediction intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.<br>
+<pre><span id="VALbeta_test"><span class="keyword">val</span> beta_test</span> : <code class="type">?null:float -> t -> <a href="Inference.html#TYPEtest">Inference.test</a></code></pre><div class="info ">
+<code class="code">beta_test ~null linear_model</code> perform a hypothesis test on the <code class="code">beta</code>
+      coefficient of the <code class="code">linear_model</code>.<br>
 </div>
 </body></html>

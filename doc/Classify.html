@@ -45,10 +45,6 @@ The classifiers below assign a discrete probability distribution over the
 <hr width="100%">
 
 <pre><span id="TYPEprobabilities"><span class="keyword">type</span> <code class="type">'a</code> probabilities</span> = <code class="type">('a * float) list</code> </pre>
-<div class="info ">
-The classifiers below assign a discrete probability distribution over the
-    list of class 'a in their training set.<br>
-</div>
 
 
 <pre><span id="VALmost_likely"><span class="keyword">val</span> most_likely</span> : <code class="type">'a <a href="Classify.html#TYPEprobabilities">probabilities</a> -> 'a</code></pre><div class="info ">
@@ -61,8 +57,6 @@ The classifiers below assign a discrete probability distribution over the
 From the perspective of classification there are two types of data:
   <a href="Classify.Data_intf.html#TYPEclas">classes</a> and <a href="Classify.Data_intf.html#TYPEfeature">features</a>.
 </div>
-<br>
-TODO Encoding data.<br>
 
 <pre><span class="keyword">module type</span> <a href="Classify.Dummy_encoded_data_intf.html">Dummy_encoded_data_intf</a> = <code class="code">sig</code> <a href="Classify.Dummy_encoded_data_intf.html">..</a> <code class="code">end</code></pre><div class="info">
 Data where features are encoded using
@@ -163,95 +157,47 @@ Train a
   <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>.
 </div>
 
-<pre><span class="keyword">module</span> <a href="Classify.LogisticRegression.html">LogisticRegression</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="type"><a href="Classify.Classifier_intf.html">Classifier_intf</a></code><code class="type">  with type spec = unit
-                  and type feature = D.feature
-                  and type clas = D.clas</code></div></pre><div class="info">
+<pre><code><span id="TYPElog_reg_spec"><span class="keyword">type</span> <code class="type"></code>log_reg_spec</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTlog_reg_spec.lambda">lambda</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTlog_reg_spec.tolerance">tolerance</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+The optional configuration of the
+    <a href="Classify.LogisticRegression.html">Logistic Regression</a> and
+    <a href="Classify.MulticlassLogisticRegression.html"> Multiclass Logistic Regression</a> 
+    classifiers.<br>
+</div>
+
+
+<pre><span class="keyword">module</span> <a href="Classify.LogisticRegression.html">LogisticRegression</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Classify.LogisticRegression.html">..</a> <code class="code">end</code></div></pre><div class="info">
 Use
   <a href="https://en.wikipedia.org/wiki/Logistic_regression">
   Logistic Regression</a> to estimate log-odds
   for each of the quantitative features in the
   <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
-  per class
+  per class.
 </div>
 
-<pre><code><span id="TYPEbinary"><span class="keyword">type</span> <code class="type"></code>binary</span> = {</code></pre><table class="typetable">
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTbinary.predicted">predicted</span>&nbsp;: <code class="type">bool</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTbinary.probability">probability</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTbinary.actual">actual</span>&nbsp;: <code class="type">bool</code>;</code></td>
-
-</tr></table>
-}
-
-<div class="info ">
-A two class prediction.<br>
+<pre><span class="keyword">module</span> <a href="Classify.MulticlassLogisticRegression.html">MulticlassLogisticRegression</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Classify.MulticlassLogisticRegression.html">..</a> <code class="code">end</code></div></pre><div class="info">
+Use
+  <a href="https://en.wikipedia.org/wiki/Multinomial_logistic_regression">
+  Multiple Class Logistic Regression</a> to estimate log-odds
+  for each of the quantitative features in the
+  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
+  per class.
 </div>
 
-
-<pre><code><span id="TYPEdescriptive_statistics"><span class="keyword">type</span> <code class="type"></code>descriptive_statistics</span> = {</code></pre><table class="typetable">
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTdescriptive_statistics.sensitivity">sensitivity</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTdescriptive_statistics.specificity">specificity</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTdescriptive_statistics.positive_predictive">positive_predictive</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTdescriptive_statistics.negative_predictive">negative_predictive</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTdescriptive_statistics.accuracy">accuracy</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTdescriptive_statistics.area_under_curve">area_under_curve</span>&nbsp;: <code class="type">float</code>;</code></td>
-
-</tr></table>
-}
-
-<div class="info ">
-Common statistics that describe performance of a two state classifier.<br>
-</div>
-
-
-<pre><span id="VALevaluate_performance"><span class="keyword">val</span> evaluate_performance</span> : <code class="type"><a href="Classify.html#TYPEbinary">binary</a> list -> <a href="Classify.html#TYPEdescriptive_statistics">descriptive_statistics</a></code></pre>
-<pre><span id="VALcross_validated_auc"><span class="keyword">val</span> cross_validated_auc</span> : <code class="type">(float * float) array -> float</code></pre></body></html>
+<pre><span class="keyword">module</span> <a href="Classify.Performance.html">Performance</a>: <code class="code">sig</code> <a href="Classify.Performance.html">..</a> <code class="code">end</code></pre></body></html>

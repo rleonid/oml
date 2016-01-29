@@ -69,4 +69,35 @@ The interface of the model constructed by a Regression procedure.<br>
 <pre><span id="VALcoefficients"><span class="keyword">val</span> coefficients</span> : <code class="type"><a href="Regression.Linear_model_intf.html#TYPEt">t</a> -> float array</code></pre><div class="info ">
 <code class="code">coefficients t</code> returns the coefficients used in the linear model.<br>
 </div>
+
+<pre><span id="VALresidual_standard_error"><span class="keyword">val</span> residual_standard_error</span> : <code class="type"><a href="Regression.Linear_model_intf.html#TYPEt">t</a> -> float</code></pre><div class="info ">
+<code class="code">residual_standard_error linear_model</code> returns an estimate, based on the
+      residuals, of the variance of the error term in the linear model.<br>
+</div>
+
+<pre><span id="VALcoeff_of_determination"><span class="keyword">val</span> coeff_of_determination</span> : <code class="type"><a href="Regression.Linear_model_intf.html#TYPEt">t</a> -> float</code></pre><div class="info ">
+<code class="code">coeff_of_determination linear_model</code> returns the R^2 statistic for the
+      linear model.<br>
+</div>
+
+<pre><span id="VALconfidence_interval"><span class="keyword">val</span> confidence_interval</span> : <code class="type"><a href="Regression.Linear_model_intf.html#TYPEt">t</a> -><br>       alpha:float -> <a href="Regression.Linear_model_intf.html#TYPEinput">input</a> -> float * float</code></pre><div class="info ">
+<code class="code">confidence_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
+      construct confidence intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.<br>
+</div>
+
+<pre><span id="VALprediction_interval"><span class="keyword">val</span> prediction_interval</span> : <code class="type"><a href="Regression.Linear_model_intf.html#TYPEt">t</a> -><br>       alpha:float -> <a href="Regression.Linear_model_intf.html#TYPEinput">input</a> -> float * float</code></pre><div class="info ">
+<code class="code">prediction_interval linear_model alpha x</code> Use the <code class="code">linear_model</code> to
+      construct prediction intervals at <code class="code">x</code> at an <code class="code">alpha</code>-level of significance.<br>
+</div>
+
+<pre><span id="VALcoefficient_tests"><span class="keyword">val</span> coefficient_tests</span> : <code class="type">?null:float -> <a href="Regression.Linear_model_intf.html#TYPEt">t</a> -> <a href="Inference.html#TYPEtest">Inference.test</a> array</code></pre><div class="info ">
+<code class="code">coefficient_tests linear_model</code> perform hypothesis tests on the
+      models coefficients to see if they are significantly different from
+      the null.<br>
+</div>
+
+<pre><span id="VALf_statistic"><span class="keyword">val</span> f_statistic</span> : <code class="type"><a href="Regression.Linear_model_intf.html#TYPEt">t</a> -> float</code></pre><div class="info ">
+<code class="code">F_test linear_model</code> compute the F-statistic to assess if there is any
+      relationship between the response and predictors in the <code class="code">linear_model</code>.<br>
+</div>
 </body></html>

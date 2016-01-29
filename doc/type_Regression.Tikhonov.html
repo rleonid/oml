@@ -37,4 +37,12 @@
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;regress&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;resp:float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residuals&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residual_standard_error&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coeff_of_determination&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;confidence_interval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;prediction_interval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficient_tests&nbsp;:&nbsp;?null:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Inference</span>.test&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;f_statistic&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;aic&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;press&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
 <span class="keyword">end</span></code></body></html>

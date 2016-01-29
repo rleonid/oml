@@ -24,7 +24,7 @@
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
 <link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Classify.LogisticRegression</title>
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Classify.MulticlassLogisticRegression</title>
 </head>
 <body>
 <code class="code"><span class="keyword">functor</span>&nbsp;(<span class="constructor">D</span>&nbsp;:&nbsp;<span class="constructor">Continuous_encoded_data_intf</span>)&nbsp;<span class="keywordsign">-&gt;</span><br>
@@ -37,6 +37,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;probabilities<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;samples&nbsp;=&nbsp;(clas&nbsp;*&nbsp;feature)&nbsp;list<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;estimate&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?classes:clas&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;samples&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;base_class&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_order&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;list<br>
 &nbsp;&nbsp;<span class="keyword">end</span></code></body></html>

@@ -42,4 +42,15 @@
 &nbsp;&nbsp;&nbsp;&nbsp;resp:float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residuals&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;residual_standard_error&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coeff_of_determination&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;confidence_interval&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;prediction_interval&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.input&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficient_tests&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;?null:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Inference</span>.test&nbsp;array<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;f_statistic&nbsp;:&nbsp;<span class="constructor">Regression</span>.<span class="constructor">Linear_model_intf</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
 <span class="keyword">end</span></code></body></html>

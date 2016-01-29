@@ -29,7 +29,13 @@
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
 <link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Distributions</title>
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><link title="Normal " rel="Section" href="#2_Normal">
+<link title="Poisson" rel="Section" href="#2_Poisson">
+<link title="Beta" rel="Section" href="#2_Beta">
+<link title="Chi" rel="Section" href="#2_Chi">
+<link title="Student" rel="Section" href="#2_Student">
+<link title="Dirichlet" rel="Section" href="#2_Dirichlet">
+<title>Distributions</title>
 </head>
 <body>
 <div class="navbar"><a class="pre" href="Continued_fraction.html" title="Continued_fraction">Previous</a>
@@ -39,9 +45,11 @@
 <h1>Module <a href="type_Distributions.html">Distributions</a></h1>
 
 <pre><span class="keyword">module</span> Distributions: <code class="code">sig</code> <a href="Distributions.html">..</a> <code class="code">end</code></pre><div class="info module top">
-Probability density, cumulative and quantile functions common distributions.<br>
+<h1 id="1_Probabilitydensitycumulativeandquantilefunctionscommondistributions">Probability density, cumulative and quantile functions common distributions.</h1><br>
 </div>
 <hr width="100%">
+<br>
+<h2 id="2_Normal">Normal </h2><br>
 
 <pre><span id="VALnormal_cdf"><span class="keyword">val</span> normal_cdf</span> : <code class="type">?mean:float -> ?std:float -> float -> float</code></pre><div class="info ">
 <code class="code">normal_cdf mean std x</code> is the probability that a normal random
@@ -60,11 +68,15 @@ Probability density, cumulative and quantile functions common distributions.<br>
     <code class="code">normal_cdf mean std x = p</code>. <code class="code">mean</code> defaults to 0.0 and <code class="code">std</code> to 1.0.<br>
 <b>Raises</b> <code>Invalid_argument</code> if <code class="code">p</code> is outside <code class="code">0,1</code>.<br>
 </div>
+<br>
+<h2 id="2_Poisson">Poisson</h2><br>
 
 <pre><span id="VALpoisson_cdf"><span class="keyword">val</span> poisson_cdf</span> : <code class="type">mean:float -> float -> float</code></pre><div class="info ">
 <code class="code">poisson_cdf mean x</code> is the probability that a Poisson random variable with
     <code class="code">mean</code> will take a value less than or equal to <code class="code">x</code>.<br>
 </div>
+<br>
+<h2 id="2_Beta">Beta</h2><br>
 
 <pre><span id="VALln_beta_pdf"><span class="keyword">val</span> ln_beta_pdf</span> : <code class="type">alpha:float -> beta:float -> float -> float</code></pre><div class="info ">
 <code class="code">beta_pdf ~alpha ~beta x</code> natural log value of the Beta distribution
@@ -77,29 +89,43 @@ Probability density, cumulative and quantile functions common distributions.<br>
 </div>
 
 <pre><span id="VALbeta_cdf"><span class="keyword">val</span> beta_cdf</span> : <code class="type">alpha:float -> beta:float -> float -> float</code></pre><div class="info ">
-<code class="code">beta_cdf ~alpha ~beta x</code> probability that a beta random
-    variable with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters takes a value less than
-    or equal to <code class="code">x</code>.<br>
+<code class="code">beta_cdf ~alpha ~beta x</code> probability that a beta random variable with
+    <code class="code">alpha</code> and <code class="code">beta</code> shape parameters takes a value less than or equal to
+    <code class="code">x</code>.<br>
 </div>
+<br>
+<h2 id="2_Chi">Chi</h2><br>
 
 <pre><span id="VALchi_square_cdf"><span class="keyword">val</span> chi_square_cdf</span> : <code class="type">k:int -> float -> float</code></pre><div class="info ">
 <code class="code">chi_square_cdf ~k x</code> computes the probability of seeing a value less than
     <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees of freedom.<br>
 </div>
+<br>
+<h2 id="2_Student">Student</h2><br>
 
-<pre><span id="VALstudent_pdf"><span class="keyword">val</span> student_pdf</span> : <code class="type">k:int -> float -> float</code></pre><div class="info ">
-<code class="code">student_pdf k x</code> computes the value of the Student T's distribution with
-    <code class="code">k</code> degrees of freedom at <code class="code">x</code>.<br>
+<pre><span id="VALstudent_pdf"><span class="keyword">val</span> student_pdf</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_pdf degrees_of_freedom x</code> computes the value of the Student T's
+    distribution with <code class="code">degrees_of_freedom</code> at <code class="code">x</code>.<br>
 </div>
 
-<pre><span id="VALstudent_cdf"><span class="keyword">val</span> student_cdf</span> : <code class="type">k:int -> float -> float</code></pre><div class="info ">
-<code class="code">student_cdf k x</code> computest the probability that the Student T's
-    distrubtion with <code class="code">k</code> degrees of freedom takes a value less than <code class="code">x</code>.<br>
+<pre><span id="VALstudent_cdf"><span class="keyword">val</span> student_cdf</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_cdf degrees_of_freedom x</code> computest the probability that the Student T's
+    distrubtion with <code class="code">degrees_of_freedom</code> takes a value less than <code class="code">x</code>.<br>
 </div>
 
-<pre><span id="VALstudent_quantile"><span class="keyword">val</span> student_quantile</span> : <code class="type">k:int -> float -> float</code></pre><div class="info ">
-<code class="code">student_quantile k p</code> computes <code class="code">x</code> such that
-    <code class="code">student_cdf k x = p</code>.<br>
+<pre><span id="VALstudent_quantile"><span class="keyword">val</span> student_quantile</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_quantile degrees_of_freedom p</code> computes <code class="code">x</code> such that
+    <code class="code">student_cdf degrees_of_freedom x = p</code>.<br>
 <b>Raises</b> <code>Invalid_argument</code> if <code class="code">p</code> is outside <code class="code">0,1</code>.<br>
+</div>
+<br>
+<h2 id="2_Dirichlet">Dirichlet</h2><br>
+
+<pre><span id="VALln_dirichlet_pdf"><span class="keyword">val</span> ln_dirichlet_pdf</span> : <code class="type">alphas:float array -> float array -> float</code></pre><div class="info ">
+<code class="code">ln_dirichlet_pdf</code><br>
+</div>
+
+<pre><span id="VALdirichlet_pdf"><span class="keyword">val</span> dirichlet_pdf</span> : <code class="type">alphas:float array -> float array -> float</code></pre><div class="info ">
+<code class="code">dirichlet_pdf</code><br>
 </div>
 </body></html>

@@ -123,28 +123,49 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_probabilities&nbsp;:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;(feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;log_reg_spec&nbsp;=&nbsp;{&nbsp;lambda&nbsp;:&nbsp;float;&nbsp;tolerance&nbsp;:&nbsp;float;&nbsp;}<br>
 &nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">LogisticRegression</span>&nbsp;:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">functor</span>&nbsp;(<span class="constructor">D</span>&nbsp;:&nbsp;<span class="constructor">Continuous_encoded_data_intf</span>)&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">sig</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;clas&nbsp;=&nbsp;<span class="constructor">D</span>.clas<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;feature&nbsp;=&nbsp;<span class="constructor">D</span>.feature<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;unit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;log_reg_spec<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;default&nbsp;:&nbsp;spec<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;probabilities<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;samples&nbsp;=&nbsp;(clas&nbsp;*&nbsp;feature)&nbsp;list<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;estimate&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?classes:clas&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;samples&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;base_class&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;binary&nbsp;=&nbsp;{&nbsp;predicted&nbsp;:&nbsp;bool;&nbsp;probability&nbsp;:&nbsp;float;&nbsp;actual&nbsp;:&nbsp;bool;&nbsp;}<br>
-&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;descriptive_statistics&nbsp;=&nbsp;{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;sensitivity&nbsp;:&nbsp;float;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;specificity&nbsp;:&nbsp;float;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;positive_predictive&nbsp;:&nbsp;float;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;negative_predictive&nbsp;:&nbsp;float;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;:&nbsp;float;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;area_under_curve&nbsp;:&nbsp;float;<br>
-&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;evaluate_performance&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Classify</span>.binary&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Classify</span>.descriptive_statistics<br>
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;cross_validated_auc&nbsp;:&nbsp;(float&nbsp;*&nbsp;float)&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">MulticlassLogisticRegression</span>&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">functor</span>&nbsp;(<span class="constructor">D</span>&nbsp;:&nbsp;<span class="constructor">Continuous_encoded_data_intf</span>)&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">sig</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;clas&nbsp;=&nbsp;<span class="constructor">D</span>.clas<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;feature&nbsp;=&nbsp;<span class="constructor">D</span>.feature<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;spec&nbsp;=&nbsp;log_reg_spec<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;default&nbsp;:&nbsp;spec<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;eval&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;feature&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;probabilities<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;samples&nbsp;=&nbsp;(clas&nbsp;*&nbsp;feature)&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;estimate&nbsp;:&nbsp;?spec:spec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?classes:clas&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;samples&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;coefficients&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_order&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;clas&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
+&nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">Performance</span>&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">sig</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;binary&nbsp;=&nbsp;{&nbsp;predicted&nbsp;:&nbsp;bool;&nbsp;probability&nbsp;:&nbsp;float;&nbsp;actual&nbsp;:&nbsp;bool;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;descriptive_statistics&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sensitivity&nbsp;:&nbsp;float;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specificity&nbsp;:&nbsp;float;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;positive_predictive&nbsp;:&nbsp;float;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;negative_predictive&nbsp;:&nbsp;float;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;accuracy&nbsp;:&nbsp;float;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;area_under_curve&nbsp;:&nbsp;float;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;evaluate_performance&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Classify</span>.<span class="constructor">Performance</span>.binary&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Classify</span>.<span class="constructor">Performance</span>.descriptive_statistics<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;cross_validated_auc&nbsp;:&nbsp;(float&nbsp;*&nbsp;float)&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
 <span class="keyword">end</span></code></body></html>

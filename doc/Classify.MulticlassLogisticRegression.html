@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
 <link rel="Start" href="index.html">
-<link rel="previous" href="Classify.GaussianNaiveBayes.html">
-<link rel="next" href="Classify.MulticlassLogisticRegression.html">
+<link rel="previous" href="Classify.LogisticRegression.html">
+<link rel="next" href="Classify.Performance.html">
 <link rel="Up" href="Classify.html">
 <link title="Index of types" rel=Appendix href="index_types.html">
 <link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
@@ -29,29 +29,22 @@
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
 <link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Classify.LogisticRegression</title>
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Classify.MulticlassLogisticRegression</title>
 </head>
 <body>
-<div class="navbar"><a class="pre" href="Classify.GaussianNaiveBayes.html" title="Classify.GaussianNaiveBayes">Previous</a>
+<div class="navbar"><a class="pre" href="Classify.LogisticRegression.html" title="Classify.LogisticRegression">Previous</a>
 &nbsp;<a class="up" href="Classify.html" title="Classify">Up</a>
-&nbsp;<a class="post" href="Classify.MulticlassLogisticRegression.html" title="Classify.MulticlassLogisticRegression">Next</a>
+&nbsp;<a class="post" href="Classify.Performance.html" title="Classify.Performance">Next</a>
 </div>
-<h1>Functor <a href="type_Classify.LogisticRegression.html">Classify.LogisticRegression</a></h1>
+<h1>Functor <a href="type_Classify.MulticlassLogisticRegression.html">Classify.MulticlassLogisticRegression</a></h1>
 
-<pre><span class="keyword">module</span> LogisticRegression: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Classify.LogisticRegression.html">..</a> <code class="code">end</code></div></pre><div class="info module top">
+<pre><span class="keyword">module</span> MulticlassLogisticRegression: <div class="sig_block"><code class="code">functor (</code><code class="code">D</code><code class="code"> : </code><code class="type"><a href="Classify.Continuous_encoded_data_intf.html">Continuous_encoded_data_intf</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Classify.MulticlassLogisticRegression.html">..</a> <code class="code">end</code></div></pre><div class="info module top">
 Use
-  <a href="https://en.wikipedia.org/wiki/Logistic_regression">
-  Logistic Regression</a> to estimate log-odds
+  <a href="https://en.wikipedia.org/wiki/Multinomial_logistic_regression">
+  Multiple Class Logistic Regression</a> to estimate log-odds
   for each of the quantitative features in the
   <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
   per class.
-<p>
-
-  Unless specified via the <code class="code">classes</code> argument to <code class="code">estimate</code>, the first
-  class encountered will be considered the <a href="Classify.LogisticRegression.html#VALbase_class">base_class</a>. All
-  other classes will be considered as not <code class="code">base_class</code> and <code class="code">eval</code> will reflect
-  that, by returning the same probability. For multi-class logistic regression
-  see <a href="Classify.MulticlassLogisticRegression.html">MulticlassLogisticRegression</a>.
 <p>
 
   A constant <code class="code">1</code> is added to all encoded features by <code class="code">estimate</code>,
@@ -76,7 +69,7 @@ Use
 
 <pre><span class="keyword">include</span> <a href="Classify.Classifier_intf.html">Classify.Classifier_intf</a></pre>
 
-<pre><span id="VALcoefficients"><span class="keyword">val</span> coefficients</span> : <code class="type">t -> float array</code></pre><div class="info ">
+<pre><span id="VALcoefficients"><span class="keyword">val</span> coefficients</span> : <code class="type">t -> float array array</code></pre><div class="info ">
 <code class="code">coefficients t</code> the weights assigned to the log-odds of the features.
 <p>
 
@@ -84,8 +77,7 @@ Use
         there will always be 1 more than the <code class="code">size</code> of features.<br>
 </div>
 
-<pre><span id="VALbase_class"><span class="keyword">val</span> base_class</span> : <code class="type">t -> clas</code></pre><div class="info ">
-<code class="code">base_class t</code> returns the class C against which the log-odds
-        are computed (and hence coefficients).<br>
+<pre><span id="VALclass_order"><span class="keyword">val</span> class_order</span> : <code class="type">t -> clas list</code></pre><div class="info ">
+<code class="code">class_order t</code> specifies the order in which coefficients are returned.<br>
 </div>
 </body></html>

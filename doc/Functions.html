@@ -29,7 +29,10 @@
 <link title="Classify" rel="Chapter" href="Classify.html">
 <link title="Measures" rel="Chapter" href="Measures.html">
 <link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><link title="Distribution CDF's" rel="Section" href="#2_DistributionCDFs">
+<link title="Interpolate" rel="Chapter" href="Interpolate.html"><link title="Standard error functions." rel="Section" href="#2_Standarderrorfunctions">
+<link title="Gamma functions." rel="Section" href="#2_Gammafunctions">
+<link title="Beta functions." rel="Section" href="#2_Betafunctions">
+<link title="Distribution CDF's" rel="Section" href="#2_DistributionCDFs">
 <title>Functions</title>
 </head>
 <body>
@@ -48,6 +51,8 @@ Implementations of basic functions needed to compute distributions.
   the <a href="https://github.com/rleonid/ocephes">Ocephes</a> library.<br>
 </div>
 <hr width="100%">
+<br>
+<h2 id="2_Standarderrorfunctions">Standard error functions.</h2><br>
 
 <pre><span id="VALerf"><span class="keyword">val</span> erf</span> : <code class="type">float -> float</code></pre><div class="info ">
 <code class="code">erf x</code> computes the (Gauss) error function,
@@ -57,6 +62,8 @@ Implementations of basic functions needed to compute distributions.
 <pre><span id="VALerfc"><span class="keyword">val</span> erfc</span> : <code class="type">float -> float</code></pre><div class="info ">
 <code class="code">erfc x</code> computes <code class="code">1.0 - erfc x</code>.<br>
 </div>
+<br>
+<h2 id="2_Gammafunctions">Gamma functions.</h2><br>
 
 <pre><span id="VALgamma"><span class="keyword">val</span> gamma</span> : <code class="type">float -> float</code></pre><div class="info ">
 <code class="code">gamma x</code> computes the gamma function of <code class="code">x</code>. For positive integers
@@ -71,15 +78,17 @@ Implementations of basic functions needed to compute distributions.
     afterwards compute the exponent.<br>
 </div>
 
-<pre><span id="VALregularized_lower_gamma"><span class="keyword">val</span> regularized_lower_gamma</span> : <code class="type">float -> float -> float</code></pre><div class="info ">
+<pre><span id="VALregularized_lower_gamma"><span class="keyword">val</span> regularized_lower_gamma</span> : <code class="type">a:float -> float -> float</code></pre><div class="info ">
 <code class="code">regularized_lower_gamma a x</code> computes regularized (normalized by
     <code class="code">gamma a</code>) incomplete lower (integral from 0 to <code class="code">x</code>) function.<br>
 </div>
 
-<pre><span id="VALregularized_upper_gamma"><span class="keyword">val</span> regularized_upper_gamma</span> : <code class="type">float -> float -> float</code></pre><div class="info ">
+<pre><span id="VALregularized_upper_gamma"><span class="keyword">val</span> regularized_upper_gamma</span> : <code class="type">a:float -> float -> float</code></pre><div class="info ">
 <code class="code">regularized_upper_gamma a x</code> computes regularized (normalized by
     <code class="code">gamma a</code>) incomplete upper (integral from <code class="code">x</code> to <code class="code">infinity</code>) function.<br>
 </div>
+<br>
+<h2 id="2_Betafunctions">Beta functions.</h2><br>
 
 <pre><span id="VALbeta"><span class="keyword">val</span> beta</span> : <code class="type">float -> float -> float</code></pre><div class="info ">
 <code class="code">beta x y</code> computes the beta function of <code class="code">x</code> and <code class="code">y</code>, this function is also
@@ -96,6 +105,17 @@ Implementations of basic functions needed to compute distributions.
     the regularized (divided by <code class="code">beta alpha beta</code>) incomplete beta function,
     which is the partial (0 to <code class="code">x</code>) integral of the beta function paramterized
     by <code class="code">alpha</code> and <code class="code">beta</code>.<br>
+</div>
+
+<pre><span id="VALmultivariate_beta"><span class="keyword">val</span> multivariate_beta</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">multivariate_beta arr</code> computes the multivariate_beta function <code class="code">arr</code>, this
+    function is also known as the Euler integral of the first kind and is useful
+    in defining various distributions.<br>
+</div>
+
+<pre><span id="VALln_multivariate_beta"><span class="keyword">val</span> ln_multivariate_beta</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">ln_multivariate_beta x y</code>  computes <code class="code">log (multivariate_beta x y)</code>,
+    for better accuracy.<br>
 </div>
 
 <pre><span id="VALsoftmax"><span class="keyword">val</span> softmax</span> : <code class="type">?temperature:float -> float array -> float array</code></pre><div class="info ">
@@ -118,18 +138,12 @@ Implementations of basic functions needed to compute distributions.
     freedom.<br>
 </div>
 
-<pre><span id="VALsoftmax"><span class="keyword">val</span> softmax</span> : <code class="type">?temperature:float -> float array -> float array</code></pre><div class="info ">
-<code class="code">softmax ?temperature weights</code> transforms <code class="code">weights</code> into softmax weights dependent
-    on <code class="code">temperature</code>.<br>
-<b>Raises</b> <code>Invalid_argument</code> if <code class="code">weights</code> is empty or <code class="code">temperature = 0</code>.<br>
-</div>
-
 <pre><span id="VALnormal_cdf_inv"><span class="keyword">val</span> normal_cdf_inv</span> : <code class="type">float -> float</code></pre><div class="info ">
 <code class="code">normal_cdf_inv x</code> returns the value <code class="code">y</code> such that the integral of the
     normal cdf is <code class="code">x</code>.<br>
 </div>
 
-<pre><span id="VALstudent_cdf_inv"><span class="keyword">val</span> student_cdf_inv</span> : <code class="type">int -> float -> float</code></pre><div class="info ">
+<pre><span id="VALstudent_cdf_inv"><span class="keyword">val</span> student_cdf_inv</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
 <code class="code">student_cdf_inv k x</code> returns the value <code class="code">y</code> such that the integral of the
     Students T distribution with <code class="code">k</code> degrees of freedom is <code class="code">x</code>.<br>
 </div>
