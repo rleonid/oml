@@ -1,7 +1,7 @@
 
 DRIVER_BUILD_DIR=_driver
 PACKAGES=lacaml lbfgs ocephes
-PACKAGES_TEST=$(PACKAGES) kaputt
+PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx.fast
 PACKAGES_INSTALL=$(PACKAGES_TEST) bisect_ppx
 
@@ -16,7 +16,7 @@ setup:
 	opam install $(PACKAGES_INSTALL)
 
 oml.cmxa:
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib/datasets data.cma data.cmxa data.cmxs -I src/lib oml.cma oml.cmxa oml.cmxs
+	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
@@ -24,17 +24,17 @@ joiner.native:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
 
 driver.test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib -I src/test driver.test
 
 test: driver.test
 	time ./driver.test ${TEST}
 
 covered_test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib/datasets -I src/lib -I src/test driver.test && \
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib -I src/test driver.test && \
 	time ./driver.test ${TEST}
 
 test_environment: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib/datasets -I src/lib -I src/test oml.cma driver.test
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib -I src/test oml.cma driver.test
 
 clean:
 	ocamlbuild -clean
