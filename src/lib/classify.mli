@@ -109,7 +109,7 @@ module type Classifier_intf = sig
   (** Representing training data. *)
   type samples = (clas * feature) list
 
-  (** [estimate spec classes samples] estimates a classifier based upon the
+  (** [estimate opt classes samples] estimates a classifier based upon the
       training [samples].
 
       [classes] is an optional argument to specify ahead of time the possible
@@ -117,14 +117,14 @@ module type Classifier_intf = sig
       This is useful for models where we know the population domain but may
       not see an example of a training datum for rare cases.
 
-      [spec] are the optional classifier dependent estimation/evaluation
+      [opt] are the optional classifier dependent estimation/evaluation
       arguments.
 
       @raise Invalid_argument if [classes] are specified and new ones are
       found in the training [samples].
       @raise Invalid_argument if [samples] is empty.
   *)
-  val estimate : ?spec:spec -> ?classes:clas list -> samples -> t
+  val estimate : ?opt:opt -> ?classes:clas list -> samples -> t
 end
 
 (** A generative classifier builds models of the form
@@ -172,7 +172,7 @@ type binomial_spec =
   classifier on data encoded using
   {{!modtype:Dummy_encoded_data_intf}Dummy variables.} *)
 module BinomialNaiveBayes(D: Dummy_encoded_data_intf) :
-  Generative_intf with type spec = binomial_spec
+  Generative_intf with type opt = binomial_spec
                   and type feature = D.feature
                   and type clas = D.clas
 
@@ -181,7 +181,7 @@ module BinomialNaiveBayes(D: Dummy_encoded_data_intf) :
   classifier on data encoded using
   {{!modtype:Category_encoded_data_intf}Categorical variables.} *)
 module CategoricalNaiveBayes(D: Category_encoded_data_intf) :
-  Generative_intf with type spec = smoothing
+  Generative_intf with type opt = smoothing
                   and type feature = D.feature
                   and type clas = D.clas
 
@@ -191,7 +191,7 @@ module CategoricalNaiveBayes(D: Category_encoded_data_intf) :
   for each of the quantitative features in the
   {{!modtype:Continuous_encoded_data_intf}encoded data}. *)
 module GaussianNaiveBayes(D: Continuous_encoded_data_intf) :
-  Generative_intf with type spec = unit
+  Generative_intf with type opt = unit
                   and type feature = D.feature
                   and type clas = D.clas
 
@@ -230,7 +230,7 @@ type log_reg_spec =
 *)
 module LogisticRegression(D: Continuous_encoded_data_intf) :
   sig
-    include Classifier_intf with type spec = log_reg_spec
+    include Classifier_intf with type opt = log_reg_spec
                             and type feature = D.feature
                             and type clas = D.clas
 
@@ -259,7 +259,7 @@ module LogisticRegression(D: Continuous_encoded_data_intf) :
 *)
 module MulticlassLogisticRegression(D: Continuous_encoded_data_intf) :
   sig
-    include Classifier_intf with type spec = log_reg_spec
+    include Classifier_intf with type opt = log_reg_spec
                              and type feature = D.feature
                              and type clas = D.clas
 

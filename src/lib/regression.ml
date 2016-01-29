@@ -30,7 +30,7 @@ module type Linear_model_intf = sig
   val describe : t -> string
 
   val eval : t -> input -> float
-  val regress : ?spec:spec -> input array -> resp:float array -> t
+  val regress : ?opt:opt -> input array -> resp:float array -> t
 
   val residuals : t -> float array
   val coefficients : t -> float array
@@ -63,7 +63,7 @@ module Univariate = struct
     ; inferred_var     : float          (* inferred variance of error. *)
     ; s_yy             : float          (* sum of diff or resp to mean, TSS. *)
     ; s_xx             : float          (* sum of diff of pred to mean. *)
-    ; goodness_of_fit  : float option
+    (*; goodness_of_fit  : float option *)
     }
 
   let alpha lrm = lrm.alpha
@@ -82,23 +82,23 @@ module Univariate = struct
 
   let eval lrm x = lrm.alpha +. lrm.beta *. x
 
-  type spec = float array
+  type opt = float array
 
-  let default = [||]
+  let opt ?weights () = match weights with | None -> [||] | Some a -> a
 
-  let regress ?spec pred ~resp =
+  let default = opt ()
+
+  let regress ?(opt=default) pred ~resp =
     let n = Array.length pred in
-    (* Optional spec argument allows us to specify the individual error
+    (* Optional argument allows us to specify the individual error
        weights on each observation. *)
+    let an = Array.length opt in
     let weights =
-      match spec with
-      | None   -> Array.make n 1.0
-      | Some a ->
-          let an = Array.length a in
-          if an <> n then
-            invalidArg "regress: spec length %d <> d predictor size %d" an n
-          else
-            a
+      if an = 0 then Array.make n 1.0
+      else if an <> n then
+        invalidArg "regress: opt length %d <> d predictor size %d" an n
+      else
+        opt
     in
     let w_s = Array.sumf weights in
     let sum2 f a1 a2 =
@@ -119,11 +119,11 @@ module Univariate = struct
     let srs = sum2 (fun w_i r -> w_i *. r *. r) weights rss in
     (* degress of freedom: one for the constant and one for beta *)
     let dgf = float (n - 2) in
-    let q =
-      match spec with
+    (*let q =
+      match opt with
       | None   -> None
       | Some _ -> Some (Functions.chi_square_greater (truncate dgf) srs)
-    in
+    in*)
     { m_pred
     ; m_resp
     ; size = float n
@@ -133,7 +133,7 @@ module Univariate = struct
     ; residuals = rss
     ; sum_residuals = srs
     ; inferred_var = srs /. dgf
-    ; goodness_of_fit = q
+    (*; goodness_of_fit = q *)
     ; s_yy = sum2 ( *. ) d_y d_y
     ; s_xx = d_xx_w
     }
@@ -176,15 +176,6 @@ module Univariate = struct
 
 end
 
-type lambda_spec =
-  | Spec of float
-  | From of float array
-
-type multivariate_spec =
-  { add_constant_column : bool
-  ; lambda_spec : lambda_spec option
-  }
-
 (* 'Solved' (via SVD) linear problem. *)
 type solved_lp =
   { coef : vec
@@ -197,20 +188,20 @@ module SolveLPViaSvd = struct
 
   open Lacaml_util
 
-  let to_lambda f g lambda_spec =
+  let to_lambda f g l2_regularizer =
     let bestl =
-      match lambda_spec with
-      | Spec l -> l
-      | From arr ->
+      match l2_regularizer with
+      | `S l -> l
+      | `From arr ->
           let loess = Array.map (fun l -> l, g (f l)) arr in
           Array.sort (fun (_,s1) (_,s2) -> compare s1 s2) loess;
           fst loess.(0)
     in
     bestl, f bestl
 
-  let reg_to_lambda svd resp lambda_spec =
+  let reg_to_lambda svd resp l2_regularizer =
     let looe  = Svd.looe svd resp in
-    to_lambda looe Vec.ssqr lambda_spec
+    to_lambda looe Vec.ssqr l2_regularizer
 
   let full_looe cmi pred resi =
     let h  = gemm (gemm pred cmi) ~transb:`T pred in
@@ -238,7 +229,7 @@ module SolveLPViaSvd = struct
         ; resi
         ; looe
         }
-    | Some lambda_spec ->
+    | Some l2_regularizer ->
         match pred with
         | `Unpadded p ->
             let dcp = lacpy p in
@@ -246,7 +237,7 @@ module SolveLPViaSvd = struct
             (* Odd, that we should know the error on the coefficients
               _before_ computing them! There's probably a better way to
               structure this! *)
-            let lambda, looe = reg_to_lambda svd resp lambda_spec in
+            let lambda, looe = reg_to_lambda svd resp l2_regularizer in
             let coef = Svd.solve_linear ~lambda svd resp in
             { coef
             ; vaco = `Svd svd
@@ -255,7 +246,7 @@ module SolveLPViaSvd = struct
             }
         | `Padded (orig, fill) ->
             let svd = Svd.svd orig in
-            let lambda, _ = reg_to_lambda svd resp lambda_spec in
+            let lambda, _ = reg_to_lambda svd resp l2_regularizer in
             let coef = Svd.solve_linear ~lambda svd resp in
             (* Set the constant term beta to the mean of the response.
               See "Estimation of the constant term when using ridge regression"
@@ -383,14 +374,18 @@ end
 
 module Multivariate = struct
 
+  type opt =
+    { add_constant_column : bool          (** Instructs the method to efficiently insert a colum of 1's into the
+                                            design matrix for the constant term. *)
+    ; l2_regularizer : [`S of float | `From of float array] option    (** How to optionally determine the ridge parameter. *)
+    }
+
   include EvalMultiVarite
 
-  type spec = multivariate_spec
+  let opt ?l2_regularizer ?(add_constant_column=true) () =
+    { add_constant_column ; l2_regularizer }
 
-  let default =
-    { add_constant_column = false
-    ; lambda_spec = None
-    }
+  let default = opt ()
 
   open Lacaml_util
   open SolveLPViaSvd
@@ -420,9 +415,9 @@ module Multivariate = struct
     - work through these covariance matrix calculations, they're probably not right
     - once that's done we can expose the hypothesis testing
   *)
-  let regress ?(spec=default) pred ~resp =
+  let regress ?(opt=default) pred ~resp =
     let resp = Vec.of_array resp in
-    let pad = spec.add_constant_column in
+    let pad = opt.add_constant_column in
     let pred, num_obs, num_pred, across_pred_col = pad_design_matrix pred pad in
     (* TODO: replace with folds, across the matrix in Lacaml. *)
     let num_obs_float = float num_obs in
@@ -431,7 +426,7 @@ module Multivariate = struct
     let m_pred        = across_pred_col (col_mean num_obs_float) in
     (* since num_pred includes a value for the constant coefficient, no -1 is needed. *)
     let deg_of_freedom  = float (num_obs - num_pred) in
-    let lambda          = spec.lambda_spec in
+    let lambda          = opt.l2_regularizer in
     let solved_lp       = solve_lp pred resp lambda in
     let sum_residuals   = dot solved_lp.resi solved_lp.resi in
     let inferred_var  = sum_residuals /. deg_of_freedom in
@@ -454,28 +449,26 @@ module Multivariate = struct
 
 end
 
-type tikhonov_spec =
-  { regularizer : float array array
-  ; lambda_spec : lambda_spec option (* multipliers on the regularizing matrix. *)
-  }
-
 module Tikhonov = struct
+
+  type opt =
+    { tik_matrix : float array array   (** The regularizing matrix. *)
+    ; l2_regularizer : [`S of float | `From of float array] option  (** How to optionally determine the ridge parameter. *)
+    }
 
   include EvalMultiVarite
 
-  type spec = tikhonov_spec
+  let opt ?(tik_matrix = [|[||]|]) ?l2_regularizer () =
+    { tik_matrix ; l2_regularizer }
 
-  let default =
-    { regularizer = [|[||]|]
-    ; lambda_spec = None
-    }
+  let default = opt ()
 
   open Lacaml_util
   open SolveLPViaSvd
 
-  let gtr_to_lambda fit_model lambda_spec =
+  let gtr_to_lambda fit_model l2_regularizer =
     let g slp = Vec.ssqr slp.looe in
-    to_lambda fit_model g lambda_spec
+    to_lambda fit_model g l2_regularizer
 
   (* TODO: This method can be optimized if we use a different decomposition. *)
   let gtk_solve_lp pred resp tik = function
@@ -487,7 +480,7 @@ module Tikhonov = struct
         let resi = Vec.sub resp (gemv pred coef) in
         let looe = full_looe covm pred resi in
         { coef ; vaco = `Cov covm ; resi ; looe}
-    | Some lambda_spec ->
+    | Some l2_regularizer ->
         let covm = gemm ~transa:`T pred pred in
         let eval l =
           let copy = lacpy covm in
@@ -498,17 +491,16 @@ module Tikhonov = struct
           let looe = full_looe covm pred resi in
           { coef ; vaco = `Cov covm ; resi ; looe}
         in
-        let lambda, slp = gtr_to_lambda eval lambda_spec in
+        let lambda, slp = gtr_to_lambda eval l2_regularizer in
         let _ = P.printf "chose gtr lambda of %0.4f\n" lambda in
         slp
 
-  let regress ?(spec=default) pred ~resp =
+  let regress ?(opt=default) pred ~resp =
     let pred = Mat.of_array pred in
     let resp = Vec.of_array resp in
-    (* UGH, awkard! to silence 41, need to 'modularize' these *)
-    let lambda = (spec:tikhonov_spec).lambda_spec in
+    let lambda = opt.l2_regularizer in
     let tik =
-      match spec.regularizer with
+      match opt.tik_matrix with
       | [|[||]|] -> Mat.make0 (Mat.dim1 pred) (Mat.dim2 pred)
       | tm       -> Mat.of_array tm
     in
