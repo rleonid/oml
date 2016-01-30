@@ -2,10 +2,12 @@
 DRIVER_BUILD_DIR=_driver
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
-PACKAGES_COVERED=$(PACKAGES_TEST) bisect_ppx.fast
-PACKAGES_INSTALL=$(PACKAGES_TEST) bisect_ppx
+PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
+PACKAGES_INSTALL=$(PACKAGES_COVERED)
 
-.PHONY: all clean test build install uninstall setup default
+SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
+
+.PHONY: all clean test build install uninstall setup default doc
 
 default: build
 
@@ -21,20 +23,28 @@ oml.cmxa:
 build: oml.cmxa
 
 joiner.native:
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -I tools joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -package str -I tools joiner.native
 
 driver.test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) -I src/lib -I src/test driver.test
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
+		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
+		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
 
 test: driver.test
 	time ./driver.test ${TEST}
 
-covered_test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib -I src/test driver.test && \
+covered_driver.test: joiner.native
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
+		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
+		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
+
+covered_test: covered_driver.test
 	time ./driver.test ${TEST}
 
 test_environment: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) -I src/lib -I src/test oml.cma driver.test
+	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
+		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
+		-I src/lib -I src/test oml.cma driver.test
 
 clean:
 	ocamlbuild -clean
@@ -69,6 +79,8 @@ report: report_dir
 clean_reports:
 	rm -rf report_dir bisect*.out
 
-doc: oml.cmxa
-	rm -rf doc/* && \
-	ocamlfind ocamldoc $(foreach package, $(PACKAGES),-package $(package)) -d doc -html -I _build/src/lib `cat src/lib/oml.mlpack | tr '[:upper:]' '[:lower:]' | sed -e 's|\([a-z_]*\)| _build/src/lib/\1.mli|g'`
+oml.odocl:
+	cp src/lib/oml.mlpack oml.odocl
+
+doc: oml.odocl
+	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib  oml.docdir/index.html

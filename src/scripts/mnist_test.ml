@@ -19,7 +19,9 @@ module MnistEncoded =
     let size = feature_size
   end
 
-module MnistLr = Classify.MulticlassLogisticRegression(MnistEncoded)
+open Oml.Classification
+module P = Probabilities
+module MnistLr = Logistic_regression.Multiclass(MnistEncoded)
 
 let m_train = Mnist.data ~dir:"../dsfo" `Train
 let m_test = Mnist.data ~dir:"../dsfo" `Test
@@ -46,12 +48,11 @@ let tolerance =
   else
     1e7
 
-let mnist_spec = {MnistLr.default with Classify.tolerance = tolerance}
-let mnist_lr = MnistLr.estimate ~spec:mnist_spec s_train
+let mnist_lr = MnistLr.(estimate ~opt:(opt ~tolerance ()) s_train)
 
 let perf =
   s_train
-  |> List.map (fun (c, f) -> c, Classify.most_likely (MnistLr.eval mnist_lr f))
+  |> List.map (fun (c, f) -> c, P.most_likely (MnistLr.eval mnist_lr f))
 
 let correct = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf
 let total = List.length perf
@@ -61,7 +62,7 @@ let s_test = to_samples m_test
 
 let perf_test =
   s_test
-  |> List.map (fun (c, f) -> c, Classify.most_likely (MnistLr.eval mnist_lr f))
+  |> List.map (fun (c, f) -> c, P.most_likely (MnistLr.eval mnist_lr f))
 
 let correct_test = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf_test
 let total_test = List.length perf_test
