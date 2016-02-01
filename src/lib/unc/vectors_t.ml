@@ -1,0 +1,86 @@
+(*
+   Copyright 2015:
+     Leonid Rozenberg <leonidr@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*)
+
+open Test_utils
+open Uncategorized.Vectors
+
+(* TODO: Organize the testing parameters:
+  There are currently three factors that effect the stability of these tests
+    1. [largest_float] the largest float that around random generator will
+      return.  This specifies a range [0, largest_float] that dictates our test
+      values.  Bigger is better.
+    2. [vector_test_size] the size of the arrays generated to be compared.
+      Bigger is better
+    3. [d] when passed to Util.significantly_different_from for pairwise
+      element float comparison. Smaller is better. These are usually implemented
+      as rescalings of the machine epsilon [Util.dx], so less rescaling is
+      better.
+
+  At the moment (2015-04-13), these parameters are 'maxed' out such that all
+  100 tests cases "regularly" pass. As the algorithms used to implement these
+  operations are improved, we should extend these
+  *)
+
+let () =
+  Test.add_simple_test ~title:"we can test vectors for equality 1"
+    (fun () -> Assert.is_true (equal [|1.0; 2.0; 3.0|] [|1.0; 2.0; 3.0|]));
+  Test.add_simple_test ~title:"we can test vectors for equality 2"
+    (fun () -> Assert.is_false (equal [|1.0; 2.0; 3.0|] [|1.0; 2.0; |]));
+  Test.add_simple_test ~title:"we can test vectors for equality 3"
+    (fun () -> Assert.is_false (equal [|1.0; 2.0; 3.0|] [|3.0; 2.0; 1.0 |]));
+  Test.add_random_test ~title:"equality test is commutative"
+    Gen.(zip2 (array (make_int 1 10) (bfloat 1e3)) (array (make_int 1 10) (bfloat 1e3)))
+    (fun (v1, v2) ->
+      equal v1 v2 = equal v2 v1)
+    Spec.([just_postcond_pred is_true]);
+
+  let vector_test_size = 10 in  (* TODO: need to apply this as a map.*)
+  let pair_of_arrays =
+    Gen.(zip2 (barray_float 1e3 vector_test_size) (barray_float 1e3 vector_test_size))
+  in
+  Test.add_random_test
+    ~title:"Vector addition is commutative."
+    pair_of_arrays
+    (fun (v1, v2) -> equal (add v1 v2) (add v2 v1))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Vector scalar multiplication is additive."
+    Gen.(zip3 (bfloat 1e3) (bfloat 1e3) (barray_float 1e3 vector_test_size))
+                            (* on order of 1e-10 *)
+    (fun (a, b, v) -> equal ~d:(Util.dx *. 1e6) (mult (a +. b) v) (add (mult a v) (mult b v)))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Vector subtraction is like adding a negative multiple."
+    Gen.(zip2 (barray_float 1e3 vector_test_size) (barray_float 1e3 vector_test_size))
+    (fun (v1, v2) -> equal (sub v1 v2) (add v1 (mult (-1.0) v2)))
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Dot products are commutative"
+    pair_of_arrays
+    (fun (v1, v2) -> dot v1 v2 = dot v2 v1)
+    Spec.([just_postcond_pred is_true]);
+
+  Test.add_random_test
+    ~title:"Dot products are distributive"
+    Gen.(zip2 (barray_float 1e3 vector_test_size) pair_of_arrays)
+    (fun (v1, (v2, v3)) ->
+      not (Util.significantly_different_from ~d:(Util.dx *. 1e7)
+            (dot v1 (add v2 v3)) (dot v1 v2 +. dot v1 v3)))
+    Spec.([just_postcond_pred is_true]);

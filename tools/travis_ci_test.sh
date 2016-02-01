@@ -4,13 +4,6 @@ export opam_pin_add=""
 travis_install_on_linux () {
     # Install OCaml and OPAM PPAs
     case "$OCAML_VERSION,$OPAM_VERSION" in
-        3.12.1,1.0.0) ppa=avsm/ocaml312+opam10 ;;
-        3.12.1,1.1.0) ppa=avsm/ocaml312+opam11 ;;
-        4.00.1,1.0.0) ppa=avsm/ocaml40+opam10 ;;
-        4.00.1,1.1.0) ppa=avsm/ocaml40+opam11 ;;
-        4.01.0,1.0.0) ppa=avsm/ocaml41+opam10 ;;
-        4.01.0,1.1.0) ppa=avsm/ocaml41+opam11 ;;
-        4.01.0,1.2.0) ppa=avsm/ocaml41+opam12; export opam_pin_add="add" ;;
         4.02.0,1.1.0) ppa=avsm/ocaml42+opam11 ;;
         4.02.0,1.2.0) ppa=avsm/ocaml42+opam12; export opam_pin_add="add" ;;
       *) echo Unknown $OCAML_VERSION,$OPAM_VERSION; exit 1 ;;
@@ -31,15 +24,15 @@ travis_install_on_osx () {
     #sudo installer -verbose -pkg /Volumes/XQuartz-2.7.6/XQuartz.pkg -target /
 
     echo "updating brew"
-    brew update
+    brew update > /dev/null
     echo "brew install lapack"
-    brew install homebrew/dupes/lapack
+    brew install homebrew/dupes/lapack > /dev/null
     echo "brew install gcc"
-    brew install gcc  # for gfortran
+    brew install gcc > /dev/null  # for gfortran
     echo "brew install libffi"
-    brew install libffi # for ocephes
+    brew install libffi > /dev/null # for ocephes
     echo "brew install opam"
-    brew install opam
+    brew install opam > /dev/null
     echo "brew install finished!"
     export opam_init_options="--comp=$OCAML_VERSION"
     export opam_pin_add="add"

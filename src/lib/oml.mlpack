@@ -1,1 +1,7 @@
-Util Vectors Matrices Functions Continued_fraction Distributions Estimations Descriptive Inference Regression Sampling Solvers Running Svd Classify Measures Pca Interpolate
+util/Util
+unc/Uncategorized
+stats/Statistics
+Online
+cls/Classification
+rgr/Regression
+uns/Unsupervised

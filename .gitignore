@@ -8,7 +8,7 @@ setup.log
 *.native
 *.byte
 bisect*.out
-doc/
-
+oml.docdir
+oml.odocl
 # emacs
 *~

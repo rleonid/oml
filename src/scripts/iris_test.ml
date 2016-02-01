@@ -1,3 +1,5 @@
+open Oml.Classification
+module P = Probabilities
 
 module IrisEncoded =
   struct
@@ -7,13 +9,13 @@ module IrisEncoded =
     let size = 4
   end
 
-module IrisMlr = Classify.MulticlassLogisticRegression(IrisEncoded)
+module IrisMlr = Logistic_regression.Multiclass(IrisEncoded)
 
 let irismlr = IrisMlr.estimate Data.Iris.iris
 let perf =
   Data.Iris.iris
   |> List.map (fun (c, f) ->
-      c, Classify.most_likely (IrisMlr.eval irismlr f))
+      c, P.most_likely (IrisMlr.eval irismlr f))
 
 let describe msg perf =
   let correct =
@@ -25,13 +27,13 @@ let describe msg perf =
 
 let () = describe "Multiclass" perf
 
-module IrisLr = Classify.LogisticRegression(IrisEncoded)
+module IrisLr = Logistic_regression.Binary(IrisEncoded)
 
 let irislr = IrisLr.estimate Data.Iris.iris
 let twoclassperf =
   Data.Iris.iris
   |> List.map (fun (c, f) ->
-      c, Classify.most_likely (IrisLr.eval irislr f))
+      c, P.most_likely (IrisLr.eval irislr f))
 
 let () = describe "Two class" twoclassperf
 
@@ -43,7 +45,7 @@ module IrisJustSetosa =
     let size = 4
   end
 
-module IrisLr_Js = Classify.LogisticRegression(IrisJustSetosa)
+module IrisLr_Js = Logistic_regression.Binary(IrisJustSetosa)
 
 let just_setosa =
   Data.Iris.iris
@@ -56,7 +58,7 @@ let irislr_js = IrisLr_Js.estimate just_setosa
 let justsetosaperf =
   just_setosa
   |> List.map (fun (c, f) ->
-      c, Classify.most_likely (IrisLr_Js.eval irislr_js f))
+      c, P.most_likely (IrisLr_Js.eval irislr_js f))
 
 let () = describe "Just Setosa" justsetosaperf
 
