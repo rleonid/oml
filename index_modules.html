@@ -9,23 +9,12 @@
 <link title="Index of modules" rel=Appendix href="index_modules.html">
 <link title="Index of module types" rel=Appendix href="index_module_types.html">
 <link title="Util" rel="Chapter" href="Util.html">
-<link title="Vectors" rel="Chapter" href="Vectors.html">
-<link title="Matrices" rel="Chapter" href="Matrices.html">
-<link title="Functions" rel="Chapter" href="Functions.html">
-<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
-<link title="Distributions" rel="Chapter" href="Distributions.html">
-<link title="Estimations" rel="Chapter" href="Estimations.html">
-<link title="Descriptive" rel="Chapter" href="Descriptive.html">
-<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
 <link title="Regression" rel="Chapter" href="Regression.html">
-<link title="Sampling" rel="Chapter" href="Sampling.html">
-<link title="Solvers" rel="Chapter" href="Solvers.html">
-<link title="Running" rel="Chapter" href="Running.html">
-<link title="Svd" rel="Chapter" href="Svd.html">
-<link title="Classify" rel="Chapter" href="Classify.html">
-<link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Index of modules</title>
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><title>Index of modules</title>
 </head>
 <body>
 <div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
@@ -39,193 +28,162 @@ Extend the <code class="code">Array</code> module with useful functions.
 </div>
 </td></tr>
 <tr><td align="left"><br>B</td></tr>
-<tr><td><a href="Classify.BinomialNaiveBayes.html">BinomialNaiveBayes</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classification.Logistic_regression.Binary.html">Binary</a> [<a href="Classification.Logistic_regression.html">Classification.Logistic_regression</a>]</td>
+<td><div class="info">
+Use
+  <a href="https://en.wikipedia.org/wiki/Logistic_regression">Logistic Regression</a>
+  to estimate log-odds for each of the quantitative features in the
+  <a href="Classification.Intf.Continuous_encoded_data.html">encoded data</a>,
+  per class.
+</div>
+</td></tr>
+<tr><td><a href="Classification.Naive_bayes.Binomial.html">Binomial</a> [<a href="Classification.Naive_bayes.html">Classification.Naive_bayes</a>]</td>
 <td><div class="info">
 Train a
   <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
   classifier on data encoded using
-  <a href="Classify.Dummy_encoded_data_intf.html">Dummy variables.</a>
+  <a href="Classification.Intf.Dummy_encoded_data.html">Dummy variables.</a>
 </div>
 </td></tr>
 <tr><td align="left"><br>C</td></tr>
-<tr><td><a href="Classify.CategoricalNaiveBayes.html">CategoricalNaiveBayes</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classification.Naive_bayes.Categorical.html">Categorical</a> [<a href="Classification.Naive_bayes.html">Classification.Naive_bayes</a>]</td>
 <td><div class="info">
 Train a
   <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier">Naive Bayes</a>
   classifier on data encoded using
-  <a href="Classify.Category_encoded_data_intf.html">Categorical variables.</a>
+  <a href="Classification.Intf.Category_encoded_data.html">Categorical variables.</a>
 </div>
 </td></tr>
-<tr><td><a href="Classify.html">Classify</a> </td>
+<tr><td><a href="Classification.html">Classification</a> </td>
 <td><div class="info">
-The classifiers below assign a discrete probability distribution over the
-    list of class 'a in their training set.
+Classify data based on features.
 </div>
 </td></tr>
-<tr><td><a href="Continued_fraction.html">Continued_fraction</a> </td>
-<td><div class="info">
-Evaluate continued fraction expressions.
-</div>
-</td></tr>
+<tr><td><a href="Uncategorized.Continued_fraction.html">Continued_fraction</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>D</td></tr>
-<tr><td><a href="Descriptive.html">Descriptive</a> </td>
-<td><div class="info">
-Compute statistics (aka estimators) and other methods <a href="Descriptive.html#VALhistogram"><code class="code">Descriptive.histogram</code></a> that
-    describe data stored in a float array.
-</div>
-</td></tr>
-<tr><td><a href="Distributions.html">Distributions</a> </td>
-<td><div class="info">
-Probability density, cumulative and quantile functions common distributions.
-</div>
-</td></tr>
+<tr><td><a href="Statistics.Descriptive.html">Descriptive</a> [<a href="Statistics.html">Statistics</a>]</td>
+<td></td></tr>
+<tr><td><a href="Statistics.Distributions.html">Distributions</a> [<a href="Statistics.html">Statistics</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>E</td></tr>
-<tr><td><a href="Estimations.html">Estimations</a> </td>
-<td><div class="info">
-Methods to estimate derivatives of functions.
-</div>
-</td></tr>
+<tr><td><a href="Uncategorized.Estimations.html">Estimations</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>F</td></tr>
 <tr><td><a href="Util.Float.html">Float</a> [<a href="Util.html">Util</a>]</td>
 <td><div class="info">
 Provide operator overloads for conveniently expressing float arithmatic.
 </div>
 </td></tr>
-<tr><td><a href="Functions.html">Functions</a> </td>
-<td><div class="info">
-Implementations of basic functions needed to compute distributions.
-</div>
-</td></tr>
+<tr><td><a href="Uncategorized.Functions.html">Functions</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>G</td></tr>
-<tr><td><a href="Classify.GaussianNaiveBayes.html">GaussianNaiveBayes</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Classification.Naive_bayes.Gaussian.html">Gaussian</a> [<a href="Classification.Naive_bayes.html">Classification.Naive_bayes</a>]</td>
 <td><div class="info">
 Train a
   <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">
   Gaussian Naive Bayes</a> by estimating mean and standard deviations
   for each of the quantitative features in the
-  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>.
+  <a href="Classification.Intf.Continuous_encoded_data.html">encoded data</a>.
 </div>
 </td></tr>
+<tr><td align="left"><br>H</td></tr>
+<tr><td><a href="Statistics.Hypothesis_test.html">Hypothesis_test</a> [<a href="Statistics.html">Statistics</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>I</td></tr>
-<tr><td><a href="Inference.html">Inference</a> </td>
-<td><div class="info">
-Infer probabilities from data and perform hypothesis tests.
-</div>
-</td></tr>
-<tr><td><a href="Interpolate.html">Interpolate</a> </td>
-<td><div class="info">
-<code class="code">linear (x1,y1) (x2,y2)</code> fits a line (l) between the two points such that
-    given an x value one can get the y along that line with <code class="code">l x</code>.
-</div>
-</td></tr>
+<tr><td><a href="Regression.Intf.html">Intf</a> [<a href="Regression.html">Regression</a>]</td>
+<td></td></tr>
+<tr><td><a href="Classification.Intf.html">Intf</a> [<a href="Classification.html">Classification</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>L</td></tr>
-<tr><td><a href="Classify.LogisticRegression.html">LogisticRegression</a> [<a href="Classify.html">Classify</a>]</td>
-<td><div class="info">
-Use
-  <a href="https://en.wikipedia.org/wiki/Logistic_regression">
-  Logistic Regression</a> to estimate log-odds
-  for each of the quantitative features in the
-  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
-  per class.
-</div>
-</td></tr>
+<tr><td><a href="Classification.Logistic_regression.html">Logistic_regression</a> [<a href="Classification.html">Classification</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>M</td></tr>
-<tr><td><a href="Matrices.html">Matrices</a> </td>
+<tr><td><a href="Online.Make.html">Make</a> [<a href="Online.html">Online</a>]</td>
 <td><div class="info">
-Provide a thin matrix interfaces for <code class="code">float array array</code>'s.
+Create custom <a href="Online.Make.html#VALupdate"><code class="code">Online.Make.update</code></a> and <a href="Online.Make.html#VALjoin"><code class="code">Online.Make.join</code></a> rules depending on how the <code class="code">mean</code> and
+    <code class="code">var</code> are update.
 </div>
 </td></tr>
-<tr><td><a href="Measures.html">Measures</a> </td>
-<td><div class="info">
-Provides various measurement functions from statistics and analysis
-</div>
-</td></tr>
-<tr><td><a href="Classify.MulticlassLogisticRegression.html">MulticlassLogisticRegression</a> [<a href="Classify.html">Classify</a>]</td>
+<tr><td><a href="Uncategorized.Matrices.html">Matrices</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
+<tr><td><a href="Statistics.Measures.html">Measures</a> [<a href="Statistics.html">Statistics</a>]</td>
+<td></td></tr>
+<tr><td><a href="Classification.Logistic_regression.Multiclass.html">Multiclass</a> [<a href="Classification.Logistic_regression.html">Classification.Logistic_regression</a>]</td>
 <td><div class="info">
 Use
   <a href="https://en.wikipedia.org/wiki/Multinomial_logistic_regression">
   Multiple Class Logistic Regression</a> to estimate log-odds
   for each of the quantitative features in the
-  <a href="Classify.Continuous_encoded_data_intf.html">encoded data</a>,
+  <a href="Classification.Intf.Continuous_encoded_data.html">encoded data</a>,
   per class.
 </div>
 </td></tr>
 <tr><td><a href="Regression.Multivariate.html">Multivariate</a> [<a href="Regression.html">Regression</a>]</td>
-<td><div class="info">
-Multi-dimensional input regression, with support for Ridge regression.
-</div>
-</td></tr>
-<tr><td align="left"><br>P</td></tr>
-<tr><td><a href="Pca.html">Pca</a> </td>
-<td><div class="info">
-Principal Components Analysis.
-</div>
-</td></tr>
-<tr><td><a href="Classify.Performance.html">Performance</a> [<a href="Classify.html">Classify</a>]</td>
 <td></td></tr>
-<tr><td><a href="Sampling.Poly.html">Poly</a> [<a href="Sampling.html">Sampling</a>]</td>
-<td><div class="info">
-Provides polymorphic versions that sample over arrays of any type.
-</div>
-</td></tr>
-<tr><td align="left"><br>R</td></tr>
-<tr><td><a href="Regression.html">Regression</a> </td>
-<td><div class="info">
-Construct linear models that describe (and learn from) data.
-</div>
-</td></tr>
-<tr><td><a href="Running.html">Running</a> </td>
+<tr><td align="left"><br>N</td></tr>
+<tr><td><a href="Classification.Naive_bayes.html">Naive_bayes</a> [<a href="Classification.html">Classification</a>]</td>
+<td></td></tr>
+<tr><td align="left"><br>O</td></tr>
+<tr><td><a href="Online.html">Online</a> </td>
 <td><div class="info">
 Compute running statitics using recurrence equations.
 </div>
 </td></tr>
+<tr><td align="left"><br>P</td></tr>
+<tr><td><a href="Unsupervised.Pca.html">Pca</a> [<a href="Unsupervised.html">Unsupervised</a>]</td>
+<td></td></tr>
+<tr><td><a href="Classification.Performance.html">Performance</a> [<a href="Classification.html">Classification</a>]</td>
+<td></td></tr>
+<tr><td><a href="Statistics.Sampling.Poly.html">Poly</a> [<a href="Statistics.Sampling.html">Statistics.Sampling</a>]</td>
+<td><div class="info">
+Provides polymorphic versions that sample over arrays of any type.
+</div>
+</td></tr>
+<tr><td><a href="Classification.Probabilities.html">Probabilities</a> [<a href="Classification.html">Classification</a>]</td>
+<td></td></tr>
+<tr><td align="left"><br>R</td></tr>
+<tr><td><a href="Regression.html">Regression</a> </td>
+<td><div class="info">
+Model relationship between variables.
+</div>
+</td></tr>
 <tr><td align="left"><br>S</td></tr>
-<tr><td><a href="Sampling.html">Sampling</a> </td>
+<tr><td><a href="Statistics.Sampling.html">Sampling</a> [<a href="Statistics.html">Statistics</a>]</td>
+<td></td></tr>
+<tr><td><a href="Uncategorized.Solvers.html">Solvers</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
+<tr><td><a href="Statistics.html">Statistics</a> </td>
 <td><div class="info">
-Create generators for sampling from specified distributions.
+Inference, parameter estimation.
 </div>
 </td></tr>
-<tr><td><a href="Solvers.html">Solvers</a> </td>
-<td><div class="info">
-Numerically find the roots of passed functions.
-</div>
-</td></tr>
-<tr><td><a href="Interpolate.Spline.html">Spline</a> [<a href="Interpolate.html">Interpolate</a>]</td>
-<td><div class="info">
-Cubic splines provide piecewise polynomial to fit the data that is smooth
-    at the fit data points (aka knots).
-</div>
-</td></tr>
-<tr><td><a href="Svd.html">Svd</a> </td>
-<td><div class="info">
-Perform the Singular Value Decomposition via <a href="https://github.com/mmottl/lacaml">Lacaml</a>.
-</div>
-</td></tr>
+<tr><td><a href="Uncategorized.Svd.html">Svd</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
 <tr><td align="left"><br>T</td></tr>
 <tr><td><a href="Regression.Tikhonov.html">Tikhonov</a> [<a href="Regression.html">Regression</a>]</td>
-<td><div class="info">
-Multi-dimensional input regression with a matrix regularizer.
-</div>
-</td></tr>
-<tr><td><a href="Interpolate.Tri_Diagonal.html">Tri_Diagonal</a> [<a href="Interpolate.html">Interpolate</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>U</td></tr>
-<tr><td><a href="Regression.Univariate.html">Univariate</a> [<a href="Regression.html">Regression</a>]</td>
+<tr><td><a href="Uncategorized.html">Uncategorized</a> </td>
 <td><div class="info">
-Simple one dimensional regress.
+WIP: Special functions and Linear Algebra.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Univariate.html">Univariate</a> [<a href="Regression.html">Regression</a>]</td>
+<td></td></tr>
+<tr><td><a href="Unsupervised.html">Unsupervised</a> </td>
+<td><div class="info">
+Unsupervised methods.
 </div>
 </td></tr>
 <tr><td><a href="Util.html">Util</a> </td>
 <td><div class="info">
-Utilities
+Standard methods.
 </div>
 </td></tr>
 <tr><td align="left"><br>V</td></tr>
-<tr><td><a href="Vectors.html">Vectors</a> </td>
-<td><div class="info">
-Provide an interface to treat float array's as vectors.
-</div>
-</td></tr>
+<tr><td><a href="Uncategorized.Vectors.html">Vectors</a> [<a href="Uncategorized.html">Uncategorized</a>]</td>
+<td></td></tr>
 </table>
 </body>
 </html>

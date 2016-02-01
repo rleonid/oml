@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
 <link rel="Start" href="index.html">
+<link rel="previous" href="Regression.Intf.html">
 <link rel="next" href="Regression.Multivariate.html">
 <link rel="Up" href="Regression.html">
 <link title="Index of types" rel=Appendix href="index_types.html">
@@ -12,54 +13,54 @@
 <link title="Index of modules" rel=Appendix href="index_modules.html">
 <link title="Index of module types" rel=Appendix href="index_module_types.html">
 <link title="Util" rel="Chapter" href="Util.html">
-<link title="Vectors" rel="Chapter" href="Vectors.html">
-<link title="Matrices" rel="Chapter" href="Matrices.html">
-<link title="Functions" rel="Chapter" href="Functions.html">
-<link title="Continued_fraction" rel="Chapter" href="Continued_fraction.html">
-<link title="Distributions" rel="Chapter" href="Distributions.html">
-<link title="Estimations" rel="Chapter" href="Estimations.html">
-<link title="Descriptive" rel="Chapter" href="Descriptive.html">
-<link title="Inference" rel="Chapter" href="Inference.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
 <link title="Regression" rel="Chapter" href="Regression.html">
-<link title="Sampling" rel="Chapter" href="Sampling.html">
-<link title="Solvers" rel="Chapter" href="Solvers.html">
-<link title="Running" rel="Chapter" href="Running.html">
-<link title="Svd" rel="Chapter" href="Svd.html">
-<link title="Classify" rel="Chapter" href="Classify.html">
-<link title="Measures" rel="Chapter" href="Measures.html">
-<link title="Pca" rel="Chapter" href="Pca.html">
-<link title="Interpolate" rel="Chapter" href="Interpolate.html"><title>Regression.Univariate</title>
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><title>Regression.Univariate</title>
 </head>
 <body>
-<div class="navbar">&nbsp;<a class="up" href="Regression.html" title="Regression">Up</a>
+<div class="navbar"><a class="pre" href="Regression.Intf.html" title="Regression.Intf">Previous</a>
+&nbsp;<a class="up" href="Regression.html" title="Regression">Up</a>
 &nbsp;<a class="post" href="Regression.Multivariate.html" title="Regression.Multivariate">Next</a>
 </div>
 <h1>Module <a href="type_Regression.Univariate.html">Regression.Univariate</a></h1>
 
-<pre><span class="keyword">module</span> Univariate: <code class="code">sig</code> <a href="Regression.Univariate.html">..</a> <code class="code">end</code></pre><div class="info module top">
-Simple one dimensional regress.<br>
-</div>
-<hr width="100%">
+<pre><span class="keyword">module</span> Univariate: <code class="code">sig</code> <a href="Regression.Univariate.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<br>
+Simple one dimensional regression.<br>
 
-<pre><span class="keyword">include</span> <a href="Regression.Linear_model_intf.html">Regression.Linear_model_intf</a></pre>
+<pre><span id="TYPEopt"><span class="keyword">type</span> <code class="type"></code>opt</span> = <code class="type">float array</code> </pre>
+<div class="info ">
+The optional <code class="code">opt</code> for univariate regression are weights for each
+    observation. One can use them to change the model such that each
+    error (e_i) is now sampled from it's own distribution: <code class="code">N(0, s/w_i)</code>,
+    where s^2 is the error variance and w_i is the weight of the ith
+    error.<br>
+</div>
+
+
+<pre><span id="VALopt"><span class="keyword">val</span> opt</span> : <code class="type">?weights:float array -> unit -> <a href="Regression.Univariate.html#TYPEopt">opt</a></code></pre>
+<pre><span class="keyword">include</span> <a href="Regression.Intf.Linear_model.html">Regression.Intf.Linear_model</a></pre>
 
 <pre><span id="VALalpha"><span class="keyword">val</span> alpha</span> : <code class="type">t -> float</code></pre><div class="info ">
 <code class="code">alpha t</code> a shorthand for the constant parameter used in the regression.
-      Equivalent to <code class="code">(coefficients t).(0)</code><br>
+    Equivalent to <code class="code">(coefficients t).(0)</code><br>
 </div>
 
 <pre><span id="VALbeta"><span class="keyword">val</span> beta</span> : <code class="type">t -> float</code></pre><div class="info ">
 <code class="code">beta t</code> a shorthand for the linear parameter used in the regression.
-      Equivalent to <code class="code">(coefficients t).(1)</code><br>
+    Equivalent to <code class="code">(coefficients t).(1)</code><br>
 </div>
 
-<pre><span id="VALalpha_test"><span class="keyword">val</span> alpha_test</span> : <code class="type">?null:float -> t -> <a href="Inference.html#TYPEtest">Inference.test</a></code></pre><div class="info ">
+<pre><span id="VALalpha_test"><span class="keyword">val</span> alpha_test</span> : <code class="type">?null:float -> t -> <a href="Statistics.Hypothesis_test.html#TYPEt">Statistics.Hypothesis_test.t</a></code></pre><div class="info ">
 <code class="code">alpha_test ~null linear_model</code> perform a hypothesis test on the <code class="code">alpha</code>
-      coefficient of the <code class="code">linear_model</code>.<br>
+    coefficient of the <code class="code">linear_model</code>.<br>
 </div>
 
-<pre><span id="VALbeta_test"><span class="keyword">val</span> beta_test</span> : <code class="type">?null:float -> t -> <a href="Inference.html#TYPEtest">Inference.test</a></code></pre><div class="info ">
+<pre><span id="VALbeta_test"><span class="keyword">val</span> beta_test</span> : <code class="type">?null:float -> t -> <a href="Statistics.Hypothesis_test.html#TYPEt">Statistics.Hypothesis_test.t</a></code></pre><div class="info ">
 <code class="code">beta_test ~null linear_model</code> perform a hypothesis test on the <code class="code">beta</code>
-      coefficient of the <code class="code">linear_model</code>.<br>
+    coefficient of the <code class="code">linear_model</code>.<br>
 </div>
 </body></html>
