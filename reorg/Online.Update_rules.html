@@ -23,18 +23,15 @@
 &nbsp;</div>
 <h1>Module type <a href="type_Online.Update_rules.html">Online.Update_rules</a></h1>
 
-<pre><span class="keyword">module type</span> Update_rules = <code class="code">sig</code> <a href="Online.Update_rules.html">..</a> <code class="code">end</code></pre><hr width="100%">
-
-<pre><span id="VALmean"><span class="keyword">val</span> mean</span> : <code class="type">size:int -><br>       n_sum:float -> n_sum_sq:float -> n_size:float -> <a href="Online.html#TYPEt">Online.t</a> -> float -> float</code></pre><div class="info ">
-Defines a mean update function. Given an existing running statistic <code class="code">t</code>,
-      number of samples <code class="code">size</code>, the already computed updated statistics
-      <code class="code">n_sum</code>, <code class="code">n_sum_sq</code>, <code class="code">n_size</code>, and the newly observed value, return
-      a new estimate of the mean.<br>
+<pre><span class="keyword">module type</span> Update_rules = <code class="code">sig</code> <a href="Online.Update_rules.html">..</a> <code class="code">end</code></pre><div class="info modtype top">
+Defines an update rule.<br>
 </div>
+<hr width="100%">
 
-<pre><span id="VALvar"><span class="keyword">val</span> var</span> : <code class="type">n_mean:float -><br>       n_sum:float -> n_sum_sq:float -> n_size:float -> <a href="Online.html#TYPEt">Online.t</a> -> float</code></pre><div class="info ">
-Defines a variance update function. Given an existing running
-      statistic <code class="code">t</code>, the already computed updated statistics <code class="code">n_mean</code>
-      <code class="code">n_sum</code>, <code class="code">n_sum_sq</code>, and <code class="code">n_size</code>, return a new estimate of the variance.<br>
+<pre><span id="VALapply"><span class="keyword">val</span> apply</span> : <code class="type">size:float -><br>       n_sum:float -><br>       n_sum_sq:float -> n_size:float -> <a href="Online.html#TYPEt">Online.t</a> -> float -> <a href="Online.html#TYPEupdate">Online.update</a></code></pre><div class="info ">
+Given an existing running statistic <code class="code">t</code>, number of samples <code class="code">size</code>,
+      the already computed updated statistics <code class="code">n_sum</code>, <code class="code">n_sum_sq</code>, <code class="code">n_size</code>,
+      and the newly observed value, return a new estimate of the mean and
+      var.<br>
 </div>
 </body></html>

@@ -118,7 +118,7 @@ Mean.<br>
 
 
 <pre><span id="VALempty"><span class="keyword">val</span> empty</span> : <code class="type"><a href="Online.html#TYPEt">t</a></code></pre><div class="info ">
-<code class="code">empty</code> an empty <code class="code">t</code>, useful for initializing the fold.<br>
+An empty <code class="code">t</code>, useful for initializing the fold.<br>
 </div>
 
 <pre><span id="VALinit"><span class="keyword">val</span> init</span> : <code class="type">?size:int -> float -> <a href="Online.html#TYPEt">t</a></code></pre><div class="info ">
@@ -126,7 +126,29 @@ Mean.<br>
     which defaults to <code class="code">1</code>.<br>
 </div>
 
-<pre><span class="keyword">module type</span> <a href="Online.Update_rules.html">Update_rules</a> = <code class="code">sig</code> <a href="Online.Update_rules.html">..</a> <code class="code">end</code></pre>
+<pre><code><span id="TYPEupdate"><span class="keyword">type</span> <code class="type"></code>update</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTupdate.n_mean">n_mean</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTupdate.n_var">n_var</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr></table>
+}
+
+
+
+<pre><span class="keyword">module type</span> <a href="Online.Update_rules.html">Update_rules</a> = <code class="code">sig</code> <a href="Online.Update_rules.html">..</a> <code class="code">end</code></pre><div class="info">
+Defines an update rule.
+</div>
+
 <pre><span class="keyword">module</span> <a href="Online.Make.html">Make</a>: <div class="sig_block"><code class="code">functor (</code><code class="code">Update</code><code class="code"> : </code><code class="type"><a href="Online.Update_rules.html">Update_rules</a></code><code class="code">) -&gt; </code><code class="code">sig</code> <a href="Online.Make.html">..</a> <code class="code">end</code></div></pre><div class="info">
 Create custom <a href="Online.Make.html#VALupdate"><code class="code">Online.Make.update</code></a> and <a href="Online.Make.html#VALjoin"><code class="code">Online.Make.join</code></a> rules depending on how the <code class="code">mean</code> and
     <code class="code">var</code> are update.

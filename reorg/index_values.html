@@ -76,6 +76,14 @@
       || (p arr.(n))</code>
 </div>
 </td></tr>
+<tr><td><a href="Online.Update_rules.html#VALapply">apply</a> [<a href="Online.Update_rules.html">Online.Update_rules</a>]</td>
+<td><div class="info">
+Given an existing running statistic <code class="code">t</code>, number of samples <code class="code">size</code>,
+      the already computed updated statistics <code class="code">n_sum</code>, <code class="code">n_sum_sq</code>, <code class="code">n_size</code>,
+      and the newly observed value, return a new estimate of the mean and
+      var.
+</div>
+</td></tr>
 <tr><td><a href="Statistics.Descriptive.html#VALautocorrelation">autocorrelation</a> [<a href="Statistics.Descriptive.html">Statistics.Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">autocorrelation lag data</code> computes the correlation of <code class="code">data</code> with itself
@@ -293,7 +301,7 @@ A really small value.
 <tr><td align="left"><br>E</td></tr>
 <tr><td><a href="Online.html#VALempty">empty</a> [<a href="Online.html">Online</a>]</td>
 <td><div class="info">
-<code class="code">empty</code> an empty <code class="code">t</code>, useful for initializing the fold.
+An empty <code class="code">t</code>, useful for initializing the fold.
 </div>
 </td></tr>
 <tr><td><a href="Classification.Intf.Continuous_encoded_data.html#VALencoding">encoding</a> [<a href="Classification.Intf.Continuous_encoded_data.html">Classification.Intf.Continuous_encoded_data</a>]</td>
@@ -556,11 +564,6 @@ A really small value.
 <tr><td><a href="Util.Array.html#VALmax">max</a> [<a href="Util.Array.html">Util.Array</a>]</td>
 <td><div class="info">
 <code class="code">Array.max a</code> computes <code class="code">max a.(0) (max a.(1)  ... (max a.(n-2) a.(n-1)))</code>.
-</div>
-</td></tr>
-<tr><td><a href="Online.Update_rules.html#VALmean">mean</a> [<a href="Online.Update_rules.html">Online.Update_rules</a>]</td>
-<td><div class="info">
-Defines a mean update function.
 </div>
 </td></tr>
 <tr><td><a href="Statistics.Descriptive.html#VALmean">mean</a> [<a href="Statistics.Descriptive.html">Statistics.Descriptive</a>]</td>
@@ -1088,11 +1091,6 @@ Describe a hypothesis test.
 </div>
 </td></tr>
 <tr><td align="left"><br>V</td></tr>
-<tr><td><a href="Online.Update_rules.html#VALvar">var</a> [<a href="Online.Update_rules.html">Online.Update_rules</a>]</td>
-<td><div class="info">
-Defines a variance update function.
-</div>
-</td></tr>
 <tr><td><a href="Statistics.Descriptive.html#VALvar">var</a> [<a href="Statistics.Descriptive.html">Statistics.Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">var data</code> returns the sample variance of <code class="code">data</code>.

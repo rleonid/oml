@@ -29,15 +29,13 @@
 &nbsp;&nbsp;}<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;empty&nbsp;:&nbsp;<span class="constructor">Online</span>.t<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;init&nbsp;:&nbsp;?size:int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Online</span>.t<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;update&nbsp;=&nbsp;{&nbsp;n_mean&nbsp;:&nbsp;float;&nbsp;n_var&nbsp;:&nbsp;float;&nbsp;}<br>
 &nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="keyword">type</span>&nbsp;<span class="constructor">Update_rules</span>&nbsp;=<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">sig</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;mean&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size:int&nbsp;<span class="keywordsign">-&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;apply&nbsp;:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size:float&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_sum:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_sum_sq:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;n_size:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Online</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;var&nbsp;:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_mean:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_sum:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;n_sum_sq:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;n_size:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Online</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_sum_sq:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;n_size:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Online</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Online</span>.update<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span><br>
 &nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">Make</span>&nbsp;:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">functor</span>&nbsp;(<span class="constructor">Update</span>&nbsp;:&nbsp;<span class="constructor">Update_rules</span>)&nbsp;<span class="keywordsign">-&gt;</span><br>
