@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Regression.Univariate.html">
+<link rel="next" href="Regression.Tikhonov.html">
+<link rel="Up" href="Regression.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><title>Regression.Multivariate</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Regression.Univariate.html" title="Regression.Univariate">Previous</a>
+&nbsp;<a class="up" href="Regression.html" title="Regression">Up</a>
+&nbsp;<a class="post" href="Regression.Tikhonov.html" title="Regression.Tikhonov">Next</a>
+</div>
+<h1>Module <a href="type_Regression.Multivariate.html">Regression.Multivariate</a></h1>
+
+<pre><span class="keyword">module</span> Multivariate: <code class="code">sig</code> <a href="Regression.Multivariate.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<br>
+Multi-dimensional input regression, with support for Ridge regression.<br>
+
+<pre><code><span id="TYPEopt"><span class="keyword">type</span> <code class="type"></code>opt</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTopt.add_constant_column">add_constant_column</span>&nbsp;: <code class="type">bool</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Instructs the method to efficiently insert a
+                                    colum of 1's into the design matrix for the
+                                    constant term.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTopt.l2_regularizer">l2_regularizer</span>&nbsp;: <code class="type">[ `From of float array | `S of float ] option</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+How to optionally determine the ridge parameter.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+}
+
+
+
+<pre><span id="VALopt"><span class="keyword">val</span> opt</span> : <code class="type">?l2_regularizer:[ `From of float array | `S of float ] -><br>       ?add_constant_column:bool -> unit -> <a href="Regression.Multivariate.html#TYPEopt">opt</a></code></pre>
+<pre><span class="keyword">include</span> <a href="Regression.Intf.Linear_model.html">Regression.Intf.Linear_model</a></pre>
+
+<pre><span id="VALaic"><span class="keyword">val</span> aic</span> : <code class="type">t -> float</code></pre><div class="info ">
+<code class="code">aic linear_model</code> return the Akaike information criterion for the
+    <code class="code">linear_model</code>.<br>
+</div>
+
+<pre><span id="VALpress"><span class="keyword">val</span> press</span> : <code class="type">t -> float</code></pre><div class="info ">
+<code class="code">press linear_model</code> return the Predicted REsidual Sum of Squares for the
+    <code class="code">linear_model</code>.<br>
+</div>
+</body></html>

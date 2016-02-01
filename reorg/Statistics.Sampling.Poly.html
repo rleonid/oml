@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="Up" href="Statistics.Sampling.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><title>Statistics.Sampling.Poly</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="Statistics.Sampling.html" title="Statistics.Sampling">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Statistics.Sampling.Poly.html">Statistics.Sampling.Poly</a></h1>
+
+<pre><span class="keyword">module</span> Poly: <code class="code">sig</code> <a href="Statistics.Sampling.Poly.html">..</a> <code class="code">end</code></pre><div class="info module top">
+Provides polymorphic versions that sample over arrays of any type.<br>
+</div>
+<hr width="100%">
+
+<pre><span id="VALuniform"><span class="keyword">val</span> uniform</span> : <code class="type">?seed:int array -> 'a array -> 'a <a href="Statistics.Sampling.html#TYPEgenerator">Statistics.Sampling.generator</a></code></pre><div class="info ">
+<code class="code">uniform ?seed elems</code> creates a generator that will sample from the
+        <code class="code">elems</code> array using the uniformly random distribution.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the given element array is empty.<br>
+</div>
+
+<pre><span id="VALmultinomial"><span class="keyword">val</span> multinomial</span> : <code class="type">?seed:int array -><br>       'a array -> float array -> 'a <a href="Statistics.Sampling.html#TYPEgenerator">Statistics.Sampling.generator</a></code></pre><div class="info ">
+<code class="code">multinomial ?seed elems weights</code> creates a generator will sample from
+        the <code class="code">elems</code> array using Multinomial distribution given by
+        a <code class="code">weights</code> vector which sums to <code class="code">1</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">weights</code> do not sum to <code class="code">1.0</code> or
+        the length of the <code class="code">elems</code> and <code class="code">weights</code> arrays are not equal.<br>
+</div>
+
+<pre><span id="VALsoftmax"><span class="keyword">val</span> softmax</span> : <code class="type">?seed:int array -><br>       ?temperature:float -><br>       'a array -> float array -> 'a <a href="Statistics.Sampling.html#TYPEgenerator">Statistics.Sampling.generator</a></code></pre><div class="info ">
+<code class="code">softmax ?seed ?temperature elems weights</code> creates a generator that will
+        sample from the <code class="code">elems</code> array using the softmax distribution given by
+        a <code class="code">weights</code> vector and <code class="code">temperature</code>erature parameter which defaults to <code class="code">1.0</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">weights</code> is empty or the length of the
+        <code class="code">elems</code> and <code class="code">weights</code> arrays are not equal.<br>
+</div>
+</body></html>

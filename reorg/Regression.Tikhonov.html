@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Regression.Multivariate.html">
+<link rel="Up" href="Regression.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><title>Regression.Tikhonov</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Regression.Multivariate.html" title="Regression.Multivariate">Previous</a>
+&nbsp;<a class="up" href="Regression.html" title="Regression">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Regression.Tikhonov.html">Regression.Tikhonov</a></h1>
+
+<pre><span class="keyword">module</span> Tikhonov: <code class="code">sig</code> <a href="Regression.Tikhonov.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<br>
+Multi-dimensional input regression with a matrix regularizer.
+  described <a href="https://en.wikipedia.org/wiki/Tikhonov_regularization"> here</a>.
+<p>
+
+  Please take care with using this method as not all of the algorithms have
+  been verified. A warning is printed to standard-error.<br>
+
+<pre><code><span id="TYPEopt"><span class="keyword">type</span> <code class="type"></code>opt</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTopt.tik_matrix">tik_matrix</span>&nbsp;: <code class="type">float array array</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+The regularizing matrix.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTopt.l2_regularizer">l2_regularizer</span>&nbsp;: <code class="type">[ `From of float array | `S of float ] option</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+How to optionally determine the ridge parameter.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+}
+
+
+
+<pre><span id="VALopt"><span class="keyword">val</span> opt</span> : <code class="type">?tik_matrix:float array array -><br>       ?l2_regularizer:[ `From of float array | `S of float ] -><br>       unit -> <a href="Regression.Tikhonov.html#TYPEopt">opt</a></code></pre>
+<pre><span class="keyword">include</span> <a href="Regression.Intf.Linear_model.html">Regression.Intf.Linear_model</a></pre>
+
+<pre><span id="VALaic"><span class="keyword">val</span> aic</span> : <code class="type">t -> float</code></pre><div class="info ">
+<code class="code">aic linear_model</code> return the Akaike information criterion for the
+    <code class="code">linear_model</code>.<br>
+</div>
+
+<pre><span id="VALpress"><span class="keyword">val</span> press</span> : <code class="type">t -> float</code></pre><div class="info ">
+<code class="code">press linear_model</code> return the Predicted REsidual Sum of Squares for the
+    <code class="code">linear_model</code>.<br>
+</div>
+</body></html>

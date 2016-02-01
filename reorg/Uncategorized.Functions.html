@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Uncategorized.Continued_fraction.html">
+<link rel="next" href="Uncategorized.Svd.html">
+<link rel="Up" href="Uncategorized.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><link title="Standard error functions." rel="Section" href="#2_Standarderrorfunctions">
+<link title="Gamma functions." rel="Section" href="#2_Gammafunctions">
+<link title="Beta functions." rel="Section" href="#2_Betafunctions">
+<link title="Distribution CDF's" rel="Section" href="#2_DistributionCDFs">
+<title>Uncategorized.Functions</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Uncategorized.Continued_fraction.html" title="Uncategorized.Continued_fraction">Previous</a>
+&nbsp;<a class="up" href="Uncategorized.html" title="Uncategorized">Up</a>
+&nbsp;<a class="post" href="Uncategorized.Svd.html" title="Uncategorized.Svd">Next</a>
+</div>
+<h1>Module <a href="type_Uncategorized.Functions.html">Uncategorized.Functions</a></h1>
+
+<pre><span class="keyword">module</span> Functions: <code class="code">sig</code> <a href="Uncategorized.Functions.html">..</a> <code class="code">end</code></pre><hr width="100%">
+<br>
+Implementations of special functions such as those needed to
+    compute probability distributions.
+<p>
+
+    At the present moment many functions are wrappers to the Cephes library
+    (http://www.netlib.org/cephes/), via a Ctypes interface implemented in
+    the <a href="https://github.com/rleonid/ocephes">Ocephes</a> library.<br>
+<br>
+<h2 id="2_Standarderrorfunctions">Standard error functions.</h2><br>
+
+<pre><span id="VALerf"><span class="keyword">val</span> erf</span> : <code class="type">float -> float</code></pre><div class="info ">
+<code class="code">erf x</code> computes the (Gauss) error function,
+  (2/sqrt(pi) * \int_0^x e^-t^2 dt)<br>
+</div>
+
+<pre><span id="VALerfc"><span class="keyword">val</span> erfc</span> : <code class="type">float -> float</code></pre><div class="info ">
+<code class="code">erfc x</code> computes <code class="code">1.0 - erfc x</code>.<br>
+</div>
+<br>
+<h2 id="2_Gammafunctions">Gamma functions.</h2><br>
+
+<pre><span id="VALgamma"><span class="keyword">val</span> gamma</span> : <code class="type">float -> float</code></pre><div class="info ">
+<code class="code">gamma x</code> computes the gamma function of <code class="code">x</code>. For positive integers
+    <code class="code">gamma x</code> approximates <code class="code">(x - 1)!</code>.<br>
+</div>
+
+<pre><span id="VALln_gamma"><span class="keyword">val</span> ln_gamma</span> : <code class="type">float -> float</code></pre><div class="info ">
+<code class="code">ln_gamma x</code> compute the natural logarithm of the gamma function of <code class="code">x</code>.
+<p>
+
+    It is usually more accurate to use <code class="code">ln_gamma</code> instead of <code class="code">gamma</code> and
+    afterwards compute the exponent.<br>
+</div>
+
+<pre><span id="VALregularized_lower_gamma"><span class="keyword">val</span> regularized_lower_gamma</span> : <code class="type">a:float -> float -> float</code></pre><div class="info ">
+<code class="code">regularized_lower_gamma a x</code> computes regularized (normalized by
+    <code class="code">gamma a</code>) incomplete lower (integral from 0 to <code class="code">x</code>) function.<br>
+</div>
+
+<pre><span id="VALregularized_upper_gamma"><span class="keyword">val</span> regularized_upper_gamma</span> : <code class="type">a:float -> float -> float</code></pre><div class="info ">
+<code class="code">regularized_upper_gamma a x</code> computes regularized (normalized by
+    <code class="code">gamma a</code>) incomplete upper (integral from <code class="code">x</code> to <code class="code">infinity</code>) function.<br>
+</div>
+<br>
+<h2 id="2_Betafunctions">Beta functions.</h2><br>
+
+<pre><span id="VALbeta"><span class="keyword">val</span> beta</span> : <code class="type">float -> float -> float</code></pre><div class="info ">
+<code class="code">beta x y</code> computes the beta function of <code class="code">x</code> and <code class="code">y</code>, this function is also
+    known as the Euler integral of the first kind and is useful in defining
+    various distributions.<br>
+</div>
+
+<pre><span id="VALln_beta"><span class="keyword">val</span> ln_beta</span> : <code class="type">float -> float -> float</code></pre><div class="info ">
+<code class="code">ln_beta x y</code>  computes <code class="code">log (beta x y)</code>, for more accuracy.<br>
+</div>
+
+<pre><span id="VALregularized_beta"><span class="keyword">val</span> regularized_beta</span> : <code class="type">alpha:float -><br>       beta:float -> ?epsilon:float -> ?max_iterations:int -> float -> float</code></pre><div class="info ">
+<code class="code">regularized_beta ?epsilon ?max_iterations ~alpha ~beta x</code> computes
+    the regularized (divided by <code class="code">beta alpha beta</code>) incomplete beta function,
+    which is the partial (0 to <code class="code">x</code>) integral of the beta function paramterized
+    by <code class="code">alpha</code> and <code class="code">beta</code>.<br>
+</div>
+
+<pre><span id="VALmultivariate_beta"><span class="keyword">val</span> multivariate_beta</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">multivariate_beta arr</code> computes the multivariate_beta function <code class="code">arr</code>, this
+    function is also known as the Euler integral of the first kind and is useful
+    in defining various distributions.<br>
+</div>
+
+<pre><span id="VALln_multivariate_beta"><span class="keyword">val</span> ln_multivariate_beta</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code">ln_multivariate_beta x y</code>  computes <code class="code">log (multivariate_beta x y)</code>,
+    for better accuracy.<br>
+</div>
+
+<pre><span id="VALsoftmax"><span class="keyword">val</span> softmax</span> : <code class="type">?temperature:float -> float array -> float array</code></pre><div class="info ">
+<code class="code">softmax ?temperature weights</code> transforms <code class="code">weights</code> into softmax weights dependent
+    on <code class="code">temperature</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">weights</code> is empty or <code class="code">temperature = 0</code>.<br>
+</div>
+<br>
+<h2 id="2_DistributionCDFs">Distribution CDF's</h2><br>
+
+<pre><span id="VALchi_square_less"><span class="keyword">val</span> chi_square_less</span> : <code class="type">int -> float -> float</code></pre><div class="info ">
+<code class="code">chi_square_less k x</code> computes the probability of
+    seeing a value less than <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees
+    of freedom.<br>
+</div>
+
+<pre><span id="VALchi_square_greater"><span class="keyword">val</span> chi_square_greater</span> : <code class="type">int -> float -> float</code></pre><div class="info ">
+<code class="code">chi_square_greater k x</code> computes the probability of seeing a value
+    greather than <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees of
+    freedom.<br>
+</div>
+
+<pre><span id="VALnormal_cdf_inv"><span class="keyword">val</span> normal_cdf_inv</span> : <code class="type">float -> float</code></pre><div class="info ">
+<code class="code">normal_cdf_inv x</code> returns the value <code class="code">y</code> such that the integral of the
+    normal cdf is <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALstudent_cdf_inv"><span class="keyword">val</span> student_cdf_inv</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_cdf_inv k x</code> returns the value <code class="code">y</code> such that the integral of the
+    Students T distribution with <code class="code">k</code> degrees of freedom is <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALf_less"><span class="keyword">val</span> f_less</span> : <code class="type">d1:float -> d2:float -> float -> float</code></pre><div class="info ">
+<code class="code">f_less d1 d2 x</code> computes the probability of seeing a value less than <code class="code">x</code>
+    in an F-distribution parameterized by <code class="code">d1</code> and <code class="code">d2</code>.<br>
+</div>
+</body></html>

@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Uncategorized.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Util" rel="Chapter" href="Util.html">
+<link title="Uncategorized" rel="Chapter" href="Uncategorized.html">
+<link title="Statistics" rel="Chapter" href="Statistics.html">
+<link title="Online" rel="Chapter" href="Online.html">
+<link title="Classification" rel="Chapter" href="Classification.html">
+<link title="Regression" rel="Chapter" href="Regression.html">
+<link title="Unsupervised" rel="Chapter" href="Unsupervised.html"><title>Util</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Uncategorized.html" title="Uncategorized">Next</a>
+</div>
+<h1>Module <a href="type_Util.html">Util</a></h1>
+
+<pre><span class="keyword">module</span> Util: <code class="code">sig</code> <a href="Util.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<h2 id="2_Utilities">Utilities</h2>
+<p>
+<OL>
+<li>general methods that are reused in other modules.</li>
+<li>overrides and</li>
+<li>extensions of standard library modules
+    (ex. <a href="http://caml.inria.fr/pub/docs/manual-ocaml/libref/Array.html">Array</a>)
+    with useful methods (ex. <a href="Util.Array.html#VALfold2"><code class="code">Util.Array.fold2</code></a> and <a href="Util.Array.html#VALsumf"><code class="code">Util.Array.sumf</code></a>)</li>
+</OL>
+<br>
+</div>
+<hr width="100%">
+
+<pre><code><span id="TYPEiterative_failure_reason"><span class="keyword">type</span> <code class="type"></code>iterative_failure_reason</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.Out_of_bounds"><span class="constructor">Out_of_bounds</span></span> <span class="keyword">of</span> <code class="type">float</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.No_convergence"><span class="constructor">No_convergence</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.Too_many_iterations"><span class="constructor">Too_many_iterations</span></span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTiterative_failure_reason.Too_few_iterations"><span class="constructor">Too_few_iterations</span></span> <span class="keyword">of</span> <code class="type">int</code></code></td>
+
+</tr></table>
+
+<div class="info ">
+Some of the iterative routines can fail for the following reasons.<br>
+</div>
+
+
+<pre><span id="EXCEPTIONIteration_failure"><span class="keyword">exception</span> Iteration_failure</span> <span class="keyword">of</span> <code class="type">string * <a href="Util.html#TYPEiterative_failure_reason">iterative_failure_reason</a></code></pre>
+<div class="info ">
+The exception raised when an iterative function fails to converge.<br>
+</div>
+
+<pre><span id="VALinvalidArg"><span class="keyword">val</span> invalidArg</span> : <code class="type">('a, unit, string, 'b) Pervasives.format4 -> 'a</code></pre>
+<pre><span id="VALpi"><span class="keyword">val</span> pi</span> : <code class="type">float</code></pre><div class="info ">
+3.14159265358979312<br>
+</div>
+
+<pre><span id="VALmidpoint"><span class="keyword">val</span> midpoint</span> : <code class="type">float -> float -> float</code></pre>
+<pre><span class="keyword">module</span> <a href="Util.Array.html">Array</a>: <code class="code">sig</code> <a href="Util.Array.html">..</a> <code class="code">end</code></pre><div class="info">
+Extend the <code class="code">Array</code> module with useful functions.
+</div>
+
+<pre><span id="VALdx"><span class="keyword">val</span> dx</span> : <code class="type">float</code></pre><div class="info ">
+A really small value. Also known as the machine epsilon, the smallest
+    distance between two representable floats.<br>
+</div>
+
+<pre><span id="VALsignificantly_different_from"><span class="keyword">val</span> significantly_different_from</span> : <code class="type">?d:float -> float -> float -> bool</code></pre><div class="info ">
+<code class="code">significantly_different_from ?d x y</code> will check if <code class="code">y</code> is more than <code class="code">d</code>
+    (defaults to <code class="code">dx</code>) away from <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALequal_floats"><span class="keyword">val</span> equal_floats</span> : <code class="type">d:float -> float -> float -> bool</code></pre><div class="info ">
+<code class="code">equal_floats d x y</code> compares <code class="code">x</code> and <code class="code">y</code> too see if they are equal,
+    specifically <code class="code">not (significantly_different_from ~d x y)</code>.<br>
+</div>
+
+<pre><span id="VALis_nan"><span class="keyword">val</span> is_nan</span> : <code class="type">float -> bool</code></pre><div class="info ">
+<code class="code">is_nan x</code> robustly determine if a float represents NaN (aka Not a number).<br>
+</div>
+
+<pre><span id="VALis_degenerate"><span class="keyword">val</span> is_degenerate</span> : <code class="type">float -> bool</code></pre><div class="info ">
+<code class="code">is_degenerate x</code> determine if a value is <code class="code">nan</code> or <code class="code">neg_infinity</code> or
+    <code class="code">infinity</code>.<br>
+</div>
+
+<pre><code><span id="TYPEbound"><span class="keyword">type</span> <code class="type">'a</code> bound</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbound.Open"><span class="constructor">Open</span></span> <span class="keyword">of</span> <code class="type">'a</code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbound.Closed"><span class="constructor">Closed</span></span> <span class="keyword">of</span> <code class="type">'a</code></code></td>
+
+</tr></table>
+
+
+
+<pre><span id="VALwithin"><span class="keyword">val</span> within</span> : <code class="type">'a <a href="Util.html#TYPEbound">bound</a> * 'a <a href="Util.html#TYPEbound">bound</a> -> 'a -> bool</code></pre><div class="info ">
+<code class="code">within bound_pair x</code> evaluates whether <code class="code">x</code> is inside the interval described
+    by the <code class="code">bound_pair</code>.<br>
+</div>
+
+<pre><span class="keyword">module</span> <a href="Util.Float.html">Float</a>: <code class="code">sig</code> <a href="Util.Float.html">..</a> <code class="code">end</code></pre><div class="info">
+Provide operator overloads for conveniently expressing float arithmatic.
+</div>
+
+<pre><span class="keyword">module type</span> <a href="Util.Optional_arg_intf.html">Optional_arg_intf</a> = <code class="code">sig</code> <a href="Util.Optional_arg_intf.html">..</a> <code class="code">end</code></pre><div class="info">
+When passing optional arguments to procedures.
+</div>
+
+<pre><span id="VALfst3"><span class="keyword">val</span> fst3</span> : <code class="type">'a * 'b * 'c -> 'a</code></pre>
+<pre><span id="VALsnd3"><span class="keyword">val</span> snd3</span> : <code class="type">'a * 'b * 'c -> 'b</code></pre>
+<pre><span id="VALthr3"><span class="keyword">val</span> thr3</span> : <code class="type">'a * 'b * 'c -> 'c</code></pre></body></html>
