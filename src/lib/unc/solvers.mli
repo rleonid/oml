@@ -29,7 +29,7 @@
 *)
 val newton_raphson_full :
   ?init:float -> accuracy:float -> iterations:int -> lower:float ->
-    upper:float -> (float -> float) -> (float -> float) -> float
+    upper:float -> f:(float -> float) -> df:(float -> float) -> float
 
 (** [newton ?init lower upper f] is equivalent to
     [newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000

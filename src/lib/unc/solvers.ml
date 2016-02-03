@@ -17,7 +17,7 @@
 
 open Util
 
-let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper f df =
+let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper ~f ~df =
   let rec loop x i =
 (*  printf "i %d: x %f\n" i x; *)
     if x < lower then
@@ -40,7 +40,7 @@ let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper f df =
 
 let newton ?init ~lower ~upper f =
   newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
-      ~lower ~upper f (Estimations.second_order f)
+      ~lower ~upper ~f ~df:(Estimations.second_order f)
 
 let debug_ref = ref false
 
