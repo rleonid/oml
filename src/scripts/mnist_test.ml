@@ -29,9 +29,9 @@ let showme ?(data=m_train) i =
 (****** DID YOU REQUIRE #DSFO ?!? 
 #require "dsfo" 
 *****)
+open Oml
+open Classification
 open Lacaml.D
-
-open Oml.Classification
 module P = Probabilities
 
 let m_train = Mnist.data ~dir:"../dsfo" `Train
@@ -103,4 +103,28 @@ let total_test = List.length perf_test
 let () =
   Printf.printf "test %0.3f correct\n"
     ((float correct_test) /. (float total_test))
+
+(***** End 5th Part *****)
+module MnistNB = Naive_bayes.Gaussian(MnistEncoded)
+
+let mnist_nb = MnistNB.(estimate s_train)
+
+let perf =
+  s_train
+  |> List.map (fun (c, f) -> c, P.most_likely (MnistNB.eval mnist_nb f))
+
+let correct = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf
+let total = List.length perf
+let () = Printf.printf "train %0.3f correct\n" ((float correct) /. (float total))
+
+let perf_test =
+  s_test
+  |> List.map (fun (c, f) -> c, P.most_likely (MnistNB.eval mnist_nb f))
+
+let correct_test = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf_test
+let total_test = List.length perf_test
+let () =
+  Printf.printf "test %0.3f correct\n"
+    ((float correct_test) /. (float total_test))
+
 
