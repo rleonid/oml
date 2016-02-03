@@ -10,10 +10,10 @@ module IrisEncoded =
   end
 
 module IrisMlr = Logistic_regression.Multiclass(IrisEncoded)
-
-let irismlr = IrisMlr.estimate Data.Iris.iris
+(* #require dsfo *)
+let irismlr = IrisMlr.estimate Iris.iris
 let perf =
-  Data.Iris.iris
+  Iris.iris
   |> List.map (fun (c, f) ->
       c, P.most_likely (IrisMlr.eval irismlr f))
 
@@ -29,9 +29,9 @@ let () = describe "Multiclass" perf
 
 module IrisLr = Logistic_regression.Binary(IrisEncoded)
 
-let irislr = IrisLr.estimate Data.Iris.iris
+let irislr = IrisLr.estimate Iris.iris
 let twoclassperf =
-  Data.Iris.iris
+  Iris.iris
   |> List.map (fun (c, f) ->
       c, P.most_likely (IrisLr.eval irislr f))
 
@@ -48,7 +48,7 @@ module IrisJustSetosa =
 module IrisLr_Js = Logistic_regression.Binary(IrisJustSetosa)
 
 let just_setosa =
-  Data.Iris.iris
+  Iris.iris
   |> List.map (fun (c,f) ->
       match c with
       | `setosa -> `setosa, f
