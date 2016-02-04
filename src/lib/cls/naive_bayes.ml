@@ -267,14 +267,17 @@ module Gaussian(Data: Continuous_encoded_data) = struct
     let (prior, dist_params) = List.assoc cls t in
     prior,
     (fun ftr ->
-      Array.map2 (fun (mean,std) y -> D.normal_pdf ~mean ~std y)
+      Array.map2 (fun (mean,std) y ->
+        (* if std = 0. then nan is ok, signals error. *)
+        D.normal_pdf ~mean ~std y)
         dist_params (safe_encoding ftr))
 
   let eval table feature =
     let to_prior (prior, _) = prior in
     let to_likelihood (_, lkhd) =
       let indices = safe_encoding feature in
-      prod_arr2 (fun (mean,std) y -> D.normal_pdf ~mean ~std y)
+      prod_arr2 (fun (mean,std) y ->
+        if std = 0. then 1. else D.normal_pdf ~mean ~std y)
         lkhd indices
     in
     eval_naive_bayes ~to_prior ~to_likelihood table
