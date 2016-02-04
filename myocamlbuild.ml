@@ -33,6 +33,14 @@ let () =
                              ; A Pathname.parent_dir_name])
                 ]
               end;
+            (* To build without interfaces
+            rule "ocaml-override: ml -> cmo & cmi"
+              ~insert:`top
+              ~prods:["%.cmo"; "%.cmi"]
+              ~deps:["%.ml"; "%.ml.depends"]
+              ~doc:"This rule disables mli files."
+              (Ocaml_compiler.byte_compile_ocaml_implem "%.ml" "%.cmo") ;
+            *)
             (* For documentation. *)
             if target_with_extension "html" then begin
               rule "Create mli from mlpack."
