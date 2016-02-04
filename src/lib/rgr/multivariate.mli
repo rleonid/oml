@@ -3,7 +3,7 @@
 
 type opt =
   { add_constant_column : bool  (** Instructs the method to efficiently insert a
-                                    colum of 1's into the design matrix for the
+                                    column of 1's into the design matrix for the
                                     constant term. *)
   ; l2_regularizer : [`S of float | `From of float array] option
                                 (** How to optionally determine the ridge parameter. *)
