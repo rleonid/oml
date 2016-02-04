@@ -18,7 +18,7 @@
 open Printf
 open Test_utils
 open Util
-open Interpolate
+open Regression.Interpolate
 
 let () =
   (*let add_simple_test = Test.add_simple_test_group "Interpolate" in*)
