@@ -31,7 +31,7 @@
 <br>
 Numerically find the roots of passed functions.<br>
 
-<pre><span id="VALnewton_raphson_full"><span class="keyword">val</span> newton_raphson_full</span> : <code class="type">?init:float -><br>       accuracy:float -><br>       iterations:int -><br>       lower:float -> upper:float -> (float -> float) -> (float -> float) -> float</code></pre><div class="info ">
+<pre><span id="VALnewton_raphson_full"><span class="keyword">val</span> newton_raphson_full</span> : <code class="type">?init:float -><br>       accuracy:float -><br>       iterations:int -><br>       lower:float -><br>       upper:float -> f:(float -> float) -> df:(float -> float) -> float</code></pre><div class="info ">
 <code class="code">newton_raphson_full ?init accuracy iterations lower upper f df</code>
     uses the Newton Raphson method to iteratively solve <code class="code">f</code>.
 <p>

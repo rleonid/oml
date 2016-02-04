@@ -22,7 +22,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;accuracy:float&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;iterations:int&nbsp;<span class="keywordsign">-&gt;</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;f:(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;df:(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;newton&nbsp;:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;?init:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;lower:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;upper:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float<br>
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;bisection&nbsp;:<br>

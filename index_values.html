@@ -209,6 +209,11 @@ Given an existing running statistic <code class="code">t</code>, number of sampl
       the null.
 </div>
 </td></tr>
+<tr><td><a href="Regression.Interpolate.Spline.html#VALcoefficients">coefficients</a> [<a href="Regression.Interpolate.Spline.html">Regression.Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> returns an array of the fit spline coefficients.
+</div>
+</td></tr>
 <tr><td><a href="Regression.Intf.Linear_model.html#VALcoefficients">coefficients</a> [<a href="Regression.Intf.Linear_model.html">Regression.Intf.Linear_model</a>]</td>
 <td><div class="info">
 <code class="code">coefficients t</code> returns the coefficients used in the linear model.
@@ -362,6 +367,11 @@ An empty <code class="code">t</code>, useful for initializing the fold.
       training <code class="code">samples</code>.
 </div>
 </td></tr>
+<tr><td><a href="Regression.Interpolate.Spline.html#VALeval">eval</a> [<a href="Regression.Interpolate.Spline.html">Regression.Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">eval spline x</code> evalute <code class="code">spline</code> at <code class="code">x</code>.
+</div>
+</td></tr>
 <tr><td><a href="Regression.Intf.Linear_model.html#VALeval">eval</a> [<a href="Regression.Intf.Linear_model.html">Regression.Intf.Linear_model</a>]</td>
 <td><div class="info">
 <code class="code">eval linear_model x</code> Evaluate a the <code class="code">linear_model</code> at <code class="code">x</code>.
@@ -371,6 +381,12 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <td><div class="info">
 <code class="code">eval classifier feature</code> assign <a href="Classification.Probabilities.html#TYPEt">probabilities</a> to the
       possible <a href="Classification.Intf.Data.html#TYPEclas">classes</a> based upon <code class="code">feature</code>.
+</div>
+</td></tr>
+<tr><td><a href="Regression.Interpolate.Spline.html#VALeval_arr">eval_arr</a> [<a href="Regression.Interpolate.Spline.html">Regression.Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">eval_arr t data</code> if <code class="code">data</code> is sorted in increasing order
+      equivalent to <code class="code">Array.map (eval spline) data</code> but a wee bit faster.
 </div>
 </td></tr>
 <tr><td><a href="Uncategorized.Continued_fraction.html#VALevaluate">evaluate</a> [<a href="Uncategorized.Continued_fraction.html">Uncategorized.Continued_fraction</a>]</td>
@@ -398,6 +414,11 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <td><div class="info">
 <code class="code">Array.find_index f a</code> returns the first <code class="code">i</code> (starting with 0) where
       <code class="code">f a.(i)</code> is true
+</div>
+</td></tr>
+<tr><td><a href="Regression.Interpolate.Spline.html#VALfit">fit</a> [<a href="Regression.Interpolate.Spline.html">Regression.Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">fit ~bc data</code>
 </div>
 </td></tr>
 <tr><td><a href="Util.Array.html#VALfold2">fold2</a> [<a href="Util.Array.html">Util.Array</a>]</td>
@@ -503,6 +524,11 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 </div>
 </td></tr>
 <tr><td align="left"><br>K</td></tr>
+<tr><td><a href="Regression.Interpolate.Spline.html#VALknots">knots</a> [<a href="Regression.Interpolate.Spline.html">Regression.Interpolate.Spline</a>]</td>
+<td><div class="info">
+<code class="code">knots t</code> return the points used to originally fit the spline.
+</div>
+</td></tr>
 <tr><td><a href="Statistics.Descriptive.html#VALkurtosis">kurtosis</a> [<a href="Statistics.Descriptive.html">Statistics.Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">kurtosis data</code> computes the sample kurtosis of <code class="code">data</code>.
@@ -521,6 +547,12 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 </div>
 </td></tr>
 <tr><td align="left"><br>L</td></tr>
+<tr><td><a href="Regression.Interpolate.html#VALlinear">linear</a> [<a href="Regression.Interpolate.html">Regression.Interpolate</a>]</td>
+<td><div class="info">
+<code class="code">linear (x1,y1) (x2,y2)</code> fits a line (l) between the two points such that
+    given an x value one can get the y along that line with <code class="code">l x</code>.
+</div>
+</td></tr>
 <tr><td><a href="Uncategorized.Functions.html#VALln_beta">ln_beta</a> [<a href="Uncategorized.Functions.html">Uncategorized.Functions</a>]</td>
 <td><div class="info">
 <code class="code">ln_beta x y</code>  computes <code class="code">log (beta x y)</code>, for more accuracy.
@@ -617,6 +649,8 @@ An empty <code class="code">t</code>, useful for initializing the fold.
     discrete probability distribution.
 </div>
 </td></tr>
+<tr><td><a href="Regression.Interpolate.Tri_Diagonal.html#VALmult">mult</a> [<a href="Regression.Interpolate.Tri_Diagonal.html">Regression.Interpolate.Tri_Diagonal</a>]</td>
+<td></td></tr>
 <tr><td><a href="Uncategorized.Matrices.html#VALmult">mult</a> [<a href="Uncategorized.Matrices.html">Uncategorized.Matrices</a>]</td>
 <td><div class="info">
 <code class="code">mult s v</code> scalar multiplication.
@@ -952,6 +986,8 @@ The number of dummy variables to track.
     on <code class="code">temperature</code>.
 </div>
 </td></tr>
+<tr><td><a href="Regression.Interpolate.Tri_Diagonal.html#VALsolve">solve</a> [<a href="Regression.Interpolate.Tri_Diagonal.html">Regression.Interpolate.Tri_Diagonal</a>]</td>
+<td></td></tr>
 <tr><td><a href="Uncategorized.Svd.html#VALsolve_linear">solve_linear</a> [<a href="Uncategorized.Svd.html">Uncategorized.Svd</a>]</td>
 <td><div class="info">
 <code class="code">solve_linear a b</code> solve for <code class="code">x</code> in <code class="code">a x = b</code> using principal components
