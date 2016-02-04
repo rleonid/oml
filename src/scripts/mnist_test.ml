@@ -19,11 +19,12 @@ let showme ?(data=m_train) i =
         (fun i -> truncate (255. *. GA.get g i))
   in
   let label =
-    let rec loop i = if y_i.{i} = 1. then i else loop (i + 1)
+    let rec loop i = if y_i.{i} = 1. then i - 1 else loop (i + 1)
     in loop 1
   in
-  x_256, label
+  x_256, label;;
 
+Pp.Toplevel.lsc 14;;
 *)
  
 (****** DID YOU REQUIRE #DSFO ?!? 
