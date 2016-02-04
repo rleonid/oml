@@ -7,7 +7,7 @@ OCaml Math Library
 
 
 A collection of OCaml Math and Statistics functions.
-The API is available [online](http://hammerlab.github.io/oml/doc/index.html).
+The API is available [online](http://hammerlab.github.io/oml/index.html).
 
 ### Goals
 
