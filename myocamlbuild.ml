@@ -43,6 +43,20 @@ let () =
             *)
             (* For documentation. *)
             if target_with_extension "html" then begin
+              (* Insert Oml_array.mli into the
+                'include (module type of Oml_array)'
+                so taht we can have the signature for documentation. *)
+              let from_file = "src/lib/util/util.mli" in
+              let to_file   = "_build/src/lib/util/util.mli" in
+              let perl_mat  = "include \\(module type of Oml_array\\)" in
+              let command   =
+                Printf.sprintf
+                  "perl -pe 's/%s/`cat src\\/lib\\/util\\/oml_array.mli`/ge' %s > %s"
+                    perl_mat from_file to_file
+              in
+              ignore (Sys.command "mkdir -p _build/src/lib/util");
+              Printf.printf "%s\n" command;
+              ignore (Sys.command command);
               rule "Create mli from mlpack."
                 ~prod:"%.mli"
                 ~deps:["%.mlpack"; "%.mlipack"]
