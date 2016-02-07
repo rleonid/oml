@@ -75,6 +75,8 @@ module Float : sig
   val ( * ) : float -> float -> float
 end
 
+module Probability : sig include (module type of Oml_probability) end
+
 (** When passing optional arguments to procedures. *)
 module type Optional_arg_intf = sig
 
