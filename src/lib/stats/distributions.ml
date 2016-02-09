@@ -95,12 +95,10 @@ let ln_dirichlet_pdf ~alphas =
       if b then invalid_arg ~f:"ln_dirichlet_pdf" "probabilities: %s" s else ()
     in
     fun parr ->
-      check (Array.length parr <> k) "different length from alphas";
-      check (significantly_different_from (Array.sumf parr) 1.) "doesn't sum to 1";
-      check (Array.any (fun p -> p < 0.0) parr) "probability less than zero";
+      check (Probability.length parr <> k) "different length from alphas";
       let s = ref norm in
       for i = 1 to k - 1 do
-        s := !s +. log parr.(i) *. alpha_m_one.(i)
+        s := !s +. log (Probability.get parr i) *. alpha_m_one.(i)
       done;
       !s
 

@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015,2016:
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 *)
+
+open Util
 
 (** {1 Probability density, cumulative and quantile functions common distributions.} *)
 
@@ -83,10 +85,10 @@ val student_quantile : degrees_of_freedom:int -> float -> float
 (** {2 Dirichlet} *)
 
 (** [ln_dirichlet_pdf] *)
-val ln_dirichlet_pdf : alphas:(float array) -> float array -> float
+val ln_dirichlet_pdf : alphas:(float array) -> Probability.s -> float
 
 (** [dirichlet_pdf] *)
-val dirichlet_pdf : alphas:(float array) -> float array -> float
+val dirichlet_pdf : alphas:(float array) -> Probability.s -> float
 
 (** {2 Benford} *)
 
