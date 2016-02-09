@@ -18,22 +18,22 @@
 
 open Util
 module F = Uncategorized.Functions
+module P = Probability
 let invalid_arg ~f fmt = invalid_arg ~m:"Distributions" ~f fmt 
 
 let normal_cdf ?(mean=0.0) ?(std=1.0) x =
   let z = ((x -. mean) /. std) in
-  (1.0 +. F.erf (z /. sqrt 2.0)) /. 2.0
+  P.restrict ((1.0 +. F.erf (z /. sqrt 2.0)) /. 2.0)
 
 let normal_pdf ?(mean=0.0) ?(std=1.0) x =
   let z = ((x -. mean) /. std) in
   (exp ((-1.0 /. 2.0) *. (z ** 2.0))) /.  (std *. (sqrt (2.0 *. pi)))
 
-let normal_quantile ?(mean=0.0) ?(std=1.0) p =
-  if p < 0. || p > 1. then invalid_arg ~f:"normal_quantile" "p %f" p else
-    mean +. std *. F.normal_cdf_inv p
+let normal_quantile ?(mean=0.0) ?(std=1.0) (p : P.t) =
+  mean +. std *. F.normal_cdf_inv (p :> float)
 
 let poisson_cdf ~mean k =
-  F.regularized_upper_gamma ~a:(floor (k +. 1.0)) mean
+  P.restrict (F.regularized_upper_gamma ~a:(floor (k +. 1.0)) mean)
 
 let ln_beta_pdf ~alpha ~beta =
   if alpha <= 0.0 then invalid_arg ~f:"ln_beta_pdf" "alpha" else
@@ -57,10 +57,10 @@ let beta_cdf ~alpha ~beta =
   if alpha <= 0.0 then invalid_arg ~f:"beta_cdf" "alpha" else
     if beta <= 0.0 then invalid_arg ~f:"beta_cdf" "beta" else
       let reg = F.regularized_beta ~alpha ~beta in
-      fun x -> if x <= 0.0 then 0.0 else if x >= 1.0 then 1.0 else reg x
+      fun x -> P.restrict (reg x)
 
 let chi_square_cdf ~k x =
-  F.regularized_lower_gamma ~a:((float k) /. 2.0) (x /. 2.0)
+  P.restrict (F.regularized_lower_gamma ~a:((float k) /. 2.0) (x /. 2.0))
 
 (* According to Wikipedia, haven't research a more efficient algorithm.
    Implemented it here for completeness.
@@ -73,16 +73,18 @@ let student_pdf ~degrees_of_freedom t =
 let student_cdf ~degrees_of_freedom t =
   let v = float degrees_of_freedom in
   let x = Float.(v / (t * t + v)) in
-  if t > 0.0 then
-    Float.(1.0 - 0.5 * (F.regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
-  else if t < 0.0 then
-    Float.(0.5 * (F.regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
-  else  (* 0.0 *)
-    0.5
+  let p =
+    if t > 0.0 then
+      Float.(1.0 - 0.5 * (F.regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
+    else if t < 0.0 then
+      Float.(0.5 * (F.regularized_beta ~alpha:(v/2.) ~beta:0.5 x))
+    else  (* 0.0 *)
+      0.5
+  in
+  P.restrict p
 
-let student_quantile ~degrees_of_freedom p =
-  if p < 0. || p > 1. then invalid_arg ~f:"student_quantile" "p %f" p else
-    F.student_cdf_inv ~degrees_of_freedom p
+let student_quantile ~degrees_of_freedom (p : P.t) =
+  F.student_cdf_inv ~degrees_of_freedom (p :> float)
 
 let ln_dirichlet_pdf ~alphas =
   if alphas = [||] || Array.any (fun a -> a <= 0.0) alphas then

@@ -23,9 +23,9 @@ open Util
 
 (** [normal_cdf mean std x] is the probability that a normal random
     variable with [mean] and standard deviation [std] takes a value less than
-    or equal to [x].  [mean] defaults to 0.0 and [std] to 1.0.
+    or equal to [x]. [mean] defaults to 0.0 and [std] to 1.0.
 *)
-val normal_cdf : ?mean:float -> ?std:float -> float -> float
+val normal_cdf : ?mean:float -> ?std:float -> float -> Probability.t
 
 (** [normal_pdf mean std x] is the value of the Normal distribution
     function (with [mean] and standard deviation [std]) at [x].
@@ -34,17 +34,14 @@ val normal_cdf : ?mean:float -> ?std:float -> float -> float
 val normal_pdf : ?mean:float -> ?std:float -> float -> float
 
 (** [normal_quantile ?mean ?std p] computes [x] such that
-    [normal_cdf mean std x = p]. [mean] defaults to 0.0 and [std] to 1.0.
-
-    @raise Invalid_argument if [p] is outside [0,1].
-*)
-val normal_quantile : ?mean:float -> ?std:float -> float -> float
+    [normal_cdf mean std x = p]. [mean] defaults to 0.0 and [std] to 1.0. *)
+val normal_quantile : ?mean:float -> ?std:float -> Probability.t -> float
 
 (** {2 Poisson} *)
 
 (** [poisson_cdf mean x] is the probability that a Poisson random variable with
     [mean] will take a value less than or equal to [x]. *)
-val poisson_cdf : mean:float -> float -> float
+val poisson_cdf : mean:float -> float -> Probability.t
 
 (** {2 Beta} *)
 (** [beta_pdf ~alpha ~beta x] natural log value of the Beta distribution
@@ -58,13 +55,13 @@ val beta_pdf : alpha:float -> beta:float -> float -> float
 (** [beta_cdf ~alpha ~beta x] probability that a beta random variable with
     [alpha] and [beta] shape parameters takes a value less than or equal to
     [x]. *)
-val beta_cdf : alpha:float -> beta:float -> float -> float
+val beta_cdf : alpha:float -> beta:float -> float -> Probability.t
 
 (** {2 Chi} *)
 
 (** [chi_square_cdf ~k x] computes the probability of seeing a value less than
     [x] in a Chi-square distribution with [k] degrees of freedom.*)
-val chi_square_cdf : k:int -> float -> float
+val chi_square_cdf : k:int -> float -> Probability.t
 
 (** {2 Student} *)
 
@@ -74,13 +71,11 @@ val student_pdf : degrees_of_freedom:int -> float -> float
 
 (** [student_cdf degrees_of_freedom x] computest the probability that the Student T's
     distrubtion with [degrees_of_freedom] takes a value less than [x].*)
-val student_cdf : degrees_of_freedom:int -> float -> float
+val student_cdf : degrees_of_freedom:int -> float -> Probability.t
 
 (** [student_quantile degrees_of_freedom p] computes [x] such that
-    [student_cdf degrees_of_freedom x = p].
-
-    @raise Invalid_argument if [p] is outside [0,1]. *)
-val student_quantile : degrees_of_freedom:int -> float -> float
+    [student_cdf degrees_of_freedom x = p]. *)
+val student_quantile : degrees_of_freedom:int -> Probability.t -> float
 
 (** {2 Dirichlet} *)
 

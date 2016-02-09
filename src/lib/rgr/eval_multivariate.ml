@@ -23,6 +23,7 @@
 open Util
 open SolvedLPViaSvd
 open Lacaml.D
+module Pr = Probability
 module P = Printf
 module D = Statistics.Distributions
 module Ht = Statistics.Hypothesis_test
@@ -101,7 +102,7 @@ let confidence_interval, prediction_interval =
     in
     let p' = if plus_one then 1. +. p else p in
     let sc = sqrt (glm.inferred_var  *. p') in
-    let t  = D.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
+    let t  = D.student_quantile ~degrees_of_freedom (Pr.restrict (alpha /. 2.0)) in
     let d  = sc *. (abs_float t) in
     let y  = eval glm x in
     (y -. d), (y +. d)

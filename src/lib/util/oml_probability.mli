@@ -1,4 +1,10 @@
 
+type t = private float
+
+val restrict : float -> t
+
+val check : float -> t option
+
 type s = private float array
 
 (* Constructors *)
