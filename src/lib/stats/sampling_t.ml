@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015,2016:
      Leonid Rozenberg <leonidr@gmail.com>
      Carmelo Piccione <carmelo.piccione@gmail.com>
 
@@ -101,29 +101,6 @@ let () =
     Spec.([ zip3 always always always ==> is_result is_true ]);
 
   let any_weights = Gen.(array (make_int 0 10) (make_float 0.0 1.0)) in (* 10 *)
-  let sometimes_good_weights =        (* Two ways to be 'bad': 1. [||]  2. Sum <> 1.0 *)
-    Gen.(zip2 bool any_weights
-         |> transform (fun (good, arr) ->
-            let s = Array.sumf arr in
-            if good then
-              good, Array.map (fun x -> x /. s) arr
-            else
-              good, Array.map (fun x -> x *. s) arr))
-  in
-  let good_weights = Spec.(zip2 always (fun (b, w) -> b && Array.length w > 0)) in
-  (* I think with P=0.998 this test passes, but occasionally the restriction
-     that sum = 1.0 might trip, especially if the size of the array grows. *)
-  add_partial_random_test
-    ~title:"Multinomial obeys bounds."
-    Gen.(zip2 seed sometimes_good_weights)
-    (fun (seed, (_, weights)) ->
-      let mm = multinomial ?seed weights in
-      let _  = Array.init samples (fun _ -> mm ()) in
-      true)
-    Spec.([ good_weights     ==> is_result is_true
-          ; not good_weights ==> is_exception is_invalid_arg
-          ]);
-
   (* Since [Functions.softmax] does the checking on [temperature] this is mostly a shell. *)
   add_partial_random_test
     ~title:"Softmax obeys bounds."
