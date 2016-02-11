@@ -4,7 +4,7 @@ module A = Oml_array
 
 type t = float
 
-let restrict x = max 1. (min 0. x)
+let restrict x = min 1. (max 0. x)
 
 let check x = if x > 1. then None else if x < 0. then None else Some x
 
