@@ -36,7 +36,7 @@ let pca ?(demean=true) ?(scale=true) ?(unbiased=true) data =
   Mat.scal s wm;
   let s, _, vt = gesvd ~jobu:`S ~jobvt:`S wm in
   { variances   = Vec.sqr s
-  ; components  = Mat.transpose vt
+  ; components  = Mat.transpose_copy vt
   ; scalings    = adj
   }
 
