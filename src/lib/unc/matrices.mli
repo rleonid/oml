@@ -32,7 +32,7 @@ val dim : t -> int * int
 val transpose : t -> t
 
 (** [diagonal v] create a diagonal matrix from vector [v]. *)
-val diagonal : Vectors.t -> t
+val diagonal : ?n:int -> ?m:int -> Vectors.t -> t
 
 (** [equal d x y] two matrices are equal if they have the same dimensions
   and all pairwise elements are not [Util.significantly_different_from ?d]
