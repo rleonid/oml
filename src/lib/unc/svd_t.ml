@@ -22,27 +22,33 @@ module Matrices = Uncategorized.Matrices
 module Vectors = Uncategorized.Vectors
 
 let () =
-  let add_random_test
+  let add_partial_random_test
     ?title ?nb_runs ?nb_tries ?classifier
     ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
-    Test.add_random_test_group "Svd"
+    Test.add_partial_random_test_group "Svd"
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
   let max_matrix_size = 10 in
-  add_random_test
+  (*let at_least_as_man_rows_as_columns m =
+    let r, c = Matrices.dim m in
+    r >= c
+  in*)
+  add_partial_random_test
     ~title:"We can."
-    Gen.(matrix (make_int 1 max_matrix_size) (make_int 1 max_matrix_size) (bfloat 1e6))
-    (fun m ->
+    Gen.(matrix (make_int 1 4) (make_int 1 5) (bfloat 1e6))
+    (fun a ->
       let open Lacaml.D in
-      let t = Svd.svd (Mat.of_array m) in
-      let m_rec = Matrices.(prod (prod (Svd.u t) (diagonal (Svd.s t))) (Svd.vt t)) in
-      Matrices.equal ~d:(Util.dx *. 1e9) m m_rec)
-    Spec.([just_postcond_pred is_true]);
+      let t = Svd.svd (Mat.of_array a) in
+      let a_rec = Matrices.(prod (prod (Svd.u t) (diagonal (Svd.s t))) (Svd.vt t)) in
+      Matrices.equal ~d:(Util.dx *. 1e9) a a_rec)
+    Spec.([ (*at_least_as_man_rows_as_columns ==> is_result is_true *)
+          always ==> is_result is_true]);
 
-  add_random_test
+  let vectors_about_equal (b1, b2) = Vectors.equal ~d:0.1 b1 b2 in
+  add_partial_random_test
     ~title:"Can find a solution to linear problems."
-    Gen.(matrix (make_int 2 max_matrix_size) (make_int 1 max_matrix_size) (bfloat 1e6))
+    Gen.(matrix (make_int 3 max_matrix_size) (make_int 3 max_matrix_size) (bfloat 1e6))
     (fun m ->
       let x = m.(0) in
       let a = Array.sub m 1 (Array.length m - 1) in
@@ -52,7 +58,11 @@ let () =
       let bc = Matrices.prod_column_vector a y in
       (* Can't compare x and y since they might be different projections,
          especially in just unaligned random data! *)
-      Vectors.equal ~d:1.0 b bc)
-    Spec.([just_postcond_pred is_true]);
+      (*let (r,c) = Matrices.dim a in
+      Printf.printf "---------%d by %d: [%s] -----------\n" r c
+        (Vectors.sub b bc |> Array.map string_of_float |> Array.to_list |> String.concat ";"); *)
+      (b,bc))
+    Spec.([ always ==> is_result vectors_about_equal (*at_least_as_man_rows_as_columns ==> is_result vectors_about_equal
+          ; always ==> is_result never*)]);
 
   ()

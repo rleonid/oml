@@ -31,11 +31,15 @@ let transpose m =
     Array.init rows (fun r ->
       m.(r).(c)))
 
-let diagonal v =
-  let n = Array.length v in
-  Array.init n (fun r ->
-    Array.init n (fun c ->
-      if r = c then v.(r) else 0.0))
+let diagonal ?n ?m v =
+  let l = Array.length v in
+  let n = match n with | None -> l | Some n -> n in
+  let m = match m with | None -> l | Some m -> m in
+  if n <= 0 then invalidArg "Invalid argument n: %d" n else
+    if m <= 0 then invalidArg "Invalid argument m: %d" m else
+      Array.init n (fun r ->
+        Array.init m (fun c ->
+          if r = c && r < l then v.(r) else 0.0))
 
 let equal ?d x y =
   let n = Array.length x
