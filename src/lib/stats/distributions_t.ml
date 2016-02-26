@@ -92,5 +92,32 @@ let () =
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
 
+ let rec next_digit ~base previous =
+    List.rev previous |> function
+      | [] -> [1]
+      | trailing_digit::rst ->
+    begin
+      if trailing_digit != (base - 1) then
+       (trailing_digit+1)::rst |> List.rev
+      else
+        (next_digit ~base (List.rev rst))@[0]
+    end in
+  add_random_test
+    ~title:"Benford pdf, assert digit sequences of same length sum to 1"
+    ~nb_runs:200
+    Gen.(zip2 (make_int 2 10)(make_int 1 5))
+    (fun (base, num_digits) ->
+      let rec first_seq l c =
+        if c == num_digits then l else
+          first_seq (0::l) (c+1)
+        in
+      let digits = List.rev @@ first_seq [1] 1 in
+      let rec helper digits =
+        if List.length digits > num_digits then 0.0 else
+        (benford_pdf_seq ~base digits) +. helper (next_digit ~base digits) in
+      let result = helper digits in
+      not (significantly_different_from ~d:0.001 1.0 result))
+    Spec.([just_postcond_pred is_true]);
+
   ()
 

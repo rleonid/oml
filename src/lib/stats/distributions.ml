@@ -104,3 +104,26 @@ let ln_dirichlet_pdf ~alphas =
 let dirichlet_pdf ~alphas =
   let ln_pdf = ln_dirichlet_pdf ~alphas in
   fun arr -> exp (ln_pdf arr)
+
+(** TODO make a stricter type to represent digits of a particular base,
+    ensure domain of the digits form a properly bounded pdf *)
+let benford_pdf_int64 ?(base=10) ~digits =
+  if base <= 1 then invalidArg "base must be > 1: %d" base else
+  if base > 10 then invalidArg "base must be <= 10: %d" base else
+  if Int64.compare digits Int64.zero < 0 then
+    invalidArg "digits must be non-negative: %s" (Int64.to_string digits) else
+  if digits = Int64.zero then 0.0 else
+    log (1.0 +. 1.0 /. Int64.to_float digits) /. log (float base)
+
+let benford_pdf ?(base=10) ~digits =
+  benford_pdf_int64 ~base ~digits:(Int64.of_int digits)
+
+let benford_pdf_seq ?(base=10) digits =
+  if base <= 1 then invalidArg "base must be > 1: %d" base else
+  if digits = [] then invalidArg "digits must be non-empty" else
+  let folder digit (acc,i) = if digit < 0 || digit >= base then
+    invalidArg "digit %d not a valid value for base: %d" digit base else
+    let coeff = Int64.of_float ((float base) ** float i) in
+      (Int64.add acc (Int64.mul (Int64.of_int digit) coeff), i+1) in
+  let digits,_ = List.fold_right folder digits (Int64.zero,0) in
+  benford_pdf_int64 ~base:10 ~digits /. log10 (float base)
