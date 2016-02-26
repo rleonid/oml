@@ -87,3 +87,27 @@ val ln_dirichlet_pdf : alphas:(float array) -> float array -> float
 
 (** [dirichlet_pdf] *)
 val dirichlet_pdf : alphas:(float array) -> float array -> float
+
+(** {2 Benford} *)
+
+(** [benford_pdf base digits] computes the probability of the
+  sequence of [digits] in the given [base] (10 by default) as determined
+  by Benford's Law.
+
+  @raise Invalid_argument if [base] <= 1, [base] > 10 or [digits] < 0. *)
+val benford_pdf : ?base:int -> digits:int -> float
+
+(** [benford_pdf_int64 base digits] computes the probability of the
+  sequence of [digits] in the given [base] (10 by default) as determined
+  by Benford's Law.
+
+  @raise Invalid_argument if [base] <= 1, [base] > 10 or [digits] < 0. *)
+val benford_pdf_int64 : ?base:int -> digits:Int64.t -> float
+
+(** [benford_pdf_seq base digits] computes the probability of the
+  sequence of [digits] in the given [base] (10 by default) as determined
+  by Benford's Law.
+
+  @raise Invalid_argument if [base] <= 1, empty [digits],
+  or any digit < 0 or >= [base] *)
+val benford_pdf_seq : ?base:int -> int list -> float
