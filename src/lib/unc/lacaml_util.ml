@@ -58,3 +58,22 @@ let remove_column_max a =
     let mx = Vec.max c in
     axpy ~alpha:(-1. *. mx) one c
   done
+
+let column_means a =
+  let n = float (Mat.dim1 a) in
+  let m = Mat.dim2 a in
+  Vec.init m (fun i -> col_mean n (Mat.col a i))
+
+let sample_covariance a =
+  let u = column_means a in
+  let n = Mat.dim1 a in
+  let l = ger ~alpha:(-1.) (Vec.make n 1.) u (lacpy a) in
+  gemm ~alpha:(1. /. (float (n - 1))) ~transa:`T l l
+
+(* Faster only upper tri form *)
+let sample_covariance_upper_tri a =
+  let u = column_means a in
+  let n = Mat.dim1 a in
+  let l = ger ~alpha:(-1.) (Vec.make n 1.) u (lacpy a) in
+  syrk ~alpha:(1. /. (float (n - 1)))  ~trans:`T l
+
