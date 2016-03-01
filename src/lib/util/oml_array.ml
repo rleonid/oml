@@ -17,12 +17,13 @@
 
 include Array
 open Oml_util
+let invalid_arg ~f fmt = invalid_arg ~m:"Array" ~f fmt
 
 let fold2 f i a b =
   let n = Array.length a
   and m = Array.length b in
   if n <> m then
-    invalidArg "unequal lengths %d and %d" n m
+    invalid_arg ~f:"fold2" "unequal lengths %d and %d" n m
   else
     begin
       let r = ref i in
@@ -36,7 +37,7 @@ let map2 f a b =
   let n = Array.length a
   and m = Array.length b in
   if n <> m then
-    invalidArg "unequal lengths %d and %d" n m
+    invalid_arg ~f:"map2" "unequal lengths %d and %d" n m
   else
     Array.mapi (fun i a_i -> f a_i b.(i)) a
 
@@ -129,7 +130,7 @@ let ranks = Rank.ranks
 let zip x y =
   let n = Array.length x in
   let m = Array.length y in
-  if m <> n then invalidArg "zip: array lengths not equal %d %d" n m
+  if m <> n then invalid_arg ~f:"zip" "array lengths not equal %d %d" n m
   else Array.mapi (fun i x -> x, y.(i)) x
 
 let unzip arr = Array.map fst arr, Array.map snd arr

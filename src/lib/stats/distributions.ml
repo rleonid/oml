@@ -18,6 +18,7 @@
 
 open Util
 module F = Uncategorized.Functions
+let invalid_arg ~f fmt = invalid_arg ~m:"Distributions" ~f fmt 
 
 let normal_cdf ?(mean=0.0) ?(std=1.0) x =
   let z = ((x -. mean) /. std) in
@@ -28,15 +29,15 @@ let normal_pdf ?(mean=0.0) ?(std=1.0) x =
   (exp ((-1.0 /. 2.0) *. (z ** 2.0))) /.  (std *. (sqrt (2.0 *. pi)))
 
 let normal_quantile ?(mean=0.0) ?(std=1.0) p =
-  if p < 0. || p > 1. then invalidArg "normal_quantile p %f" p else
+  if p < 0. || p > 1. then invalid_arg ~f:"normal_quantile" "p %f" p else
     mean +. std *. F.normal_cdf_inv p
 
 let poisson_cdf ~mean k =
   F.regularized_upper_gamma ~a:(floor (k +. 1.0)) mean
 
 let ln_beta_pdf ~alpha ~beta =
-  if alpha <= 0.0 then invalidArg "alpha" else
-    if beta <= 0.0 then invalidArg "beta" else
+  if alpha <= 0.0 then invalid_arg ~f:"ln_beta_pdf" "alpha" else
+    if beta <= 0.0 then invalid_arg ~f:"ln_beta_pdf" "beta" else
       let alpha_minus_1 = alpha -. 1.0 in
       let beta_minus_1 = beta -. 1.0 in
       let z = F.ln_beta alpha beta in
@@ -53,8 +54,8 @@ let beta_pdf ~alpha ~beta =
   if value = neg_infinity then 0.0 else exp value
 
 let beta_cdf ~alpha ~beta =
-  if alpha <= 0.0 then invalidArg "alpha" else
-    if beta <= 0.0 then invalidArg "beta" else
+  if alpha <= 0.0 then invalid_arg ~f:"beta_cdf" "alpha" else
+    if beta <= 0.0 then invalid_arg ~f:"beta_cdf" "beta" else
       let reg = F.regularized_beta ~alpha ~beta in
       fun x -> if x <= 0.0 then 0.0 else if x >= 1.0 then 1.0 else reg x
 
@@ -80,17 +81,19 @@ let student_cdf ~degrees_of_freedom t =
     0.5
 
 let student_quantile ~degrees_of_freedom p =
-  if p < 0. || p > 1. then invalidArg "student_quantile p %f" p else
+  if p < 0. || p > 1. then invalid_arg ~f:"student_quantile" "p %f" p else
     F.student_cdf_inv ~degrees_of_freedom p
 
 let ln_dirichlet_pdf ~alphas =
   if alphas = [||] || Array.any (fun a -> a <= 0.0) alphas then
-    invalidArg "alphas"
+    invalid_arg ~f:"ln_dirichlet_pdf" "alphas"
   else
     let alpha_m_one = Array.map (fun a -> a -. 1.) alphas in
     let norm = -1. *. F.ln_multivariate_beta alphas in
     let k = Array.length alphas in
-    let check b s = if b then invalidArg "probabilities: %s" s else () in
+    let check b s =
+      if b then invalid_arg ~f:"ln_dirichlet_pdf" "probabilities: %s" s else ()
+    in
     fun parr ->
       check (Array.length parr <> k) "different length from alphas";
       check (significantly_different_from (Array.sumf parr) 1.) "doesn't sum to 1";
@@ -108,22 +111,34 @@ let dirichlet_pdf ~alphas =
 (** TODO make a stricter type to represent digits of a particular base,
     ensure domain of the digits form a properly bounded pdf *)
 let benford_pdf_int64 ?(base=10) ~digits =
-  if base <= 1 then invalidArg "base must be > 1: %d" base else
-  if base > 10 then invalidArg "base must be <= 10: %d" base else
-  if Int64.compare digits Int64.zero < 0 then
-    invalidArg "digits must be non-negative: %s" (Int64.to_string digits) else
-  if digits = Int64.zero then 0.0 else
-    log (1.0 +. 1.0 /. Int64.to_float digits) /. log (float base)
+  if base <= 1 then
+    invalid_arg ~f:"benford_pdf_int64" "base must be > 1: %d" base
+  else if base > 10 then
+    invalid_arg ~f:"benford_pdf_int64" "base must be <= 10: %d" base
+  else
+    if Int64.compare digits Int64.zero < 0 then
+      invalid_arg ~f:"benford_pdf_int64" "digits must be non-negative: %s"
+        (Int64.to_string digits)
+    else
+      if digits = Int64.zero then 0.0 else
+        log (1.0 +. 1.0 /. Int64.to_float digits) /. log (float base)
 
 let benford_pdf ?(base=10) ~digits =
   benford_pdf_int64 ~base ~digits:(Int64.of_int digits)
 
 let benford_pdf_seq ?(base=10) digits =
-  if base <= 1 then invalidArg "base must be > 1: %d" base else
-  if digits = [] then invalidArg "digits must be non-empty" else
-  let folder digit (acc,i) = if digit < 0 || digit >= base then
-    invalidArg "digit %d not a valid value for base: %d" digit base else
-    let coeff = Int64.of_float ((float base) ** float i) in
-      (Int64.add acc (Int64.mul (Int64.of_int digit) coeff), i+1) in
-  let digits,_ = List.fold_right folder digits (Int64.zero,0) in
-  benford_pdf_int64 ~base:10 ~digits /. log10 (float base)
+  if base <= 1 then
+    invalid_arg ~f:"benford_pdf_seq" "base must be > 1: %d" base
+  else if digits = [] then
+    invalid_arg ~f:"benford_pdf_seq" "digits must be non-empty"
+  else
+    let folder digit (acc,i) =
+      if digit < 0 || digit >= base then
+        invalid_arg ~f:"benford_pdf_seq" "digit %d not a valid value for base: %d"
+          digit base
+      else
+      let coeff = Int64.of_float ((float base) ** float i) in
+        (Int64.add acc (Int64.mul (Int64.of_int digit) coeff), i+1)
+    in
+    let digits,_ = List.fold_right folder digits (Int64.zero,0) in
+    benford_pdf_int64 ~base:10 ~digits /. log10 (float base)

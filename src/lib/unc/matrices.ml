@@ -16,6 +16,7 @@
 *)
 
 open Util
+let invalid_arg ~f fmt = invalid_arg ~m:"Matrices" ~f fmt
 
 type t = Vectors.t array
 
@@ -35,8 +36,8 @@ let diagonal ?n ?m v =
   let l = Array.length v in
   let n = match n with | None -> l | Some n -> n in
   let m = match m with | None -> l | Some m -> m in
-  if n <= 0 then invalidArg "Invalid argument n: %d" n else
-    if m <= 0 then invalidArg "Invalid argument m: %d" m else
+  if n <= 0 then invalid_arg ~f:"diagonal" "n: %d" n else
+    if m <= 0 then invalid_arg ~f:"diagonal" "m: %d" m else
       Array.init n (fun r ->
         Array.init m (fun c ->
           if r = c && r < l then v.(r) else 0.0))
@@ -64,8 +65,9 @@ let prod ml mr =
   let row_l, col_l = dim ml
   and row_r, col_r = dim mr in
   if col_l <> row_r then
-    invalidArg "incompatible matrices dimensions (%d, %d)*(%d, %d) for product"
-      row_l col_l row_r col_r
+    invalid_arg ~f:"prod"
+      "incompatible matrices dimensions (%d, %d)*(%d, %d) for product"
+        row_l col_l row_r col_r
   else
     let n = col_l - 1 in
     let s = ref 0.0 in
@@ -80,8 +82,9 @@ let prod ml mr =
 let prod_row_vector v m =
   let col_l = Array.length v and row_r, col_r = dim m in
   if col_l <> col_r then
-    invalidArg "incompatible vector matrix dimensions [%d]*(%d, %d) for prod_row_vector"
-      col_l row_r col_r
+    invalid_arg ~f:"prod_row_vector"
+      "incompatible vector matrix dimensions [%d]*(%d, %d) for prod_row_vector"
+        col_l row_r col_r
   else
     let n = col_l - 1 in
     let s = ref 0.0 in
@@ -95,8 +98,9 @@ let prod_row_vector v m =
 let prod_column_vector m v =
   let row_l, col_l = dim m and row_r = Array.length v in
   if col_l <> row_r then
-    invalidArg "incompatible vector matrix dimensions (%d, %d)*[%d] for prod_column_vector"
-      row_l col_l row_r
+    invalid_arg ~f:"prod_column_vector"
+      "incompatible vector matrix dimensions (%d, %d)*[%d] for prod_column_vector"
+        row_l col_l row_r
   else
     let n = col_l - 1 in
     let s = ref 0.0 in

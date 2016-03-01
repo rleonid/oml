@@ -16,6 +16,7 @@
 *)
 
 open Util
+let invalid_arg ~f fmt = invalid_arg ~m:"Descriptive" ~f fmt
 
 (* TODO: A tiny optimization; Once bench mark code has been written, it might
    be useful to compare the logic in this code where variables such as the
@@ -201,7 +202,7 @@ let spearman x y =
   let n = Array.length x in
   let ny = Array.length y in
   if ny <> n then
-    invalidArg "spearman: array lengths don't match %d %d." n ny
+    invalid_arg ~f:"spearman" "array lengths don't match %d %d." n ny
   else
     let rx = Array.ranks ~average_ties:true x in
     let ry = Array.ranks ~average_ties:true y in
