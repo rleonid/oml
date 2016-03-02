@@ -23,7 +23,15 @@ type iterative_failure_reason =
 
 exception Iteration_failure of string * iterative_failure_reason
 
-let invalidArg fmt = Printf.ksprintf (fun s -> raise (Invalid_argument s)) fmt
+let invalid_arg ?m ?f fmt =
+  let p =
+    match m, f with
+    | None, None          -> ""
+    | (Some m), None      -> m ^ ": "
+    | None, (Some f)      -> f ^ ": "
+    | (Some m), (Some f)  -> Printf.sprintf "%s.%s:" m f
+  in
+  Printf.ksprintf (fun s -> raise (Invalid_argument (p ^ s))) fmt
 
 let pi = 4. *. atan 1.
 

@@ -16,10 +16,11 @@
 *)
 
 open Util
+let invalid_arg ~f fmt = invalid_arg ~m:"Interpolate" ~f fmt
 
 let linear (ax, ay) (bx, by) =
   if ax = bx then
-    invalidArg "equal x values %f" ax
+    invalid_arg ~f:"linear" "equal x values %f" ax
   else
     let slope = Float.((by - ay) / (bx - ax)) in
     fun x -> Float.(slope * (x - ax) + ay)
@@ -91,7 +92,7 @@ module Spline = struct
       (fun i ->
         let _x, y, opt = t.(i) in
         match opt with
-        | None -> invalidArg "Improper spline size %d" i
+        | None -> invalid_arg ~f:"coefficients" "improper spline size %d" i
         | Some (c, b, a)  -> y, c, b, a)
 
   (* Helper functions to extract correctly indexed elements of data.
@@ -140,7 +141,7 @@ module Spline = struct
   let fit ?(bc=Natural) arr =
     let n = Array.length arr in
     if n < 3 then
-      invalidArg "Less than 3 data points %d" n;
+      invalid_arg ~f:"fit" "Less than 3 data points %d" n;
     Array.sort (fun (x1,_) (x2,_) -> compare x1 x2) arr;
     let abc, d = setup_tridiagonal bc arr in
     let m = Tri_Diagonal.solve abc d in

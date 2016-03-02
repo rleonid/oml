@@ -67,7 +67,8 @@ let regress ?(opt=default) pred ~resp =
   let weights =
     if an = 0 then Array.make n 1.0
     else if an <> n then
-      invalidArg "regress: opt length %d <> d predictor size %d" an n
+      invalid_arg ~m:"Univariate" ~f:"regress"
+        "opt length %d <> d predictor size %d" an n
     else
       opt
   in

@@ -18,7 +18,7 @@
 type 'a t = ('a * float) list
 
 let most_likely = function
-  | []    -> Util.invalidArg "Classification.most_likely: empty probabilities"
+  | []    -> Util.invalid_arg "Probabilities.most_likely: empty probabilities"
   | h::tl ->
     ListLabels.fold_left ~f:(fun ((_,p1) as c1) ((_,p2) as c2) ->
       if p2 > p1 then c2 else c1) ~init:h tl

@@ -44,21 +44,20 @@ module LrCommon(Data: Continuous_encoded_data) = struct
     if l = Data.size then
       e
     else
-      Util.invalidArg
-        "Continuous_encoded_data.encoding: size %d actual %d"
-          Data.size l
+      invalid_arg ~m:"Continuous_encoded_data" ~f:"encoding"
+        "size %d actual %d" Data.size l
 
   let copy1 arr = Array.init (Data.size + 1) (function | 0 -> 1. | i -> arr.(i - 1))
 
   (* map classes to [1;2 ... 3], convert features to matrix and run Softmax *)
-  let estimate ~method_name ~class_bound ~to_t ?(opt=default) ?(classes=[]) data =
+  let estimate ~m ~class_bound ~to_t ?(opt=default) ?(classes=[]) data =
     let class_bound =
       match class_bound with
       | None   -> fun n -> n
       | Some b -> min b
     in
     if data = [] then
-      invalidArg "Classify.%s.estimate: Nothing to train on!" method_name
+      invalid_arg ~m ~f:"estimate" "Nothing to train on!" 
     else
       let error_on_new = classes <> [] in
       let assigned_cls_assoc =
@@ -70,7 +69,8 @@ module LrCommon(Data: Continuous_encoded_data) = struct
             List.assoc c !assigned_cls_assoc
           with Not_found ->
             if error_on_new then
-              invalidArg "Found a new (unexpected) class at datum %d" idx
+              invalid_arg ~m ~f:"estimate"
+                "Found a new (unexpected) class at datum %d" idx
             else
               let n = class_bound (List.length !assigned_cls_assoc + 1) in
               assigned_cls_assoc := (c, n) :: !assigned_cls_assoc;
@@ -78,7 +78,8 @@ module LrCommon(Data: Continuous_encoded_data) = struct
         |> Array.of_list
       in
       if List.length !assigned_cls_assoc < 2 then
-        invalidArg "Trying to estimate Log Reg on less than 2 classes."
+        invalid_arg ~m ~f:"estimate"
+          "Trying to estimate Log Reg on less than 2 classes."
       else
         let ftrs =
           List.map ~f:(fun (_, f) -> copy1 (safe_encoding f)) data
@@ -124,7 +125,7 @@ module Binary(Data: Continuous_encoded_data) = struct
       (List.map ~f:(fun c -> c, (1. -. p)) (List.tl lr.classes))
 
   let estimate = estimate
-      ~method_name:"Binary"
+      ~m:"Binary"
       ~class_bound:(Some 2)
       ~to_t:(fun weights classes ->
               let r1 = Mat.copy_row weights 1 in
@@ -154,7 +155,7 @@ module Multiclass(Data: Continuous_encoded_data) = struct
     List.map2 ~f:(fun c (_, p) -> (c, p)) lr.classes prs
 
   let estimate = estimate
-      ~method_name:"Multiclass"
+      ~m:"Multiclass"
       ~class_bound:None
       ~to_t:(fun weights classes -> { weights ; classes})
 

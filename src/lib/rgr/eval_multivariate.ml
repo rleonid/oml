@@ -75,12 +75,14 @@ let eval glm vec =
   let vn = Array.length vec in
   if glm.padded then
     if vn + 1 <> n then
-      invalidArg "Improper array length: %d exp %d - 1." vn n
+      invalid_arg ~m:"Regression" ~f:"eval"
+        "Improper array length: %d exp %d - 1." vn n
     else
       let c = Array.sub coe 1 (n - 1) in
       coe.(0) +. dot c vec
   else if vn <> n then
-    invalidArg "Improper array length: %d exp %d." vn n
+    invalid_arg ~m:"Regression" ~f:"eval"
+      "Improper array length: %d exp %d." vn n
   else
     dot coe vec
 

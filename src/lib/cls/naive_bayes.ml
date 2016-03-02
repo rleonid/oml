@@ -21,7 +21,6 @@ module D = Statistics.Distributions
 module O = Online
 open Intf
 
-
 let multiply_ref = ref true
 
 (* How we choose to multiply large arrays of small probabilities.
@@ -61,9 +60,9 @@ let eval_naive_bayes ~to_prior ~to_likelihood cls_assoc =
 (* init - init per class data
    update - update per class data
    incorporate - convert class assoc to final shape *)
-let estimate_naive_bayes modulename (type c) init update incorporate
+let estimate_naive_bayes m (type c) init update incorporate
   (module Cm : Map.S with type key = c) ?(classes=[]) (data : (c * 'a) list) =
-  let ia = invalidArg "Classify.%s.estimate: %s" modulename in
+  let ia fmt = invalid_arg ~m ~f:"estimate" fmt in
   if data = [] then
     ia "Nothing to train on"
   else
@@ -82,7 +81,8 @@ let estimate_naive_bayes modulename (type c) init update incorporate
               Cm.add cls (update a ftr) m
             with Not_found ->
               if error_on_new then
-                ia (Printf.sprintf "Unexpected class at datum %d" total)
+                (*ia (Printf.sprintf "Unexpected class at datum %d" total*)
+                ia "Unexpected class at datum %d" total
               else
                 Cm.add cls (update (init cls) ftr) m
           in
@@ -116,7 +116,7 @@ module Binomial(Data: Dummy_encoded_data) = struct
   let safe_encoding f =
     let e = Data.encoding f in
     if Array.any (fun i -> i >= Data.size) e then
-      invalidArg "Binomial.encoding: index beyond the encoding size."
+      invalid_arg ~m:"Binomial" ~f:"encoding" "index beyond the encoding size."
     else
       e
 
@@ -198,9 +198,8 @@ module Categorical(Data: Category_encoded_data) = struct
     if same_size && constrained then
       e
     else
-      invalidArg
-        "Category_encoded_data.encoding: same size %b, constrained: %b"
-          same_size constrained
+      invalid_arg ~m:"Category_encoded_data" ~f:"encoding"
+        "same size %b, constrained: %b" same_size constrained
 
   let class_probabilities t cls =
     let (prior, likelihood_arr) = List.assoc cls t in
@@ -259,9 +258,8 @@ module Gaussian(Data: Continuous_encoded_data) = struct
     if l = Data.size then
       e
     else
-      Util.invalidArg
-        "Continuous_encoded_data.encoding: size %d actual %d"
-          Data.size l
+      invalid_arg ~m:"Continuous_encoded_data" ~f:"encoding"
+        "size %d actual %d" Data.size l
 
   let class_probabilities t cls =
     let (prior, dist_params) = List.assoc cls t in

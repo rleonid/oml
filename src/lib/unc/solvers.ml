@@ -16,6 +16,7 @@
 *)
 
 open Util
+let invalid_arg ~f fmt = invalid_arg ~m:"Solvers" ~f fmt 
 
 let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper ~f ~df =
   let rec loop x i =
@@ -87,7 +88,6 @@ let bisection ~epsilon ~lower ~upper f =
   | `EqZero v
   | `CloseEnough v -> v
   | `Outside _     ->
-      invalidArg "Function does not take oppositely signed values at bounds"
+      invalid_arg ~f:"bisection" "Function does not take oppositely signed values at bounds"
   | `IntermediateValueTheoremViolated v ->
-      invalidArg "Intermediate Value Theorem has been violated: %f" v
-
+      invalid_arg ~f:"bisection" "Intermediate Value Theorem has been violated: %f" v

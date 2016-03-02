@@ -27,7 +27,7 @@ type iterative_failure_reason =
 (** The exception raised when an iterative function fails to converge. *)
 exception Iteration_failure of string * iterative_failure_reason
 
-val invalidArg : ('a, unit, string, 'b) format4 -> 'a
+val invalid_arg : ?m:string -> ?f:string -> ('a, unit, string, 'b) format4 -> 'a
 
 (** 3.14159265358979312  *)
 val pi : float
