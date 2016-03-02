@@ -36,7 +36,7 @@ let () =
       let t   = chi obs exp in
       equalf 3.0 t.degrees_of_freedom;
       equalf 0.470023980815 t.statistic;
-      equalf 0.925425895104 t.prob_by_chance);
+      equalf 0.925425895104 (t.prob_by_chance :> float));
 
   let data =
     [| 102.319612; 89.168824; 102.688238; 92.326973; 104.518277; 98.503768
@@ -46,7 +46,7 @@ let () =
     equalf tst.degrees_of_freedom df;
     equalf tst.statistic st;
     equalf tst.standard_error se;
-    equalf tst.prob_by_chance pc;
+    equalf (tst.prob_by_chance :> float) pc;
   in
   (* Tested against http://vassarstats.net/ *)
   add_simple_test

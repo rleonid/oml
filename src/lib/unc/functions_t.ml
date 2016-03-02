@@ -19,6 +19,7 @@ open Test_utils
 open Printf
 open Util
 open Uncategorized.Functions
+module P = Probability
 
 let fac i =
   let rec loop a i =
@@ -124,7 +125,7 @@ let () =
     ~title:"Softmax obeys bounds"
     Gen.(zip2 temp_opt (array (make_int 0 100) (bfloat max_float)))
     (fun (temperature, weights) ->
-      let _ = softmax ?temperature weights in
+      let _ = P.softmax ?temperature weights in
       true)
     Spec.([ bad_spec     ==> is_exception is_invalid_arg
           ; not bad_spec ==> is_result is_true

@@ -18,6 +18,7 @@
 open Test_utils
 open Util
 open Statistics.Distributions
+module P = Probability
 
 let () =
   let add_random_test
@@ -43,21 +44,14 @@ let () =
     ~title:"Normal_cdf is between 0 and 1."
     Gen.(zip3 mean_o std_o (make_float (-1e1) (1e1)))
     (fun (mean,std,x) ->
-      within (Closed 0.0, Closed 1.0) (normal_cdf ?mean ?std x))
-    Spec.([just_postcond_pred is_true]);
-
-  add_random_test
-    ~title:"Normal_df is also bounded."
-    Gen.(zip3 mean_o std_o (bfloat max_float))
-    (fun (mean,std,x) ->
-      within (Closed 0.0, Closed 1.0) (normal_pdf ?mean ?std x))
+      within (Closed 0.0, Closed 1.0) (normal_cdf ?mean ?std x :> float))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
     ~title:"Normal_quantile works."
     Gen.(zip3 mean_o std_o (make_float 0.0 1.0))
     (fun (mean,std,p) ->
-      let _ = normal_quantile ?mean ?std p in
+      let _ = normal_quantile ?mean ?std (P.restrict p) in
       true (* TODO *))
     Spec.([just_postcond_pred is_true]);
 
@@ -67,7 +61,7 @@ let () =
     Gen.(make_float 0. 1.)
     (fun weight ->
       let result = beta_cdf weight in
-      not (significantly_different_from weight result))
+      not (significantly_different_from weight (result :> float)))
     Spec.([just_postcond_pred is_true]);
 
   let prob f = Spec.(zip3 f always always) in
@@ -75,8 +69,8 @@ let () =
     ~title:"Normal_cdf and normal_quantile are inverses."
     Gen.(zip3 (make_float (-0.5) 1.5) (make_float (-100.) 100.) (make_float (-100.) 100.))
     (fun (p, mean, std) ->
-      let pp = normal_cdf ~mean ~std (normal_quantile ~mean ~std p) in
-      equal_floats ~d:1e-9 pp p)
+      let pp = normal_cdf ~mean ~std (normal_quantile ~mean ~std (P.restrict p)) in
+      equal_floats ~d:1e-9 (pp :> float) p)
     Spec.([ prob (fun p -> p < 0.0 || p > 1.0)   ==> is_exception is_invalid_arg
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
@@ -86,8 +80,10 @@ let () =
     ~title:"Student_cdf and student_quantile are inverses."
     Gen.(zip2 (make_float (-0.5) 1.5) (make_int 1 1000))
     (fun (p, degrees_of_freedom) ->
-      let pp = student_cdf ~degrees_of_freedom (student_quantile ~degrees_of_freedom p) in
-      equal_floats ~d:1e-6 pp p)
+      let pp = student_cdf ~degrees_of_freedom 
+          (student_quantile ~degrees_of_freedom (P.restrict p))
+      in
+      equal_floats ~d:1e-6 (pp :> float) p)
     Spec.([ prob (fun p -> p < 0.0 || p > 1.0)   ==> is_exception is_invalid_arg
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
