@@ -21,8 +21,13 @@ type t
 (** [empty] initialize a summation. *)
 val empty : t
 
+val zero : t
+
 (** [update summation value] *)
 val update : t -> float -> t
+
+(** [update summation value] *)
+val ( + ) : t -> float -> t
 
 (** [sum summation] returns the sum from summation. *)
 val sum : t -> float
