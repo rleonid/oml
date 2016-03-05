@@ -184,6 +184,11 @@ val geometric_mean : float array -> float
 val harmonic_mean : float array -> float
 
 (** [spearman x y] returns the Spearman rank correlation coefficient.
- 
+
     @raise Invalid_argument if the size of [x] doesn't equal the size of [y]. *)
 val spearman : float array -> float array -> float
+
+(** [cosine x y] returns the Cosine similarity of the two float arrays.
+
+    @raise Invalid_argument if the size of [x] doesn't equal the size of [y]. *)
+val cosine : float array -> float array -> float

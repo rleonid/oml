@@ -268,4 +268,15 @@ let () =
       let y = Array.map (fun (_,y) -> float y) data in
       Assert.equal (spearman x y) (-29.0 /. 165.0));
 
+  add_random_test
+    ~title:"Cosine is size invariant!"
+    Gen.(zip2 (barray_float 1e9 max_array_size)
+                (barray_float 1e9 max_array_size))
+    (fun (arr1,arr2) ->
+       let cs1 = cosine arr1 arr2 in
+       let nrm = let mx = Array.max arr1 in Array.map (fun x -> x /. mx) arr1 in
+       let cs2 = cosine nrm arr2 in
+       float_eq 1e-15 cs1 cs2)
+    Spec.([just_postcond_pred is_true]);
+
   ()

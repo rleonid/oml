@@ -207,3 +207,11 @@ let spearman x y =
     let rx = Array.ranks ~average_ties:true x in
     let ry = Array.ranks ~average_ties:true y in
     correlation rx ry
+
+let cosine x y =
+  let p,a,b =
+      Array.fold2 (fun (p,a,b) x y ->
+        Float.(p + x * y, a + x * x, b + y * y))
+          (0.,0.,0.) x y
+  in
+  p /. (sqrt a *. sqrt b)
