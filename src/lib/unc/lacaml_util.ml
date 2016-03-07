@@ -19,6 +19,7 @@ open Lacaml.D
 
 (* column mean. *)
 let col_mean n c = Vec.sum c /. n
+let msk_mean m c = (dot m c) /. (Vec.sum m)
 
 (* sum of squares diff of col *)
 let sum_sq_dm c m = Vec.ssqr (Vec.add_const (-.m) c)
@@ -64,16 +65,99 @@ let column_means a =
   let m = Mat.dim2 a in
   Vec.init m (fun i -> col_mean n (Mat.col a i))
 
-let sample_covariance a =
+let centered a =
   let u = column_means a in
   let n = Mat.dim1 a in
-  let l = ger ~alpha:(-1.) (Vec.make n 1.) u (lacpy a) in
-  gemm ~alpha:(1. /. (float (n - 1))) ~transa:`T l l
+  ger ~alpha:(-1.) (Vec.make n 1.) u (lacpy a)
+
+let scale_or_unbiased_rows a = function
+  | None ->
+    let n = Mat.dim1 a in
+    1. /. (float (n - 1))
+  | Some s -> s
+
+let sample_covariance ?scale a =
+  let c = centered a in
+  let alpha = scale_or_unbiased_rows a scale in
+  gemm ~alpha ~transa:`T c c
 
 (* Faster only upper tri form *)
-let sample_covariance_upper_tri a =
+let sample_covariance_upper_tri ?scale a =
+  let c = centered a in
+  let alpha = scale_or_unbiased_rows a scale in
+  syrk ~alpha ~trans:`T c
+
+(* Slow method
+let class_mean_maps data cls =
+  let cols = Mat.dim2 data in
+  let rows = Mat.dim1 data in
+  let htbl = Hashtbl.create (rows / 2) in
+  List.iteri (fun i c ->
+    match Hashtbl.find htbl c with
+    | l -> Hashtbl.replace htbl c (i :: l)
+    | exception Not_found ->
+      Hashtbl.add htbl c [i]) cls;
+  Hashtbl.fold (fun c idxs a ->
+      let v = Array.of_list idxs in
+      let rows = Array.length v in
+      let cms =
+        column_means
+          (Mat.init_rows rows cols (fun r c -> data.{v.(r-1)+1, c}))
+      in
+      (c, cms) :: a) htbl [] *)
+
+let msk_mean_mat mask a =
+  let m = Mat.dim2 a in
+  Vec.init m (fun i -> msk_mean mask (Mat.col a i))
+
+let class_masks data cls =
+  let rows = Mat.dim1 data in
+  let htbl = Hashtbl.create (rows / 10) in
+  List.iteri (fun i c ->
+      match Hashtbl.find htbl c with
+      | v -> v.{i + 1} <- 1.0
+      | exception Not_found ->
+          let v = Vec.make0 rows in
+          v.{i + 1} <- 1.0;
+          Hashtbl.add htbl c v) cls;
+  htbl
+
+let class_means data masks =
+  Hashtbl.fold (fun c v a ->
+    let means = msk_mean_mat v data in
+    (c, means) :: a) masks []
+
+let mean_matrix ?alpha ?init data masks =
+  let a =
+    match init with
+    | Some i -> i
+    | None -> Mat.make0 (Mat.dim1 data) (Mat.dim2 data)
+  in
+  Hashtbl.fold (fun _ v a ->
+    let means = msk_mean_mat v data in
+    ger ?alpha v means a) masks a
+
+let centered_class a masks =
+  mean_matrix ~alpha:(-1.) ~init:(lacpy a) a masks
+
+let covariance_class ?scale a masks =
+  let c = centered_class a masks in
+  let alpha = scale_or_unbiased_rows a scale in
+  gemm ~alpha ~transa:`T c c
+
+(* Faster only upper tri form *)
+let covariance_class_upper_tri ?scale a =
+  let c = centered_class a masks in
+  let alpha = scale_or_unbiased_rows a scale in
+  syrk ~alpha ~trans:`T c
+
+let between a masks =
+  let m = Mat.dim2 a in
   let u = column_means a in
-  let n = Mat.dim1 a in
-  let l = ger ~alpha:(-1.) (Vec.make n 1.) u (lacpy a) in
-  syrk ~alpha:(1. /. (float (n - 1)))  ~trans:`T l
+  class_means data masks
+  |> List.fold_left (fun a (_, v) ->
+       let d = Vec.sub v u in
+       ger ~alpha:50. d d a)
+      (Mat.make0 4 4)
+
 
