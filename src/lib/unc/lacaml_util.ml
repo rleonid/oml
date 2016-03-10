@@ -52,6 +52,13 @@ let normalize ?(demean=true) ?(scale=true) ?(unbiased=true) m =
   in
   adj, mmm
 
+(* TODO/Observations:
+  1. This work can/should be parameterized to be independent of row/column
+     feature/data orientation. Right now each row represents a data point so
+     columns are treated as features.
+  2. Many of the resulting matrix calculations are symmetric, need to
+     parameterize by what the resulting operation needs. *)
+
 let remove_column_max a =
   let one = Vec.make (Mat.dim1 a) 1. in
   for j = 1 to Mat.dim2 a do
@@ -69,26 +76,28 @@ let centered a =
   let n = Mat.dim1 a in
   ger ~alpha:(-1.) (Vec.make n 1.) u (lacpy a)
 
+(* Create a centering matrix of size [n]. *)
 let centering n =
   let i = Mat.identity n in
   let o = Vec.make n 1. in
   ger ~alpha:(-1./. (float n)) o o i
 
-(*
-let scatter_matrix a =
-  let n = Mat.dim1 a in
-   *)
+let scatter ?(alpha=1.) a =
+  let n = float (Mat.dim1 a) in
+  let u = column_means a in
+  let ralpha = -1. *. n *. alpha in
+  let malpha = alpha in
+  ger ~alpha:ralpha u u (gemm ~alpha:malpha ~transa:`T a a)
 
 let scale_or_unbiased_rows a = function
   | None ->
     let n = Mat.dim1 a in
-    1. /. (float (n - 1))
+    1. /. float n
   | Some s -> s
 
 let sample_covariance ?scale a =
-  let c = centered a in
   let alpha = scale_or_unbiased_rows a scale in
-  gemm ~alpha ~transa:`T c c
+  scatter ~alpha a
 
 (* Faster only upper tri form *)
 let sample_covariance_upper_tri ?scale a =
@@ -100,8 +109,14 @@ let msk_mean_mat mask n a =
   let m = Mat.dim2 a in
   Vec.init m (fun i -> msk_mean mask n (Mat.col a i))
 
-let class_masks data cls =
-  let rows = Mat.dim1 data in
+type 'a class_mask =
+  { order : 'a list
+  ; masks : Vec.t list
+  ; sizes : float list
+  }
+
+let class_masks cls =
+  let rows = List.length cls in
   let htbl = Hashtbl.create (rows / 10) in
   List.iteri (fun i c ->
       match Hashtbl.find htbl c with
@@ -110,43 +125,37 @@ let class_masks data cls =
           let v = Vec.make0 rows in
           v.{i + 1} <- 1.0;
           Hashtbl.add htbl c v) cls;
-  Hashtbl.fold (fun c v a -> (c, (v, Vec.sum v)) :: a) htbl []
-
-let class_means data masks =
-  List.map (fun (c, (v, n)) ->
-    c, msk_mean_mat v n data) masks
-
-let mean_matrix ?alpha ?init data masks =
-  let a =
-    match init with
-    | Some i -> i
-    | None -> Mat.make0 (Mat.dim1 data) (Mat.dim2 data)
+  let order, masks, sizes =
+    Hashtbl.fold (fun c v (c_a,v_a,n_a) ->
+      let n = Vec.sum v in
+      (c::c_a,v::v_a,n::n_a))
+       htbl ([],[],[])
   in
-  List.fold_left (fun a (_c, (v, n)) ->
-    let means = msk_mean_mat v n data in
-    ger ?alpha v means a) a masks
+  {order; masks; sizes}
 
-let centered_class a masks =
-  mean_matrix ~alpha:(-1.) ~init:(lacpy a) a masks
+let class_means data m =
+  let cc = Mat.of_diag (Vec.reci (Vec.of_list m.sizes)) in
+  let mm = Mat.of_col_vecs_list m.masks in
+  gemm ~transa:`T data (gemm mm cc)
 
-let within_class_covariance ?scale a masks =
-  let c = centered_class a masks in
-  let alpha = scale_or_unbiased_rows a scale in
-  gemm ~alpha ~transa:`T c c
+let centered_class a m =
+  let mm = Mat.of_col_vecs_list m.masks in
+  let mu = class_means a m in
+  Mat.sub a (gemm mm ~transb:`T mu)
+
+let within_class_scatter a m =
+  let c = centered_class a m in
+  gemm ~transa:`T c c
 
 (* Faster only upper tri form *)
-let within_class_covariance_upper_tri ?scale a masks =
-  let c = centered_class a masks in
-  let alpha = scale_or_unbiased_rows a scale in
-  syrk ~alpha ~trans:`T c
+let within_class_scatter_upper_tri a m =
+  let c = centered_class a m in
+  syrk ~trans:`T c
 
-let between a masks =
-  let m = Mat.dim2 a in
-  let u = column_means a in
-  class_means a masks
-  |> List.fold_left (fun a (n, v) ->
-       let d = Vec.sub v u in
-       ger ~alpha:n d d a)
-      (Mat.make0 m m)
-
-
+let between_class_scatter a m =
+  let cu = column_means a in
+  let cm = class_means a m in
+  let v = Vec.sqrt (Vec.of_list m.sizes) in
+  let d = Mat.sub cm (Mat.of_col_vecs_list (List.map (fun _ -> cu) m.sizes)) in
+  Mat.scal_cols d v;
+  gemm d ~transb:`T d
