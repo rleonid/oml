@@ -29,6 +29,13 @@ let scatter_fold_ger a =
   let u = column_means a in
   ger ~alpha:(-1. *. float n) u u (gemm ~transa:`T a a)
 
+(* Ger allocates more but is significantly faster as the
+   overhead of the centering matrix grows. 
+
+   TODO:
+    - ger can be replaced by syr in both cases, 
+*)
+
 let () =
   let hun = Mat.random 100 100 in
   let tho = Mat.random 1000 1000 in
