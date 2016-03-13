@@ -15,6 +15,7 @@ all: build
 
 # This should be called something else.
 setup:
+	opam pin add dsfo git://github.com/rleonid/dsfo
 	opam install $(PACKAGES_INSTALL)
 
 oml.cmxa:
