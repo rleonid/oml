@@ -115,7 +115,7 @@ type 'a class_mask =
   ; sizes : float list
   }
 
-let class_masks cls =
+let class_masks ?class_order cls =
   let rows = List.length cls in
   let htbl = Hashtbl.create (rows / 10) in
   List.iteri (fun i c ->
@@ -126,10 +126,16 @@ let class_masks cls =
           v.{i + 1} <- 1.0;
           Hashtbl.add htbl c v) cls;
   let order, masks, sizes =
-    Hashtbl.fold (fun c v (c_a,v_a,n_a) ->
-      let n = Vec.sum v in
-      (c::c_a,v::v_a,n::n_a))
-       htbl ([],[],[])
+    match class_order with
+    | None ->
+        Hashtbl.fold (fun c v (c_a,v_a,n_a) ->
+          let n = Vec.sum v in
+          (c::c_a,v::v_a,n::n_a)) htbl ([],[],[])
+    | Some order ->
+        List.fold_right (fun c (c_a,v_a,n_a) ->
+          let v = Hashtbl.find htbl c in
+          let n = Vec.sum v in
+          (c::c_a,v::v_a,n::n_a)) order ([],[],[])
   in
   {order; masks; sizes}
 
@@ -195,10 +201,15 @@ let determinant_symmetric a =
    L is lower uni[triangular/trapezoidal] -> det(L) = 1.
    U is upper triangular/trapezoidal -> det(U) = product of diagonal.
 
-   TODO: same tidbit about info applies
+   TODO:
+    - make private
+    - same tidbit about info, as above, applies.
+    - when to use this vs the symmetric approach, weirdly experimenting
+      with known matrices gives better results with this (LU decomposition)
+      approach.
 *)
-let determinant a =
-  let c = lacpy a in
+let det_pipeline ?(copy=true) a f =
+  let c = if copy then lacpy a else a in
   (* details: http://www.netlib.no/netlib/lapack/double/dgetrf.f,
      remember that p is not a permutation matrix but just what gets
      swapped, so everytime p.{i} doesn't equal i there is a swap. *)
@@ -210,4 +221,13 @@ let determinant a =
     d := !d *. c.{i,i};
     if p.{i} <> Int32.of_int i then incr x
   done;
-  if !x mod 2 = 0 then !d else !d *. -1. (* d *. -1 ** x *)
+  let d = if !x mod 2 = 0 then !d else !d *. -1. (* d *. -1 ** x *) in
+  f d p c
+
+let determinant ?copy a =
+  det_pipeline ?copy a (fun d _ipiv _c -> d)
+
+let determinant_and_inverse ?copy a =
+  det_pipeline ?copy a (fun d ipiv c ->
+    getri ~ipiv c;
+    d, c)

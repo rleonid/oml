@@ -168,6 +168,8 @@ module Binomial(Data: Dummy_encoded_data) = struct
     in
     {table ; e_bernoulli = opt.bernoulli}
 
+  type feature_probability = float array
+
   let class_probabilities nb cls =
     let arr = List.assoc cls nb.table in
     let cls_p = arr.(Data.size) in
@@ -200,6 +202,8 @@ module Categorical(Data: Category_encoded_data) = struct
     else
       invalid_arg ~m:"Category_encoded_data" ~f:"encoding"
         "same size %b, constrained: %b" same_size constrained
+
+  type feature_probability = float array
 
   let class_probabilities t cls =
     let (prior, likelihood_arr) = List.assoc cls t in
@@ -245,12 +249,12 @@ module Categorical(Data: Category_encoded_data) = struct
 
 module Gaussian(Data: Continuous_encoded_data) = struct
 
-  type feature = Data.feature
-  type clas = Data.clas
+  (*type feature := Data.feature
+  type clas := Data.clas *)
 
-  type samples = (clas * feature) list
+  type samples = (Data.clas * Data.feature) list
 
-  type t = (clas * (float * (float * float) array)) list
+  type t = (Data.clas * (float * (float * float) array)) list
 
   let safe_encoding f =
     let e = Data.encoding f in
@@ -260,6 +264,8 @@ module Gaussian(Data: Continuous_encoded_data) = struct
     else
       invalid_arg ~m:"Continuous_encoded_data" ~f:"encoding"
         "size %d actual %d" Data.size l
+
+  type feature_probability = float array
 
   let class_probabilities t cls =
     let (prior, dist_params) = List.assoc cls t in
@@ -283,7 +289,7 @@ module Gaussian(Data: Continuous_encoded_data) = struct
   type opt = unit
   let default = ()
 
-  module Cm = Map.Make(struct type t = clas let compare = compare end)
+  module Cm = Map.Make(struct type t = Data.clas let compare = compare end)
 
   let estimate ?(opt=default) =
     ignore opt;
