@@ -159,3 +159,55 @@ let between_class_scatter a m =
   let d = Mat.sub cm (Mat.of_col_vecs_list (List.map (fun _ -> cu) m.sizes)) in
   Mat.scal_cols d v;
   gemm d ~transb:`T d
+
+(* source: http://www.r-bloggers.com/matrix-determinant-with-the-lapack-routine-dspsv/
+  TODO: Lacaml's spsv swallowed up the info arg, this needs to be checked.
+*)
+let determinant_symmetric a =
+  let p = Mat.packed a in
+  let b = Vec.random (Mat.dim1 a) in
+  let n = truncate (sqrt (float (2 * Vec.dim p))) in
+  let ipiv = Lacaml.Common.create_int32_vec n in
+  (* Solves the linear equation A x = b, where a is upper triangular, by
+     factoring A intu U D U^T, where U is unitriangular (1's along main
+     diagonal, ie det(U) = 1, and D has either 1x1 or 2x2 matrices along
+     it's diagonal. D is returned, also packed in A.
+     p = packed A.
+    details: http://www.netlib.no/netlib/lapack/double/dspsv.f
+  *)
+  spsv p (Mat.from_col_vec b) ~ipiv;
+  let det = ref 1.0 in
+  let dt1 i j = p.{i + ((j-1) * j) / 2} in  (* upper triangle packed *)
+  let dt2 i =
+    let im1 = i - 1 in                      (* 2D determinant *)
+    dt1 i i *. dt1 im1 im1 -. dt1 im1 i *. dt1 im1 i
+  in
+  for i = 1 to n do
+    if ipiv.{i} > 0l then
+      det := !det *. dt1 i i
+    else if i > 1 && ipiv.{i} < 0l && ipiv.{i} = ipiv.{i-1} then
+      det := !det *. dt2 i
+  done;
+  !det
+
+(* Decompose A = into P*L*U, where
+   P is a permutation matrix -> det(P) = -1 ** # swaps,
+   L is lower uni[triangular/trapezoidal] -> det(L) = 1.
+   U is upper triangular/trapezoidal -> det(U) = product of diagonal.
+
+   TODO: same tidbit about info applies
+*)
+let determinant a =
+  let c = lacpy a in
+  (* details: http://www.netlib.no/netlib/lapack/double/dgetrf.f,
+     remember that p is not a permutation matrix but just what gets
+     swapped, so everytime p.{i} doesn't equal i there is a swap. *)
+  let p = getrf c in
+  let d = ref 1.0 in
+  let n = min (Mat.dim1 a) (Mat.dim2 a) in
+  let x = ref 0 in
+  for i = 1 to n do
+    d := !d *. c.{i,i};
+    if p.{i} <> Int32.of_int i then incr x
+  done;
+  if !x mod 2 = 0 then !d else !d *. -1. (* d *. -1 ** x *)
