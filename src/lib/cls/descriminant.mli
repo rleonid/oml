@@ -5,8 +5,11 @@
     then used to model a {{:https://en.wikipedia.org/wiki/Multivariate_normal_distribution}
     Multivariate normal distribution}. These, per class, distributions are used
     in Bayes's rule for classification. *)
-module LDA(D: Intf.Continuous_encoded_data) :
-  Intf.Generative with type feature = D.feature
-                  and type clas = D.clas
-                  and type feature_probability = float
+module LDA(D: Intf.Continuous_encoded_data) : sig
+  include Intf.Generative with type feature = D.feature
+                          and type clas = D.clas
+                          and type feature_probability = float
 
+  val opt : ?shrinkage:float -> unit -> opt
+
+end
