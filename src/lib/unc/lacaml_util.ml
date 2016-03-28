@@ -71,6 +71,10 @@ let column_means a =
   let n = Mat.dim1 a in
   gemv ~alpha:(1./. (float n)) ~trans:`T a (Vec.make n 1.)
 
+let row_means a =
+  let m = Mat.dim2 a in
+  gemv ~alpha:(1./.(float m)) a (Vec.make m 1.)
+
 let centered a =
   let u = column_means a in
   let n = Mat.dim1 a in
@@ -88,6 +92,7 @@ let scatter ?(alpha=1.) a =
   let ralpha = -1. *. n *. alpha in
   let malpha = alpha in
   ger ~alpha:ralpha u u (gemm ~alpha:malpha ~transa:`T a a)
+      (* TODO:syrk ? *)
 
 let scale_or_unbiased_rows a = function
   | None ->
@@ -139,10 +144,14 @@ let class_masks ?class_order cls =
   in
   {order; masks; sizes}
 
-let class_means data m =
+let class_means_pip data m f =
   let cc = Mat.of_diag (Vec.reci (Vec.of_list m.sizes)) in
   let mm = Mat.of_col_vecs_list m.masks in
-  gemm ~transa:`T data (gemm mm cc)
+  let mn = gemm ~transa:`T data (gemm mm cc) in
+  f cc mm mn
+
+let class_means data m =
+  class_means_pip data m (fun _ _ mn -> mn)
 
 let centered_class a m =
   let mm = Mat.of_col_vecs_list m.masks in
@@ -166,6 +175,23 @@ let between_class_scatter a m =
   Mat.scal_cols d v;
   gemm d ~transb:`T d
 
+ let determinant_of_one_and_two_d_blocks_fold ~dt1 ipiv n ~f ~init =
+  let dt2 i =
+    let im1 = i - 1 in                      (* 2D determinant *)
+    dt1 i i *. dt1 im1 im1 -. dt1 im1 i *. dt1 im1 i
+  in
+  let d = ref init in
+  for i = 1 to n do
+    if ipiv.{i} > 0l then
+      d := f !d (dt1 i i)
+    else if i > 1 && ipiv.{i} < 0l && ipiv.{i} = ipiv.{i-1} then
+      d := f !d (dt2 i)
+  done;
+  !d
+
+let determinant_of_one_and_two_d_blocks ~dt1 ipiv n =
+  determinant_of_one_and_two_d_blocks_fold ~dt1 ipiv n ~f:( *. ) ~init:1.
+
 (* source: http://www.r-bloggers.com/matrix-determinant-with-the-lapack-routine-dspsv/
   TODO: Lacaml's spsv swallowed up the info arg, this needs to be checked.
 *)
@@ -182,19 +208,17 @@ let determinant_symmetric a =
     details: http://www.netlib.no/netlib/lapack/double/dspsv.f
   *)
   spsv p (Mat.from_col_vec b) ~ipiv;
-  let det = ref 1.0 in
   let dt1 i j = p.{i + ((j-1) * j) / 2} in  (* upper triangle packed *)
-  let dt2 i =
-    let im1 = i - 1 in                      (* 2D determinant *)
-    dt1 i i *. dt1 im1 im1 -. dt1 im1 i *. dt1 im1 i
-  in
-  for i = 1 to n do
-    if ipiv.{i} > 0l then
-      det := !det *. dt1 i i
-    else if i > 1 && ipiv.{i} < 0l && ipiv.{i} = ipiv.{i-1} then
-      det := !det *. dt2 i
-  done;
-  !det
+  determinant_of_one_and_two_d_blocks ~dt1 ipiv n
+
+let determinant_symmetric_and_inverse ?(copy=true) a =
+  let p = if copy then lacpy a else a in
+  let n = Mat.dim1 a in
+  let b = Mat.identity n in
+  let ipiv = Lacaml.Common.create_int32_vec n in
+  sysv ~ipiv p b;
+  let dt1 i j = p.{i,j} in
+  determinant_of_one_and_two_d_blocks ~dt1 ipiv n, b
 
 (* Decompose A = into P*L*U, where
    P is a permutation matrix -> det(P) = -1 ** # swaps,
@@ -204,9 +228,8 @@ let determinant_symmetric a =
    TODO:
     - make private
     - same tidbit about info, as above, applies.
-    - when to use this vs the symmetric approach, weirdly experimenting
-      with known matrices gives better results with this (LU decomposition)
-      approach.
+    - when to use this vs the symmetric approach, experimenting with known
+      matrices gives better results with this (LU decomposition) approach.
 *)
 let det_pipeline ?(copy=true) a f =
   let c = if copy then lacpy a else a in
