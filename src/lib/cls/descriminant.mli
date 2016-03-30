@@ -13,3 +13,12 @@ module LDA(D: Intf.Continuous_encoded_data) : sig
   val opt : ?shrinkage:float -> unit -> opt
 
 end
+
+module QDA(D: Intf.Continuous_encoded_data) : sig
+  include Intf.Generative with type feature = D.feature
+                          and type clas = D.clas
+                          and type feature_probability = float
+
+  val opt : ?normalize:bool -> ?shrinkage:float -> unit -> opt
+
+end

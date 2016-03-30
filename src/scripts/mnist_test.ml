@@ -58,7 +58,7 @@ module MnistEncoded =
 
 let column_to_label c =
   let rec loop i =
-    if c.{i + feature_size} = 1.0 then i
+    if c.{i + feature_size} = 1.0 then i - 1 (* 10 -> 0 *)
     else loop (i + 1) in
   loop 1
 
@@ -95,7 +95,7 @@ let evaluate label classify =
   Printf.printf "test %0.3f correct\n"
     ((float correct_test) /. (float total_test))
 
-(****** End 3rd Part ****)
+(****** End 3rd Part ***)
 
 module MnistLr = Logistic_regression.Multiclass(MnistEncoded)
 
@@ -109,6 +109,7 @@ module MnistNB = Naive_bayes.Gaussian(MnistEncoded)
 let mnist_nb = MnistNB.(estimate s_train)
 let () = evaluate "Gaussian naive bayes" (MnistNB.eval mnist_nb)
 
+(******* End 5th Part ****)
 (*** How about LDA? *)
 module MnistLDA = Descriminant.LDA(MnistEncoded)
 
@@ -126,6 +127,7 @@ let () = evaluate "LDA" (MnistLDA.eval mnist_lda)
 (* We need a better feature representation.
   Let's remove all of the columns with zero variance*)
 
+(******* End 6th Part ****)
 module LU = Uncategorized.Lacaml_util
 let x = lacpy ~m:784 m_train
 let a = Mat.transpose_copy x
@@ -160,3 +162,19 @@ module MnistLDA2 = Descriminant.LDA(MnistEncoded_SubImage)
 let mnist_lda2 = MnistLDA2.(estimate ~opt:(opt ~shrinkage:0.01 ()) s_train)
 let () = evaluate "Smarter encoded LDA" (MnistLDA2.eval mnist_lda2)
 
+(******* End 7th Part ****)
+(**** QDA ***)
+module MnistQDA = Descriminant.QDA(MnistEncoded)
+
+(* This will *fail* since the determinant calculation to normalize
+   the multivariate normal pdf will underflow -> denumerator = 0 *)
+let mnist_qda = MnistQDA.(estimate s_train ~opt:(opt ~shrinkage:0.01 ()))
+
+let () = evaluate "QDA" (MnistQDA.eval mnist_qda)
+
+(* Mathematically this is problematic, but it 'works'.*)
+let mnist_qda_no_norm =
+  MnistQDA.(estimate s_train
+    ~opt:(opt ~normalize:false ~shrinkage:0.01 ()))
+
+let () = evaluate "QDA" (MnistQDA.eval mnist_qda_no_norm)
