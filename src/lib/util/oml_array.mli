@@ -48,8 +48,10 @@ val max : 'a array -> 'a
 val min : 'a array -> 'a
 
 (** [Array.find_index f a] returns the first [i] (starting with 0) where
-    [f a.(i)] is true *)
-val find_index : ('a -> bool) -> 'a array -> int
+    [f a.(i)] is true.
+
+    @param start The index from which we start searching, defaults to 0. *)
+val find_index : ?start:int -> ('a -> bool) -> 'a array -> int
 
 (** [binary_search c a], find the index of element [e] in [a] where
     [c e = 0]. Where [c e'] returns < 0 if [e' < e] and [> 0] if [e' > e].

@@ -62,7 +62,7 @@ let prodf = Array.fold_left ( *. ) 1.0
 let max a = Array.fold_left max a.(0) a
 let min a = Array.fold_left min a.(0) a
 
-let find_index f a =
+let find_index ?(start=0) f a =
   let n = Array.length a in
   let rec loop i =
     if i >= n then
@@ -72,7 +72,7 @@ let find_index f a =
     else
       loop (i + 1)
   in
-  loop 0
+  loop start
 
 let bs precise c a =
   let rec bs_loop mi mx =
