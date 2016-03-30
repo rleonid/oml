@@ -86,23 +86,29 @@ let centering n =
   let o = Vec.make n 1. in
   ger ~alpha:(-1./. (float n)) o o i
 
-let scatter ?(alpha=1.) a =
+let column_scatter ?(alpha=1.) a =
   let n = float (Mat.dim1 a) in
   let u = column_means a in
   let ralpha = -1. *. n *. alpha in
   let malpha = alpha in
+  (* TODO:syrk ? *)
   ger ~alpha:ralpha u u (gemm ~alpha:malpha ~transa:`T a a)
-      (* TODO:syrk ? *)
+
+let row_scatter ?(alpha=1.) a =
+  let m = float (Mat.dim2 a) in
+  let u = row_means a in
+  let ralpha = -1. *. m *. alpha in
+  let malpha = 1. in
+  (* TODO:syrk ? *)
+  ger ~alpha:ralpha u u (gemm ~alpha:malpha ~transb:`T a a)
 
 let scale_or_unbiased_rows a = function
-  | None ->
-    let n = Mat.dim1 a in
-    1. /. float n
+  | None   -> 1. /. float (Mat.dim1 a)
   | Some s -> s
 
 let sample_covariance ?scale a =
   let alpha = scale_or_unbiased_rows a scale in
-  scatter ~alpha a
+  column_scatter ~alpha a
 
 (* Faster only upper tri form *)
 let sample_covariance_upper_tri ?scale a =
@@ -114,39 +120,46 @@ let msk_mean_mat mask n a =
   let m = Mat.dim2 a in
   Vec.init m (fun i -> msk_mean mask n (Mat.col a i))
 
-type 'a class_mask =
-  { order : 'a list
-  ; masks : Vec.t list
-  ; sizes : float list
+type class_positions =
+  { mask : Vec.t
+  ; inds : int list
+  ; size : float
   }
+
+type 'a class_mask = ('a * class_positions) list
+
+let masks cm = List.map (fun (_, {mask;_}) -> mask) cm
+let sizes cm = List.map (fun (_, {size;_}) -> size) cm
 
 let class_masks ?class_order cls =
   let rows = List.length cls in
   let htbl = Hashtbl.create (rows / 10) in
   List.iteri (fun i c ->
-      match Hashtbl.find htbl c with
-      | v -> v.{i + 1} <- 1.0
-      | exception Not_found ->
-          let v = Vec.make0 rows in
-          v.{i + 1} <- 1.0;
-          Hashtbl.add htbl c v) cls;
-  let order, masks, sizes =
-    match class_order with
-    | None ->
-        Hashtbl.fold (fun c v (c_a,v_a,n_a) ->
-          let n = Vec.sum v in
-          (c::c_a,v::v_a,n::n_a)) htbl ([],[],[])
-    | Some order ->
-        List.fold_right (fun c (c_a,v_a,n_a) ->
-          let v = Hashtbl.find htbl c in
-          let n = Vec.sum v in
-          (c::c_a,v::v_a,n::n_a)) order ([],[],[])
-  in
-  {order; masks; sizes}
+      let i = i + 1 in
+      let nv, nl =
+        let v, l =
+          match Hashtbl.find htbl c with
+          | p -> p
+          | exception Not_found -> let v = Vec.make0 rows in v, []
+        in
+        v.{i} <- 1.0;
+        v, (i::l) (* Store these a 1 based indices *)
+      in
+      Hashtbl.replace htbl c (nv, nl)) cls;
+  match class_order with
+  | None ->
+      Hashtbl.fold (fun c (mask,inds) acc ->
+        let size = Vec.sum mask in
+        (c, { mask; inds; size}) :: acc) htbl []
+  | Some order ->
+      List.fold_right (fun c acc ->
+        let (mask, inds) = Hashtbl.find htbl c in
+        let size = Vec.sum mask in
+        (c, { mask; inds; size}) :: acc) order []
 
 let class_means_pip data m f =
-  let cc = Mat.of_diag (Vec.reci (Vec.of_list m.sizes)) in
-  let mm = Mat.of_col_vecs_list m.masks in
+  let cc = Mat.of_diag (Vec.reci (Vec.of_list (sizes m))) in
+  let mm = Mat.of_col_vecs_list (masks m) in
   let mn = gemm ~transa:`T data (gemm mm cc) in
   f cc mm mn
 
@@ -154,7 +167,7 @@ let class_means data m =
   class_means_pip data m (fun _ _ mn -> mn)
 
 let centered_class a m =
-  let mm = Mat.of_col_vecs_list m.masks in
+  let mm = Mat.of_col_vecs_list (masks m) in
   let mu = class_means a m in
   Mat.sub a (gemm mm ~transb:`T mu)
 
@@ -170,8 +183,8 @@ let within_class_scatter_upper_tri a m =
 let between_class_scatter a m =
   let cu = column_means a in
   let cm = class_means a m in
-  let v = Vec.sqrt (Vec.of_list m.sizes) in
-  let d = Mat.sub cm (Mat.of_col_vecs_list (List.map (fun _ -> cu) m.sizes)) in
+  let v = Vec.sqrt (Vec.of_list (sizes m)) in
+  let d = Mat.sub cm (Mat.of_col_vecs_list (List.map (fun _ -> cu) m)) in
   Mat.scal_cols d v;
   gemm d ~transb:`T d
 
@@ -254,3 +267,16 @@ let determinant_and_inverse ?copy a =
   det_pipeline ?copy a (fun d ipiv c ->
     getri ~ipiv c;
     d, c)
+
+(* TODO: how to 'scale' the covariance matrices
+   should we even allow it?  ... *)
+let class_sample_covariance data msk =
+  let dt = Mat.transpose_copy data in
+  List.map (fun (c, m) ->
+    let cov =
+      Array.of_list m.inds
+      |> Array.map (Mat.col dt)
+      |> Mat.of_col_vecs
+      |> (fun a -> row_scatter ~alpha:(1. /. float (Mat.dim2 a)) a)
+    in
+    c, cov) msk
