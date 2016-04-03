@@ -39,13 +39,12 @@ let median arr =
   then (sorted.(m - 1) +. sorted.(m)) /. 2.0
   else sorted.(m)
 
-let var ?population_mean arr =
+let var ?population_mean ?(biased=false) arr =
   let m = match population_mean with | Some m -> m | None -> mean arr in
-  mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr)
-
-let unbiased_var ?population_mean  arr =
-  let n = float (Array.length arr) in
-  (n /. (n -.  1.0)) *. (var ?population_mean arr)
+  let v = mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr) in
+  if biased then v else
+    let n = float (Array.length arr) in
+    (n /. (n -.  1.0)) *. v
 
 let covariance x y =
   let x_mean = mean x in
@@ -53,6 +52,7 @@ let covariance x y =
   mean (Array.map2 (fun x_i y_i -> (x_i -. x_mean) *. (y_i -. y_mean)) x y)
 
 let correlation x y =
+  let var = var ~biased:true in
   (covariance x y) /. (sqrt ((var x) *. (var y)))
 
 let autocorrelation lag ar =
@@ -65,7 +65,7 @@ let moment n arr =
   mean (Array.map (fun x -> (x -. m) ** p) arr)
 
 let skew arr =
-  let std = sqrt (var arr) in
+  let std = sqrt (var ~biased:true arr) in
   (moment 3 arr) /. (std ** 3.0)
 
 let unbiased_skew arr =
@@ -73,7 +73,7 @@ let unbiased_skew arr =
   Float.(skew arr * (sqrt (n * (n - 1.0))) / (n-2.0))
 
 let kurtosis arr =
-  (moment 4 arr) /. ((var arr) ** 2.0) -. 3.0
+  (moment 4 arr) /. ((var ~biased:true arr) ** 2.0) -. 3.0
 
 let unbiased_kurtosis arr =
     let n = float (Array.length arr) in
@@ -85,7 +85,7 @@ let unbiased_kurtosis arr =
   error calcuations. *)
 let var_standard_error arr =
   let n = float (Array.length arr) in
-  let v = unbiased_var arr in
+  let v = var arr in
   Float.(sqrt (2.0 / (n - 1.0)) * v)
 
 let skew_standard_error arr =
@@ -99,7 +99,7 @@ let kurtosis_standard_error arr =
   Float.(2.0 * (skew_standard_error arr) * sqrt ((n * n - 1.0) / ((n - 3.0) * (n - 5.0))))
 
 let var_statistic arr =
-  (unbiased_var arr) /. (var_standard_error arr)
+  (var arr) /. (var_standard_error arr)
 
 let skew_statistic arr =
   (unbiased_skew arr) /. (skew_standard_error arr)
@@ -141,7 +141,7 @@ type summary =
   }
 
 let unbiased_summary arr =
-  let v = unbiased_var arr in
+  let v = var arr in
   let s = unbiased_skew arr in
   let k = unbiased_kurtosis arr in
   let sc = classify_skew arr in
@@ -150,7 +150,7 @@ let unbiased_summary arr =
   ; min      = Array.min arr
   ; max      = Array.max arr
   ; mean     = mean arr
-  ; std      = sqrt (unbiased_var arr)
+  ; std      = sqrt (var arr)
   ; var      = v
   ; skew     = s, sc
   ; kurtosis = k, kc

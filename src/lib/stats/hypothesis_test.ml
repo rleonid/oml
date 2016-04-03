@@ -85,7 +85,7 @@ let mean_t_test population_mean hypothesis arr =
   let m = mean arr in
   let d = Array.length arr in
   let nf = float d in
-  let sd = sqrt (unbiased_var arr) in
+  let sd = sqrt (var arr) in
   let error = sd /. (sqrt nf) in
   let diff  = m -. population_mean in
   t_test hypothesis ~degrees_of_freedom:(d - 1) ~diff ~error
@@ -98,8 +98,8 @@ let means_same_variance_test hypothesis arr1 arr2 =
     let nf2 = float n2 in
     let df1 = nf1 -. 1. in
     let df2 = nf2 -. 1. in
-    let v1 = unbiased_var arr1 in
-    let v2 = unbiased_var arr2 in
+    let v1 = var arr1 in
+    let v2 = var arr2 in
     let vp = Float.((v1 * df1 + v2 * df2) / (df1 + df2)) in
     let f  = Float.( 1. / nf1 + 1. / nf2) in
     sqrt (vp *. f)
@@ -119,8 +119,8 @@ let means_different_variance_test hypothesis arr1 arr2 =
   let n2 = Array.length arr2 in
   let nf1 = float n1 in
   let nf2 = float n2 in
-  let w1 = unbiased_var arr1 /. nf1 in
-  let w2 = unbiased_var arr2 /. nf2 in
+  let w1 = var arr1 /. nf1 in
+  let w2 = var arr2 /. nf2 in
   let vw = w1 +. w2 in
   let df1 = nf1 -. 1. in
   let df2 = nf2 -. 1. in
@@ -137,8 +137,8 @@ let means_different_variance_test hypothesis arr1 arr2 =
   t_test hypothesis ~degrees_of_freedom ~diff ~error
 
 let variance_ratio_test arr1 arr2 =
-  let v1 = unbiased_var arr1 in
-  let v2 = unbiased_var arr2 in
+  let v1 = var arr1 in
+  let v2 = var arr2 in
   let dg1 = float (Array.length arr1 - 1) in
   let dg2 = float (Array.length arr2 - 1) in
   let f, d1, d2 =

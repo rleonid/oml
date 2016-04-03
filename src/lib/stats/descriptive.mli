@@ -38,18 +38,14 @@ val median : float array -> float
 
 (** [var data] returns the sample variance of [data].
 
-    @param population_mean allows you to calculate the variance against a known
-           population mean, and uses the {{!val:mean}sample mean} if not
-           specified. *)
-val var : ?population_mean:float -> float array -> float
-
-(** [unbiased_var] returns the unbiased variance of [data] via Bessel's
-    correction; ie. divinding by [n - 1].
+    @param biased By default the variance calculation is unbiased, via Bessel's
+           correction (dividing by [n - 1]) setting the parameter to true will
+           divide by [n] instead.
 
     @param population_mean allows you to calculate the variance against a known
            population mean, and uses the {{!val:mean}sample mean} if not
            specified. *)
-val unbiased_var : ?population_mean:float -> float array -> float
+val var : ?population_mean:float -> ?biased:bool -> float array -> float
 
 (* Between two random variables.*)
 
