@@ -85,7 +85,7 @@ let mean_t_test population_mean hypothesis arr =
   let m = mean arr in
   let d = Array.length arr in
   let nf = float d in
-  let sd = sqrt (var arr) in
+  let sd = sd arr in
   let error = sd /. (sqrt nf) in
   let diff  = m -. population_mean in
   t_test hypothesis ~degrees_of_freedom:(d - 1) ~diff ~error

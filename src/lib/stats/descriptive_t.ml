@@ -168,7 +168,7 @@ let () =
     ~title:"Skew and kurtosis (and their statistics) are scale invariant."
     (test_data 1e8)
     (fun data ->
-      let std   = sqrt (var data) in
+      let std   = sd data in
       let sk    = skew data in
       let ku    = kurtosis data in
       let sks   = skew_statistic data in
@@ -207,7 +207,7 @@ let () =
       s.min       = Array.min data &&
       s.max       = Array.max data &&
       s.mean      = mean data &&
-      s.std       = sqrt (var ~biased:false data) &&
+      s.std       = sd ~biased:false data &&
       s.var       = var ~biased:false data &&
       s.skew      = (unbiased_skew data, classify_skew data) &&
       s.kurtosis  = (unbiased_kurtosis data, classify_kurtosis data))

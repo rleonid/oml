@@ -46,6 +46,9 @@ let var ?population_mean ?(biased=false) arr =
     let n = float (Array.length arr) in
     (n /. (n -.  1.0)) *. v
 
+let sd ?population_mean ?(biased=false) arr =
+  sqrt (var ?population_mean ~biased arr)
+
 let covariance x y =
   let x_mean = mean x in
   let y_mean = mean y in
@@ -65,7 +68,7 @@ let moment n arr =
   mean (Array.map (fun x -> (x -. m) ** p) arr)
 
 let skew arr =
-  let std = sqrt (var ~biased:true arr) in
+  let std = sd ~biased:true arr in
   (moment 3 arr) /. (std ** 3.0)
 
 let unbiased_skew arr =
@@ -150,7 +153,7 @@ let unbiased_summary arr =
   ; min      = Array.min arr
   ; max      = Array.max arr
   ; mean     = mean arr
-  ; std      = sqrt (var arr)
+  ; std      = sd arr
   ; var      = v
   ; skew     = s, sc
   ; kurtosis = k, kc
