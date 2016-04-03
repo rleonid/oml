@@ -39,15 +39,13 @@ let median arr =
   then (sorted.(m - 1) +. sorted.(m)) /. 2.0
   else sorted.(m)
 
-let population_var m arr =
+let var ?population_mean arr =
+  let m = match population_mean with | Some m -> m | None -> mean arr in
   mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr)
 
-let var arr =
-  population_var (mean arr) arr
-
-let unbiased_var arr =
+let unbiased_var ?population_mean  arr =
   let n = float (Array.length arr) in
-  (n /. (n -.  1.0)) *. (var arr)
+  (n /. (n -.  1.0)) *. (var ?population_mean arr)
 
 let covariance x y =
   let x_mean = mean x in

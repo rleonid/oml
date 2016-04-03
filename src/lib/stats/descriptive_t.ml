@@ -65,7 +65,7 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   add_simple_test ~title:"Population var for small data set."
-    (fun () -> Assert.equalf (population_var 3.0 sample_data) 2.0);
+    (fun () -> Assert.equalf (var ~population_mean:3.0 sample_data) 2.0);
 
   add_simple_test ~title:"Var for small data set."
     (fun () -> Assert.equalf (var sample_data) 2.0);
@@ -74,8 +74,8 @@ let () =
     ~title:"Population_var is just mean var."
     (test_data 1e8)
     (fun data ->
-      let m = mean data in
-      (population_var m data) = var data)
+      let population_mean = mean data in
+      (var ~population_mean data) = var data)
     Spec.([just_postcond_pred is_true]);
 
   add_simple_test ~title:"Unbiased_var for small data set."

@@ -36,16 +36,20 @@ val median : float array -> float
 
 (** Spread. *)
 
-(** [var data] returns the sample variance of [data]. *)
-val var : float array -> float
+(** [var data] returns the sample variance of [data].
+
+    @param population_mean allows you to calculate the variance against a known
+           population mean, and uses the {{!val:mean}sample mean} if not
+           specified. *)
+val var : ?population_mean:float -> float array -> float
 
 (** [unbiased_var] returns the unbiased variance of [data] via Bessel's
-    correction; ie. divinding by [n - 1]. *)
-val unbiased_var : float array -> float
+    correction; ie. divinding by [n - 1].
 
-(** [population_var mean data] computes the variance of data when you know the
-  population [mean]. *)
-val population_var : float -> float array -> float
+    @param population_mean allows you to calculate the variance against a known
+           population mean, and uses the {{!val:mean}sample mean} if not
+           specified. *)
+val unbiased_var : ?population_mean:float -> float array -> float
 
 (* Between two random variables.*)
 
