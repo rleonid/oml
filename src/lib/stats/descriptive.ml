@@ -40,9 +40,13 @@ let median arr =
   else sorted.(m)
 
 let var ?population_mean ?(biased=false) arr =
-  let m = match population_mean with | Some m -> m | None -> mean arr in
+  let m, known_mean =
+    match population_mean with
+    | Some m -> m, true
+    | None -> mean arr, false
+  in
   let v = mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr) in
-  if biased then v else
+  if known_mean || biased then v else
     let n = float (Array.length arr) in
     (n /. (n -.  1.0)) *. v
 

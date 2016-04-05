@@ -44,7 +44,8 @@ val median : float array -> float
 
     @param population_mean allows you to calculate the variance against a known
            population mean, and uses the {{!val:mean}sample mean} if not
-           specified. *)
+           specified. Setting this will ignore the [biased] parameter as it
+           does not apply.*)
 val var : ?population_mean:float -> ?biased:bool -> float array -> float
 
 (** [sd data] returns the sample standard deviation of [data].

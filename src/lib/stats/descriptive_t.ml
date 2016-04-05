@@ -75,13 +75,13 @@ let () =
     (fun () -> Assert.equalf (var ~biased:true sample_data) 2.0);
 
   add_random_test
-    ~title:"Variance with population mean is just mean variance."
-    (test_data 1e8)
-    (fun data ->
+    ~title:"Variance with population mean is just biased mean variance."
+    Gen.(zip2 (test_data 1e8) bool)
+    (fun (data, biased) ->
       let population_mean = mean data in
-      (var ~population_mean data) = var data)
+      (* testing that we're ignoring 'biased' once population_mean is set. *)
+      (var ~population_mean ~biased data) = var ~biased:true data)
     Spec.([just_postcond_pred is_true]);
-
 
   add_random_test
     ~title:"Unbiased variance is bigger than var."
