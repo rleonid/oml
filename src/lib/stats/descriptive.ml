@@ -67,20 +67,17 @@ let moment n arr =
   let m = mean arr in
   mean (Array.map (fun x -> (x -. m) ** p) arr)
 
-let skew arr =
+let skew ?(biased=false) arr =
   let std = sd ~biased:true arr in
-  (moment 3 arr) /. (std ** 3.0)
-
-let unbiased_skew arr =
-  let n = float (Array.length arr) in
-  Float.(skew arr * (sqrt (n * (n - 1.0))) / (n-2.0))
-
-let kurtosis arr =
-  (moment 4 arr) /. ((var ~biased:true arr) ** 2.0) -. 3.0
-
-let unbiased_kurtosis arr =
+  let s = (moment 3 arr) /. (std ** 3.0) in
+  if biased then s else
     let n = float (Array.length arr) in
-    let k = (kurtosis arr) in
+    Float.(s * (sqrt (n * (n - 1.0))) / (n-2.0))
+
+let kurtosis ?(biased=false) arr =
+  let k = (moment 4 arr) /. ((var ~biased:true arr) ** 2.0) -. 3.0 in
+  if biased then k else
+    let n = float (Array.length arr) in
     Float.(((n - 1.0) * ((n + 1.0) * k + 6.0)) / ((n - 2.0) * (n - 3.0)))
 
 (* See "Standard errors: A review and evaluation of standard error estimators
@@ -105,10 +102,10 @@ let var_statistic arr =
   (var arr) /. (var_standard_error arr)
 
 let skew_statistic arr =
-  (unbiased_skew arr) /. (skew_standard_error arr)
+  (skew arr) /. (skew_standard_error arr)
 
 let kurtosis_statistic arr =
-  (unbiased_kurtosis arr) /. (kurtosis_standard_error arr)
+  (kurtosis arr) /. (kurtosis_standard_error arr)
 
 type skew_classification =
   [ `Negative | `Slightly_negative | `Normal | `Slightly_positive | `Positive ]
@@ -143,17 +140,17 @@ type summary =
   ; kurtosis : float * kurtosis_classification
   }
 
-let unbiased_summary arr =
-  let v = var arr in
-  let s = unbiased_skew arr in
-  let k = unbiased_kurtosis arr in
+let summary ?(biased=false) arr =
+  let v = var ~biased arr in
+  let s = skew ~biased arr in
+  let k = kurtosis ~biased arr in
   let sc = classify_skew arr in
   let kc = classify_kurtosis arr in
   { size     = Array.length arr
   ; min      = Array.min arr
   ; max      = Array.max arr
   ; mean     = mean arr
-  ; std      = sd arr
+  ; std      = sqrt v
   ; var      = v
   ; skew     = s, sc
   ; kurtosis = k, kc

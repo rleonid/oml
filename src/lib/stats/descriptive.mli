@@ -81,29 +81,27 @@ val moment : int -> float array -> float
 (** [skew data] computes the sample skew of [data] (Fisher-Pearson's moment
     coefficient of skewness), which is a measure of asymmetry. For unimodal
     data negative values indicate that the left tail is longer in relation
-    to the right.*)
-val skew : float array -> float
+    to the right.
 
-(** [unbiased_skew data] adjusts the skew calculation to take into account
-    sample size.
-
-    The adjustments are chosen to prefer smaller mean squared error for small
-    samples on non-normal distributions. See "Comparing measures of sample
-    skewness and kurtosis" Joanes 1997, for details.  *)
-val unbiased_skew : float array -> float
+    @param biased The default skew calculation is adjusted to take into
+           account sample size. The adjustments are chosen to prefer smaller
+           mean squared error for small samples on non-normal distributions
+           (See "Comparing measures of sample skewness and kurtosis" Joanes
+           1997, for details). Set this parameter to true to ignore these
+           adjustments.  *)
+val skew : ?biased:bool -> float array -> float
 
 (** [kurtosis data] computes the sample kurtosis of [data]. This is a
     measure of the 'peakedness' vs 'tailness' of a distribution. It is adjusted
-    so that a normal distribution will have kurtosis of 0. *)
-val kurtosis : float array -> float
+    so that a normal distribution will have kurtosis of 0.
 
-(** [unbiased_kurtosis data] adjusts the kurtosis calculation to take into
-    account sample size.
-
-    The adjustments are chosen to prefer smaller mean squared error for small
-    samples on non-normal distributions. See "Comparing measures of sample
-    skewness and kurtosis" Joanes 1997, for details.  *)
-val unbiased_kurtosis : float array -> float
+    @param biased The default kurtosis calculation is adjusted to take into
+           account sample size. The adjustments are chosen to prefer smaller
+           mean squared error for small samples on non-normal distributions
+           (See "Comparing measures of sample skewness and kurtosis" Joanes
+           1997, for details). Set this parameter to true to ignore these
+           adjustments.*)
+val kurtosis : ?biased:bool -> float array -> float
 
 (* Error of measurements. *)
 
@@ -166,8 +164,12 @@ type summary =
   ; kurtosis : float * kurtosis_classification
   }
 
-(** [unbiased_summary data] summarizes [data] into a [summary]. *)
-val unbiased_summary : float array -> summary
+(** [summary data] summarizes [data] into a [summary].
+
+    @param biased By default all of the statistics are {i unbiased} (sample size
+           adjustments are made), set this parameter to true to get the regular
+           biased calculations. *)
+val summary : ?biased:bool -> float array -> summary
 
 (** [histogram data width_setting] group [data] into a specific number of buckets
     of given width (according to [width_setting]:

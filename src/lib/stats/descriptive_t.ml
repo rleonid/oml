@@ -129,19 +129,20 @@ let () =
     (fun data -> moment 2 data = var ~biased:true data)
     Spec.([just_postcond_pred is_true]);
 
-  add_simple_test ~title:"Skew for small data set."
+
+  add_simple_test ~title:"Unbiased skew for small data set."
     (fun () -> Assert.equalf (skew sample_data) 0.0);
 
-  add_simple_test ~title:"Unbiased_skew for small data set."
-    (fun () -> Assert.equalf (unbiased_skew sample_data) 0.0);
-
-  add_simple_test ~title:"Kurtosis for small data set."
-    (fun () -> Assert.equalf (kurtosis sample_data) (-1.3));
+  add_simple_test ~title:"Biased Skew for small data set."
+    (fun () -> Assert.equalf (skew ~biased:true sample_data) 0.0);
 
   let float_eq d = fun x y -> not (Util.significantly_different_from ~d x y) in
-  add_simple_test ~title:"Unbiased_kurtosis for small data set."
+  add_simple_test ~title:"Unbiased Kurtosis for small data set."
     (fun () -> Assert.equalf ~eq:(float_eq 1e-15) (* rounding error :( *)
-                (unbiased_kurtosis sample_data) (-1.2));
+                (kurtosis sample_data) (-1.2));
+  add_simple_test ~title:"Biased Kurtosis for small data set."
+    (fun () -> Assert.equalf (kurtosis ~biased:true sample_data) (-1.3));
+
 
   add_random_test
     ~title:"Variance scales by square."
@@ -199,18 +200,18 @@ let () =
 
   (* Just a regression test to make sure we don't break the 1-1. *)
   add_random_test
-    ~title:"Unbiased_summary is just that."
+    ~title:"summary is just that."
     (test_data 1e8)
     (fun data ->
-      let s = unbiased_summary data in
+      let s = summary data in
       s.size      = Array.length data &&
       s.min       = Array.min data &&
       s.max       = Array.max data &&
       s.mean      = mean data &&
-      s.std       = sd ~biased:false data &&
-      s.var       = var ~biased:false data &&
-      s.skew      = (unbiased_skew data, classify_skew data) &&
-      s.kurtosis  = (unbiased_kurtosis data, classify_kurtosis data))
+      s.std       = sd data &&
+      s.var       = var data &&
+      s.skew      = (skew data, classify_skew data) &&
+      s.kurtosis  = (kurtosis data, classify_kurtosis data))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
