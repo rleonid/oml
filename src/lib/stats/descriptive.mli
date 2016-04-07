@@ -61,8 +61,18 @@ val sd : ?population_mean:float -> ?biased:bool -> float array -> float
     reverse relationship (smaller with larger and vice versa). While values
     close to 0.0 indicate no relationship.
 
+    @param biased By default the covariance calculation is unbiased, via
+           Bessel's correction (dividing by [n - 1]), setting the parameter to
+           true will divide by [n] instead.
+
+    @param population_means allows you to calculate the covariance against
+           known population means, and uses the {{!val:mean}sample mean} if
+           not specified. Setting this will ignore the [biased] parameter as it
+           does not apply.
+
     @raise Invalid_argument if the size of [x] doesn't equal the size of [y]. *)
-val covariance : float array -> float array -> float
+val covariance : ?population_means:(float * float) -> ?biased:bool ->
+  float array -> float array -> float
 
 (** [correlation x y] returns the Pearson correlation coefficient of [x] and
     [y]. This is normalized sample covariance.
@@ -71,7 +81,7 @@ val covariance : float array -> float array -> float
 val correlation : float array -> float array -> float
 
 (** [autocorrelation lag data] computes the correlation of [data] with itself
-  offset by [lag].  *)
+    offset by [lag].  *)
 val autocorrelation : int -> float array -> float
 
 (* Higher moments.*)

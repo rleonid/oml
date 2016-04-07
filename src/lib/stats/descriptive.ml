@@ -53,14 +53,23 @@ let var ?population_mean ?(biased=false) arr =
 let sd ?population_mean ?(biased=false) arr =
   sqrt (var ?population_mean ~biased arr)
 
-let covariance x y =
-  let x_mean = mean x in
-  let y_mean = mean y in
-  mean (Array.map2 (fun x_i y_i -> (x_i -. x_mean) *. (y_i -. y_mean)) x y)
+let covariance ?population_means ?(biased=false) x y =
+  let x_m, y_m, known_mean =
+    match population_means with
+    | Some (x_m, y_m) -> x_m,    y_m,    true
+    | None            -> mean x, mean y, false
+  in
+  let v = mean (Array.map2 (fun x_i y_i -> (x_i -. x_m) *. (y_i -. y_m)) x y) in
+  if known_mean || biased then v else
+    let n = float (Array.length x) in
+    (n /. (n -.  1.0)) *. v
 
 let correlation x y =
+  (* We specifiy a biased form for var/covariance to having consistent
+     division by 'n'. *)
   let var = var ~biased:true in
-  (covariance x y) /. (sqrt ((var x) *. (var y)))
+  let cov = covariance ~biased:true in
+  (cov x y) /. (sqrt ((var x) *. (var y)))
 
 let autocorrelation lag ar =
   let m = Array.length ar - lag in
