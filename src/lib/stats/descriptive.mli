@@ -36,16 +36,22 @@ val median : float array -> float
 
 (** Spread. *)
 
-(** [var data] returns the sample variance of [data]. *)
-val var : float array -> float
+(** [var data] returns the sample variance of [data].
 
-(** [unbiased_var] returns the unbiased variance of [data] via Bessel's
-    correction; ie. divinding by [n - 1]. *)
-val unbiased_var : float array -> float
+    @param biased By default the variance calculation is unbiased, via Bessel's
+           correction (dividing by [n - 1]), setting the parameter to true will
+           divide by [n] instead.
 
-(** [population_var mean data] computes the variance of data when you know the
-  population [mean]. *)
-val population_var : float -> float array -> float
+    @param population_mean allows you to calculate the variance against a known
+           population mean, and uses the {{!val:mean}sample mean} if not
+           specified. Setting this will ignore the [biased] parameter as it
+           does not apply.*)
+val var : ?population_mean:float -> ?biased:bool -> float array -> float
+
+(** [sd data] returns the sample standard deviation of [data].
+    Shorthand for to [sqrt (var data)]. See {{!val:var}var} for information
+    about optional args.*)
+val sd : ?population_mean:float -> ?biased:bool -> float array -> float
 
 (* Between two random variables.*)
 
@@ -55,8 +61,18 @@ val population_var : float -> float array -> float
     reverse relationship (smaller with larger and vice versa). While values
     close to 0.0 indicate no relationship.
 
+    @param biased By default the covariance calculation is unbiased, via
+           Bessel's correction (dividing by [n - 1]), setting the parameter to
+           true will divide by [n] instead.
+
+    @param population_means allows you to calculate the covariance against
+           known population means, and uses the {{!val:mean}sample mean} if
+           not specified. Setting this will ignore the [biased] parameter as it
+           does not apply.
+
     @raise Invalid_argument if the size of [x] doesn't equal the size of [y]. *)
-val covariance : float array -> float array -> float
+val covariance : ?population_means:(float * float) -> ?biased:bool ->
+  float array -> float array -> float
 
 (** [correlation x y] returns the Pearson correlation coefficient of [x] and
     [y]. This is normalized sample covariance.
@@ -65,7 +81,7 @@ val covariance : float array -> float array -> float
 val correlation : float array -> float array -> float
 
 (** [autocorrelation lag data] computes the correlation of [data] with itself
-  offset by [lag].  *)
+    offset by [lag].  *)
 val autocorrelation : int -> float array -> float
 
 (* Higher moments.*)
@@ -76,29 +92,27 @@ val moment : int -> float array -> float
 (** [skew data] computes the sample skew of [data] (Fisher-Pearson's moment
     coefficient of skewness), which is a measure of asymmetry. For unimodal
     data negative values indicate that the left tail is longer in relation
-    to the right.*)
-val skew : float array -> float
+    to the right.
 
-(** [unbiased_skew data] adjusts the skew calculation to take into account
-    sample size.
-
-    The adjustments are chosen to prefer smaller mean squared error for small
-    samples on non-normal distributions. See "Comparing measures of sample
-    skewness and kurtosis" Joanes 1997, for details.  *)
-val unbiased_skew : float array -> float
+    @param biased The default skew calculation is adjusted to take into
+           account sample size. The adjustments are chosen to prefer smaller
+           mean squared error for small samples on non-normal distributions
+           (See "Comparing measures of sample skewness and kurtosis" Joanes
+           1997, for details). Set this parameter to true to ignore these
+           adjustments.  *)
+val skew : ?biased:bool -> float array -> float
 
 (** [kurtosis data] computes the sample kurtosis of [data]. This is a
     measure of the 'peakedness' vs 'tailness' of a distribution. It is adjusted
-    so that a normal distribution will have kurtosis of 0. *)
-val kurtosis : float array -> float
+    so that a normal distribution will have kurtosis of 0.
 
-(** [unbiased_kurtosis data] adjusts the kurtosis calculation to take into
-    account sample size.
-
-    The adjustments are chosen to prefer smaller mean squared error for small
-    samples on non-normal distributions. See "Comparing measures of sample
-    skewness and kurtosis" Joanes 1997, for details.  *)
-val unbiased_kurtosis : float array -> float
+    @param biased The default kurtosis calculation is adjusted to take into
+           account sample size. The adjustments are chosen to prefer smaller
+           mean squared error for small samples on non-normal distributions
+           (See "Comparing measures of sample skewness and kurtosis" Joanes
+           1997, for details). Set this parameter to true to ignore these
+           adjustments.*)
+val kurtosis : ?biased:bool -> float array -> float
 
 (* Error of measurements. *)
 
@@ -161,8 +175,12 @@ type summary =
   ; kurtosis : float * kurtosis_classification
   }
 
-(** [unbiased_summary data] summarizes [data] into a [summary]. *)
-val unbiased_summary : float array -> summary
+(** [summary data] summarizes [data] into a [summary].
+
+    @param biased By default all of the statistics are {i unbiased} (sample size
+           adjustments are made), set this parameter to true to get the regular
+           biased calculations. *)
+val summary : ?biased:bool -> float array -> summary
 
 (** [histogram data width_setting] group [data] into a specific number of buckets
     of given width (according to [width_setting]:

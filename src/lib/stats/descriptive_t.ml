@@ -65,32 +65,35 @@ let () =
     Spec.([just_postcond_pred is_true]);
 
   add_simple_test ~title:"Population var for small data set."
-    (fun () -> Assert.equalf (population_var 3.0 sample_data) 2.0);
+    (fun () ->
+       Assert.equalf (var ~biased:true ~population_mean:3.0 sample_data) 2.0);
 
-  add_simple_test ~title:"Var for small data set."
-    (fun () -> Assert.equalf (var sample_data) 2.0);
+  add_simple_test ~title:"Variance for small data set."
+    (fun () -> Assert.equalf (var sample_data) 2.5);
+
+  add_simple_test ~title:"Biased variance for small data set."
+    (fun () -> Assert.equalf (var ~biased:true sample_data) 2.0);
 
   add_random_test
-    ~title:"Population_var is just mean var."
-    (test_data 1e8)
-    (fun data ->
-      let m = mean data in
-      (population_var m data) = var data)
+    ~title:"Variance with population mean is just biased mean variance."
+    Gen.(zip2 (test_data 1e8) bool)
+    (fun (data, biased) ->
+      let population_mean = mean data in
+      (* testing that we're ignoring 'biased' once population_mean is set. *)
+      (var ~population_mean ~biased data) = var ~biased:true data)
     Spec.([just_postcond_pred is_true]);
 
-  add_simple_test ~title:"Unbiased_var for small data set."
-    (fun () -> Assert.equalf (unbiased_var sample_data) 2.5);
-
   add_random_test
-    ~title:"Unbiased_var is bigger than var."
+    ~title:"Unbiased variance is bigger than var."
     Gen.(array (make_int 2 max_array_size) (bfloat 1e8))
-    (fun data -> unbiased_var data > var data)
+    (fun data -> var data > var ~biased:true data)
     Spec.([just_postcond_pred is_true]);
 
   let two_arrays_same_size b =
     Gen.(matrix (lift 2 "2") (make_int 2 max_array_size) (bfloat b)
          |> map1 (fun m -> m.(0), m.(1))
-          (fun (x,_) -> Printf.sprintf "Arrays of length %d" (Array.length x)))
+          (fun (x,_) ->
+            Printf.sprintf "Arrays of length %d" (Array.length x)))
   in
   add_random_test
     ~title:"Correlation and covariance are order invariant."
@@ -123,22 +126,23 @@ let () =
   add_random_test
     ~title:"Moment 2 is just var."
     (test_data 1e8)
-    (fun data -> moment 2 data = var data)
+    (fun data -> moment 2 data = var ~biased:true data)
     Spec.([just_postcond_pred is_true]);
 
-  add_simple_test ~title:"Skew for small data set."
+
+  add_simple_test ~title:"Unbiased skew for small data set."
     (fun () -> Assert.equalf (skew sample_data) 0.0);
 
-  add_simple_test ~title:"Unbiased_skew for small data set."
-    (fun () -> Assert.equalf (unbiased_skew sample_data) 0.0);
-
-  add_simple_test ~title:"Kurtosis for small data set."
-    (fun () -> Assert.equalf (kurtosis sample_data) (-1.3));
+  add_simple_test ~title:"Biased Skew for small data set."
+    (fun () -> Assert.equalf (skew ~biased:true sample_data) 0.0);
 
   let float_eq d = fun x y -> not (Util.significantly_different_from ~d x y) in
-  add_simple_test ~title:"Unbiased_kurtosis for small data set."
+  add_simple_test ~title:"Unbiased Kurtosis for small data set."
     (fun () -> Assert.equalf ~eq:(float_eq 1e-15) (* rounding error :( *)
-                (unbiased_kurtosis sample_data) (-1.2));
+                (kurtosis sample_data) (-1.2));
+  add_simple_test ~title:"Biased Kurtosis for small data set."
+    (fun () -> Assert.equalf (kurtosis ~biased:true sample_data) (-1.3));
+
 
   add_random_test
     ~title:"Variance scales by square."
@@ -165,7 +169,7 @@ let () =
     ~title:"Skew and kurtosis (and their statistics) are scale invariant."
     (test_data 1e8)
     (fun data ->
-      let std   = sqrt (var data) in
+      let std   = sd data in
       let sk    = skew data in
       let ku    = kurtosis data in
       let sks   = skew_statistic data in
@@ -196,18 +200,18 @@ let () =
 
   (* Just a regression test to make sure we don't break the 1-1. *)
   add_random_test
-    ~title:"Unbiased_summary is just that."
+    ~title:"summary is just that."
     (test_data 1e8)
     (fun data ->
-      let s = unbiased_summary data in
+      let s = summary data in
       s.size      = Array.length data &&
       s.min       = Array.min data &&
       s.max       = Array.max data &&
       s.mean      = mean data &&
-      s.std       = sqrt (unbiased_var data) &&
-      s.var       = unbiased_var data &&
-      s.skew      = (unbiased_skew data, classify_skew data) &&
-      s.kurtosis  = (unbiased_kurtosis data, classify_kurtosis data))
+      s.std       = sd data &&
+      s.var       = var data &&
+      s.skew      = (skew data, classify_skew data) &&
+      s.kurtosis  = (kurtosis data, classify_kurtosis data))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test

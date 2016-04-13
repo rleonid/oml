@@ -50,7 +50,7 @@ let () =
     in
   let compare_against_descriptive rs data =
     let n = Array.length data in
-    let dv = D.unbiased_var data in
+    let dv = D.var ~biased:false data in
     let ds = data |> Array.map (fun x-> x *. x) |> Array.sumf in
     (*Printf.printf "%f vs %f \n" rs.sum_sq ds; *)
     rs.size = n &&

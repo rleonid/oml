@@ -39,23 +39,37 @@ let median arr =
   then (sorted.(m - 1) +. sorted.(m)) /. 2.0
   else sorted.(m)
 
-let population_var m arr =
-  mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr)
+let var ?population_mean ?(biased=false) arr =
+  let m, known_mean =
+    match population_mean with
+    | Some m -> m, true
+    | None -> mean arr, false
+  in
+  let v = mean (Array.map (fun x -> (x -. m) *. (x -. m)) arr) in
+  if known_mean || biased then v else
+    let n = float (Array.length arr) in
+    (n /. (n -.  1.0)) *. v
 
-let var arr =
-  population_var (mean arr) arr
+let sd ?population_mean ?(biased=false) arr =
+  sqrt (var ?population_mean ~biased arr)
 
-let unbiased_var arr =
-  let n = float (Array.length arr) in
-  (n /. (n -.  1.0)) *. (var arr)
-
-let covariance x y =
-  let x_mean = mean x in
-  let y_mean = mean y in
-  mean (Array.map2 (fun x_i y_i -> (x_i -. x_mean) *. (y_i -. y_mean)) x y)
+let covariance ?population_means ?(biased=false) x y =
+  let x_m, y_m, known_mean =
+    match population_means with
+    | Some (x_m, y_m) -> x_m,    y_m,    true
+    | None            -> mean x, mean y, false
+  in
+  let v = mean (Array.map2 (fun x_i y_i -> (x_i -. x_m) *. (y_i -. y_m)) x y) in
+  if known_mean || biased then v else
+    let n = float (Array.length x) in
+    (n /. (n -.  1.0)) *. v
 
 let correlation x y =
-  (covariance x y) /. (sqrt ((var x) *. (var y)))
+  (* We specifiy a biased form for var/covariance to having consistent
+     division by 'n'. *)
+  let var = var ~biased:true in
+  let cov = covariance ~biased:true in
+  (cov x y) /. (sqrt ((var x) *. (var y)))
 
 let autocorrelation lag ar =
   let m = Array.length ar - lag in
@@ -66,20 +80,17 @@ let moment n arr =
   let m = mean arr in
   mean (Array.map (fun x -> (x -. m) ** p) arr)
 
-let skew arr =
-  let std = sqrt (var arr) in
-  (moment 3 arr) /. (std ** 3.0)
-
-let unbiased_skew arr =
-  let n = float (Array.length arr) in
-  Float.(skew arr * (sqrt (n * (n - 1.0))) / (n-2.0))
-
-let kurtosis arr =
-  (moment 4 arr) /. ((var arr) ** 2.0) -. 3.0
-
-let unbiased_kurtosis arr =
+let skew ?(biased=false) arr =
+  let std = sd ~biased:true arr in
+  let s = (moment 3 arr) /. (std ** 3.0) in
+  if biased then s else
     let n = float (Array.length arr) in
-    let k = (kurtosis arr) in
+    Float.(s * (sqrt (n * (n - 1.0))) / (n-2.0))
+
+let kurtosis ?(biased=false) arr =
+  let k = (moment 4 arr) /. ((var ~biased:true arr) ** 2.0) -. 3.0 in
+  if biased then k else
+    let n = float (Array.length arr) in
     Float.(((n - 1.0) * ((n + 1.0) * k + 6.0)) / ((n - 2.0) * (n - 3.0)))
 
 (* See "Standard errors: A review and evaluation of standard error estimators
@@ -87,7 +98,7 @@ let unbiased_kurtosis arr =
   error calcuations. *)
 let var_standard_error arr =
   let n = float (Array.length arr) in
-  let v = unbiased_var arr in
+  let v = var arr in
   Float.(sqrt (2.0 / (n - 1.0)) * v)
 
 let skew_standard_error arr =
@@ -101,13 +112,13 @@ let kurtosis_standard_error arr =
   Float.(2.0 * (skew_standard_error arr) * sqrt ((n * n - 1.0) / ((n - 3.0) * (n - 5.0))))
 
 let var_statistic arr =
-  (unbiased_var arr) /. (var_standard_error arr)
+  (var arr) /. (var_standard_error arr)
 
 let skew_statistic arr =
-  (unbiased_skew arr) /. (skew_standard_error arr)
+  (skew arr) /. (skew_standard_error arr)
 
 let kurtosis_statistic arr =
-  (unbiased_kurtosis arr) /. (kurtosis_standard_error arr)
+  (kurtosis arr) /. (kurtosis_standard_error arr)
 
 type skew_classification =
   [ `Negative | `Slightly_negative | `Normal | `Slightly_positive | `Positive ]
@@ -142,17 +153,17 @@ type summary =
   ; kurtosis : float * kurtosis_classification
   }
 
-let unbiased_summary arr =
-  let v = unbiased_var arr in
-  let s = unbiased_skew arr in
-  let k = unbiased_kurtosis arr in
+let summary ?(biased=false) arr =
+  let v = var ~biased arr in
+  let s = skew ~biased arr in
+  let k = kurtosis ~biased arr in
   let sc = classify_skew arr in
   let kc = classify_kurtosis arr in
   { size     = Array.length arr
   ; min      = Array.min arr
   ; max      = Array.max arr
   ; mean     = mean arr
-  ; std      = sqrt (unbiased_var arr)
+  ; std      = sqrt v
   ; var      = v
   ; skew     = s, sc
   ; kurtosis = k, kc
