@@ -22,7 +22,8 @@
   {{!modtype:Intf.Dummy_encoded_data}Dummy variables.} *)
 module Binomial(D: Intf.Dummy_encoded_data) : sig
   include Intf.Generative with type feature = D.feature
-                     and type clas = D.clas
+                          and type clas = D.clas
+                          and type feature_probability = float array
 
   (** [opt ~smoothing ~bernoulli ()] the optional configuration of the
        classifier.
@@ -47,7 +48,8 @@ end
   {{!modtype:Intf.Category_encoded_data}Categorical variables.} *)
 module Categorical(D: Intf.Category_encoded_data) : sig
   include Intf.Generative with type feature = D.feature
-                     and type clas = D.clas
+                          and type clas = D.clas
+                          and type feature_probability = float array
 
   (** [opt ~smoothing ()] the optional configuration of the classifier.
 
@@ -66,7 +68,10 @@ end
   Gaussian Naive Bayes} by estimating mean and standard deviations
   for each of the quantitative features in the
   {{!modtype:Intf.Continuous_encoded_data}encoded data}. *)
-module Gaussian(D: Intf.Continuous_encoded_data) :
-  Intf.Generative with type feature = D.feature
-                  and type clas = D.clas
+module Gaussian(D: Intf.Continuous_encoded_data) : sig
+  include Intf.Generative with type feature := D.feature
+                          and type clas := D.clas
+                          and type feature_probability = float array
+
+end
 

@@ -129,10 +129,12 @@ end
 module type Generative = sig
   include Classifier
 
+  type feature_probability
+
   (** [class_probabilities t class] returns the prior and per feature
-      likelihood probabilities learned by [t] for [class].
+      likelihood probability (ies) learned by [t] for [class].
 
       @raise Not_found if [t] never trained on [class]. *)
-  val class_probabilities : t -> clas -> float * (feature -> float array)
+  val class_probabilities : t -> clas -> float * (feature -> feature_probability)
 
 end

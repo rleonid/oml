@@ -26,9 +26,9 @@ let showme ?(data=m_train) i =
 
 Pp.Toplevel.lsc 14;;
 *)
- 
-(****** DID YOU REQUIRE #DSFO ?!? 
-#require "dsfo" 
+
+(****** DID YOU REQUIRE #DSFO ?!?
+#require "dsfo"
 *****)
 open Oml
 open Classification
@@ -58,7 +58,7 @@ module MnistEncoded =
 
 let column_to_label c =
   let rec loop i =
-    if c.{i + feature_size} = 1.0 then i
+    if c.{i + feature_size} = 1.0 then i - 1 (* 10 -> 0 *)
     else loop (i + 1) in
   loop 1
 
@@ -78,54 +78,103 @@ let tolerance =
     float_of_string Sys.argv.(1)
   else
     1e7
+let measure_perf set classify =
+  List.map (fun (c, f) -> c, P.most_likely (classify f)) set
 
-(****** End 3rd Part *****)
+let evaluate label classify =
+  Printf.printf "%s\n" label;
+  let perf = measure_perf s_train classify in
+  let correct =
+    List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf in
+  let total = List.length perf in
+  Printf.printf "train %0.3f correct\n" ((float correct) /. (float total));
+  let perf_test = measure_perf s_test classify in
+  let correct_test =
+    List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf_test in
+  let total_test = List.length perf_test in
+  Printf.printf "test %0.3f correct\n"
+    ((float correct_test) /. (float total_test))
+
+(****** End 3rd Part ***)
 
 module MnistLr = Logistic_regression.Multiclass(MnistEncoded)
 
 let mnist_lr = MnistLr.(estimate ~opt:(opt ~tolerance ()) s_train)
+let () = evaluate "logistic regression" (MnistLr.eval mnist_lr)
 
 (****** End 4th Part *****)
 
-let perf =
-  s_train
-  |> List.map (fun (c, f) -> c, P.most_likely (MnistLr.eval mnist_lr f))
-
-let correct = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf
-let total = List.length perf
-let () = Printf.printf "train %0.3f correct\n" ((float correct) /. (float total))
-
-let perf_test =
-  s_test
-  |> List.map (fun (c, f) -> c, P.most_likely (MnistLr.eval mnist_lr f))
-
-let correct_test = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf_test
-let total_test = List.length perf_test
-let () =
-  Printf.printf "test %0.3f correct\n"
-    ((float correct_test) /. (float total_test))
-
-(***** End 5th Part *****)
 module MnistNB = Naive_bayes.Gaussian(MnistEncoded)
 
 let mnist_nb = MnistNB.(estimate s_train)
+let () = evaluate "Gaussian naive bayes" (MnistNB.eval mnist_nb)
 
-let perf =
-  s_train
-  |> List.map (fun (c, f) -> c, P.most_likely (MnistNB.eval mnist_nb f))
+(******* End 5th Part ****)
+(*** How about LDA? *)
+module MnistLDA = Descriminant.LDA(MnistEncoded)
 
-let correct = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf
-let total = List.length perf
-let () = Printf.printf "train %0.3f correct\n" ((float correct) /. (float total))
+(* A lot of the features, in this case, pixes in the 28x28 image are always
+   0, so they have no variance and this makes the cov-matrix singular. The
+   calculation of the inverse of the covariance matrix cannot succeed without
+   shrinkage (the determinant will still underflow to 0.0, it was always
+   going to be useless, 0.01 ** 780 -> 1e-700 = 0. is unrepresentable ).
+   So the probabilities will evaluate to nan's after division by zero, unless
+   we apply a little shrinkage, and use that. *)
+let mnist_lda = MnistLDA.(estimate s_train ~opt:(opt ~shrinkage:0.01 ()))
 
-let perf_test =
-  s_test
-  |> List.map (fun (c, f) -> c, P.most_likely (MnistNB.eval mnist_nb f))
+let () = evaluate "LDA" (MnistLDA.eval mnist_lda)
 
-let correct_test = List.fold_left (fun c (a,p) -> if a = p then c + 1 else c) 0 perf_test
-let total_test = List.length perf_test
-let () =
-  Printf.printf "test %0.3f correct\n"
-    ((float correct_test) /. (float total_test))
+(* We need a better feature representation.
+  Let's remove all of the columns with zero variance*)
 
+(******* End 6th Part ****)
+module LU = Uncategorized.Lacaml_util
+let x = lacpy ~m:784 m_train
+let a = Mat.transpose_copy x
+let c = LU.sample_covariance a
+let bad_cols =
+  Mat.copy_diag c
+  |> Vec.fold (fun (i,a) v -> if v = 0. then (i+1, i::a) else (i+1,a)) (1,[])
+  |> snd
+  |> List.rev
 
+let num_bad_cols = List.length bad_cols
+
+let rec missing n acc = function
+  | [] -> List.rev acc
+  | (h :: t) as lst ->
+      if n < h
+      then missing (n + 1) (n :: acc) lst
+      else missing (n + 1) acc t
+
+let safe_indices = missing 1 [] bad_cols |> Array.of_list
+
+module MnistEncoded_SubImage =
+  struct
+    type clas = int
+    type feature = float array
+    let size = feature_size - num_bad_cols
+    let encoding arr = Array.map (Array.get arr) safe_indices
+  end
+
+(* Gives identical results... so not that useful? *)
+module MnistLDA2 = Descriminant.LDA(MnistEncoded_SubImage)
+let mnist_lda2 = MnistLDA2.(estimate ~opt:(opt ~shrinkage:0.01 ()) s_train)
+let () = evaluate "Smarter encoded LDA" (MnistLDA2.eval mnist_lda2)
+
+(******* End 7th Part ****)
+(**** QDA ***)
+module MnistQDA = Descriminant.QDA(MnistEncoded)
+
+(* This will *fail* since the determinant calculation to normalize
+   the multivariate normal pdf will underflow -> denumerator = 0 *)
+let mnist_qda = MnistQDA.(estimate s_train ~opt:(opt ~shrinkage:0.01 ()))
+
+let () = evaluate "QDA" (MnistQDA.eval mnist_qda)
+
+(* Mathematically this is problematic, but it 'works'.*)
+let mnist_qda_no_norm =
+  MnistQDA.(estimate s_train
+    ~opt:(opt ~normalize:false ~shrinkage:0.01 ()))
+
+let () = evaluate "QDA" (MnistQDA.eval mnist_qda_no_norm)
