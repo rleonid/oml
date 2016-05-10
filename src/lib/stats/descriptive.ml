@@ -56,10 +56,10 @@ let sd ?population_mean ?(biased=false) arr =
 let ad ?population ?(center=`Median) arr =
   match center with
   | `Mean ->
-    let m = match population with | None -> mean arr | Some m ->m in
+    let m = match population with | None -> mean arr | Some m -> m in
     mean (Array.map (fun x -> abs_float (x -. m)) arr)
   | `Median ->
-    let m = match population with | None -> median arr | Some m ->m in
+    let m = match population with | None -> median arr | Some m -> m in
     median (Array.map (fun x -> abs_float (x -. m)) arr)
 
 let covariance ?population_means ?(biased=false) x y =

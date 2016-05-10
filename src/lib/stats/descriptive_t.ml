@@ -89,6 +89,15 @@ let () =
     (fun data -> var data > var ~biased:true data)
     Spec.([just_postcond_pred is_true]);
 
+  add_simple_test ~title:"Ad for small data set."
+    (fun () -> Assert.equalf (ad sample_data) 1.0);
+
+  add_simple_test ~title:"Ad for small data set (explicit Median)."
+    (fun () -> Assert.equalf (ad ~center:`Median sample_data) 1.0);
+
+  add_simple_test ~title:"Ad for small data set (explicit Mean)."
+    (fun () -> Assert.equalf (ad ~center:`Mean sample_data) 1.2);
+
   let two_arrays_same_size b =
     Gen.(matrix (lift 2 "2") (make_int 2 max_array_size) (bfloat b)
          |> map1 (fun m -> m.(0), m.(1))
