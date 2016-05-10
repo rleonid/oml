@@ -5,3 +5,5 @@
 # 50 : ambiguous documentation comment.
 # I'd like to get rid of 42,44 and 50
 true: annot, bin_annot, principal, warn(A-42-44-48-50), warn_error(A-42-44-48-50)
+"_build": -traverse
+"_driver": -traverse
