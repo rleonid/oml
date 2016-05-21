@@ -53,6 +53,14 @@ val var : ?population_mean:float -> ?biased:bool -> float array -> float
     about optional args.*)
 val sd : ?population_mean:float -> ?biased:bool -> float array -> float
 
+(** [ad data] returns the sample {b median} absolute deviation of [data].
+
+    @param center method of measuring centrality {i and} deviation.
+    @param population allows the user to specify the measure of central
+           tendency (mean or median) as opposed to inferring it.
+ *)
+val ad : ?population:float -> ?center:[ `Mean | `Median ] -> float array -> float
+
 (* Between two random variables.*)
 
 (** [covariance x y] computes the sample covariance of [x] and [y] where higher
