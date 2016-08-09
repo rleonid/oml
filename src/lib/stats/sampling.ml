@@ -18,6 +18,7 @@
 
 open Util
 module F = Uncategorized.Functions
+let invalid_arg ~f fmt = invalid_arg ~m:"Sampling" ~f fmt
 
 type 'a generator = unit -> 'a
 
@@ -61,26 +62,75 @@ let normal ?seed ~mean ~std () =
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
+(** Alias method for sampling from a categorical distribution.
+
+    The method allows to generate a sample in costant time after a
+    linear time preprocessing of the probabilities array. *)
+module Alias =
+  struct
+    type t =
+      { probs: float array
+      ; alias: int array
+      }
+
+    let create weights =
+      (* [Alias] is currently internal to [Sampling], therefore
+         validating [weights] is a responsibility of the caller. *)
+      let weights = Array.copy weights in
+      let n = Array.length weights in
+      let average = 1.0 /. float n in
+
+      let rec iter weights probs alias = function
+      | ([], rest) | (rest, []) ->
+        List.iter (fun lg -> probs.(lg) <- 1.0) rest
+      | (l::small, g::large) -> begin
+          probs.(l) <- weights.(l) *. float n;
+          alias.(l) <- g;
+
+          weights.(g) <- (weights.(g) +. weights.(l)) -. average;
+          if weights.(g) < average then
+            iter weights probs alias (g::small, large)
+          else
+            iter weights probs alias (small, g::large)
+        end
+      in
+
+      let rec partition weights i (small, large) =
+        if i = n then
+          (small, large)
+        else if weights.(i) < average then
+          partition weights (succ i) (i::small, large)
+        else
+          partition weights (succ i) (small, i::large)
+      in
+
+      let (small, large) = partition weights 0 ([], [])
+      and probs = Array.make n 0.0
+      and alias = Array.make n 0 in begin
+        iter weights probs alias (small, large);
+        { probs; alias }
+      end
+
+    let sample { probs; alias } r =
+      let i = Random.State.int r (Array.length alias) in
+      if (Random.State.float r 1.0 < probs.(i)) then i else alias.(i)
+  end
+
 let multinomial ?seed weights =
   if not (Array.all (within (Open 0.0, Closed 1.0)) weights) then
-    raise (Invalid_argument "weights")
+    invalid_arg ~f:"multinomial" "weights must be within (0, 1]"
   else
     let sum = Array.sumf weights in
     if significantly_different_from 1.0 sum then
-      raise (Invalid_argument "weights")
+      invalid_arg ~f:"multinomial" "weights must sum to 1 (got: %.2f)" sum
     else
-      let r = init seed in
-      let n = Array.length weights - 1 in
-      (fun () ->
-        let threshold = Random.State.float r 1.0 in
-        let rec iter i sum =
-          if i = n then i else
-            let sum' = sum +. weights.(i) in
-            if sum' >= threshold then i else iter (i+1) sum' in
-        iter 0 0.0)
+      let r = init seed
+      and alias = Alias.create weights in
+      (fun () -> Alias.sample alias r)
 
 let softmax ?seed ?temperature weights =
   multinomial ?seed (F.softmax ?temperature weights)
+
 
 module Poly =
   struct

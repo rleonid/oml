@@ -134,7 +134,25 @@ let () =
       true)
     Spec.([ (fun (_,arr) -> arr <> [||]) ==> is_result is_true
           ; (fun (_,arr) -> arr =  [||]) ==> is_exception is_invalid_arg
-          ]);
+          ])
 
-  ()
+let () =
+  let add_simple_test = Test.add_simple_test_group "Sampling" in
 
+  add_simple_test
+    ~title:"Multinomial is correct."
+    (fun () ->
+       let n_samples = 10000 in
+       let weights = [|0.15; 0.6; 0.25|] in
+       let mm = multinomial weights in
+       let counts = Array.make (Array.length weights) 0 in begin
+         for _s = 0 to n_samples - 1 do
+           let i = mm () in
+           counts.(i) <- counts.(i) + 1
+         done;
+
+         Array.iteri (fun i count ->
+             Assert.equal_float ~eps:1e-2 weights.(i)
+               (float count /. float n_samples))
+           counts
+       end)
