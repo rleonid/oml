@@ -67,7 +67,7 @@ let () =
                   let mli = !Options.build_dir / env "%.mli" in
                   string_list_of_file pck
                   |> List.map (fun mdl ->
-                    let fname = dir / String.lowercase (mdl ^ ".mli") in
+                    let fname = dir / String.lowercase_ascii (mdl ^ ".mli") in
                     let mdlfl = env fname in
                     if Pathname.exists mdlfl then begin
                       [ Sh (Printf.sprintf "echo module %s : sig >>" mdl)
