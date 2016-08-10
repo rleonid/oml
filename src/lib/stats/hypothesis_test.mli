@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015,2016:
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +15,18 @@
    limitations under the License.
 *)
 
+open Util
+
 (** Infer probabilities from data and perform hypothesis tests. *)
 
 (** [prediction_interval stats alpha]
   Creates a prediction interval for the distribution described by [stats]
   at an [alpha] level of statistical significance; future observations
-  will fall within the bounds with probabiltiy [1.0 - alpha].
+  will fall within the bounds with probability [1.0 - alpha].
 
   When we do not know the mean or standard deviation of a distribution
   we can still create a prediction interval based off of basic sampled
-  statistics and Student's distribution.
-  *)
+  statistics and Student's distribution. *)
 val prediction_interval : Descriptive.summary -> float -> float * float
 
 (** A hypothesis test.  *)
@@ -33,7 +34,8 @@ type t =
   { degrees_of_freedom : float  (** Can be non-integer due to corrections. *)
   ; statistic          : float  (** The value that we're testing. *)
   ; standard_error     : float  (** The scaled version of the statistic. *)
-  ; prob_by_chance     : float  (** The probability that statistic could be
+  ; prob_by_chance     : Probability.t
+                                (** The probability that statistic could be
                                     this large (or larger) by chance, for the
                                     specified conditions of the test. *)
   }
@@ -54,7 +56,7 @@ type null_hypothesis =
     hypothesis, where [d] is the difference between population parameter and
     the observed value, [e] is the standard error of the observed value, and
     [k] is the degrees of freedom in the statistical procedure.
-    
+
     One may think of this as a principled way to test the signal (diff)
     to noise (error) seen in a sample of data. *)
 val t_test : null_hypothesis -> degrees_of_freedom:int -> diff:float
@@ -81,5 +83,4 @@ val means_different_variance_test : null_hypothesis -> float array
 (** [variance_ratio_test sample1 sample2] tests the data in [sample1] and
     [sample2] have the same variance based on F-test.*)
 val variance_ratio_test : float array -> float array -> t
-
 

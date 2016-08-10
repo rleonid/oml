@@ -67,13 +67,6 @@ let chi_square_less num_observations chi_square =
 let chi_square_greater num_observations chi_square =
   regularized_upper_gamma ~a:((float num_observations) /. 2.0) (chi_square /. 2.0)
 
-let softmax ?(temperature=1.0) weights =
-  if Array.length weights = 0 then raise (Invalid_argument "weights") else
-  if temperature = 0.0 then raise (Invalid_argument "temperature") else
-    let weights = Array.map (fun w -> exp (w /. temperature)) weights in
-    let sum = Array.fold_left (+.) 0.0 weights in
-    Array.map (fun w -> w /. sum) weights
-
 let normal_cdf_inv = Ocephes.ndtri
 
 let student_cdf_inv ~degrees_of_freedom = Ocephes.stdtri ~k:degrees_of_freedom

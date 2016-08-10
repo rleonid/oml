@@ -77,12 +77,6 @@ val multivariate_beta : float array -> float
     for better accuracy.*)
 val ln_multivariate_beta : float array -> float
 
-(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
-    on [temperature].
-
-    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
-val softmax : ?temperature:float -> float array -> float array
-
 (** {2 Distribution CDF's} *)
 
 (** [chi_square_less k x] computes the probability of

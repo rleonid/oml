@@ -16,6 +16,7 @@
 *)
 
 open Util
+module Pr = Probability
 module P = Printf
 module D = Statistics.Distributions
 module Ht = Statistics.Hypothesis_test
@@ -114,7 +115,7 @@ let confidence_interval, prediction_interval =
   let interval a lrm ~alpha x =
     let dgf = lrm.size -. 2.0 in
     let degrees_of_freedom = truncate dgf in
-    let t  = D.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
+    let t  = D.student_quantile ~degrees_of_freedom (Pr.restrict (alpha /. 2.0)) in
     let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
     let c  = lrm.sum_residuals /. dgf in
     let se = sqrt ((a +. b) *. c) in

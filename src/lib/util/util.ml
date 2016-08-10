@@ -16,7 +16,10 @@
 *)
 
 include Oml_util
+
 module Array = Oml_array
+
+module Probability = Oml_probability
 
 module Float = struct
   let ( + ) x y = x +. y

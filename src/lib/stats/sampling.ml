@@ -62,25 +62,18 @@ let normal ?seed ~mean ~std () =
   (fun () -> std *. (rsn ()) +. mean)
 
 let multinomial ?seed weights =
-  if not (Array.all (within (Open 0.0, Closed 1.0)) weights) then
-    raise (Invalid_argument "weights")
-  else
-    let sum = Array.sumf weights in
-    if significantly_different_from 1.0 sum then
-      raise (Invalid_argument "weights")
-    else
-      let r = init seed in
-      let n = Array.length weights - 1 in
-      (fun () ->
-        let threshold = Random.State.float r 1.0 in
-        let rec iter i sum =
-          if i = n then i else
-            let sum' = sum +. weights.(i) in
-            if sum' >= threshold then i else iter (i+1) sum' in
-        iter 0 0.0)
+  let r = init seed in
+  let n = Probability.length weights - 1 in
+  (fun () ->
+    let threshold = Random.State.float r 1.0 in
+    let rec iter i sum =
+      if i = n then i else
+        let sum' = sum +. Probability.get weights i in
+        if sum' >= threshold then i else iter (i+1) sum' in
+    iter 0 0.0)
 
 let softmax ?seed ?temperature weights =
-  multinomial ?seed (F.softmax ?temperature weights)
+  multinomial ?seed (Probability.softmax ?temperature weights)
 
 module Poly =
   struct
@@ -89,7 +82,7 @@ module Poly =
       fun () -> elems.(f())
 
     let multinomial ?seed elems weights =
-      if (Array.length elems != Array.length weights) then
+      if (Array.length elems != Probability.length weights) then
         raise (Invalid_argument "weights") else
           let f = multinomial ?seed weights in
           fun () -> elems.(f())

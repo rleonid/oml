@@ -16,12 +16,14 @@
 *)
 
 open Util
+module P = Probability
 open Descriptive
 open Distributions
 module F = Uncategorized.Functions
 
 let prediction_interval_sub k std mean alpha =
-  let t_v = student_quantile ~degrees_of_freedom:(k - 1) (1.0 -. alpha /. 2.) in
+  let p   = P.restrict (1.0 -. alpha /. 2.) in
+  let t_v = student_quantile ~degrees_of_freedom:(k - 1) p in
   let fk  = float k in
   let d   = Float.(t_v * std * sqrt (1. + (1. / fk))) in
   (mean -. d, mean +. d)
@@ -33,7 +35,7 @@ type t =
   { degrees_of_freedom  : float   (* can be non-integer due to corrections. *)
   ; statistic           : float
   ; standard_error      : float
-  ; prob_by_chance      : float
+  ; prob_by_chance      : P.t
   }
 
 let test_to_string t =
@@ -44,7 +46,7 @@ let test_to_string t =
         t.degrees_of_freedom
         t.statistic
         t.standard_error
-        t.prob_by_chance
+        (t.prob_by_chance :> float)
 
 (* TODO: Refactor the Chi logic to use a cdf *)
 let chi observed expected =
@@ -57,7 +59,7 @@ let chi observed expected =
   { degrees_of_freedom
   ; statistic
   ; standard_error      = sqrt (2.0 *. degrees_of_freedom)
-  ; prob_by_chance      = F.chi_square_greater dgf statistic
+  ; prob_by_chance      = P.restrict (F.chi_square_greater dgf statistic)
   }
 
 (* TODO: Add Tests where the population variance is known, ie Z-tests.*)
@@ -70,7 +72,7 @@ let t_test hypothesis ~degrees_of_freedom ~diff ~error =
   let statistic = diff /. error in
   let prob_by_chance =
     let upper_ct = student_cdf ~degrees_of_freedom (abs_float statistic) in
-    let prob_upper_tail = 1.0 -. upper_ct in
+    let prob_upper_tail = 1.0 -. (upper_ct :> float) in
     match hypothesis with
     | Two_sided -> prob_upper_tail *. 2.0
     | One_sided -> prob_upper_tail
@@ -78,7 +80,7 @@ let t_test hypothesis ~degrees_of_freedom ~diff ~error =
   { degrees_of_freedom = float_of_int degrees_of_freedom
   ; statistic
   ; standard_error = error
-  ; prob_by_chance
+  ; prob_by_chance = P.restrict prob_by_chance
   }
 
 let mean_t_test population_mean hypothesis arr =
@@ -152,5 +154,5 @@ let variance_ratio_test arr1 arr2 =
   { degrees_of_freedom = d1 +. d2
   ; statistic = f
   ; standard_error = nan
-  ; prob_by_chance = p
+  ; prob_by_chance = P.restrict p
   }
