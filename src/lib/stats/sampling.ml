@@ -118,20 +118,20 @@ module Alias =
       if (Random.State.float r 1.0 < probs.(i)) then i else alias.(i)
   end
 
-let multinomial ?seed weights =
+let categorical ?seed weights =
   if not (Array.all (within (Open 0.0, Closed 1.0)) weights) then
-    invalid_arg ~f:"multinomial" "weights must be within (0, 1]"
+    invalid_arg ~f:"categorical" "weights must be within (0, 1]"
   else
     let sum = Array.sumf weights in
     if significantly_different_from 1.0 sum then
-      invalid_arg ~f:"multinomial" "weights must sum to 1 (got: %.2f)" sum
+      invalid_arg ~f:"categorical" "weights must sum to 1 (got: %.2f)" sum
     else
       let r = init seed
       and alias = Alias.create weights in
       (fun () -> Alias.sample alias r)
 
 let softmax ?seed ?temperature weights =
-  multinomial ?seed (F.softmax ?temperature weights)
+  categorical ?seed (F.softmax ?temperature weights)
 
 
 module Poly =
@@ -140,10 +140,10 @@ module Poly =
       let f = uniform_i ?seed (Array.length elems) in
       fun () -> elems.(f())
 
-    let multinomial ?seed elems weights =
+    let categorical ?seed elems weights =
       if (Array.length elems != Array.length weights) then
         raise (Invalid_argument "weights") else
-          let f = multinomial ?seed weights in
+          let f = categorical ?seed weights in
           fun () -> elems.(f())
 
     let softmax ?seed ?temperature elems weights =

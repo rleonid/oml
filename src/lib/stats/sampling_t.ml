@@ -114,10 +114,10 @@ let () =
   (* I think with P=0.998 this test passes, but occasionally the restriction
      that sum = 1.0 might trip, especially if the size of the array grows. *)
   add_partial_random_test
-    ~title:"Multinomial obeys bounds."
+    ~title:"Categorical obeys bounds."
     Gen.(zip2 seed sometimes_good_weights)
     (fun (seed, (_, weights)) ->
-      let mm = multinomial ?seed weights in
+      let mm = categorical ?seed weights in
       let _  = Array.init samples (fun _ -> mm ()) in
       true)
     Spec.([ good_weights     ==> is_result is_true
@@ -140,11 +140,11 @@ let () =
   let add_simple_test = Test.add_simple_test_group "Sampling" in
 
   add_simple_test
-    ~title:"Multinomial is correct."
+    ~title:"Categorical is correct."
     (fun () ->
        let n_samples = 10000 in
        let weights = [|0.15; 0.6; 0.25|] in
-       let mm = multinomial weights in
+       let mm = categorical weights in
        let counts = Array.make (Array.length weights) 0 in begin
          for _s = 0 to n_samples - 1 do
            let i = mm () in

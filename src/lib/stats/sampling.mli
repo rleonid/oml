@@ -46,14 +46,14 @@ val normal : ?seed:int array -> mean:float -> std:float -> unit -> float generat
 (** [normal_std seed ()] is equivalent to [normal seed ~mean:0.0 ~std:1.0 ()].*)
 val normal_std : ?seed:int array -> unit -> float generator
 
-(** [multinomial ?seed weights] creates a generator that will return an integer
-    representating the ith element from the Multinomial distribution given by
+(** [categorical ?seed weights] creates a generator that will return an integer
+    representating the ith element from the Categorical distribution given by
     a [weights] vector which sums to [1].
 
     @raise Invalid_argument if [weights] do not sum to [1.0] (this is checked
      using [Util.significantly_different_from]) or any individual weight is not
      in \[[0,1]). *)
-val multinomial : ?seed:int array -> float array -> int generator
+val categorical : ?seed:int array -> float array -> int generator
 
 (** [softmax ?seed ?temperature weights] creates a generator that will return an integer
     representating the ith element from the softmax distribution given by
@@ -71,13 +71,13 @@ module Poly :
         @raise Invalid_argument if the given element array is empty. *)
     val uniform : ?seed:int array -> 'a array -> 'a generator
 
-    (** [multinomial ?seed elems weights] creates a generator will sample from
-        the [elems] array using Multinomial distribution given by
+    (** [categorical ?seed elems weights] creates a generator will sample from
+        the [elems] array using Categorical distribution given by
         a [weights] vector which sums to [1].
 
         @raise Invalid_argument if [weights] do not sum to [1.0] or
         the length of the [elems] and [weights] arrays are not equal. *)
-    val multinomial : ?seed:int array -> 'a array -> float array -> 'a generator
+    val categorical : ?seed:int array -> 'a array -> float array -> 'a generator
 
     (** [softmax ?seed ?temperature elems weights] creates a generator that will
         sample from the [elems] array using the softmax distribution given by
