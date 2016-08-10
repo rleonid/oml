@@ -62,14 +62,16 @@ let normal ?seed ~mean ~std () =
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
 
-(** Alias method for sampling from a categorical distribution.
+(** {{:http://www.keithschwarz.com/darts-dice-coins} Alias method} for
+    sampling from a Categorical distribution.
 
     The method allows to generate a sample in costant time after a
     linear time preprocessing of the probabilities array. *)
 module Alias =
   struct
     type t =
-      { probs: float array
+      { n : int
+      ; probs: float array
       ; alias: int array
       }
 
@@ -104,15 +106,15 @@ module Alias =
           partition weights (succ i) (small, i::large)
       in
 
-      let (small, large) = partition weights 0 ([], [])
-      and probs = Array.make n 0.0
-      and alias = Array.make n 0 in begin
+      let (small, large) = partition weights 0 ([], []) in
+      let probs = Array.make n 0.0 in
+      let alias = Array.make n 0 in begin
         iter weights probs alias (small, large);
-        { probs; alias }
+        { n; probs; alias }
       end
 
-    let sample { probs; alias } r =
-      let i = Random.State.int r (Array.length alias) in
+    let sample { n; probs; alias } r =
+      let i = Random.State.int r n in
       if (Random.State.float r 1.0 < probs.(i)) then i else alias.(i)
   end
 
