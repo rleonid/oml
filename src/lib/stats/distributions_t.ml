@@ -97,7 +97,7 @@ let () =
       | [] -> [1]
       | trailing_digit::rst ->
     begin
-      if trailing_digit != (base - 1) then
+      if trailing_digit <> (base - 1) then
        (trailing_digit+1)::rst |> List.rev
       else
         (next_digit ~base (List.rev rst))@[0]

@@ -44,7 +44,7 @@ let evaluate t ?(epsilon=small) ?(max_iterations=max_iteration_default) x =
       let dN =  1.0 /. dN in
       let deltaN = cN *. dN in
       let hN = hPrev *. deltaN in
-      if hN == infinity then raise (Iteration_failure ("continued fraction diverged", No_convergence)) else
+      if hN = infinity then raise (Iteration_failure ("continued fraction diverged", No_convergence)) else
         if (abs_float (deltaN -. 1.0)) < epsilon then
           hN else loop dN cN hN (n+1) in
   let n = 1 in

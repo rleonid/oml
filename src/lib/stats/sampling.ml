@@ -141,13 +141,13 @@ module Poly =
       fun () -> elems.(f())
 
     let categorical ?seed elems weights =
-      if (Array.length elems != Array.length weights) then
+      if (Array.length elems <> Array.length weights) then
         raise (Invalid_argument "weights") else
           let f = categorical ?seed weights in
           fun () -> elems.(f())
 
     let softmax ?seed ?temperature elems weights =
-      if (Array.length elems != Array.length weights) then
+      if (Array.length elems <> Array.length weights) then
         raise (Invalid_argument "weights") else
           let f = softmax ?seed ?temperature weights in
           fun () -> elems.(f())
