@@ -40,7 +40,7 @@ val newton : ?init:float -> lower:float ->
 (** [bisection epsilon lower upper f] iteratively finds the root of [f] between
     [lower] and [upper] using the bisection method.
 
-    @raise Invalid_arg If the function does not take opposite signs at the
+    @raise Invalid_argument If the function does not take opposite signs at the
       supplied bounds.  *)
 val bisection : epsilon:float -> lower:float -> upper:float ->
     (float -> float) -> float

@@ -29,12 +29,12 @@ let init = function
 let int_upper_bound = 2 lsl (30 - 1)
 
 let uniform_i ?seed n =
-  if n <= 0 || n >= int_upper_bound then raise (Invalid_argument "n") else
+  if n <= 0 || n >= int_upper_bound then invalid_arg ~f:"uniform_i" "n" else
   let r = init seed in
   fun () -> Random.State.int r n
 
 let uniform_f ?seed n =
-  if n <= 0.0 then raise (Invalid_argument "n") else
+  if n <= 0.0 then invalid_arg ~f:"uniform_f" "n" else
   let r = init seed in
   fun () -> Random.State.float r n
 
@@ -57,7 +57,7 @@ let normal_std ?seed () =
     | None   -> loop (p ()) (p ()))
 
 let normal ?seed ~mean ~std () =
-  if std < 0.0 then raise (Invalid_argument "std") else
+  if std < 0.0 then invalid_arg ~f:"normal" "std" else
   if std = 0.0 then (fun () -> mean) else
   let rsn = normal_std ?seed () in
   (fun () -> std *. (rsn ()) +. mean)
@@ -136,19 +136,22 @@ let softmax ?seed ?temperature weights =
 
 module Poly =
   struct
+
+    let invalid_arg ~f fmt = Util.invalid_arg ~m:"Poly.Sampling" ~f fmt
+
     let uniform ?seed elems =
       let f = uniform_i ?seed (Array.length elems) in
       fun () -> elems.(f())
 
     let categorical ?seed elems weights =
       if (Array.length elems <> Array.length weights) then
-        raise (Invalid_argument "weights") else
+        invalid_arg ~f:"categorical" "weights" else
           let f = categorical ?seed weights in
           fun () -> elems.(f())
 
     let softmax ?seed ?temperature elems weights =
       if (Array.length elems <> Array.length weights) then
-        raise (Invalid_argument "weights") else
+        invalid_arg ~f:"softmax" "weights" else
           let f = softmax ?seed ?temperature weights in
           fun () -> elems.(f())
   end

@@ -17,6 +17,8 @@
 
 open Util
 
+let invalid_arg ~f fmt = invalid_arg ~m:"Functions" ~f fmt
+
 (* TODO: Figure out the best bound for this and ensure the more
   accurate method is used. I think that Cephes might already do this
   but I need to make sure. *)
@@ -68,8 +70,8 @@ let chi_square_greater num_observations chi_square =
   regularized_upper_gamma ~a:((float num_observations) /. 2.0) (chi_square /. 2.0)
 
 let softmax ?(temperature=1.0) weights =
-  if Array.length weights = 0 then raise (Invalid_argument "weights") else
-  if temperature = 0.0 then raise (Invalid_argument "temperature") else
+  if Array.length weights = 0 then invalid_arg ~f:"softmax" "weights" else
+  if temperature = 0.0 then invalid_arg ~f:"softmax" "temperature" else
     let weights = Array.map (fun w -> exp (w /. temperature)) weights in
     let sum = Array.fold_left (+.) 0.0 weights in
     Array.map (fun w -> w /. sum) weights

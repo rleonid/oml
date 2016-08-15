@@ -27,6 +27,12 @@ type iterative_failure_reason =
 (** The exception raised when an iterative function fails to converge. *)
 exception Iteration_failure of string * iterative_failure_reason
 
+(** [invalid_arg ?m ?f format msg] raise [Invalid_argument] exception with a
+    message based on [format] and [msg]. Prepend [m]odule and [f]unction name
+    if specified.
+
+    @raise Invalid_argument.
+*)
 val invalid_arg : ?m:string -> ?f:string -> ('a, unit, string, 'b) format4 -> 'a
 
 (** 3.14159265358979312  *)
