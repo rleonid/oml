@@ -25,6 +25,7 @@ open Util
 open Statistics.Sampling
 
 let () =
+  let add_simple_test = Test.add_simple_test_group "Sampling" in
   let add_partial_random_test
     ?title ?nb_runs ?nb_tries ?classifier
     ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
@@ -134,10 +135,7 @@ let () =
       true)
     Spec.([ (fun (_,arr) -> arr <> [||]) ==> is_result is_true
           ; (fun (_,arr) -> arr =  [||]) ==> is_exception is_invalid_arg
-          ])
-
-let () =
-  let add_simple_test = Test.add_simple_test_group "Sampling" in
+          ]);
 
   add_simple_test
     ~title:"Categorical is correct."
@@ -155,4 +153,26 @@ let () =
              Assert.equal_float ~eps:1e-2 weights.(i)
                (float count /. float n_samples))
            counts
-       end)
+       end);
+  let non_empty_weights = Gen.(array (make_int 1 10) (make_float 0.0 1.0)) in
+  add_partial_random_test
+    ~title:"Categorical is very correct."
+    ~nb_runs:1000
+    non_empty_weights
+    (fun unnormalized_weights ->
+        let n_samples = 50000 in
+        let sum = Array.sumf unnormalized_weights in
+        let weights = Array.map (fun x -> x /. sum) unnormalized_weights in
+        let mm = categorical weights in
+        let counts = Array.make (Array.length weights) 0 in
+        for _s = 0 to n_samples - 1 do
+          let i = mm () in
+          counts.(i) <- counts.(i) + 1
+        done;
+        let comp =
+          Array.mapi (fun i count ->
+            Util.equal_floats ~d:1e-2 weights.(i) (float count /. float n_samples))
+            counts
+        in
+        Array.all (fun b -> b) comp)
+Spec.([ always ==> is_result is_true])
