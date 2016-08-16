@@ -22,7 +22,6 @@
 
 open Test_utils
 open Util
-open Statistics.Sampling
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Sampling" in

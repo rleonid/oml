@@ -39,10 +39,10 @@ let () =
     (fun (demean, scale, unbiased, m) ->
       let r,c = Matrices.dim m in
       let s = min r c in
-      let t = Pca.pca ~demean ~scale ~unbiased (Mat.of_array m) in
-      let v = Pca.variances t in
-      let _ = Pca.components t in
-      let _ = Pca.scalings t in
+      let t = pca ~demean ~scale ~unbiased (Mat.of_array m) in
+      let v = variances t in
+      let _ = components t in
+      let _ = scalings t in
       Array.length v = s && Array.has_order ( > ) v)
     Spec.([ just_postcond_pred is_true ]);
 

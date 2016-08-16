@@ -17,7 +17,6 @@
 
 open Test_utils
 open Util
-open Online
 module D = Statistics.Descriptive
 
 (* In order for these tests to work well, we have to span the range of

@@ -17,33 +17,32 @@
 
 open Test_utils
 
+(* Just referencing the modules will load the tests. *)
 module Rank = Rank
-(*
-module Util_t = Util_t
+module Util = Util
 
-module Estimations_t = Estimations_t
-module Functions_t = Functions_t
-module Solvers_t = Solvers_t
-module Svd_t = Svd_t
+module Estimations = Uncategorized.Estimations
+module Solvers = Uncategorized.Solvers
+module Svd = Uncategorized.Svd
 
-module Matrices_t = Matrices_t
-module Vectors_t = Vectors_t
+module Matrices = Uncategorized.Matrices
+module Vectors = Uncategorized.Vectors
 
-module Descriptive_t = Descriptive_t
-module Distributions_t = Distributions_t
-module Hypothesis_test_t = Hypothesis_test_t
-module Measures_t = Measures_t
-module Sampling_t = Sampling_t
+module Functions = Statistics.Functions
+module Descriptive = Statistics.Descriptive
+module Distributions = Statistics.Distributions
+module Hypothesis_test = Statistics.Hypothesis_test
+module Measures = Statistics.Measures
+module Sampling = Statistics.Sampling
 
-module Online_t = Online_t
+module Online = Online
 
-module Classification_t = Classification_t
+module Classification = Classification
 
-module Interpolate_t = Interpolate_t
-module Regression_t = Regression_t
+module Regression = Regression
+(*module Interpolate = Interpolate *)
 
-module Pca_t = Pca_t
-*)
+module Pca = Pca
 
 let () =
   if Array.length Sys.argv > 1 then

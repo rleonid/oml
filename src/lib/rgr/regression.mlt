@@ -18,7 +18,6 @@
 open Test_utils
 
 open Util
-open Regression
 module U = Univariate
 module M = Multivariate
 module T = Tikhonov
@@ -107,7 +106,6 @@ let () =
   (* TODO: clever test to react to variance in the predicted variable. *)
 
 (*
-  add_random_test
   add_random_test
     ~title:"Confidence intervals are symmetric around evaluation point."
     Gen.(zip3 simple_lrm_gen grt_zer_lss_one bfloat)

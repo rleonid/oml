@@ -14,10 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 *)
-
 open Test_utils
 open Util
-open Uncategorized.Estimations
 module D = Statistics.Descriptive
 
 let () =

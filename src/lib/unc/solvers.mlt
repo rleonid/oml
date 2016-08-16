@@ -18,7 +18,6 @@
 module P = Printf
 open Test_utils
 open Util
-open Uncategorized.Solvers
 
 let () =
   let add_random_test

@@ -88,7 +88,9 @@ let add_compile_mlj_to_native_rule () =
       let cmx = env "%.cmx" in
       let cmi = Pathname.update_extensions "cmi" cmx in
       let tags =
-        (Tags.union (tags_of_pathname ml) (tags_of_pathname mlj))
+        (Tags.union
+          (Tags.union (tags_of_pathname ml) (tags_of_pathname mlj))
+            (tags_of_pathname cmx))
           ++ "ocaml"
           ++ "implem"
           ++ "native"

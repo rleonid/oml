@@ -17,7 +17,6 @@
 *)
 
 open Test_utils
-open Statistics.Measures
 
 let () =
   let add_random_test

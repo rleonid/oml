@@ -17,9 +17,6 @@
 
 open Test_utils
 open Lacaml.D
-module Svd = Uncategorized.Svd
-module Matrices = Uncategorized.Matrices
-module Vectors = Uncategorized.Vectors
 
 let () =
   let add_partial_random_test
@@ -39,8 +36,8 @@ let () =
     Gen.(matrix (make_int 1 4) (make_int 1 5) (bfloat 1e6))
     (fun a ->
       let open Lacaml.D in
-      let t = Svd.svd (Mat.of_array a) in
-      let a_rec = Matrices.(prod (prod (Svd.u t) (diagonal (Svd.s t))) (Svd.vt t)) in
+      let t = svd (Mat.of_array a) in
+      let a_rec = Matrices.(prod (prod (u t) (diagonal (s t))) (vt t)) in
       Matrices.equal ~d:(Util.dx *. 1e9) a a_rec)
     Spec.([ (*at_least_as_man_rows_as_columns ==> is_result is_true *)
           always ==> is_result is_true]);
@@ -53,8 +50,8 @@ let () =
       let x = m.(0) in
       let a = Array.sub m 1 (Array.length m - 1) in
       let b = Matrices.prod_column_vector a x in
-      let t = Svd.svd (Mat.of_array a) in
-      let y = Svd.solve_linear t (Vec.of_array b) |> Vec.to_array in
+      let t = svd (Mat.of_array a) in
+      let y = solve_linear t (Vec.of_array b) |> Vec.to_array in
       let bc = Matrices.prod_column_vector a y in
       (* Can't compare x and y since they might be different projections,
          especially in just unaligned random data! *)

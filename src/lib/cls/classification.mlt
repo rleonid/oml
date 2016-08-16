@@ -17,7 +17,6 @@
 
 module List = ListLabels
 open Test_utils
-open Classification
 module P = Probabilities
 
 let () =

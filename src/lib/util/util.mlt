@@ -16,7 +16,6 @@
 *)
 
 open Test_utils
-open Util
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Util" in
