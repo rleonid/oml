@@ -37,7 +37,8 @@ module Sampling = Statistics.Sampling
 
 module Online = Online
 
-module Classification = Classification
+module Naive_bayes = Classification.Naive_bayes
+module Logistic_regression = Classification.Logistic_regression
 
 module Regression = Regression
 (*module Interpolate = Interpolate *)
