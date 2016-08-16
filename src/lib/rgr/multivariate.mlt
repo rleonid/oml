@@ -46,7 +46,7 @@ let () =
   let add_random_test
     ?title ?nb_runs ?nb_tries ?classifier
     ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
-    Test.add_random_test_group "Regression"
+    Test.add_random_test_group "Multivariate"
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in
