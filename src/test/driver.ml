@@ -43,7 +43,7 @@ module Logistic_regression = Classification.Logistic_regression
 module Univariate = Regression.Univariate
 module Multivariate = Regression.Multivariate
 module Tikhonov = Regression.Tikhonov
-(*module Interpolate = Interpolate *)
+module Interpolate = Regression.Interpolate
 
 module Pca = Pca
 
