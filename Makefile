@@ -23,9 +23,6 @@ oml.cmxa:
 
 build: oml.cmxa
 
-#joiner.native:
-#	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -package str -I tools joiner.native
-
 driver.test:
 	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
