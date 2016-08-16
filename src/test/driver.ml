@@ -17,7 +17,8 @@
 
 open Test_utils
 
-module Rank_t = Rank_t
+module Rank = Rank
+(*
 module Util_t = Util_t
 
 module Estimations_t = Estimations_t
@@ -42,6 +43,7 @@ module Interpolate_t = Interpolate_t
 module Regression_t = Regression_t
 
 module Pca_t = Pca_t
+*)
 
 let () =
   if Array.length Sys.argv > 1 then
