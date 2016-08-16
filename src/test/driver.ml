@@ -40,7 +40,9 @@ module Online = Online
 module Naive_bayes = Classification.Naive_bayes
 module Logistic_regression = Classification.Logistic_regression
 
-module Regression = Regression
+module Univariate = Regression.Univariate
+module Multivariate = Regression.Multivariate
+module Tikhonov = Regression.Tikhonov
 (*module Interpolate = Interpolate *)
 
 module Pca = Pca
