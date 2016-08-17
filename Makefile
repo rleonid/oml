@@ -7,7 +7,7 @@ PACKAGES_INSTALL=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
 
-.PHONY: all clean test build install uninstall setup default doc
+.PHONY: all clean test build install uninstall setup default doc driver.test
 
 default: build
 
