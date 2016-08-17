@@ -37,5 +37,5 @@ make covered_test
 echo PostingCoverage
 opam install ocveralls
 
-cd _driver
+cd _test_build
 ocveralls --repo_token $COVERALLSTOKEN --git --send ../bisect0001.out
