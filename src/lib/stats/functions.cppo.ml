@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015:2016
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 open Util
 
 let invalid_arg ~f fmt = invalid_arg ~m:"Functions" ~f fmt
+#ifndef OML_LITE
 
 (* TODO: Figure out the best bound for this and ensure the more
   accurate method is used. I think that Cephes might already do this
@@ -69,13 +70,6 @@ let chi_square_less num_observations chi_square =
 let chi_square_greater num_observations chi_square =
   regularized_upper_gamma ~a:((float num_observations) /. 2.0) (chi_square /. 2.0)
 
-let softmax ?(temperature=1.0) weights =
-  if Array.length weights = 0 then invalid_arg ~f:"softmax" "weights" else
-  if temperature = 0.0 then invalid_arg ~f:"softmax" "temperature" else
-    let weights = Array.map (fun w -> exp (w /. temperature)) weights in
-    let sum = Array.fold_left (+.) 0.0 weights in
-    Array.map (fun w -> w /. sum) weights
-
 let normal_cdf_inv = Ocephes.ndtri
 
 let student_cdf_inv ~degrees_of_freedom = Ocephes.stdtri ~k:degrees_of_freedom
@@ -83,3 +77,11 @@ let student_cdf_inv ~degrees_of_freedom = Ocephes.stdtri ~k:degrees_of_freedom
 let f_less ~d1 ~d2 x =
   let xr = Float.((d1 * x) / (d1 * x + d2)) in
   regularized_beta ~alpha:(d1 /. 2.) ~beta:(d2 /. 2.) xr
+#endif
+
+let softmax ?(temperature=1.0) weights =
+  if Array.length weights = 0 then invalid_arg ~f:"softmax" "weights" else
+  if temperature = 0.0 then invalid_arg ~f:"softmax" "temperature" else
+    let weights = Array.map (fun w -> exp (w /. temperature)) weights in
+    let sum = Array.fold_left (+.) 0.0 weights in
+    Array.map (fun w -> w /. sum) weights

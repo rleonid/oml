@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015:2016
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@
     (http://www.netlib.org/cephes/), via a Ctypes interface implemented in
     the {{:https://github.com/rleonid/ocephes}Ocephes} library. *)
 
+#ifndef OML_LITE
 (** {2 Standard error functions.} *)
 
 (** [erf x] computes the (Gauss) error function,
@@ -77,12 +78,6 @@ val multivariate_beta : float array -> float
     for better accuracy.*)
 val ln_multivariate_beta : float array -> float
 
-(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
-    on [temperature].
-
-    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
-val softmax : ?temperature:float -> float array -> float array
-
 (** {2 Distribution CDF's} *)
 
 (** [chi_square_less k x] computes the probability of
@@ -106,3 +101,10 @@ val student_cdf_inv : degrees_of_freedom:int -> float -> float
 (** [f_less d1 d2 x] computes the probability of seeing a value less than [x]
     in an F-distribution parameterized by [d1] and [d2]. *)
 val f_less : d1:float -> d2:float -> float -> float
+
+#endif
+(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
+    on [temperature].
+
+    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
+val softmax : ?temperature:float -> float array -> float array
