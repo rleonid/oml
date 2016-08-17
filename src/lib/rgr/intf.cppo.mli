@@ -32,6 +32,7 @@ module type Linear_model = sig
       linear model. *)
   val coeff_of_determination : t -> float
 
+#ifndef OML_LITE
   (** [confidence_interval linear_model alpha x] Use the [linear_model] to
       construct confidence intervals at [x] at an [alpha]-level of significance.
   *)
@@ -46,11 +47,10 @@ module type Linear_model = sig
       models coefficients to see if they are significantly different from
       the null. *)
   val coefficient_tests : ?null:float -> t -> Statistics.Hypothesis_test.t array
+#endif
 
   (** [F_test linear_model] compute the F-statistic to assess if there is any
       relationship between the response and predictors in the [linear_model].*)
   val f_statistic : t -> float (*Hypothesis_test.t*)
 
 end
-
-

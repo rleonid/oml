@@ -4,4 +4,6 @@ stats/Statistics
 Online
 cls/Classification
 rgr/Regression
+#ifndef OML_LITE
 uns/Unsupervised
+#endif

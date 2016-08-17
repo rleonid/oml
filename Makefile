@@ -1,13 +1,15 @@
 
 TEST_BUILD_DIR=_test_build
+LITE_BUILD_DIR=_lite_build
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=$(PACKAGES_COVERED)
+PACKAGES_INSTALL=cppo $(PACKAGES_COVERED)
+CPPO_TAG:=-plugin-tag 'package(cppo_ocamlbuild)' 
 
 SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
 
-.PHONY: all clean test build install uninstall setup default doc omltest.native
+.PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
 
 default: build
 
@@ -19,12 +21,16 @@ setup:
 	opam install $(PACKAGES_INSTALL)
 
 oml.cmxa:
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
+	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
+
+lite: 
+	ocamlbuild -build-dir $(LITE_BUILD_DIR) $(CPPO_TAG) -tag 'cppo_D(OML_LITE)' -use-ocamlfind -I src/lib oml.cma oml.cmxa oml.cmxs
 
 build: oml.cmxa
 
 omltest.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+		$(CPPO_TAG) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
@@ -33,6 +39,7 @@ test: omltest.native
 
 covered_test.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+		$(CPPO_TAG) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 

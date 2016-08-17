@@ -1,10 +1,7 @@
 _build
-_driver
+_test_build
+_lite_build
 report_dir/
-setup.data
-setup.ml
-setup.log
-*.test
 *.native
 *.byte
 bisect*.out

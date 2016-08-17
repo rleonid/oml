@@ -17,8 +17,6 @@
 
 open Util
 module P = Printf
-module D = Statistics.Distributions
-module Ht = Statistics.Hypothesis_test
 
 type input = float
 
@@ -110,6 +108,10 @@ let regress ?(opt=default) pred ~resp =
   ; s_xx = d_xx_w
   }
 
+#ifndef OML_LITE
+module D = Statistics.Distributions
+module Ht = Statistics.Hypothesis_test
+
 let confidence_interval, prediction_interval =
   let interval a lrm ~alpha x =
     let dgf = lrm.size -. 2.0 in
@@ -142,6 +144,8 @@ let beta_test ?(null=0.0) t =
 
 let coefficient_tests ?null t =
   [| alpha_test ?null t ; beta_test ?null t |]
+
+#endif
 
 let f_statistic t =
   (t.s_yy -. t.sum_residuals) /. (t.sum_residuals /. (t.size -. 2.))

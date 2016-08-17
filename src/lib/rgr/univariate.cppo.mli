@@ -22,6 +22,7 @@ val alpha : t -> float
     Equivalent to [(coefficients t).(1)] *)
 val beta : t -> float
 
+#ifndef OML_LITE
 (** [alpha_test ~null linear_model] perform a hypothesis test on the [alpha]
     coefficient of the [linear_model]. *)
 val alpha_test : ?null:float -> t -> Statistics.Hypothesis_test.t
@@ -29,3 +30,4 @@ val alpha_test : ?null:float -> t -> Statistics.Hypothesis_test.t
 (** [beta_test ~null linear_model] perform a hypothesis test on the [beta]
     coefficient of the [linear_model]. *)
 val beta_test : ?null:float -> t -> Statistics.Hypothesis_test.t
+#endif
