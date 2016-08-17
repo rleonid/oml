@@ -7,7 +7,7 @@ PACKAGES_INSTALL=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
 
-.PHONY: all clean test build install uninstall setup default doc driver.test
+.PHONY: all clean test build install uninstall setup default doc omltest.native
 
 default: build
 
@@ -23,29 +23,28 @@ oml.cmxa:
 
 build: oml.cmxa
 
-driver.test:
+omltest.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
+		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
-test: driver.test
-	time ./driver.test ${TEST}
+test: omltest.native
+	time ./omltest.native ${TEST}
 
-covered_driver.test:
+covered_test.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
+		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
-covered_test: covered_driver.test
-	time ./driver.test ${TEST}
+covered_test: covered_test.native
+	time ./omltest.native ${TEST}
 
 test_environment:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib -I src/test oml.cma driver.test
+		-I src/lib -I src/test oml.cma omltest.native
 
 clean:
-	rm -rf driver.test
 	ocamlbuild -clean
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
 

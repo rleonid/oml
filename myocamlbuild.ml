@@ -5,21 +5,8 @@ open Printf
 let target_with_extension ext =
   List.exists (fun s -> Pathname.get_extension s = ext) !Options.targets
 
-let add_test_target_rule () =
-  rule "Create a test target."
-    ~prod:"%.test"
-    ~dep:"%.native"
-    begin fun env _build ->
-      let test = env "%.test" in
-      let native = env "%.native" in
-      Seq [ ln_f native test
-          ; Cmd ( S [ A "ln"
-                    ; A "-sf"
-                    ; P (!Options.build_dir/test)
-                    ; A Pathname.parent_dir_name
-                    ])
-          ]
-    end
+let is_test_target () =
+  List.exists (function "omltest.native" -> true | _ -> false) !Options.targets
 
 let add_ml_and_mlt_and_depends () =
   rule "concat ml and mlt files, and build dependencies"
@@ -124,13 +111,12 @@ let () =
             Pathname.define_context "src/lib/rgr"   ["src/lib/util"; "src/lib/unc"; "src/lib/stats"; "src/lib/rgr"];
             Pathname.define_context "src/lib/uns"   ["src/lib/util"; "src/lib/unc"; "src/lib/uns"];
 
-            if target_with_extension "test" then begin
+            if is_test_target () then begin
               add_ml_and_mlt_and_depends ();
               add_compile_mlj_to_native_rule ();
               add_compile_mlj_to_byte_rule ();
+              Options.make_links := true;
             end;
-
-            add_test_target_rule ();
 
             (* To build without interfaces
             rule "ocaml-override: ml -> cmo & cmi"
