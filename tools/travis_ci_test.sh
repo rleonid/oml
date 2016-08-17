@@ -30,6 +30,7 @@ make setup
 
 echo Compiling
 make
+make lite
 
 echo Testing
 make covered_test
