@@ -13,7 +13,4 @@ install: [make "install-lite"]
 remove: ["ocamlfind" "remove" "oml-lite"]
 depends: [
   "ocamlfind" {build}
-  "lacaml" { >= "8.0.6" }
-  "lbfgs" { >= "0.8.7" }
-  "ocephes" { >= "0.8" }
 ]
