@@ -10,12 +10,14 @@ let add_test_target_rule () =
     ~prod:"%.test"
     ~dep:"%.native"
     begin fun env _build ->
-      let test = env "%.test" and native = env "%.native" in
+      let test = env "%.test" in
+      let native = env "%.native" in
       Seq [ ln_f native test
           ; Cmd ( S [ A "ln"
                     ; A "-sf"
                     ; P (!Options.build_dir/test)
-                    ; A Pathname.parent_dir_name])
+                    ; A Pathname.parent_dir_name
+                    ])
           ]
     end
 
@@ -54,7 +56,7 @@ let report_dependencies pth =
 let add_compile_mlj_to_byte_rule () =
   rule "ocaml: mlj -> cmo"
     ~insert:`top
-    ~prods:["%.cmo"]
+    ~prods:["%.cmo"; "%.cmi"]
     ~deps:["%.mlj"; "%.mlj.depends"]
     begin fun env build ->
       let ml  = env "%.ml" in
