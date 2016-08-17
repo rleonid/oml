@@ -11,7 +11,7 @@ let add_test_target_rule () =
     ~dep:"%.native"
     begin fun env _build ->
       let test = env "%.test" and native = env "%.native" in
-      Seq [ mv native test
+      Seq [ ln_f native test
           ; Cmd ( S [ A "ln"
                     ; A "-sf"
                     ; P (!Options.build_dir/test)
