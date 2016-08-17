@@ -16,7 +16,6 @@
 *)
 
 open Test_utils
-open Statistics.Hypothesis_test
 
 let () =
   let equalf = Assert.equalf ~eq:(fun x y ->

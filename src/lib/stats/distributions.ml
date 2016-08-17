@@ -17,7 +17,7 @@
 *)
 
 open Util
-module F = Uncategorized.Functions
+module F = Functions
 let invalid_arg ~f fmt = invalid_arg ~m:"Distributions" ~f fmt 
 
 let normal_cdf ?(mean=0.0) ?(std=1.0) x =

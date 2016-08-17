@@ -18,7 +18,6 @@
 open Test_utils
 open Printf
 open Util
-open Uncategorized.Functions
 
 let fac i =
   let rec loop a i =

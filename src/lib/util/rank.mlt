@@ -16,7 +16,6 @@
 *)
 
 open Test_utils
-open Rank
 
 let () =
   let add_random_test

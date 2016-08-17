@@ -17,7 +17,6 @@
 
 open Test_utils
 open Util
-open Online
 module D = Statistics.Descriptive
 
 (* In order for these tests to work well, we have to span the range of
@@ -30,7 +29,7 @@ let () =
   let add_random_test
     ?title ?nb_runs ?nb_tries ?classifier
     ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec =
-    Test.add_random_test_group "Running"
+    Test.add_random_test_group "Online"
       ?title ?nb_runs ?nb_tries ?classifier
       ?reducer ?reduce_depth ?reduce_smaller ?random_src gen f spec
   in

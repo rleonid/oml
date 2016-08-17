@@ -1,5 +1,5 @@
 
-DRIVER_BUILD_DIR=_driver
+TEST_BUILD_DIR=_test_build
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
@@ -7,7 +7,7 @@ PACKAGES_INSTALL=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
 
-.PHONY: all clean test build install uninstall setup default doc
+.PHONY: all clean test build install uninstall setup default doc omltest.native
 
 default: build
 
@@ -23,34 +23,30 @@ oml.cmxa:
 
 build: oml.cmxa
 
-joiner.native:
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -package str -I tools joiner.native
-
-driver.test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
+omltest.native:
+	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
+		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
-test: driver.test
-	time ./driver.test ${TEST}
+test: omltest.native
+	time ./omltest.native ${TEST}
 
-covered_driver.test: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
+covered_test.native:
+	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test driver.test
+		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
-covered_test: covered_driver.test
-	time ./driver.test ${TEST}
+covered_test: covered_test.native
+	time ./omltest.native ${TEST}
 
-test_environment: joiner.native
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) \
+test_environment:
+	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib -I src/test oml.cma driver.test
+		-I src/lib -I src/test oml.cma omltest.native
 
 clean:
 	ocamlbuild -clean
-	ocamlbuild -build-dir $(DRIVER_BUILD_DIR) -clean
-	rm -rf driver.test
+	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
 
 install:
 	ocamlfind install oml META \
@@ -73,7 +69,7 @@ report_dir:
 # (ie. the *.ml has the *.mlt inside of it with our label), we get proper
 # alignment of the html!
 report: report_dir
-	cd $(DRIVER_BUILD_DIR) && \
+	cd $(TEST_BUILD_DIR) && \
 	bisect-ppx-report -html ../report_dir ../$(shell ls -t bisect*.out | head -1) && \
 	cd -
 

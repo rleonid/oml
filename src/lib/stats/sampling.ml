@@ -17,7 +17,7 @@
 *)
 
 open Util
-module F = Uncategorized.Functions
+module F = Functions
 let invalid_arg ~f fmt = invalid_arg ~m:"Sampling" ~f fmt
 
 type 'a generator = unit -> 'a

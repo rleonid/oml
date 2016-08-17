@@ -123,6 +123,6 @@ module Default = struct
 
 end
 
-module D = Make(Default)
-include D
+module Def = Make(Default)
+include Def
 

@@ -17,7 +17,6 @@
 
 open Test_utils
 open Util
-open Statistics.Distributions
 
 let () =
   let add_random_test

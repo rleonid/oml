@@ -17,7 +17,6 @@
 
 open Test_utils
 open Util
-open Statistics.Descriptive
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Descriptive" in

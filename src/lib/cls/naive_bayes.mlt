@@ -15,13 +15,11 @@
    limitations under the License.
 *)
 
-module List = ListLabels
 open Test_utils
-open Classification
 module P = Probabilities
 
 let () =
-  let add_simple_test = Test.add_simple_test_group "Classify" in
+  let add_simple_test = Test.add_simple_test_group "Naive Bayes" in
   add_simple_test ~title:"Naive Multinomial Bayes."
     (fun () ->
       (** This example comes from
@@ -53,7 +51,7 @@ let () =
         ]
       in
       let to_feature_arr l = l |> List.map ~f:feature_map |> Array.of_list in
-      let module NB = Naive_bayes.Binomial(
+      let module NB = Binomial(
         struct
           type feature = [ `shortbread | `lager | `whiskey | `porridge | `football ] list
           type clas = [ `English | `Scottish]
@@ -82,7 +80,7 @@ let () =
   add_simple_test ~title:"Naive Gaussian Bayes."
     (fun () ->
       let iris    = Iris.iris in
-      let module GB = Naive_bayes.Gaussian(IrisEncoding) in
+      let module GB = Gaussian(IrisEncoding) in
       let iris_gb = GB.estimate iris in
       let result  =
         List.map ~f:(fun (v, d) -> GB.eval iris_gb d |> P.most_likely, v) iris
@@ -92,38 +90,5 @@ let () =
           ~init:0
       in
       Assert.is_true (different = 6));
-
-  add_simple_test ~title:"Logistic Regression on Iris only 2 classes."
-    (fun () ->
-      let iris      = Iris.iris in
-      let no_setosa =
-        List.filter ~f:(fun (c,_) -> match c with | `setosa -> false | _ -> true)
-          iris
-      in
-      let module LR = Logistic_regression.Binary(IrisEncoding) in
-      let classes   = [`versicolor; `virginica] in
-      let iris_lr   = LR.estimate ~classes no_setosa in
-      let result    =
-        List.map ~f:(fun (v, d) -> LR.eval iris_lr d |> P.most_likely, v) no_setosa
-      in
-      let different =
-        List.fold_left result ~f:(fun s (x,y) -> if x = y then s else s + 1)
-          ~init:0
-      in
-      Assert.is_true (different = 3));
-
-  add_simple_test ~title:"Logistic Regression on Iris all classes."
-    (fun () ->
-      let iris      = Iris.iris in
-      let module LR = Logistic_regression.Multiclass(IrisEncoding) in
-      let iris_lr   = LR.estimate iris in
-      let result    =
-        List.map ~f:(fun (v, d) -> LR.eval iris_lr d |> P.most_likely, v) iris
-      in
-      let different =
-        List.fold_left result ~f:(fun s (x,y) -> if x = y then s else s + 1)
-          ~init:0
-      in
-      Assert.is_true (different = 3));
-
+  
   ()
