@@ -25,13 +25,18 @@ oml.cmxa:
 	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
 
 lite:
-	ocamlbuild -build-dir $(LITE_BUILD_DIR) $(CPPO_TAG) -tag 'cppo_D(OML_LITE)' -use-ocamlfind -I src/lib oml.cma oml.cmxa oml.cmxs
+	mv src/lib/_tags src/lib/_tags_old && \
+	cp src/lib/_lite_tags src/lib/_tags && \
+	ocamlbuild -build-dir $(LITE_BUILD_DIR) $(CPPO_TAG) -tag 'cppo_D(OML_LITE)' -use-ocamlfind -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs || \
+	mv src/lib/_tags_old src/lib/_tags &&	\
+	rm src/lib/_tags_old
 
 build: oml.cmxa
 
 clean:
 	ocamlbuild -clean
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
+	ocamlbuild -build-dir $(LITE_BUILD_DIR) -clean
 
 #### Testing
 
@@ -67,7 +72,7 @@ uninstall:
 	ocamlfind remove oml
 
 install-lite:
-	cd pkg/lite && ocamlfind install oml-lite META $(foreach ext, $(INSTALL_EXTS), ../../${LITE_BUILD_DIR}/src/lib/oml.$(ext))
+	cd pkg/lite && ocamlfind install oml-lite META $(foreach ext, $(INSTALL_EXTS), ../../${LITE_BUILD_DIR}/src/lib/oml_lite.$(ext))
 
 uninstall-lite:
 	ocamlfind remove oml-lite

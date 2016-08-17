@@ -1,7 +1,2 @@
-#require "ocephes"
-#require "lacaml"
-#require "lbfgs"
-#directory "_build/src/lib" ;;
-#load_rec "oml.cma";;
-open Oml
-open Oml.Util
+#directory "_lite_build/src/lib" ;;
+#load_rec "oml_lite.cma";;
