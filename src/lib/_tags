@@ -1,24 +1,24 @@
-<*.cmx> and not <oml_lite.cm*> : for-pack(Oml_lite)
+<*.cmx> and not <oml.cm*> : for-pack(Oml)
 
 # For the sub-packed modules
-<util/util.cm*> : for-pack(Oml_lite)
+<util/util.cm*> : for-pack(Oml)
 
-<unc/*.cmx> and not <unc/uncategorized.cm*> : for-pack(Oml_lite.Uncategorized)
+<unc/*.cmx> and not <unc/uncategorized.cm*> : for-pack(Oml.Uncategorized)
 <unc/*.cmx> and not <unc/uncategorized.cm*> : for-pack(Uncategorized)
-<unc/uncategorized.cm*> : for-pack(Oml_lite)
+<unc/uncategorized.cm*> : for-pack(Oml)
 
-<stats/*.cmx> and not <stats/statistics.cm*> : for-pack(Oml_lite.Statistics)
+<stats/*.cmx> and not <stats/statistics.cm*> : for-pack(Oml.Statistics)
 <stats/*.cmx> and not <stats/statistics.cm*> : for-pack(Statistics)
-<stats/statistics.cm*> : for-pack(Oml_lite)
+<stats/statistics.cm*> : for-pack(Oml)
 
-<cls/*.cmx> and not <cls/classification.cm*> : for-pack(Oml_lite.Classification)
+<cls/*.cmx> and not <cls/classification.cm*> : for-pack(Oml.Classification)
 <cls/*.cmx> and not <cls/classification.cm*> : for-pack(Classification)
-<cls/classification.cm*> : for-pack(Oml_lite)
+<cls/classification.cm*> : for-pack(Oml)
 
-<rgr/*.cmx> and not <rgr/regression.cm*> : for-pack(Oml_lite.Regression)
+<rgr/*.cmx> and not <rgr/regression.cm*> : for-pack(Oml.Regression)
 <rgr/*.cmx> and not <rgr/regression.cm*> : for-pack(Regression)
-<rgr/regression.cm*> : for-pack(Oml_lite)
+<rgr/regression.cm*> : for-pack(Oml)
 
-<uns/*.cmx> and not <uns/unsupervised.cm*> : for-pack(Oml_lite.Unsupervised)
+<uns/*.cmx> and not <uns/unsupervised.cm*> : for-pack(Oml.Unsupervised)
 <uns/*.cmx> and not <uns/unsupervised.cm*> : for-pack(Unsupervised)
-<uns/unsupervised.cm*> : for-pack(Oml_lite)
+<uns/unsupervised.cm*> : for-pack(Oml)
