@@ -4,7 +4,8 @@ LITE_BUILD_DIR=_lite_build
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=cppo $(PACKAGES_COVERED)
+PACKAGES_INSTALL=cppo $(PACKAGES)
+PACKAGES_INSTALL_TEST=cppo $(PACKAGES_COVERED)
 CPPO_TAG:=-plugin-tag 'package(cppo_ocamlbuild)'
 
 SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
@@ -12,12 +13,28 @@ INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
 
 .PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
 
-default: build
+default: FORCE
+	@echo "available targets:"
+	@echo "  build      	compiles Oml"
+	@echo "  lite       	compiles Oml_lite"
+	@echo "  tests      	runs unit tests"
+	@echo "  doc        	generates ocamldoc documentations"
+	@echo "  clean      	deletes all produced files"
+	@echo "  setup    		opam install Oml dependencies"
+	@echo "  setup-test		opam install Oml and testing dependencies"
+	@echo "  install    	copies executable and library files"
+	@echo "  install-lite copies executable and library files"
+	@echo "  covered_test	runs unit tests with coverage"
+	@echo "  report				generate Bisect_ppx coverage report"
+
 
 # This should be called something else.
 setup:
-	opam pin add dsfo git://github.com/rleonid/dsfo
 	opam install $(PACKAGES_INSTALL)
+
+setup-test:
+	opam pin add dsfo git://github.com/rleonid/dsfo
+	opam install $(PACKAGES_INSTALL_TEST)
 
 #### Building
 
