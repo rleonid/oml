@@ -26,7 +26,7 @@ opam install ocamlbuild
 opam pin add dsfo git://github.com/rleonid/dsfo
 
 echo Installing Libraries
-make setup
+make setup-test
 
 echo Compiling
 make build
