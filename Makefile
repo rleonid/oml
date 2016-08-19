@@ -20,12 +20,12 @@ default: FORCE
 	@echo "  tests      	runs unit tests"
 	@echo "  doc        	generates ocamldoc documentations"
 	@echo "  clean      	deletes all produced files"
-	@echo "  setup    		opam install Oml dependencies"
-	@echo "  setup-test		opam install Oml and testing dependencies"
+	@echo "  setup      	opam install Oml dependencies"
+	@echo "  setup-test 	opam install Oml and testing dependencies"
 	@echo "  install    	copies executable and library files"
-	@echo "  install-lite copies executable and library files"
+	@echo "  install-lite	copies executable and library files"
 	@echo "  covered_test	runs unit tests with coverage"
-	@echo "  report				generate Bisect_ppx coverage report"
+	@echo "  report     	generate Bisect_ppx coverage report"
 
 
 # This should be called something else.
@@ -118,3 +118,5 @@ oml.odocl:
 
 doc: oml.odocl
 	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib  oml.docdir/index.html
+
+FORCE:
