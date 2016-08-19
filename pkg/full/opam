@@ -1,7 +1,7 @@
 opam-version: "1.2"
 name: "oml"
-version: "0.0.5"
-available: [ ocaml-version >= "4.01" ]
+version: "0.0.6"
+available: [ ocaml-version >= "4.03" ]
 maintainer: "Leonid Rozenberg <leonidr@gmail.com>"
 authors: "Leonid Rozenberg <leonidr@gmail.com>"
 homepage: "https://github.com/hammerlab/oml/"
@@ -13,7 +13,8 @@ install: [make "install"]
 remove: ["ocamlfind" "remove" "oml"]
 depends: [
   "ocamlfind" {build}
+  "cppo" { build & >= "1.4.0" }
   "lacaml" { >= "8.0.6" }
-  "lbfgs" { = "0.8.7" }
-  "ocephes" { = "0.8" }
+  "lbfgs" { >= "0.8.7" }
+  "ocephes" { >= "0.8" }
 ]

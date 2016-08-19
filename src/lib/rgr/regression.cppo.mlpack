@@ -1,7 +1,9 @@
 Intf
 Univariate
+#ifndef OML_LITE
 Eval_multivariate
 SolvedLPViaSvd
 Multivariate
 Tikhonov
+#endif
 Interpolate

@@ -1,4 +1,4 @@
-<*.cmx> and not <oml.cm*>      : for-pack(Oml)
+<*.cmx> and not <oml.cm*> : for-pack(Oml)
 
 # For the sub-packed modules
 <util/util.cm*> : for-pack(Oml)

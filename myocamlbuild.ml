@@ -130,7 +130,7 @@ let () =
             if target_with_extension "html" then begin
               (* Insert Oml_array.mli into the
                 'include (module type of Oml_array)'
-                so taht we can have the signature for documentation. *)
+                so that we can have the signature for documentation. *)
               let from_file = "src/lib/util/util.mli" in
               let to_file   = "_build/src/lib/util/util.mli" in
               let perl_mat  = "include \\(module type of Oml_array\\)" in
@@ -179,4 +179,6 @@ let () =
             end
           end
   in
-  dispatch additional_rules
+  dispatch (fun hook ->
+    Ocamlbuild_cppo.dispatcher hook;
+    additional_rules hook)

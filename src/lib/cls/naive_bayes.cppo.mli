@@ -63,6 +63,7 @@ module Categorical(D: Intf.Category_encoded_data) : sig
 
 end
 
+#ifndef OML_LITE
 (** Train a
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes}
   Gaussian Naive Bayes} by estimating mean and standard deviations
@@ -74,4 +75,4 @@ module Gaussian(D: Intf.Continuous_encoded_data) : sig
                           and type feature_probability = float array
 
 end
-
+#endif

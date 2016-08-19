@@ -17,7 +17,6 @@
 
 open Util
 module List = ListLabels
-module D = Statistics.Distributions
 module O = Online
 open Intf
 
@@ -247,8 +246,10 @@ module Categorical(Data: Category_encoded_data) = struct
 
   end
 
+#ifndef OML_LITE
 module Gaussian(Data: Continuous_encoded_data) = struct
 
+  module D = Statistics.Distributions
   (*type feature := Data.feature
   type clas := Data.clas *)
 
@@ -314,4 +315,5 @@ module Gaussian(Data: Continuous_encoded_data) = struct
       init update incorporate (module Cm)
 
   end
+#endif
 

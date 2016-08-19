@@ -1,30 +1,48 @@
 
 TEST_BUILD_DIR=_test_build
+LITE_BUILD_DIR=_lite_build
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=$(PACKAGES_COVERED)
+PACKAGES_INSTALL=cppo $(PACKAGES_COVERED)
+CPPO_TAG:=-plugin-tag 'package(cppo_ocamlbuild)'
 
 SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
+INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
 
-.PHONY: all clean test build install uninstall setup default doc omltest.native
+.PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
 
 default: build
-
-all: build
 
 # This should be called something else.
 setup:
 	opam pin add dsfo git://github.com/rleonid/dsfo
 	opam install $(PACKAGES_INSTALL)
 
+#### Building
+
 oml.cmxa:
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
+	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
+
+lite:
+	mv src/lib/_tags src/lib/_tags_orig && \
+	cp src/lib/_lite_tags src/lib/_tags && \
+	ocamlbuild -build-dir $(LITE_BUILD_DIR) $(CPPO_TAG) -tag 'cppo_D(OML_LITE)' -use-ocamlfind -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs && \
+	mv src/lib/_tags_orig src/lib/_tags || \
+	mv src/lib/_tags_orig src/lib/_tags
 
 build: oml.cmxa
 
+clean:
+	ocamlbuild -clean
+	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
+	ocamlbuild -build-dir $(LITE_BUILD_DIR) -clean
+
+#### Testing
+
 omltest.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+		$(CPPO_TAG) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
@@ -33,6 +51,7 @@ test: omltest.native
 
 covered_test.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+		$(CPPO_TAG) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
@@ -44,23 +63,21 @@ test_environment:
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib -I src/test oml.cma omltest.native
 
-clean:
-	ocamlbuild -clean
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
+#### Installing
 
 install:
-	ocamlfind install oml META \
-		_build/src/lib/oml.a \
-		_build/src/lib/oml.o \
-		_build/src/lib/oml.cma \
-		_build/src/lib/oml.cmxa \
-		_build/src/lib/oml.cmxs \
-		_build/src/lib/*.cmi \
-		_build/src/lib/*.cmo \
-		_build/src/lib/*.cmx
+	cd pkg/full && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../../_build/src/lib/oml.$(ext))
 
 uninstall:
 	ocamlfind remove oml
+
+install-lite:
+	cd pkg/lite && ocamlfind install oml-lite META $(foreach ext, $(INSTALL_EXTS), ../../${LITE_BUILD_DIR}/src/lib/oml_lite.$(ext))
+
+uninstall-lite:
+	ocamlfind remove oml-lite
+
+#### Test Coverage
 
 report_dir:
 	mkdir report_dir
@@ -75,6 +92,9 @@ report: report_dir
 
 clean_reports:
 	rm -rf report_dir bisect*.out
+
+
+#### Documentation
 
 oml.odocl:
 	cp src/lib/oml.mlpack oml.odocl
