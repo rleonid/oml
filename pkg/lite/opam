@@ -13,4 +13,5 @@ install: [make "install-lite"]
 remove: ["ocamlfind" "remove" "oml-lite"]
 depends: [
   "ocamlfind" {build}
+  "cppo" { build & >= "1.4.0" }
 ]

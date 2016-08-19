@@ -117,21 +117,6 @@ let () =
               add_compile_mlj_to_byte_rule ();
               Options.make_links := true;
             end;
-            (* Taken from Cppo_plugin code. *)
-            let cppo_rules ext =
-                    let dep   = "%(name).cppo"-.-ext
-                    and prod1 = "%(name: <*> and not <*.cppo>)"-.-ext
-                    and prod2 = "%(name: <**/*> and not <**/*.cppo>)"-.-ext in
-                    let cppo_rule prod env _build =
-                      let dep = env dep in
-                      let prod = env prod in
-                      let tags = tags_of_pathname prod ++ "cppo" in
-                      Cmd (S[A "cppo"; T tags; S [A "-o"; P prod]; P dep ])
-                    in
-                    rule ("cppo: *.cppo."-.-ext^" -> *."-.-ext)  ~dep ~prod:prod1 (cppo_rule prod1);
-                    rule ("cppo: **/*.cppo."-.-ext^" -> **/*."-.-ext)  ~dep ~prod:prod2 (cppo_rule prod2);
-                  in
-            List.iter cppo_rules ["mlpack"; ];
 
             (* To build without interfaces
             rule "ocaml-override: ml -> cmo & cmi"
