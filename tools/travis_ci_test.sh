@@ -29,7 +29,7 @@ echo Installing Libraries
 make setup
 
 echo Compiling
-make
+make build
 make lite
 
 echo Testing
