@@ -1,3 +1,14 @@
+Version 0.0.6 (2016-08-19):
+---------------------------
+  - Alias method for sampling from Categorical distribution and
+    correcting multinomial to categorical (Sergei Lebedev @superbobry).
+  - Create build for Oml_lite.
+  - Remove the joiner tool to rely exclusively on Ocamlbuild.
+  - Median and Mean absolute deviation.
+  - Cosine distance.
+  - Classification via linear (and Quadratic) discriminant analysis.
+  - Benford's law (Carmelo Piccione @structured).
+
 Version 0.0.5 (2016-02-03):
 ---------------------------
   - Refine Logistic Regression to tune gradient calculation in L-BFGS.
