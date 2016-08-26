@@ -18,7 +18,7 @@
 (** Use
   {{:https://en.wikipedia.org/wiki/Logistic_regression}Logistic Regression}
   to estimate log-odds for each of the quantitative features in the
-  {{!modtype:Intf.Continuous_encoded_data}encoded data},
+  {{!modtype:Cls_intf.Continuous_encoded_data}encoded data},
   per class.
 
   Unless specified via the [classes] argument to [estimate], the first
@@ -29,10 +29,10 @@
 
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
-  {{!val:Intf.Continuous_encoded_data.encoding}encoding}. *)
-module Binary(D: Intf.Continuous_encoded_data) :
+  {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
+module Binary(D: Cls_intf.Continuous_encoded_data) :
   sig
-    include Intf.Classifier with  type feature = D.feature
+    include Cls_intf.Classifier with  type feature = D.feature
                             and type clas = D.clas
 
     (** [opt ~lambda ~tolerance ()] a constructor for the optional arguments,
@@ -61,15 +61,15 @@ module Binary(D: Intf.Continuous_encoded_data) :
   {{:https://en.wikipedia.org/wiki/Multinomial_logistic_regression}
   Multiple Class Logistic Regression} to estimate log-odds
   for each of the quantitative features in the
-  {{!modtype:Intf.Continuous_encoded_data}encoded data},
+  {{!modtype:Cls_intf.Continuous_encoded_data}encoded data},
   per class.
 
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
-  {{!val:Intf.Continuous_encoded_data.encoding}encoding}. *)
-module Multiclass(D: Intf.Continuous_encoded_data) :
+  {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
+module Multiclass(D: Cls_intf.Continuous_encoded_data) :
   sig
-    include Intf.Classifier with (* type opt := opt
+    include Cls_intf.Classifier with (* type opt := opt
                             and*) type feature = D.feature
                             and type clas = D.clas
 

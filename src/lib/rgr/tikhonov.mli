@@ -14,7 +14,7 @@ val opt : ?tik_matrix:float array array ->
           unit ->
           opt
 
-include Intf.Linear_model
+include Oml_intf.Linear_model
   with type input = float array
   and type opt := opt
 

@@ -5,7 +5,7 @@ open Util
 module LU = Uncategorized.Lacaml_util
 module List = ListLabels
 
-module LDA(Data : Intf.Continuous_encoded_data) = struct
+module LDA(Data : Cls_intf.Continuous_encoded_data) = struct
   type feature = Data.feature
   type clas = Data.clas
 
@@ -101,7 +101,7 @@ module LDA(Data : Intf.Continuous_encoded_data) = struct
 
 end (* LDA *)
 
-module QDA(Data : Intf.Continuous_encoded_data) = struct
+module QDA(Data : Cls_intf.Continuous_encoded_data) = struct
   type feature = Data.feature
   type clas = Data.clas
 

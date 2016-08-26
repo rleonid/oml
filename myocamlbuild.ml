@@ -105,6 +105,7 @@ let () =
       | Before_rules    -> ()
       | After_rules     ->
           begin
+            Pathname.define_context "src/lib/"      ["src/lib/util"];
             Pathname.define_context "src/lib/unc"   ["src/lib/util"; "src/lib/unc"];
             Pathname.define_context "src/lib/stats" ["src/lib/util"; "src/lib/unc"; "src/lib/stats"];
             Pathname.define_context "src/lib/cls"   ["src/lib/util"; "src/lib/unc"; "src/lib/stats"; "src/lib/cls"];

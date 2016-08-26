@@ -15,20 +15,15 @@
    limitations under the License.
 *)
 
-include Oml_util
-module Array = struct
-  include Oml_array
-end
+include module type of Oml_lite_naive_bayes
 
-module Float = struct
-  let ( + ) x y = x +. y
-  let ( - ) x y = x -. y
-  let ( * ) x y = x *. y
-  let ( / ) x y = x /. y
-end
-
-module type Optional_arg_intf = sig
-
-  type opt            (** type of default argument. *)
-  val default : opt   (** A default value used when not specified.*)
+(** Train a
+  {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes}
+  Gaussian Naive Bayes} by estimating mean and standard deviations
+  for each of the quantitative features in the
+  {{!modtype:Cls_intf.Continuous_encoded_data}encoded data}. *)
+module Gaussian(D: Cls_intf.Continuous_encoded_data) : sig
+  include Cls_intf.Generative with type feature := D.feature
+                          and type clas := D.clas
+                          and type feature_probability = float array
 end

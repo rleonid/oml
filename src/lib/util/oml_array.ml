@@ -54,8 +54,9 @@ let sumf a = Kahan.sum (Array.fold_left Kahan.update Kahan.empty a)
   !s *)
 
 (* TODO: Are there heuristics to consider when arrays are large? or elements
-  in the array are particulary large/small. log transforms?
-  Specifically, if I'm not going to use this method for geometric_mean,
+  in the array are particulary large/small,
+  specifically. when to log transforms?
+  Furthermore, if I'm not going to use this method for geometric_mean,
   when should I use this default version?  *)
 let prodf = Array.fold_left ( *. ) 1.0
 

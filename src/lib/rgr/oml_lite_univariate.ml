@@ -15,20 +15,4 @@
    limitations under the License.
 *)
 
-include Oml_util
-module Array = struct
-  include Oml_array
-end
-
-module Float = struct
-  let ( + ) x y = x +. y
-  let ( - ) x y = x -. y
-  let ( * ) x y = x *. y
-  let ( / ) x y = x /. y
-end
-
-module type Optional_arg_intf = sig
-
-  type opt            (** type of default argument. *)
-  val default : opt   (** A default value used when not specified.*)
-end
+include Common_univariate

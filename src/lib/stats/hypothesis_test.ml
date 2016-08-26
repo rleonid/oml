@@ -18,7 +18,7 @@
 open Util
 open Descriptive
 open Distributions
-module F = Functions
+module F = Oml_functions
 
 let prediction_interval_sub k std mean alpha =
   let t_v = student_quantile ~degrees_of_freedom:(k - 1) (1.0 -. alpha /. 2.) in

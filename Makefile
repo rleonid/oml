@@ -8,7 +8,7 @@ PACKAGES_INSTALL=cppo $(PACKAGES)
 PACKAGES_INSTALL_TEST=cppo $(PACKAGES_COVERED)
 CPPO_TAG:=-plugin-tag 'package(cppo_ocamlbuild)'
 
-SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
+SOURCE_DIRS=util unc stats cls rgr uns
 INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
 
 .PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
@@ -39,7 +39,8 @@ setup-test:
 #### Building
 
 oml.cmxa:
-	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
+	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
+			$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs oml.cma oml.cmxa oml.cmxs
 
 lite:
 	mv src/lib/_tags src/lib/_tags_orig && \

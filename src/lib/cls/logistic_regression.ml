@@ -17,7 +17,7 @@
 
 module List = ListLabels
 open Util
-open Intf
+open Cls_intf
 
 module LrCommon(Data: Continuous_encoded_data) = struct
 

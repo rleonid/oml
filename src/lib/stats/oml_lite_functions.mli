@@ -1,5 +1,6 @@
 (*
-   Copyright 2015,2016:
+   Copyright 2015:2016
+     Carmelo Piccione <carmelo.piccione@gmail.com>
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +16,8 @@
    limitations under the License.
 *)
 
-include Oml_util
-module Array = struct
-  include Oml_array
-end
+(** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
+    on [temperature].
 
-module Float = struct
-  let ( + ) x y = x +. y
-  let ( - ) x y = x -. y
-  let ( * ) x y = x *. y
-  let ( / ) x y = x /. y
-end
-
-module type Optional_arg_intf = sig
-
-  type opt            (** type of default argument. *)
-  val default : opt   (** A default value used when not specified.*)
-end
+    @raise Invalid_argument if [weights] is empty or [temperature = 0]. *)
+val softmax : ?temperature:float -> float array -> float array

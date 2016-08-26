@@ -1,5 +1,6 @@
 (*
-   Copyright 2015,2016:
+   Copyright 2015:2016
+     Carmelo Piccione <carmelo.piccione@gmail.com>
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +16,13 @@
    limitations under the License.
 *)
 
-include Oml_util
-module Array = struct
-  include Oml_array
-end
+open Util
 
-module Float = struct
-  let ( + ) x y = x +. y
-  let ( - ) x y = x -. y
-  let ( * ) x y = x *. y
-  let ( / ) x y = x /. y
-end
+let invalid_arg ~f fmt = invalid_arg ~m:"Functions" ~f fmt
 
-module type Optional_arg_intf = sig
-
-  type opt            (** type of default argument. *)
-  val default : opt   (** A default value used when not specified.*)
-end
+let softmax ?(temperature=1.0) weights =
+  if Array.length weights = 0 then invalid_arg ~f:"softmax" "weights" else
+  if temperature = 0.0 then invalid_arg ~f:"softmax" "temperature" else
+    let weights = Array.map (fun w -> exp (w /. temperature)) weights in
+    let sum = Array.fold_left (+.) 0.0 weights in
+    Array.map (fun w -> w /. sum) weights

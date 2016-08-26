@@ -47,9 +47,9 @@ let coefficients lm = [| lm.alpha; lm.beta |]
 
 let residual_standard_error lm = sqrt lm.inferred_var
 
-let coeff_of_determination lm = 1.0 -. lm.sum_residuals /. lm.s_yy
-
 let eval lrm x = lrm.alpha +. lrm.beta *. x
+
+let coeff_of_determination lm = 1.0 -. lm.sum_residuals /. lm.s_yy
 
 type opt = float array
 
@@ -107,45 +107,6 @@ let regress ?(opt=default) pred ~resp =
   ; s_yy = sum2 ( *. ) d_y d_y
   ; s_xx = d_xx_w
   }
-
-#ifndef OML_LITE
-module D = Statistics.Distributions
-module Ht = Statistics.Hypothesis_test
-
-let confidence_interval, prediction_interval =
-  let interval a lrm ~alpha x =
-    let dgf = lrm.size -. 2.0 in
-    let degrees_of_freedom = truncate dgf in
-    let t  = D.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
-    let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
-    let c  = lrm.sum_residuals /. dgf in
-    let se = sqrt ((a +. b) *. c) in
-    let d  = t *. se in
-    let y  = eval lrm x in
-    (y -. d), (y +. d)
-  in
-  (fun lrm -> interval (1.0 /. lrm.size) lrm),
-  (fun lrm -> interval ((lrm.size +. 1.0) /. lrm.size) lrm)
-
-let alpha_test ?(null=0.0) t =
-  let alpha_var =
-    t.inferred_var *. (1. /. t.sum_weights +.
-    t.m_pred *. t.m_pred /. t.s_xx)
-  in
-  let degrees_of_freedom = truncate t.size - 2 in
-  let diff = t.alpha -. null in
-  Ht.(t_test Two_sided ~degrees_of_freedom ~diff ~error:(sqrt alpha_var))
-
-let beta_test ?(null=0.0) t =
-  let beta_var = t.inferred_var /. t.s_xx in
-  let degrees_of_freedom = truncate t.size - 2 in
-  let diff = t.beta -. null in
-  Ht.(t_test Two_sided ~degrees_of_freedom ~diff ~error:(sqrt beta_var))
-
-let coefficient_tests ?null t =
-  [| alpha_test ?null t ; beta_test ?null t |]
-
-#endif
 
 let f_statistic t =
   (t.s_yy -. t.sum_residuals) /. (t.sum_residuals /. (t.size -. 2.))

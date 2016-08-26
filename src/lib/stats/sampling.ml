@@ -17,7 +17,7 @@
 *)
 
 open Util
-module F = Functions
+
 let invalid_arg ~f fmt = invalid_arg ~m:"Sampling" ~f fmt
 
 type 'a generator = unit -> 'a
@@ -131,8 +131,7 @@ let categorical ?seed weights =
       (fun () -> Alias.sample alias r)
 
 let softmax ?seed ?temperature weights =
-  categorical ?seed (F.softmax ?temperature weights)
-
+  categorical ?seed (Oml_lite_functions.softmax ?temperature weights)
 
 module Poly =
   struct

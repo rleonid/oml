@@ -24,8 +24,7 @@ open Util
 open SolvedLPViaSvd
 open Lacaml.D
 module P = Printf
-module D = Statistics.Distributions
-module Ht = Statistics.Hypothesis_test
+module D = Distributions
 module Svd = Uncategorized.Svd
 
 type glm =
@@ -124,7 +123,7 @@ let coefficient_tests ?(null=0.0) glm =
   Array.init n (fun i ->
     let error = sqrt (glm.inferred_var *. cov_dia.{i+1}) (*FORTRAN*) in
     let diff  = coe.(i) -. null in
-    Ht.(t_test Two_sided ~degrees_of_freedom ~diff ~error))
+    Hypothesis_test.(t_test Two_sided ~degrees_of_freedom ~diff ~error))
 
 let f_statistic t =
   let n = Vec.dim t.solved_lp.coef in

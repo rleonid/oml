@@ -14,16 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 *)
-(*open Intf *)
 
 (** Train a
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
-  {{!modtype:Intf.Dummy_encoded_data}Dummy variables.} *)
-module Binomial(D: Intf.Dummy_encoded_data) : sig
-  include Intf.Generative with type feature = D.feature
-                          and type clas = D.clas
-                          and type feature_probability = float array
+  {{!modtype:Cls_intf.Dummy_encoded_data}Dummy variables.} *)
+module Binomial(D: Cls_intf.Dummy_encoded_data) : sig
+  include Cls_intf.Generative with type feature = D.feature
+                              and type clas = D.clas
+                              and type feature_probability = float array
 
   (** [opt ~smoothing ~bernoulli ()] the optional configuration of the
        classifier.
@@ -45,11 +44,11 @@ end
 (** Train a
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
-  {{!modtype:Intf.Category_encoded_data}Categorical variables.} *)
-module Categorical(D: Intf.Category_encoded_data) : sig
-  include Intf.Generative with type feature = D.feature
-                          and type clas = D.clas
-                          and type feature_probability = float array
+  {{!modtype:Cls_intf.Category_encoded_data}Categorical variables.} *)
+module Categorical(D: Cls_intf.Category_encoded_data) : sig
+  include Cls_intf.Generative with type feature = D.feature
+                              and type clas = D.clas
+                              and type feature_probability = float array
 
   (** [opt ~smoothing ()] the optional configuration of the classifier.
 
@@ -62,17 +61,3 @@ module Categorical(D: Intf.Category_encoded_data) : sig
   val opt : ?smoothing:float -> unit -> opt
 
 end
-
-#ifndef OML_LITE
-(** Train a
-  {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes}
-  Gaussian Naive Bayes} by estimating mean and standard deviations
-  for each of the quantitative features in the
-  {{!modtype:Intf.Continuous_encoded_data}encoded data}. *)
-module Gaussian(D: Intf.Continuous_encoded_data) : sig
-  include Intf.Generative with type feature := D.feature
-                          and type clas := D.clas
-                          and type feature_probability = float array
-
-end
-#endif
