@@ -22,6 +22,8 @@
     (http://www.netlib.org/cephes/), via a Ctypes interface implemented in
     the {{:https://github.com/rleonid/ocephes}Ocephes} library. *)
 
+include module type of Oml_lite_functions
+
 (** {2 Standard error functions.} *)
 
 (** [erf x] computes the (Gauss) error function,

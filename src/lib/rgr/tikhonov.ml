@@ -16,7 +16,7 @@
 *)
 
 open SolvedLPViaSvd
-open Uncategorized.Lacaml_util
+open Lacaml_util
 open Lacaml.D
 
 type opt =

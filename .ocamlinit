@@ -1,10 +1,14 @@
-#directory "_build/src/lib" ;;
 (* Need to list all of the sub directories so that Utop
   knows where to look. *)
-#directory "_build/src/lib/util" ;;  
-#directory "_build/src/lib/stats" ;;  
+(*
+#directory "_lite_build/src/lib" ;;
+#load_rec "oml_lite.cma" ;;
+print_endline "Loaded Oml_lite" ;;
+*)
+
+#directory "_build/src/lib" ;;
 #require "ocephes";;
 #require "lacaml";;
 #require "lbfgs";;
 #load_rec "oml.cma";;
-#load_rec "oml_lite.cma";;
+print_endline "Loaded Oml" ;;

@@ -4,16 +4,15 @@ module Uncategorized = struct
   include Oml_lite_uncategorized
 end
 
+
 module Statistics = struct
   module Continued_fraction = Continued_fraction
   module Functions = struct
     include Oml_lite_functions
-    include Oml_functions
   end
   module Sampling = Sampling
   module Descriptive = Descriptive
   module Measures = Measures
-
 end
 
 module Online = Online
@@ -31,8 +30,8 @@ module Regression = struct
   module Intf = struct
     include Oml_lite_intf
   end
-
   module Univariate = struct
     include Oml_lite_univariate
   end
+  module Interpolate = Interpolate
 end

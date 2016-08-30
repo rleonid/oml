@@ -1,6 +1,6 @@
 
 open SolvedLPViaSvd
-open Uncategorized.Lacaml_util
+open Lacaml_util
 open Lacaml.D
 
 module E = Eval_multivariate

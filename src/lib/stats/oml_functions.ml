@@ -16,6 +16,7 @@
 *)
 
 open Util
+include Oml_lite_functions
 
 (* TODO: Figure out the best bound for this and ensure the more
   accurate method is used. I think that Cephes might already do this

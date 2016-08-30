@@ -16,7 +16,7 @@ INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
 default: FORCE
 	@echo "available targets:"
 	@echo "  build      	compiles Oml"
-	@echo "  lite       	compiles Oml_lite"
+	@echo "  lite       	compiles only Oml_lite"
 	@echo "  tests      	runs unit tests"
 	@echo "  doc        	generates ocamldoc documentations"
 	@echo "  clean      	deletes all produced files"
@@ -39,15 +39,13 @@ setup-test:
 #### Building
 
 oml.cmxa:
-	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
-			$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs oml.cma oml.cmxa oml.cmxs
+	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml.cma oml.cmxa oml.cmxs
 
 lite:
-	mv src/lib/_tags src/lib/_tags_orig && \
-	cp src/lib/_lite_tags src/lib/_tags && \
-	ocamlbuild -build-dir $(LITE_BUILD_DIR) $(CPPO_TAG) -tag 'cppo_D(OML_LITE)' -use-ocamlfind -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs && \
-	mv src/lib/_tags_orig src/lib/_tags || \
-	mv src/lib/_tags_orig src/lib/_tags
+	ocamlbuild -build-dir $(LITE_BUILD_DIR) \
+		-I src/lib $(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) \
+		oml_lite.cma oml_lite.cmxa oml_lite.cmxs
 
 build: oml.cmxa
 

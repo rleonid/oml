@@ -2,8 +2,8 @@
 
 open Lacaml.D
 open Util
-module LU = Uncategorized.Lacaml_util
 module List = ListLabels
+module LU = Lacaml_util
 
 module LDA(Data : Cls_intf.Continuous_encoded_data) = struct
   type feature = Data.feature

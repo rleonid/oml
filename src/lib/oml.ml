@@ -1,18 +1,17 @@
-module Util = struct include Util end
+module Util = struct include Oml_lite.Util end
 
 module Uncategorized = struct
   include Oml_uncategorized
 end
 
 module Statistics = struct
-  module Continued_fraction = Continued_fraction
+  module Continued_fraction = Oml_lite.Statistics.Continued_fraction
   module Functions = struct
     include Oml_functions
   end
-
-  module Sampling = Sampling
-  module Descriptive = Descriptive
-  module Measures = Measures
+  module Sampling = Oml_lite.Statistics.Sampling
+  module Descriptive = Oml_lite.Statistics.Descriptive
+  module Measures = Oml_lite.Statistics.Measures
   module Distributions = Distributions
   module Hypothesis_test = Hypothesis_test
 end
@@ -20,8 +19,8 @@ end
 module Online = Online
 
 module Classification = struct
-  module Intf = Cls_intf
-  module Probabilities = Probabilities
+  module Intf = Oml_lite.Classification.Intf
+  module Probabilities = Oml_lite.Classification.Probabilities
   module Naive_bayes = struct
     include Oml_naive_bayes
   end
@@ -40,6 +39,5 @@ module Regression = struct
   end
   module Multivariate = Multivariate
   module Tikhonov = Tikhonov
-  module Interpolate = Interpolate
-
+  module Interpolate = Oml_lite.Regression.Interpolate
 end

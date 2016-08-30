@@ -8,10 +8,7 @@ end
 
 module Statistics : sig
   module Continued_fraction : sig include module type of Continued_fraction end
-  module Functions : sig 
-    include module type of Oml_lite_functions
-  end
-
+  module Functions : sig include module type of Oml_lite_functions end
   module Sampling : sig include module type of Sampling end
   module Descriptive : sig include module type of Descriptive end
   module Measures : sig include module type of Measures end
@@ -28,3 +25,8 @@ module Classification : sig
   module Performance : sig include module type of Performance end
 end
 
+module Regression : sig
+  module Intf : sig include module type of Oml_lite_intf end
+  module Univariate : sig include module type of Oml_lite_univariate end
+  module Interpolate : sig include module type of Interpolate end
+end

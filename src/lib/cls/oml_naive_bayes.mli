@@ -24,6 +24,6 @@ include module type of Oml_lite_naive_bayes
   {{!modtype:Cls_intf.Continuous_encoded_data}encoded data}. *)
 module Gaussian(D: Cls_intf.Continuous_encoded_data) : sig
   include Cls_intf.Generative with type feature := D.feature
-                          and type clas := D.clas
-                          and type feature_probability = float array
+                              and type clas := D.clas
+                              and type feature_probability = float array
 end

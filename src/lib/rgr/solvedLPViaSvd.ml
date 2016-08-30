@@ -1,6 +1,6 @@
-open Uncategorized.Lacaml_util
+open Lacaml_util
 open Lacaml.D
-module Svd = Uncategorized.Svd
+module Svd = Svd
 
 (* 'Solved' (via SVD) linear problem. *)
 type solved_lp =

@@ -25,7 +25,6 @@ open SolvedLPViaSvd
 open Lacaml.D
 module P = Printf
 module D = Distributions
-module Svd = Uncategorized.Svd
 
 type glm =
   { padded            : bool
