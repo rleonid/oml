@@ -16,8 +16,7 @@
 *)
 
 open Lacaml.D
-
-open Uncategorized.Lacaml_util
+open Lacaml_util
 
 type t = { variances   : vec
          ; components  : mat

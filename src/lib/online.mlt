@@ -17,13 +17,12 @@
 
 open Test_utils
 open Util
-module D = Statistics.Descriptive
+module D = Descriptive
 
 (* In order for these tests to work well, we have to span the range of
    acceptable floats as well. If we're uniformly sampling from [0, largest_float]
    we'll have different characteristics if largest_float is tiny or huge:
-   this will influence the significand in the algorithms.
-*)
+   this will influence the significand in the algorithms.  *)
 
 let () =
   let add_random_test

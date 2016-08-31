@@ -18,7 +18,6 @@
 open Test_utils
 open Util
 open Lacaml.D
-module Matrices = Uncategorized.Matrices
 
 let () =
   let matrix_size = 100 in

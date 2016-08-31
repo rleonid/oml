@@ -20,8 +20,8 @@ open Test_utils
 
 open Util
 
-module Descriptive = Statistics.Descriptive
-module Vectors = Uncategorized.Vectors
+module Descriptive = Descriptive
+module Vectors = Vectors
 
 let looe_manually lambda pred resp =
   let predi = Array.to_list pred |> List.mapi (fun i p -> (i, p)) in

@@ -17,6 +17,7 @@
 
 open Test_utils
 module P = Probabilities
+module List = ListLabels
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Naive Bayes" in

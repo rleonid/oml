@@ -21,29 +21,29 @@ open Test_utils
 module Rank = Rank
 module Util = Util
 
-module Estimations = Uncategorized.Estimations
-module Solvers = Uncategorized.Solvers
-module Svd = Uncategorized.Svd
+module Estimations = Estimations
+module Solvers = Solvers
+module Svd = Svd
 
-module Matrices = Uncategorized.Matrices
-module Vectors = Uncategorized.Vectors
+module Matrices = Matrices
+module Vectors = Vectors
 
-module Functions = Statistics.Functions
-module Descriptive = Statistics.Descriptive
-module Distributions = Statistics.Distributions
-module Hypothesis_test = Statistics.Hypothesis_test
-module Measures = Statistics.Measures
-module Sampling = Statistics.Sampling
-
+module Functions = Functions
+module Descriptive = Descriptive
+module Distributions = Distributions
+module Hypothesis_test = Hypothesis_test
+module Measures = Measures
+module Sampling = Sampling
 module Online = Online
 
-module Naive_bayes = Classification.Naive_bayes
-module Logistic_regression = Classification.Logistic_regression
 
-module Univariate = Regression.Univariate
-module Multivariate = Regression.Multivariate
-module Tikhonov = Regression.Tikhonov
-module Interpolate = Regression.Interpolate
+module Naive_bayes = Naive_bayes
+module Logistic_regression = Logistic_regression
+
+module Univariate = Univariate
+module Multivariate = Multivariate
+module Tikhonov = Tikhonov
+module Interpolate = Interpolate
 
 module Pca = Pca
 

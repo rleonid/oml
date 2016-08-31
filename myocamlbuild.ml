@@ -34,6 +34,47 @@ let add_ml_and_mlt_and_depends () =
           ]
     end
 
+(* For unknown reasons this rule is not firing?
+   Or maybe it is insufficient to trigger the generation of a
+   full module needed for test. Using this would prevent
+   the need for stub code such as functions.ml.
+let add_lite_ml_and_mlt_and_depends () =
+  let dmlt  = "%.mlt" in
+  let doml  = "oml_%.ml" in
+  let domll = "oml_lite_%.ml" in
+  let pmld  = "%.ml.depends" in
+  let pmlj  = "%.mlj" in
+  let pmljd = "%.mlj.depends" in
+  rule "concat oml_ and oml_lite_ prefixed ml and mlt files, and build dependencies"
+    ~insert:`top
+    ~deps:[ dmlt; doml; domll ]
+    ~prods:[ pmld; pmlj; pmljd ]
+    begin fun env _build ->
+      let mlt  = env dmlt in
+      let oml  = env doml in
+      let omll = env domll in
+      let mlj  = env pmlj in
+      let ml_depends  = env pmld in
+      let mlj_depends = env pmljd in
+      let ocamldep_tags =
+        (Tags.union (tags_of_pathname oml) (tags_of_pathname omll))
+        ++ "ocaml" ++ "ocamldep"
+      in
+      Seq [ Cmd ( S [ A "cat";  P omll;                       Sh ">";  P mlj])
+          ; Cmd ( S [ A "cat";  P oml;                        Sh ">>"; P mlj])
+          ; Cmd ( S [ A "echo"; A (sprintf "# 0 %S" mlt);     Sh ">>"; P mlj])
+          ; Cmd ( S [ A "echo"; A "(*BISECT-IGNORE-BEGIN*)";  Sh ">>"; P mlj])
+          ; Cmd ( S [ A "cat";  P mlt;                        Sh ">>"; P mlj])
+          ; Cmd ( S [ A "echo"; A "(*BISECT-IGNORE-END*)";    Sh ">>"; P mlj])
+          (* Now build the dependencies for the mlj file. *)
+          ; Cmd ( S [ A "ocamlfind"; A "ocamldep"; T ocamldep_tags ; A "-ml-synonym"
+                    ; Sh "'.mlj'"; A "-modules"; P mlj;       Sh ">";  P mlj_depends])
+          (* Fake the ml.depends to be the same as mlj.depends. *)
+          ; Cmd ( S [ A "sed"; A "-E"; A "s/mlj/ml/g"; P mlj_depends;
+                                                              Sh ">" ; P ml_depends])
+          ]
+    end *)
+
 let report_dependencies pth =
   let () = printf "here are the %s dependencies\n" pth in
   List.iter (function | `just_try, s  -> printf "just_try: %s\n" s
@@ -105,18 +146,22 @@ let () =
       | Before_rules    -> ()
       | After_rules     ->
           begin
-            Pathname.define_context "src/lib/"      ["src/lib/util"];
-            Pathname.define_context "src/lib/unc"   ["src/lib/util"; "src/lib/unc"];
-            Pathname.define_context "src/lib/stats" ["src/lib/util"; "src/lib/unc"; "src/lib/stats"];
-            Pathname.define_context "src/lib/cls"   ["src/lib/util"; "src/lib/unc"; "src/lib/stats"; "src/lib/cls"];
-            Pathname.define_context "src/lib/rgr"   ["src/lib/util"; "src/lib/unc"; "src/lib/stats"; "src/lib/rgr"];
-            Pathname.define_context "src/lib/uns"   ["src/lib/util"; "src/lib/unc"; "src/lib/uns"];
 
             if is_test_target () then begin
               add_ml_and_mlt_and_depends ();
+              (*add_lite_ml_and_mlt_and_depends (); *)
               add_compile_mlj_to_native_rule ();
               add_compile_mlj_to_byte_rule ();
               Options.make_links := true;
+              Pathname.define_context "src/test"
+                [ "src/lib"; "src/lib/util"; "src/lib/unc"; "src/lib/stats"
+                ; "src/lib/cls"; "src/lib/rgr"; "src/lib/uns"];
+              Pathname.define_context "src/lib"       ["src/lib/util"; "src/lib/stats"];
+              Pathname.define_context "src/lib/unc"   ["src/lib/util"; "src/lib/stats"];
+              Pathname.define_context "src/lib/stats" ["src/lib/util"; ];
+              Pathname.define_context "src/lib/cls"   ["src/lib/util"; "src/lib/stats"];
+              Pathname.define_context "src/lib/rgr"   ["src/lib/util"; "src/lib/unc"; "src/lib/stats"];
+              Pathname.define_context "src/lib/uns"   ["src/lib/util"; "src/lib/unc" ];
             end;
 
             (* To build without interfaces

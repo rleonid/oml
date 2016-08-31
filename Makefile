@@ -4,9 +4,8 @@ LITE_BUILD_DIR=_lite_build
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=cppo $(PACKAGES)
-PACKAGES_INSTALL_TEST=cppo $(PACKAGES_COVERED)
-CPPO_TAG:=-plugin-tag 'package(cppo_ocamlbuild)'
+PACKAGES_INSTALL=$(PACKAGES)
+PACKAGES_INSTALL_TEST=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=util unc stats cls rgr uns
 INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
@@ -17,7 +16,7 @@ default: FORCE
 	@echo "available targets:"
 	@echo "  build      	compiles Oml"
 	@echo "  lite       	compiles only Oml_lite"
-	@echo "  tests      	runs unit tests"
+	@echo "  test       	runs unit tests"
 	@echo "  doc        	generates ocamldoc documentations"
 	@echo "  clean      	deletes all produced files"
 	@echo "  setup      	opam install Oml dependencies"
@@ -58,16 +57,14 @@ clean:
 
 omltest.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
-		$(CPPO_TAG) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test omltest.native
 
 test: omltest.native
 	time ./omltest.native ${TEST}
 
 covered_test.native:
 	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
-		$(CPPO_TAG) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 

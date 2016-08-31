@@ -18,7 +18,7 @@
 open Test_utils
 open Util
 
-module Matrices = Uncategorized.Matrices
+module Matrices = Matrices
 
 let () =
   let add_random_test

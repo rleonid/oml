@@ -16,7 +16,7 @@
 *)
 open Test_utils
 open Util
-module D = Statistics.Descriptive
+module D = Descriptive
 
 let () =
   let add_random_test
