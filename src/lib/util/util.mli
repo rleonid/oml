@@ -71,7 +71,7 @@ val snd3 : ('a * 'b * 'c) -> 'b
 val thr3 : ('a * 'b * 'c) -> 'c
 
 (** Extend the [Array] module with useful functions. *)
-module Array : sig include (module type of Oml_array) end
+module Array : sig include module type of Oml_array end
 
 (** Provide operator overloads for conveniently expressing float arithmatic.*)
 module Float : sig
