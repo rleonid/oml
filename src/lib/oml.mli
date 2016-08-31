@@ -57,3 +57,9 @@ module Regression : sig
   module Tikhonov : sig include module type of Tikhonov end
   module Interpolate : sig include module type of  Oml_lite.Regression.Interpolate end
 end
+
+module Unsupervised : sig
+  module Pca : sig
+    include module type of Pca
+  end
+end

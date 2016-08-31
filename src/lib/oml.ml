@@ -41,3 +41,7 @@ module Regression = struct
   module Tikhonov = Tikhonov
   module Interpolate = Oml_lite.Regression.Interpolate
 end
+
+module Unsupervised = struct
+  module Pca = Pca
+end
