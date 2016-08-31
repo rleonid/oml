@@ -31,7 +31,7 @@ exception Iteration_failure of string * iterative_failure_reason
     message based on [format] and [msg]. Prepend [m]odule and [f]unction name
     if specified.
 
-    @raise Invalid_argument.
+    @raise Invalid_argument with the formatted message.
 *)
 val invalid_arg : ?m:string -> ?f:string -> ('a, unit, string, 'b) format4 -> 'a
 
