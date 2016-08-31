@@ -18,7 +18,7 @@
 
 (** Extend the [Array] module with useful functions. *)
 
-include (module type of Array)
+include module type of Array
 
 (** [Array.fold2 f x a b] computes
       [f (... (f (f x a.(0) b.(0)) a.(1) b.(1)) ...) a.(n-1) b.(n-1)].
