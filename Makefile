@@ -10,7 +10,8 @@ PACKAGES_INSTALL=$(PACKAGES)
 PACKAGES_INSTALL_TEST=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=util unc stats cls rgr uns
-INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
+# Do NOT install the cmo's, since we're packing oml_lite.cma into oml.cma.
+INSTALL_EXTS=a o cma cmi cmt cmx cmxa cmxs
 
 # One more and we might as well add a genuine configure step.
 # Remember that the comma's in Make 'if' are space sensitive!
@@ -62,9 +63,10 @@ lite:
 build:
 ifeq (0, $(WITH_OML))
 	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
-		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml.cma oml.cmxa oml.cmxs
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib \
+		oml_lite.cma oml_lite.cmxa oml_lite.cmxs oml.cma oml.cmxa oml.cmxs
 else
-	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
+	$(OCAMLBUILD) \
 		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs
 endif
 
@@ -100,7 +102,12 @@ test_environment:
 #### Installing
 
 install:
-	cd pkg/full && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../../_build/src/lib/oml.$(ext))
+ifeq (0, $(WITH_OML))
+	cd pkg && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../_build/src/lib/oml.$(ext)) \
+		$(foreach ext, $(INSTALL_EXTS), ../_build/src/lib/oml_lite.$(ext))
+else
+	cd pkg && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../_build/src/lib/oml_lite.$(ext))
+endif
 
 uninstall:
 	ocamlfind remove oml
