@@ -1,17 +1,24 @@
+(** OCaml Math, Statistics and ML Libary.
+
+    Oml_lite {i plus} [C] and [Fortran] bindings where appropriate.*)
+
+(** Common values used throughout the library. *)
 module Util : sig
   include module type of Oml_lite.Util
 end
 
+(** WIP: Special functions and Linear Algebra. *)
 module Uncategorized : sig
   include module type of Oml_uncategorized
 end
 
+(** Inference, parameter estimation.*)
 module Statistics : sig
 
   module Continued_fraction : sig
     include module type of Oml_lite.Statistics.Continued_fraction
   end
-  module Functions : sig 
+  module Functions : sig
     include module type of Oml_functions
   end
   module Sampling : sig
@@ -23,17 +30,19 @@ module Statistics : sig
   module Measures : sig
     include module type of Oml_lite.Statistics.Measures
   end
-   
+
   module Distributions : sig include module type of Distributions end
   module Hypothesis_test : sig include module type of Hypothesis_test end
 end
 
+(** Compute running statitics using recurrence equations. *)
 module Online : sig include module type of Oml_lite.Online end
 
+(** Classify data based on features. *)
 module Classification : sig
   module Intf : sig include module type of Oml_lite.Classification.Intf end
   module Probabilities : sig include module type of Oml_lite.Classification.Probabilities end
-  module Naive_bayes : sig 
+  module Naive_bayes : sig
     include module type of Oml_naive_bayes
   end
   module Logistic_regression : sig
@@ -45,6 +54,7 @@ module Classification : sig
   module Performance : sig include module type of Oml_lite.Classification.Performance end
 end
 
+(** Model relationship between variables. *)
 module Regression : sig
   module Intf : sig
     include module type of Oml_intf
@@ -58,6 +68,7 @@ module Regression : sig
   module Interpolate : sig include module type of  Oml_lite.Regression.Interpolate end
 end
 
+(** Unsupervised learning. *)
 module Unsupervised : sig
   module Pca : sig
     include module type of Pca
