@@ -136,6 +136,64 @@ let add_compile_mlj_to_native_rule () =
               ; A "-impl"; P mlj])
     end
 
+let all_mli_files dir =
+  let rec loop acc = function
+    | []       -> acc
+    | dir :: t ->
+        let dirs, files =
+          Sys.readdir dir
+          |> ArrayLabels.fold_left ~init:([],[]) ~f:(fun (d, m) f ->
+              let df = Filename.concat dir f in
+              if Sys.is_directory df then
+                df :: d, m
+              else if Filename.check_suffix df ".mli" then
+                d, df :: m
+              else
+                d, m)
+        in
+        loop (files @ acc) (dirs @ t)
+  in
+  loop [] [dir]
+
+let to_mli_assoc =
+  List.map (fun s ->
+    String.capitalize_ascii (Filename.chop_extension (Filename.basename s)), s)
+
+let imto_regex =
+  Str.regexp "include module type of \\([A-Z][a-zA-Z_]+\\)"
+
+let include_includes modassoc mli =
+  let ic = open_in mli in
+  let en = in_channel_length ic in
+  let ff = really_input_string ic en in
+  close_in ic;
+  let rec loop pos acc =
+    try
+      let np = Str.search_forward imto_regex ff pos in
+      let md = Str.matched_group 1 ff in
+      let ap = Str.match_end () in
+      try
+        let file = List.assoc md modassoc in
+        let bef  = String.sub ff pos (np - pos - 1) in
+        let ic   = open_in ("../" ^ file) in
+        let incf = really_input_string ic (in_channel_length ic) in
+        close_in ic;
+        loop ap (incf :: bef :: acc)
+      with Not_found -> (* Missing module in modassoc *)
+        begin
+        let bef  = String.sub ff pos (ap - pos - 1) in
+        loop (ap - 1) (bef :: acc)
+        end
+    with Not_found ->
+      String.sub ff pos (en - pos) :: acc
+  in
+  match loop 0 [] with
+  | [] -> ()
+  | lst ->
+      let oc = open_out mli in
+      List.iter (output_string oc) (List.rev lst);
+      close_out oc
+
 let () =
   let additional_rules =
     function
@@ -146,7 +204,6 @@ let () =
       | Before_rules    -> ()
       | After_rules     ->
           begin
-
             if is_test_target () then begin
               add_ml_and_mlt_and_depends ();
               (*add_lite_ml_and_mlt_and_depends (); *)
@@ -170,61 +227,34 @@ let () =
               ~prods:["%.cmo"; "%.cmi"]
               ~deps:["%.ml"; "%.ml.depends"]
               ~doc:"This rule disables mli files."
-              (Ocaml_compiler.byte_compile_ocaml_implem "%.ml" "%.cmo") ;
+              (Ocaml_compiler.byte_compile_ocaml_implem "%.ml" "%.cmo");
             *)
+
             (* For documentation. *)
             if target_with_extension "html" then begin
-              (* Insert Oml_array.mli into the
-                'include (module type of Oml_array)'
-                so that we can have the signature for documentation. *)
-              let from_file = "src/lib/util/util.mli" in
-              let to_file   = "_build/src/lib/util/util.mli" in
-              let perl_mat  = "include \\(module type of Oml_array\\)" in
-              let command   =
-                sprintf
-                  "perl -pe 's/%s/`cat src\\/lib\\/util\\/oml_array.mli`/ge' %s > %s"
-                    perl_mat from_file to_file
-              in
-              ignore (Sys.command "mkdir -p _build/src/lib/util");
-              printf "%s\n" command;
-              ignore (Sys.command command);
-              rule "Create mli from mlpack."
-                ~prod:"%.mli"
-                ~deps:["%.mlpack"; "%.mlipack"]
-                begin fun env _build ->
-                  let pck = env "%.mlpack" in
-                  let pcki = env "%.mlipack" in
-                  let dir = Pathname.pwd / Pathname.dirname pck in
-                  let mli = !Options.build_dir / env "%.mli" in
-                  string_list_of_file pck
-                  |> List.map (fun mdl ->
-                    let fname = dir / String.lowercase_ascii (mdl ^ ".mli") in
-                    let mdlfl = env fname in
-                    if Pathname.exists mdlfl then begin
-                      [ Sh (sprintf "echo module %s : sig >>" mdl)
-                      ; P mli
-                      ; Sh ";"
-                      ; Sh (sprintf "cat %s >>" mdlfl)
-                      ; P mli
-                      ; Sh ";"
-                      ; Sh "echo end >>"
-                      ; P mli
-                      ; Sh ";"
-                      ]
-                    end else
-                      [])
-                  |> List.concat
-                  |> fun lst ->
-                      let nlst = Sh (sprintf "cat %s >>" pcki)
-                                 :: P mli
-                                 :: Sh ";"
-                                 :: lst
-                      in
-                      Cmd (S nlst)
-                end
+              Options.make_links := true;
+              Pathname.define_context "src/lib"
+                [ "src/lib"; "src/lib/util"; "src/lib/unc"; "src/lib/stats"
+                ; "src/lib/cls"; "src/lib/rgr"; "src/lib/uns"];
+              Pathname.define_context "src/lib/cls"   ["src/lib/util"; ];
+              Pathname.define_context "src/lib/rgr"   ["src/lib/util"; "src/lib/stats"];
+
+              (* Since ocamldoc doesn't work very well with
+                 "include module type of ___" directives, we'll preprocess the
+                 mli files to manually insert the relevant signature. *)
+
+              let mla = all_mli_files "src" |> to_mli_assoc in
+              rule "For documentation ocaml: mli -> cmi"
+                ~insert:`top
+                ~deps:[ "%.mli"; "%.mli.depends" ]
+                ~prods:[ "%.cmi" ]
+                begin fun env build ->
+                  let mli = env "%.mli" in
+                  include_includes mla mli;
+                  Ocaml_compiler.compile_ocaml_interf "%.mli" "%.cmi" env build
+                end;
+
             end
           end
   in
-  dispatch (fun hook ->
-    (*Ocamlbuild_cppo.dispatcher hook; *)
-    additional_rules hook)
+  dispatch additional_rules

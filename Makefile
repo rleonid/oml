@@ -1,6 +1,8 @@
 
 TEST_BUILD_DIR=_test_build
+# Used when building just lite
 LITE_BUILD_DIR=_lite_build
+DOC_BUILD_DIR=_doc_build
 PACKAGES=lacaml lbfgs ocephes
 PACKAGES_TEST=$(PACKAGES) kaputt dsfo
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
@@ -9,6 +11,8 @@ PACKAGES_INSTALL_TEST=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=util unc stats cls rgr uns
 INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
+
+OCAMLBUILD=ocamlbuild -plugin-tag "package(str)"
 
 .PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
 
@@ -38,25 +42,26 @@ setup-test:
 #### Building
 
 oml.cmxa:
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
+	$(OCAMLBUILD) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
 		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml.cma oml.cmxa oml.cmxs
 
 lite:
-	ocamlbuild -build-dir $(LITE_BUILD_DIR) \
+	$(OCAMLBUILD) -build-dir $(LITE_BUILD_DIR) \
 		-I src/lib $(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) \
 		oml_lite.cma oml_lite.cmxa oml_lite.cmxs
 
 build: oml.cmxa
 
 clean:
-	ocamlbuild -clean
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
-	ocamlbuild -build-dir $(LITE_BUILD_DIR) -clean
+	$(OCAMLBUILD) -clean
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) -clean
+	$(OCAMLBUILD) -build-dir $(LITE_BUILD_DIR) -clean
+	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) -clean
 
 #### Testing
 
 omltest.native:
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
 		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test omltest.native
 
@@ -64,7 +69,7 @@ test: omltest.native
 	time ./omltest.native ${TEST}
 
 covered_test.native:
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
 
@@ -72,7 +77,7 @@ covered_test: covered_test.native
 	time ./omltest.native ${TEST}
 
 test_environment:
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
 		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib -I src/test oml.cma omltest.native
 
@@ -112,7 +117,9 @@ clean_reports:
 oml.odocl:
 	cp src/lib/oml.mlpack oml.odocl
 
-doc: oml.odocl
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib  oml.docdir/index.html
+doc:
+	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) \
+		-use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib doc.docdir/index.html
 
 FORCE:

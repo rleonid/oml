@@ -18,10 +18,11 @@
 (** Compute statistics (aka estimators) and other methods
     {!val:Descriptive.histogram} that describe data stored in a float array.
 
-    Testing against statistics is found in {Hypothesis_testing}. These
+    Testing against statistics is found in {!module:Hypothesis_testing}. These
     algorithms are not necessarily tailored for the most accurate algorithms
-    that try to minimize truncating (see [Online] for online algorithms) but
-    for having a simple function(al) interface with good runtime performance.
+    that try to minimize truncating (see {!module:Online} for online
+    algorithms) but for having a simple function(al) interface with good runtime
+    performance.
 *)
 
 (* Central tendency *)
