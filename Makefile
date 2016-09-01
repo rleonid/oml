@@ -12,13 +12,22 @@ PACKAGES_INSTALL_TEST=$(PACKAGES_COVERED)
 SOURCE_DIRS=util unc stats cls rgr uns
 INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
 
+# One more and we might as well add a genuine configure step.
+# Remember that the comma's in Make 'if' are space sensitive!
+WITH_OML:=$(if $(shell ocamlfind query ocephes 2>/dev/null),0,1)
+WITH_OML:=$(if $(shell ocamlfind query lacaml 2>/dev/null),$(WITH_OML),1)
+WITH_OML:=$(if $(shell ocamlfind query lbfgs 2>/dev/null),$(WITH_OML),1)
+
+
+# Str is necessary for building the documentation, which unfortunately, is in a
+# half broken state because "include Module" logic doesn't work with OCamldoc.
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag "package(str)"
 
 .PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
 
 default: FORCE
 	@echo "available targets:"
-	@echo "  build      	compiles Oml"
+	@echo "  build      	compiles Oml_lite and Oml if possible"
 	@echo "  lite       	compiles only Oml_lite"
 	@echo "  test       	runs unit tests"
 	@echo "  doc        	generates ocamldoc documentations"
@@ -50,7 +59,14 @@ lite:
 		-I src/lib $(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) \
 		oml_lite.cma oml_lite.cmxa oml_lite.cmxs
 
-build: oml.cmxa
+build:
+ifeq (0, $(WITH_OML))
+	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml.cma oml.cmxa oml.cmxs
+else
+	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs
+endif
 
 clean:
 	$(OCAMLBUILD) -clean
