@@ -12,7 +12,7 @@ PACKAGES_INSTALL_TEST=$(PACKAGES_COVERED)
 SOURCE_DIRS=util unc stats cls rgr uns
 INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
 
-OCAMLBUILD=ocamlbuild -plugin-tag "package(str)"
+OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag "package(str)"
 
 .PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
 
@@ -42,7 +42,7 @@ setup-test:
 #### Building
 
 oml.cmxa:
-	$(OCAMLBUILD) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
+	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
 		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml.cma oml.cmxa oml.cmxs
 
 lite:
@@ -62,7 +62,7 @@ clean:
 
 omltest.native:
 	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
-		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
+		$(foreach package, $(PACKAGES_TEST),-package $(package)) \
 		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test omltest.native
 
 test: omltest.native
@@ -70,15 +70,15 @@ test: omltest.native
 
 covered_test.native:
 	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
-		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
+		$(foreach package, $(PACKAGES_COVERED),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test omltest.native
 
 covered_test: covered_test.native
 	time ./omltest.native ${TEST}
 
 test_environment:
 	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
-		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
+		$(foreach package, $(PACKAGES_COVERED),-package $(package)) \
 		-I src/lib -I src/test oml.cma omltest.native
 
 #### Installing
@@ -119,7 +119,7 @@ oml.odocl:
 
 doc:
 	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) \
-		-use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach package, $(PACKAGES),-package $(package)) \
 		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib doc.docdir/index.html
 
 FORCE:
