@@ -249,8 +249,8 @@ let () =
                  mli files to manually insert the relevant signature. *)
 
               let mla = all_mli_files "src" |> to_mli_assoc in
-              Printf.printf "We have these files:\n%!";
-              List.iter (fun (m,f) -> Printf.printf "%s\t\t%s\n%!" m f) mla;
+              (*Printf.printf "We have these files:\n%!";
+              List.iter (fun (m,f) -> Printf.printf "%s\t\t%s\n%!" m f) mla; *)
               rule "For documentation ocaml: mli -> cmi"
                 ~insert:`top
                 ~deps:[ "%.mli"; "%.mli.depends" ]
@@ -260,7 +260,6 @@ let () =
                   include_includes mla mli;
                   Ocaml_compiler.compile_ocaml_interf "%.mli" "%.cmi" env build
                 end;
-
             end
           end
   in
