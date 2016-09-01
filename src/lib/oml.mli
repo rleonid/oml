@@ -36,12 +36,19 @@ module Statistics : sig
 end
 
 (** Compute running statitics using recurrence equations. *)
-module Online : sig include module type of Oml_lite.Online end
+module Online : sig
+  include module type of Oml_lite.Online
+        with type t = Oml_lite.Online.t
+end
 
 (** Classify data based on features. *)
 module Classification : sig
-  module Intf : sig include module type of Oml_lite.Classification.Intf end
-  module Probabilities : sig include module type of Oml_lite.Classification.Probabilities end
+  module Intf : sig
+    include module type of Oml_lite.Classification.Intf
+  end
+  module Probabilities : sig
+    include module type of Oml_lite.Classification.Probabilities
+  end
   module Naive_bayes : sig
     include module type of Oml_naive_bayes
   end
@@ -51,7 +58,9 @@ module Classification : sig
   module Descriminant : sig
     include module type of Descriminant
   end
-  module Performance : sig include module type of Oml_lite.Classification.Performance end
+  module Performance : sig
+    include module type of Oml_lite.Classification.Performance
+  end
 end
 
 (** Model relationship between variables. *)
@@ -63,9 +72,15 @@ module Regression : sig
   module Univariate : sig
     include module type of Oml_univariate
   end
-  module Multivariate : sig include module type of Multivariate end
-  module Tikhonov : sig include module type of Tikhonov end
-  module Interpolate : sig include module type of  Oml_lite.Regression.Interpolate end
+  module Multivariate : sig
+    include module type of Multivariate
+  end
+  module Tikhonov : sig
+    include module type of Tikhonov
+  end
+  module Interpolate : sig
+    include module type of  Oml_lite.Regression.Interpolate
+  end
 end
 
 (** Unsupervised learning. *)
