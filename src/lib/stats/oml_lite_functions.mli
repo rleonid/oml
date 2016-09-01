@@ -16,6 +16,8 @@
    limitations under the License.
 *)
 
+(** Implementations of special functions. *)
+
 (** [softmax ?temperature weights] transforms [weights] into softmax weights dependent
     on [temperature].
 

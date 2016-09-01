@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-(** Standard methods. *)
+(** Common values used throughout the library. *)
 
 (** Some of the iterative routines can fail for the following reasons. *)
 type iterative_failure_reason =

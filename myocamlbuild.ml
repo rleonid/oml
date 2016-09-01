@@ -162,7 +162,8 @@ let to_mli_assoc =
 let imto_regex =
   Str.regexp "include module type of \\([A-Z][a-zA-Z_]+\\)"
 
-let include_includes modassoc mli =
+let rec include_includes modassoc mli =
+  Printf.printf "considering includes of %s\n" mli;
   let ic = open_in mli in
   let en = in_channel_length ic in
   let ff = really_input_string ic en in
@@ -174,16 +175,23 @@ let include_includes modassoc mli =
       let ap = Str.match_end () in
       try
         let file = List.assoc md modassoc in
-        let bef  = String.sub ff pos (np - pos - 1) in
-        let ic   = open_in ("../" ^ file) in
+        let bef  = String.sub ff pos (np - pos) in
+        Printf.printf "from %d of %d : %S\n" pos (np - pos) bef;
+        let ic   =
+          if not (Sys.file_exists file) then begin
+            ignore (Sys.command (Printf.sprintf "mkdir -p %s" (Filename.dirname file)));
+            ignore (Sys.command (Printf.sprintf "cp ../%s %s" file file));
+          end;
+          include_includes modassoc file;
+          open_in file
+        in
         let incf = really_input_string ic (in_channel_length ic) in
         close_in ic;
         loop ap (incf :: bef :: acc)
       with Not_found -> (* Missing module in modassoc *)
-        begin
+        Printf.printf "Couldn't find %s module\n" md;
         let bef  = String.sub ff pos (ap - pos - 1) in
         loop (ap - 1) (bef :: acc)
-        end
     with Not_found ->
       String.sub ff pos (en - pos) :: acc
   in
@@ -244,6 +252,8 @@ let () =
                  mli files to manually insert the relevant signature. *)
 
               let mla = all_mli_files "src" |> to_mli_assoc in
+              Printf.printf "We have these files:\n%!";
+              List.iter (fun (m,f) -> Printf.printf "%s\t\t%s\n%!" m f) mla;
               rule "For documentation ocaml: mli -> cmi"
                 ~insert:`top
                 ~deps:[ "%.mli"; "%.mli.depends" ]

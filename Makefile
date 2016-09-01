@@ -117,9 +117,11 @@ clean_reports:
 oml.odocl:
 	cp src/lib/oml.mlpack oml.odocl
 
+# including the cmi as build targets triggers all of the including logic
+# to get saner documentation.
 doc:
 	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) \
 		$(foreach package, $(PACKAGES),-package $(package)) \
-		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib doc.docdir/index.html
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib oml.cmi doc.docdir/index.html
 
 FORCE:
