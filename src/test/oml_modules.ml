@@ -1,5 +1,5 @@
 (*
-   Copyright 2015:
+   Copyright 2015,2016:
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,40 +15,25 @@
    limitations under the License.
 *)
 
-open Test_utils
+(* Reference all of the modules that are exclusively in Oml; the ones with
+   C/Fortran dependencies. This module is also referenced in the full test
+   driver: oml_test.ml. *)
 
-(* Just referencing the modules will load the tests. *)
-module Rank = Rank
-module Util = Util
-
-module Estimations = Estimations
-module Solvers = Solvers
+(* Uncategorized. *)
 module Svd = Svd
 
-module Matrices = Matrices
-module Vectors = Vectors
-
-module Functions = Functions
-module Descriptive = Descriptive
+(* Statistics. *)
+module Oml_functions = Oml_functions
 module Distributions = Distributions
 module Hypothesis_test = Hypothesis_test
-module Measures = Measures
-module Sampling = Sampling
-module Online = Online
 
-
-module Naive_bayes = Naive_bayes
+(* Classification. *)
 module Logistic_regression = Logistic_regression
+module Oml_naive_bayes = Oml_naive_bayes
 
-module Univariate = Univariate
+(* Regression. *)
 module Multivariate = Multivariate
 module Tikhonov = Tikhonov
-module Interpolate = Interpolate
 
+(* Unsupervised. *)
 module Pca = Pca
-
-let () =
-  if Array.length Sys.argv > 1 then
-    Test.launch_test Sys.argv.(1)
-  else
-    Test.launch_tests ();

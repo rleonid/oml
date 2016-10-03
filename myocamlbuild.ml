@@ -6,7 +6,11 @@ let target_with_extension ext =
   List.exists (fun s -> Pathname.get_extension s = ext) !Options.targets
 
 let is_test_target () =
-  List.exists (function "omltest.native" -> true | _ -> false) !Options.targets
+  List.exists (function
+    | "oml_test.native"
+    | "oml_lite_test.native" -> true
+    | _                      -> false)
+    !Options.targets
 
 let add_ml_and_mlt_and_depends () =
   rule "concat ml and mlt files, and build dependencies"

@@ -1,5 +1,5 @@
 (*
-   Copyright 2016
+   Copyright 2015,2016:
      Leonid Rozenberg <leonidr@gmail.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,12 @@
    limitations under the License.
 *)
 
-(** See message above add_lite_ml_and_mlt_and_depends for explanation. *)
-if Filename.basename Sys.argv.(0) <> "omltest.native" then
-  failwith ("Linked the Functions tests stub file into: " ^ Sys.argv.(0))
+open Test_utils
 
-include Oml_functions
+module Oml_lite_modules = Oml_lite_modules
+
+let () =
+  if Array.length Sys.argv > 1 then
+    Test.launch_test Sys.argv.(1)
+  else
+    Test.launch_tests ();

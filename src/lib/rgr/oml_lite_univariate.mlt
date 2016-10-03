@@ -82,6 +82,7 @@ let () =
 
   (* TODO: clever test to react to variance in the predicted variable. *)
   (*
+  This will need to be put into an Oml_univariate.mlt
   add_random_test
     ~title:"Confidence intervals are symmetric around evaluation point."
     Gen.(zip3 simple_lrm_gen grt_zer_lss_one bfloat)

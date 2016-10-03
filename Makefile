@@ -3,11 +3,12 @@ TEST_BUILD_DIR=_test_build
 # Used when building just lite
 LITE_BUILD_DIR=_lite_build
 DOC_BUILD_DIR=_doc_build
-PACKAGES=lacaml lbfgs ocephes
-PACKAGES_TEST=$(PACKAGES) kaputt dsfo
+PACKAGES:=lacaml lbfgs ocephes
+JUST_TEST:=kaputt dsfo
+PACKAGES_TEST:=$(PACKAGES) $(JUST_TEST)
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=$(PACKAGES)
-PACKAGES_INSTALL_TEST=$(PACKAGES_COVERED)
+PACKAGES_INSTALL:=$(PACKAGES)
+PACKAGES_INSTALL_TEST:=$(PACKAGES_COVERED)
 
 SOURCE_DIRS=util unc stats cls rgr uns
 # Do NOT install the cmo's, since we're packing oml_lite.cma into oml.cma.
@@ -24,7 +25,8 @@ WITH_OML:=$(if $(shell ocamlfind query lbfgs 2>/dev/null),$(WITH_OML),1)
 # half broken state because "include Module" logic doesn't work with OCamldoc.
 OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag "package(str)"
 
-.PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
+.PHONY: all clean test build install uninstall setup default doc \
+	oml_test.native oml_lite_test.native omoml.cmxa oml_lite.cmxa lite
 
 default: FORCE
 	@echo "available targets:"
@@ -78,26 +80,31 @@ clean:
 
 #### Testing
 
-omltest.native:
+oml_test.native:
 	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
 		$(foreach package, $(PACKAGES_TEST),-package $(package)) \
-		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test omltest.native
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test oml_test.native
 
-test: omltest.native
-	time ./omltest.native ${TEST}
+oml_lite_test.native:
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
+		$(foreach package, $(JUST_TEST),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test oml_lite_test.native
+
+test: oml_test.native
+	time ./oml_test.native ${TEST}
 
 covered_test.native:
 	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
 		$(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test omltest.native
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test oml_test.native
 
 covered_test: covered_test.native
-	time ./omltest.native ${TEST}
+	time ./oml_test.native ${TEST}
 
 test_environment:
 	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
 		$(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib -I src/test oml.cma omltest.native
+		-I src/lib -I src/test oml.cma oml_test.native
 
 #### Installing
 

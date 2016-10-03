@@ -17,7 +17,6 @@
 
 include Oml_lite_naive_bayes
 open Util
-module List = ListLabels
 
 module Gaussian(Data: Cls_intf.Continuous_encoded_data) = struct
 

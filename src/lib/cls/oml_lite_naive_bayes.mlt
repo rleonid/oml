@@ -17,7 +17,6 @@
 
 open Test_utils
 module P = Probabilities
-module List = ListLabels
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Naive Bayes" in
@@ -69,27 +68,4 @@ let () =
       in
       Assert.is_true (expect = result));
 
-  let module IrisEncoding =
-    struct
-      type feature = float array
-      type clas = [ `setosa | `versicolor | `virginica ]
-      let encoding x = x
-      let size = 4
-    end
-  in
-
-  add_simple_test ~title:"Naive Gaussian Bayes."
-    (fun () ->
-      let iris    = Iris.iris in
-      let module GB = Gaussian(IrisEncoding) in
-      let iris_gb = GB.estimate iris in
-      let result  =
-        List.map ~f:(fun (v, d) -> GB.eval iris_gb d |> P.most_likely, v) iris
-      in
-      let different =
-        List.fold_left result ~f:(fun s (x,y) -> if x = y then s else s + 1)
-          ~init:0
-      in
-      Assert.is_true (different = 6));
-  
   ()
