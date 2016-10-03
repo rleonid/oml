@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-module List = ListLabels
+open Util
 
 type binary =
   { predicted   : bool

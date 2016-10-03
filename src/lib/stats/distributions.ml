@@ -140,5 +140,5 @@ let benford_pdf_seq ?(base=10) digits =
       let coeff = Int64.of_float ((float base) ** float i) in
         (Int64.add acc (Int64.mul (Int64.of_int digit) coeff), i+1)
     in
-    let digits,_ = List.fold_right folder digits (Int64.zero,0) in
+    let digits,_ = List.fold_right ~f:folder digits ~init:(Int64.zero,0) in
     benford_pdf_int64 ~base:10 ~digits /. log10 (float base)

@@ -15,7 +15,6 @@
    limitations under the License.
 *)
 
-module List = ListLabels
 open Util
 open Cls_intf
 

@@ -37,7 +37,7 @@ let () =
   let polynomial = Gen.(list (make_int 2 10) (bfloat 1e5)) in
     let poly_to_f = function
     | []  -> fun _ -> 0.0
-    | lst -> fun x -> List.fold_left (fun p r -> p *. (x -. r)) 1.0 lst
+    | lst -> fun x -> List.fold_left ~f:(fun p r -> p *. (x -. r)) ~init:1.0 lst
   in
   let lower = -1e10 in
   let upper = 1e10 in
@@ -51,7 +51,7 @@ let () =
       Spec.([ even_length       ==> is_exception is_invalid_arg
             ; (not even_length) => (fun (lst,r) ->
               match r with
-              | Kaputt.Specification.Result v -> List.exists (equal_floats ~d:1e-9 v) lst
+              | Kaputt.Specification.Result v -> List.exists ~f:(equal_floats ~d:1e-9 v) lst
               | Kaputt.Specification.Exception _ -> false)
             ]);
 
@@ -72,7 +72,7 @@ let () =
         | exception Util.Iteration_failure (_, Util.Too_many_iterations _) ->
             let _ =
               P.printf "newton failed for %s with Too_many_iterations\n%!"
-                (String.concat ";" (List.map (P.sprintf "%f") lst))
+                (String.concat ";" (List.map ~f:(P.sprintf "%f") lst))
             in
             true
         | rn ->

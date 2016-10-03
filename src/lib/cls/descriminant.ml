@@ -2,7 +2,6 @@
 
 open Lacaml.D
 open Util
-module List = ListLabels
 module LU = Lacaml_util
 
 module LDA(Data : Cls_intf.Continuous_encoded_data) = struct

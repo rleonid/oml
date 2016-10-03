@@ -75,11 +75,10 @@ module Gaussian(Data: Cls_intf.Continuous_encoded_data) = struct
          computes the unbiased form. Not certain if we should implement the
          n/(n-1) conversion below. *)
       let select rs = rs.O.mean, (sqrt rs.O.var) in
-      rs_lst
-      |> List.map ~f:(fun (c, (cf, rsarr)) ->
-          let class_prior = (float cf) /. totalf in
-          let attr_params = Array.map select rsarr in
-          (c, (class_prior, attr_params)))
+      List.map rs_lst ~f:(fun (c, (cf, rsarr)) ->
+        let class_prior = (float cf) /. totalf in
+        let attr_params = Array.map select rsarr in
+        (c, (class_prior, attr_params)))
     in
     Common_naive_bayes.estimate "Gaussian"
       init update incorporate (module Cm)

@@ -16,7 +16,6 @@
 *)
 
 open Util
-module List = ListLabels
 
 let multiply_ref = ref true
 

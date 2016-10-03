@@ -73,6 +73,7 @@ val thr3 : ('a * 'b * 'c) -> 'c
 (** Extend the [Array] module with useful functions. *)
 module Array : sig include module type of Oml_array end
 
+module List : sig include module type of ListLabels end
 (** Provide operator overloads for conveniently expressing float arithmatic.*)
 module Float : sig
   val ( + ) : float -> float -> float

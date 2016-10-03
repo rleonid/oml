@@ -84,7 +84,7 @@ module Alias =
 
       let rec iter weights probs alias = function
       | ([], rest) | (rest, []) ->
-        List.iter (fun lg -> probs.(lg) <- 1.0) rest
+        List.iter ~f:(fun lg -> probs.(lg) <- 1.0) rest
       | (l::small, g::large) -> begin
           probs.(l) <- weights.(l) *. float n;
           alias.(l) <- g;

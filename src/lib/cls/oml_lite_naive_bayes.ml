@@ -16,7 +16,6 @@
 *)
 
 open Util
-module List = ListLabels
 
 module Binomial(Data: Cls_intf.Dummy_encoded_data) = struct
 

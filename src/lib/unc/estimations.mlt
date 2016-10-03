@@ -29,15 +29,15 @@ let () =
 
   let polynomial b = Gen.(list (make_int 2 10) (bfloat b)) in
   let poly_to_f = function
-    | []      -> fun _ -> 0.0
-    | h :: tl -> fun x -> List.fold_left (fun p v -> (p *. x) +. v) h tl
+    | []         -> fun _ -> 0.0
+    | init :: tl -> fun x -> List.fold_left ~f:(fun p v -> (p *. x) +. v) ~init tl
   in
   (* Compute the derivative of the polynomial symbolically *)
   let poly_to_df lst =
     List.rev lst
     |> List.tl
     |> List.rev
-    |> List.mapi (fun i c -> (float (i + 1)) *. c)
+    |> List.mapi ~f:(fun i c -> (float (i + 1)) *. c)
     |> poly_to_f
   in
   (* TODO: Separate this into 2 cases, one where we know the derivative

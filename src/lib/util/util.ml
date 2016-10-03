@@ -20,6 +20,8 @@ module Array = struct
   include Oml_array
 end
 
+module List = ListLabels
+
 module Float = struct
   let ( + ) x y = x +. y
   let ( - ) x y = x -. y

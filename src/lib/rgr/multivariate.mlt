@@ -24,11 +24,11 @@ module Descriptive = Descriptive
 module Vectors = Vectors
 
 let looe_manually lambda pred resp =
-  let predi = Array.to_list pred |> List.mapi (fun i p -> (i, p)) in
-  let respi = Array.to_list resp |> List.mapi (fun i r -> (i, r)) in
+  let predi = Array.to_list pred |> List.mapi ~f:(fun i p -> (i, p)) in
+  let respi = Array.to_list resp |> List.mapi ~f:(fun i r -> (i, r)) in
   let without i =
-    List.filter (fun (j, _) -> j <> i) predi |> Array.of_list |> Array.map snd,
-    List.filter (fun (j, _) -> j <> i) respi |> Array.of_list |> Array.map snd
+    List.filter ~f:(fun (j, _) -> j <> i) predi |> Array.of_list |> Array.map snd,
+    List.filter ~f:(fun (j, _) -> j <> i) respi |> Array.of_list |> Array.map snd
   in
   pred
   |> Array.mapi (fun i p ->
