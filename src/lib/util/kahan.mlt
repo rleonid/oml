@@ -1,0 +1,35 @@
+(*
+   Copyright 2015,2016:
+     Leonid Rozenberg <leonidr@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*)
+
+open Test_utils
+
+let () =
+  let add_simple_test = Test.add_simple_test_group __MODULE__ in
+  add_simple_test ~title:"Kahan summations keep the first degeneracy"
+    (fun () ->
+      let is_nan (x : float) = x <> x in
+      let e = empty in
+      Assert.is_true (sum (update (update e infinity) nan) = infinity
+                  &&  sum (update (update e infinity) neg_infinity) = infinity
+                  &&  sum (update (update e infinity) 3.4) = infinity
+                  &&  sum (update (update e neg_infinity) nan) = neg_infinity
+                  &&  sum (update (update e neg_infinity) infinity) = neg_infinity
+                  &&  sum (update (update e neg_infinity) (-342.3)) = neg_infinity
+                  &&  (is_nan (sum (update (update e nan) infinity)))
+                  &&  (is_nan (sum (update (update e nan) 0.3)))
+                  &&  (is_nan (sum (update (update e nan) neg_infinity)))));
+  ()
