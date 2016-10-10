@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-include module type of Oml_lite_naive_bayes
+include module type of Oml_naive_bayes
 
 (** Train a
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes}

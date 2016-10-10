@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-include Oml_lite_naive_bayes
+include Oml_naive_bayes
 open Oml_util
 
 module Gaussian(Data: Oml_cls_intf.Continuous_encoded_data) = struct

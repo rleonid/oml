@@ -131,7 +131,7 @@ let categorical ?seed weights =
       (fun () -> Alias.sample alias r)
 
 let softmax ?seed ?temperature weights =
-  categorical ?seed (Oml_lite_functions.softmax ?temperature weights)
+  categorical ?seed (Oml_functions.softmax ?temperature weights)
 
 module Poly =
   struct

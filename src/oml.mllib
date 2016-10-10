@@ -12,23 +12,23 @@ util/oml_util_base
 
 stats/oml_continued_fraction
 stats/oml_descriptive
-stats/oml_lite_functions
+stats/oml_functions
 stats/oml_measures
 stats/oml_sampling
 
 cls/oml_cls_intf
 cls/oml_common_naive_bayes
-cls/oml_lite_naive_bayes
+cls/oml_naive_bayes
 cls/oml_performance
 cls/oml_probabilities
 
 rgr/oml_common_univariate
 rgr/oml_interpolate
-rgr/oml_lite_univariate
-rgr/oml_lite_intf
+rgr/oml_univariate
+rgr/oml_intf
 
 unc/oml_estimations
 unc/oml_solvers
 unc/oml_matrices
 unc/oml_vectors
-unc/oml_lite_uncategorized
+unc/oml_uncategorized

@@ -16,7 +16,7 @@
 *)
 
 module type Linear_model = sig
-  include Oml_lite_intf.Linear_model
+  include Oml_intf.Linear_model
 
   (** [confidence_interval linear_model alpha x] Use the [linear_model] to
       construct confidence intervals at [x] at an [alpha]-level of significance.

@@ -7,7 +7,7 @@ end
 
 (** WIP: Special functions and Linear Algebra. *)
 module Uncategorized : sig
-  include module type of Oml_lite_uncategorized
+  include module type of Oml_uncategorized
 end
 
 (** Inference, parameter estimation.*)
@@ -15,7 +15,7 @@ module Statistics : sig
   module Continued_fraction : sig include
     module type of Oml_continued_fraction
   end
-  module Functions : sig include module type of Oml_lite_functions end
+  module Functions : sig include module type of Oml_functions end
   module Sampling : sig include module type of Oml_sampling end
   module Descriptive : sig include module type of Oml_descriptive end
   module Measures : sig include module type of Oml_measures end
@@ -29,14 +29,14 @@ module Classification : sig
   module Intf : sig include module type of Oml_cls_intf end
   module Probabilities : sig include module type of Oml_probabilities end
   module Naive_bayes : sig
-    include module type of Oml_lite_naive_bayes
+    include module type of Oml_naive_bayes
   end
   module Performance : sig include module type of Oml_performance end
 end
 
 (** Model relationship between variables. *)
 module Regression : sig
-  module Intf : sig include module type of Oml_lite_intf end
-  module Univariate : sig include module type of Oml_lite_univariate end
+  module Intf : sig include module type of Oml_intf end
+  module Univariate : sig include module type of Oml_univariate end
   module Interpolate : sig include module type of Oml_interpolate end
 end
