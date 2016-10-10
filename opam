@@ -8,15 +8,22 @@ homepage: "https://github.com/hammerlab/oml/"
 dev-repo: "https://github.com/hammerlab/oml.git"
 bug-reports: "https://github.com/hammerlab/oml/issues"
 license: "Apache2"
-build: [make "build"]
-install: [make "install"]
-remove: ["ocamlfind" "remove" "oml"]
 depends: [
   "ocamlfind" {build}
+  "ocamlbuild" {build}
+  "topkg" {build}
   "cppo" { build & >= "1.4.0" }
 ]
-depopts :[
+depopts: [
   "lacaml"
   "lbfgs"
   "ocephes"
 ]
+
+build: [[
+   "ocaml" "pkg/pkg.ml" "build"
+           "--pinned" "%{pinned}%"
+           "--with-lacaml" lacaml:installed
+           "--with-lbfgs" lbfgs:installed
+           "--with-ocephes" ocephes:installed
+]]

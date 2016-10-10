@@ -5,6 +5,7 @@ _doc_build
 report_dir/
 *.native
 *.byte
+*.install
 bisect*.out
 oml.docdir
 oml.odocl
