@@ -17,7 +17,7 @@
 *)
 
 open Oml_util
-module F = Oml_functions
+module F = Omlf_functions
 let invalid_arg ~f fmt = invalid_arg ~m:"Distributions" ~f fmt
 
 let normal_cdf ?(mean=0.0) ?(std=1.0) x =

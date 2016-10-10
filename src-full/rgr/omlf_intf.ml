@@ -31,5 +31,5 @@ module type Linear_model = sig
   (** [coefficient_tests linear_model] perform hypothesis tests on the
       models coefficients to see if they are significantly different from
       the null. *)
-  val coefficient_tests : ?null:float -> t -> Hypothesis_test.t array
+  val coefficient_tests : ?null:float -> t -> Omlf_hypothesis_test.t array
 end

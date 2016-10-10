@@ -32,11 +32,11 @@ let poly_to_f = function
 let poly_lst_to_string_as_func lst =
   let n = List.length lst - 1 in
   lst
-  |> List.mapi (fun i v -> sprintf "%f * x**%d." v (n - i))
+  |> List.mapi (fun i v -> Printf.sprintf "%f * x**%d." v (n - i))
   |> String.concat " + "
-  |> sprintf "f(x) = %s"
+  |> Printf.sprintf "f(x) = %s"
 
 let poly_lst_to_string lst =
   lst
-  |> List.map (fun v -> sprintf "%.25f" v)
+  |> List.map (fun v -> Printf.sprintf "%.25f" v)
   |> String.concat "; "

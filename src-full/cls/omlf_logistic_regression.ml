@@ -86,7 +86,7 @@ module LrCommon(Data: Continuous_encoded_data) = struct
           |> Mat.of_array
         in
         let weights =
-          Softmax_regression.regress
+          Omlf_softmax_regression.regress
             ~lambda:opt.lambda
             ~tolerance:opt.tolerance
             ftrs classes
@@ -150,7 +150,7 @@ module Multiclass(Data: Continuous_encoded_data) = struct
   let eval lr feature =
     let a   = safe_encoding feature in
     let x_i = Vec.of_array (copy1 a) in
-    let prs = Softmax_regression.classify_v lr.weights x_i in
+    let prs = Omlf_softmax_regression.classify_v lr.weights x_i in
     List.map2 ~f:(fun c (_, p) -> (c, p)) lr.classes prs
 
   let estimate = estimate

@@ -15,8 +15,8 @@
    limitations under the License.
 *)
 
-open SolvedLPViaSvd
-open Lacaml_util
+open Omlf_solvedLPViaSvd
+open Omlf_lacaml_util
 open Lacaml.D
 
 type opt =
@@ -29,7 +29,7 @@ let opt ?(tik_matrix = [|[||]|]) ?l2_regularizer () =
 
 let default = opt ()
 
-module E = Eval_multivariate
+module E = Omlf_eval_multivariate
 include E
 
 let gtr_to_lambda fit_model l2_regularizer =
@@ -114,5 +114,3 @@ let coefficient_tests ?null t =
 let f_statistic t =
   P.eprintf "Tikhonov f statistic are experimental, caution!\n";
   f_statistic t
-
-

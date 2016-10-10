@@ -19,7 +19,7 @@ type opt = float array
 
 val opt : ?weights:float array -> unit -> opt
 
-include Oml_intf.Linear_model
+include Omlf_intf.Linear_model
   with type input = float
   and type opt := opt
 
@@ -33,8 +33,8 @@ val beta : t -> float
 
 (** [alpha_test ~null linear_model] perform a hypothesis test on the [alpha]
     coefficient of the [linear_model]. *)
-val alpha_test : ?null:float -> t -> Hypothesis_test.t
+val alpha_test : ?null:float -> t -> Omlf_hypothesis_test.t
 
 (** [beta_test ~null linear_model] perform a hypothesis test on the [beta]
     coefficient of the [linear_model]. *)
-val beta_test : ?null:float -> t -> Hypothesis_test.t
+val beta_test : ?null:float -> t -> Omlf_hypothesis_test.t

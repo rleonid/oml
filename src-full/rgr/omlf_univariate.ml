@@ -21,7 +21,9 @@ let confidence_interval, prediction_interval =
   let interval a lrm ~alpha x =
     let dgf = lrm.size -. 2.0 in
     let degrees_of_freedom = truncate dgf in
-    let t  = Distributions.student_quantile ~degrees_of_freedom (alpha /. 2.0) in
+    let t  =
+      Omlf_distributions.student_quantile ~degrees_of_freedom (alpha /. 2.0)
+    in
     let b  = (x -. lrm.m_pred) ** 2.0 /. lrm.s_xx in
     let c  = lrm.sum_residuals /. dgf in
     let se = sqrt ((a +. b) *. c) in
@@ -39,13 +41,17 @@ let alpha_test ?(null=0.0) t =
   in
   let degrees_of_freedom = truncate t.size - 2 in
   let diff = t.alpha -. null in
-  Hypothesis_test.(t_test Two_sided ~degrees_of_freedom ~diff ~error:(sqrt alpha_var))
+  Omlf_hypothesis_test.(t_test
+                          Two_sided ~degrees_of_freedom ~diff
+                          ~error:(sqrt alpha_var))
 
 let beta_test ?(null=0.0) t =
   let beta_var = t.inferred_var /. t.s_xx in
   let degrees_of_freedom = truncate t.size - 2 in
   let diff = t.beta -. null in
-  Hypothesis_test.(t_test Two_sided ~degrees_of_freedom ~diff ~error:(sqrt beta_var))
+  Omlf_hypothesis_test.(t_test
+                          Two_sided ~degrees_of_freedom ~diff
+                          ~error:(sqrt beta_var))
 
 let coefficient_tests ?null t =
   [| alpha_test ?null t ; beta_test ?null t |]

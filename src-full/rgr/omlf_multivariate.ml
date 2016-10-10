@@ -1,9 +1,9 @@
 
-open SolvedLPViaSvd
-open Lacaml_util
+open Omlf_solvedLPViaSvd
+open Omlf_lacaml_util
 open Lacaml.D
 
-module E = Eval_multivariate
+module E = Omlf_eval_multivariate
 include E
 
 type opt =
@@ -72,5 +72,3 @@ let regress ?(opt=default) pred ~resp =
   (*d_w = durbin_watson residuals *)
   ; aic = aic
   }
-
-

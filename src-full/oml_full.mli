@@ -9,7 +9,7 @@ end
 
 (** WIP: Special functions and Linear Algebra. *)
 module Uncategorized : sig
-  include module type of Oml_uncategorized
+  include module type of Omlf_uncategorized
 end
 
 (** Inference, parameter estimation.*)
@@ -19,7 +19,7 @@ module Statistics : sig
     include module type of Oml.Statistics.Continued_fraction
   end
   module Functions : sig
-    include module type of Oml_functions
+    include module type of Omlf_functions
   end
   module Sampling : sig
     include module type of Oml.Statistics.Sampling
@@ -31,8 +31,8 @@ module Statistics : sig
     include module type of Oml.Statistics.Measures
   end
 
-  module Distributions : sig include module type of Distributions end
-  module Hypothesis_test : sig include module type of Hypothesis_test end
+  module Distributions : sig include module type of Omlf_distributions end
+  module Hypothesis_test : sig include module type of Omlf_hypothesis_test end
 end
 
 (** Compute running statitics using recurrence equations. *)
@@ -50,13 +50,13 @@ module Classification : sig
     include module type of Oml.Classification.Probabilities
   end
   module Naive_bayes : sig
-    include module type of Oml_naive_bayes
+    include module type of Omlf_naive_bayes
   end
   module Logistic_regression : sig
-    include module type of Logistic_regression
+    include module type of Omlf_logistic_regression
   end
   module Descriminant : sig
-    include module type of Descriminant
+    include module type of Omlf_descriminant
   end
   module Performance : sig
     include module type of Oml.Classification.Performance
@@ -66,17 +66,17 @@ end
 (** Model relationship between variables. *)
 module Regression : sig
   module Intf : sig
-    include module type of Oml_intf
+    include module type of Omlf_intf
   end
 
   module Univariate : sig
-    include module type of Oml_univariate
+    include module type of Omlf_univariate
   end
   module Multivariate : sig
-    include module type of Multivariate
+    include module type of Omlf_multivariate
   end
   module Tikhonov : sig
-    include module type of Tikhonov
+    include module type of Omlf_tikhonov
   end
   module Interpolate : sig
     include module type of  Oml.Regression.Interpolate
@@ -86,6 +86,6 @@ end
 (** Unsupervised learning. *)
 module Unsupervised : sig
   module Pca : sig
-    include module type of Pca
+    include module type of Omlf_pca
   end
 end

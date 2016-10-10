@@ -2,7 +2,7 @@
 
 open Lacaml.D
 open Oml_util
-module LU = Lacaml_util
+module LU = Omlf_lacaml_util
 
 module LDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
   type feature = Data.feature

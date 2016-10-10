@@ -21,10 +21,10 @@
   true for Tikhonov. *)
 
 open Oml_util
-open SolvedLPViaSvd
+open Omlf_solvedLPViaSvd
 open Lacaml.D
 module P = Printf
-module D = Distributions
+module D = Omlf_distributions
 
 type glm =
   { padded            : bool
@@ -122,7 +122,7 @@ let coefficient_tests ?(null=0.0) glm =
   Array.init n (fun i ->
     let error = sqrt (glm.inferred_var *. cov_dia.{i+1}) (*FORTRAN*) in
     let diff  = coe.(i) -. null in
-    Hypothesis_test.(t_test Two_sided ~degrees_of_freedom ~diff ~error))
+    Omlf_hypothesis_test.(t_test Two_sided ~degrees_of_freedom ~diff ~error))
 
 let f_statistic t =
   let n = Vec.dim t.solved_lp.coef in

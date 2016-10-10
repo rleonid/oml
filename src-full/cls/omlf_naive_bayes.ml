@@ -20,7 +20,7 @@ open Oml_util
 
 module Gaussian(Data: Oml_cls_intf.Continuous_encoded_data) = struct
 
-  module D = Distributions
+  module D = Omlf_distributions
   module O = Oml_online
 
   type samples = (Data.clas * Data.feature) list

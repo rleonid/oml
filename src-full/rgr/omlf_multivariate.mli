@@ -14,7 +14,7 @@ val opt : ?l2_regularizer:[`S of float | `From of float array] ->
           unit ->
           opt
 
-include Oml_intf.Linear_model
+include Omlf_intf.Linear_model
   with type input = float array
   and type opt := opt
 

@@ -1,6 +1,6 @@
-open Lacaml_util
+open Omlf_lacaml_util
 open Lacaml.D
-module Svd = Svd
+module Svd = Omlf_svd
 
 (* 'Solved' (via SVD) linear problem. *)
 type solved_lp =
@@ -82,4 +82,3 @@ let solve_lp pred resp = function
             full_looe cmi fill resi
           in
           { coef ; vaco = `Svd svd ; resi ; looe }
-
