@@ -1,23 +1,38 @@
 
 TEST_BUILD_DIR=_test_build
+# Used when building just lite
 LITE_BUILD_DIR=_lite_build
-PACKAGES=lacaml lbfgs ocephes
-PACKAGES_TEST=$(PACKAGES) kaputt dsfo
+DOC_BUILD_DIR=_doc_build
+PACKAGES:=lacaml lbfgs ocephes
+JUST_TEST:=kaputt dsfo
+PACKAGES_TEST:=$(PACKAGES) $(JUST_TEST)
 PACKAGES_COVERED:=$(PACKAGES_TEST) bisect_ppx
-PACKAGES_INSTALL=cppo $(PACKAGES)
-PACKAGES_INSTALL_TEST=cppo $(PACKAGES_COVERED)
-CPPO_TAG:=-plugin-tag 'package(cppo_ocamlbuild)'
+PACKAGES_INSTALL:=$(PACKAGES)
+PACKAGES_INSTALL_TEST:=$(PACKAGES_COVERED)
 
-SOURCE_DIRS=/util /unc /stats /cls /rgr /uns
-INSTALL_EXTS=a o cma cmi cmo cmt cmx cmxa cmxs
+SOURCE_DIRS=util unc stats cls rgr uns
+# Do NOT install the cmo's, since we're packing oml_lite.cma into oml.cma.
+INSTALL_EXTS=a o cma cmi cmt cmx cmxa cmxs
 
-.PHONY: all clean test build install uninstall setup default doc omltest.native oml.cmxa oml_lite.cmxa lite
+# One more and we might as well add a genuine configure step.
+# Remember that the comma's in Make 'if' are space sensitive!
+WITH_OML:=$(if $(shell ocamlfind query ocephes 2>/dev/null),0,1)
+WITH_OML:=$(if $(shell ocamlfind query lacaml 2>/dev/null),$(WITH_OML),1)
+WITH_OML:=$(if $(shell ocamlfind query lbfgs 2>/dev/null),$(WITH_OML),1)
+
+
+# Str is necessary for building the documentation, which unfortunately, is in a
+# half broken state because "include Module" logic doesn't work with OCamldoc.
+OCAMLBUILD=ocamlbuild -use-ocamlfind -plugin-tag "package(str)"
+
+.PHONY: all clean test build install uninstall setup default doc \
+	oml_test.native oml_lite_test.native omoml.cmxa oml_lite.cmxa lite
 
 default: FORCE
 	@echo "available targets:"
-	@echo "  build      	compiles Oml"
-	@echo "  lite       	compiles Oml_lite"
-	@echo "  tests      	runs unit tests"
+	@echo "  build      	compiles Oml_lite and Oml if possible"
+	@echo "  lite       	compiles only Oml_lite"
+	@echo "  test       	runs unit tests"
 	@echo "  doc        	generates ocamldoc documentations"
 	@echo "  clean      	deletes all produced files"
 	@echo "  setup      	opam install Oml dependencies"
@@ -39,51 +54,67 @@ setup-test:
 #### Building
 
 oml.cmxa:
-	ocamlbuild $(CPPO_TAG) -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib oml.cma oml.cmxa oml.cmxs
+	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml.cma oml.cmxa oml.cmxs
 
 lite:
-	mv src/lib/_tags src/lib/_tags_orig && \
-	cp src/lib/_lite_tags src/lib/_tags && \
-	ocamlbuild -build-dir $(LITE_BUILD_DIR) $(CPPO_TAG) -tag 'cppo_D(OML_LITE)' -use-ocamlfind -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs && \
-	mv src/lib/_tags_orig src/lib/_tags || \
-	mv src/lib/_tags_orig src/lib/_tags
+	$(OCAMLBUILD) -build-dir $(LITE_BUILD_DIR) \
+		-I src/lib $(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) \
+		oml_lite.cma oml_lite.cmxa oml_lite.cmxs
 
-build: oml.cmxa
+build:
+ifeq (0, $(WITH_OML))
+	$(OCAMLBUILD) $(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib \
+		oml_lite.cma oml_lite.cmxa oml_lite.cmxs oml.cma oml.cmxa oml.cmxs
+else
+	$(OCAMLBUILD) \
+		$(foreach d, $(SOURCE_DIRS), -I src/lib/$(d)) -I src/lib oml_lite.cma oml_lite.cmxa oml_lite.cmxs
+endif
 
 clean:
-	ocamlbuild -clean
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) -clean
-	ocamlbuild -build-dir $(LITE_BUILD_DIR) -clean
+	$(OCAMLBUILD) -clean
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) -clean
+	$(OCAMLBUILD) -build-dir $(LITE_BUILD_DIR) -clean
+	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) -clean
 
 #### Testing
 
-omltest.native:
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
-		$(CPPO_TAG) \
-		-use-ocamlfind $(foreach package, $(PACKAGES_TEST),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
+oml_test.native:
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
+		$(foreach package, $(PACKAGES_TEST),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test oml_test.native
 
-test: omltest.native
-	time ./omltest.native ${TEST}
+oml_lite_test.native:
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
+		$(foreach package, $(JUST_TEST),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test oml_lite_test.native
+
+test: oml_test.native
+	time ./oml_test.native ${TEST}
 
 covered_test.native:
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
-		$(CPPO_TAG) \
-		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib $(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/test omltest.native
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
+		$(foreach package, $(PACKAGES_COVERED),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib -I src/test oml_test.native
 
 covered_test: covered_test.native
-	time ./omltest.native ${TEST}
+	time ./oml_test.native ${TEST}
 
 test_environment:
-	ocamlbuild -build-dir $(TEST_BUILD_DIR) \
-		-use-ocamlfind $(foreach package, $(PACKAGES_COVERED),-package $(package)) \
-		-I src/lib -I src/test oml.cma omltest.native
+	$(OCAMLBUILD) -build-dir $(TEST_BUILD_DIR) \
+		$(foreach package, $(PACKAGES_COVERED),-package $(package)) \
+		-I src/lib -I src/test oml.cma oml_test.native
 
 #### Installing
 
 install:
-	cd pkg/full && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../../_build/src/lib/oml.$(ext))
+ifeq (0, $(WITH_OML))
+	cd pkg && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../_build/src/lib/oml.$(ext)) \
+		$(foreach ext, $(INSTALL_EXTS), ../_build/src/lib/oml_lite.$(ext))
+else
+	cd pkg && ocamlfind install oml META $(foreach ext, $(INSTALL_EXTS), ../_build/src/lib/oml_lite.$(ext))
+endif
 
 uninstall:
 	ocamlfind remove oml
@@ -116,7 +147,11 @@ clean_reports:
 oml.odocl:
 	cp src/lib/oml.mlpack oml.odocl
 
-doc: oml.odocl
-	ocamlbuild -use-ocamlfind $(foreach package, $(PACKAGES),-package $(package)) -I src/lib  oml.docdir/index.html
+# including the cmi as build targets triggers all of the including logic
+# to get saner documentation.
+doc:
+	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) \
+		$(foreach package, $(PACKAGES),-package $(package)) \
+		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib oml.cmi doc.docdir/index.html
 
 FORCE:

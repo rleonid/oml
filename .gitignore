@@ -1,9 +1,11 @@
 _build
 _test_build
 _lite_build
+_doc_build
 report_dir/
 *.native
 *.byte
+*.install
 bisect*.out
 oml.docdir
 oml.odocl

@@ -4,7 +4,17 @@
 # 48 : implicit elimination of optional arguments (ex. ?n, ?c, ?ofsx, ?incx)
 # 50 : ambiguous documentation comment.
 # I'd like to get rid of 42,44 and 50
-true: annot, bin_annot, principal, warn(A-42-44-48-50), warn_error(A-42-44-48-50)
+true: safe_string, annot, bin_annot, principal, warn(A-42-44-48-50)
+
+# warn_error(A-42-44-48-50)
+
+<src> : include
+<src/*> : include
+<src-full> : include
+<src-full/*> : include
+<src-full/**> : package(lacaml), package(ocephes), package(lbfgs)
+
 "_build": -traverse
 "_test_build": -traverse
 "_lite_build": -traverse
+"_doc_build": -traverse
