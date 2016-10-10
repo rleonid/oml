@@ -30,9 +30,9 @@
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
   {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
-module Binary(D: Cls_intf.Continuous_encoded_data) :
+module Binary(D: Oml_cls_intf.Continuous_encoded_data) :
   sig
-    include Cls_intf.Classifier with  type feature = D.feature
+    include Oml_cls_intf.Classifier with  type feature = D.feature
                             and type clas = D.clas
 
     (** [opt ~lambda ~tolerance ()] a constructor for the optional arguments,
@@ -67,9 +67,9 @@ module Binary(D: Cls_intf.Continuous_encoded_data) :
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
   {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
-module Multiclass(D: Cls_intf.Continuous_encoded_data) :
+module Multiclass(D: Oml_cls_intf.Continuous_encoded_data) :
   sig
-    include Cls_intf.Classifier with (* type opt := opt
+    include Oml_cls_intf.Classifier with (* type opt := opt
                             and*) type feature = D.feature
                             and type clas = D.clas
 

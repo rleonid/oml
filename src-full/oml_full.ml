@@ -20,7 +20,7 @@ module Classification = struct
   module Naive_bayes = Oml_naive_bayes
   module Logistic_regression = Logistic_regression
   module Descriminant = Descriminant
-  module Performance = Performance
+  module Performance = Oml.Classification.Performance
 end
 
 module Regression = struct

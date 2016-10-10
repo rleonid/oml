@@ -17,13 +17,13 @@
 
 (** Provide a thin matrix interfaces for [float array array]'s. *)
 
-type t = Vectors.t array
+type t = Oml_vectors.t array
 
 (** [row m i] returns the [i]th row of matrix [m].*)
-val row : t -> int -> Vectors.t
+val row : t -> int -> Oml_vectors.t
 
 (** [column m i] returns the [i]th colum of matrix [m].*)
-val column : t -> int -> Vectors.t
+val column : t -> int -> Oml_vectors.t
 
 (** [dim m] the dimensions (row, columns) of the matrix [m]. *)
 val dim : t -> int * int
@@ -32,7 +32,7 @@ val dim : t -> int * int
 val transpose : t -> t
 
 (** [diagonal v] create a diagonal matrix from vector [v]. *)
-val diagonal : ?n:int -> ?m:int -> Vectors.t -> t
+val diagonal : ?n:int -> ?m:int -> Oml_vectors.t -> t
 
 (** [equal d x y] two matrices are equal if they have the same dimensions
   and all pairwise elements are not [Util.significantly_different_from ?d]
@@ -57,7 +57,7 @@ val identity : int -> t
 val prod : t -> t -> t
 
 (** Multiply a row vector against a matrix. *)
-val prod_row_vector : Vectors.t -> t -> Vectors.t
+val prod_row_vector : Oml_vectors.t -> t -> Oml_vectors.t
 
 (** Multiply a matrix against a column vector. *)
-val prod_column_vector : t -> Vectors.t -> Vectors.t
+val prod_column_vector : t -> Oml_vectors.t -> Oml_vectors.t

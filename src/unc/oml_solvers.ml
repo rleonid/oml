@@ -41,7 +41,7 @@ let newton_raphson_full ?init ~accuracy ~iterations ~lower ~upper ~f ~df =
 
 let newton ?init ~lower ~upper f =
   newton_raphson_full ?init ~accuracy:1.0e-10 ~iterations:1000
-      ~lower ~upper ~f ~df:(Estimations.second_order f)
+      ~lower ~upper ~f ~df:(Oml_estimations.second_order f)
 
 let debug_ref = ref false
 

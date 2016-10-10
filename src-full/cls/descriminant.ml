@@ -4,7 +4,7 @@ open Lacaml.D
 open Oml_util
 module LU = Lacaml_util
 
-module LDA(Data : Cls_intf.Continuous_encoded_data) = struct
+module LDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
   type feature = Data.feature
   type clas = Data.clas
 
@@ -100,7 +100,7 @@ module LDA(Data : Cls_intf.Continuous_encoded_data) = struct
 
 end (* LDA *)
 
-module QDA(Data : Cls_intf.Continuous_encoded_data) = struct
+module QDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
   type feature = Data.feature
   type clas = Data.clas
 

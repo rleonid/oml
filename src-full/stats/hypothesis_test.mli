@@ -26,7 +26,7 @@
   we can still create a prediction interval based off of basic sampled
   statistics and Student's distribution.
   *)
-val prediction_interval : Descriptive.summary -> float -> float * float
+val prediction_interval : Oml_descriptive.summary -> float -> float * float
 
 (** A hypothesis test.  *)
 type t =
@@ -54,7 +54,7 @@ type null_hypothesis =
     hypothesis, where [d] is the difference between population parameter and
     the observed value, [e] is the standard error of the observed value, and
     [k] is the degrees of freedom in the statistical procedure.
-    
+
     One may think of this as a principled way to test the signal (diff)
     to noise (error) seen in a sample of data. *)
 val t_test : null_hypothesis -> degrees_of_freedom:int -> diff:float
@@ -81,5 +81,3 @@ val means_different_variance_test : null_hypothesis -> float array
 (** [variance_ratio_test sample1 sample2] tests the data in [sample1] and
     [sample2] have the same variance based on F-test.*)
 val variance_ratio_test : float array -> float array -> t
-
-

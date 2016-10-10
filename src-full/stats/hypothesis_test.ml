@@ -16,7 +16,7 @@
 *)
 
 open Oml_util
-open Descriptive
+open Oml_descriptive
 open Distributions
 module F = Oml_functions
 

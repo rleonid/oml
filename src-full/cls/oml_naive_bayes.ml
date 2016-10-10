@@ -18,10 +18,10 @@
 include Oml_lite_naive_bayes
 open Oml_util
 
-module Gaussian(Data: Cls_intf.Continuous_encoded_data) = struct
+module Gaussian(Data: Oml_cls_intf.Continuous_encoded_data) = struct
 
   module D = Distributions
-  module O = Online
+  module O = Oml_online
 
   type samples = (Data.clas * Data.feature) list
 
@@ -51,11 +51,11 @@ module Gaussian(Data: Cls_intf.Continuous_encoded_data) = struct
     let to_prior (prior, _) = prior in
     let to_likelihood (_, lkhd) =
       let indices = safe_encoding feature in
-      Common_naive_bayes.prod_arr2 (fun (mean,std) y ->
+      Oml_common_naive_bayes.prod_arr2 (fun (mean,std) y ->
         if std = 0. then 1. else D.normal_pdf ~mean ~std y)
         lkhd indices
     in
-    Common_naive_bayes.eval ~to_prior ~to_likelihood table
+    Oml_common_naive_bayes.eval ~to_prior ~to_likelihood table
 
   type opt = unit
   let default = ()
@@ -80,7 +80,7 @@ module Gaussian(Data: Cls_intf.Continuous_encoded_data) = struct
         let attr_params = Array.map select rsarr in
         (c, (class_prior, attr_params)))
     in
-    Common_naive_bayes.estimate "Gaussian"
+    Oml_common_naive_bayes.estimate "Gaussian"
       init update incorporate (module Cm)
 
 end (* Gaussian *)

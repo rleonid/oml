@@ -95,7 +95,7 @@ module type Classifier = sig
 
   (** [eval classifier feature] assign {{!Probabilities.t}probabilities} to the
       possible {{!type:Data.clas}classes} based upon [feature]. *)
-  val eval : t -> feature -> clas Probabilities.t
+  val eval : t -> feature -> clas Oml_probabilities.t
 
   (** Representing training data. *)
   type samples = (clas * feature) list

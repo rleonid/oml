@@ -17,7 +17,7 @@
 
 open Oml_util
 
-module Binomial(Data: Cls_intf.Dummy_encoded_data) = struct
+module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
 
   type feature = Data.feature
   type clas = Data.clas
@@ -51,16 +51,16 @@ module Binomial(Data: Cls_intf.Dummy_encoded_data) = struct
       let idx = safe_encoding b in
       if nb.e_bernoulli then
         let set = Array.to_list idx in
-        Common_naive_bayes.prod_arr (fun i ->
+        Oml_common_naive_bayes.prod_arr (fun i ->
           if List.mem i ~set then
             class_probs.(i)
           else
             (1.0 -. class_probs.(i)))
           (Array.init Data.size (fun x -> x))
       else
-        Common_naive_bayes.prod_arr (fun i -> class_probs.(i)) idx
+        Oml_common_naive_bayes.prod_arr (fun i -> class_probs.(i)) idx
     in
-    Common_naive_bayes.eval ~to_prior ~to_likelihood nb.table
+    Oml_common_naive_bayes.eval ~to_prior ~to_likelihood nb.table
 
   module Cm = Map.Make(struct type t = clas let compare = compare end)
 
@@ -75,7 +75,7 @@ module Binomial(Data: Cls_intf.Dummy_encoded_data) = struct
       arr
     in
     let incorporate all num_classes totalf =
-      let to_prob = Common_naive_bayes.smoothing_to_prob opt.smoothing in
+      let to_prob = Oml_common_naive_bayes.smoothing_to_prob opt.smoothing in
       List.map all ~f:(fun (cl, attr_count) ->
         let prior_count = float attr_count.(Data.size) in
         let likelihood =
@@ -88,7 +88,7 @@ module Binomial(Data: Cls_intf.Dummy_encoded_data) = struct
         cl, likelihood)
     in
     let table =
-      Common_naive_bayes.estimate "Binomial"
+      Oml_common_naive_bayes.estimate "Binomial"
         init update incorporate (module Cm) ?classes data
     in
     {table ; e_bernoulli = opt.bernoulli}
@@ -103,7 +103,7 @@ module Binomial(Data: Cls_intf.Dummy_encoded_data) = struct
 
 end (* Binomial *)
 
-module Categorical(Data: Cls_intf.Category_encoded_data) = struct
+module Categorical(Data: Oml_cls_intf.Category_encoded_data) = struct
 
   type feature = Data.feature
   type clas = Data.clas
@@ -140,9 +140,10 @@ module Categorical(Data: Cls_intf.Category_encoded_data) = struct
     let to_prior (prior, _) = prior in
     let to_likelihood (_, ftr_prob) =
       let indices = safe_encoding feature in
-      Common_naive_bayes.prod_arr2 (fun i lk_arr -> lk_arr.(i)) indices ftr_prob
+      Oml_common_naive_bayes.prod_arr2
+        (fun i lk_arr -> lk_arr.(i)) indices ftr_prob
     in
-    Common_naive_bayes.eval ~to_prior ~to_likelihood table
+    Oml_common_naive_bayes.eval ~to_prior ~to_likelihood table
 
   module Cm = Map.Make(struct type t = clas let compare = compare end)
 
@@ -154,7 +155,7 @@ module Categorical(Data: Cls_intf.Category_encoded_data) = struct
       (c + 1, arr)
     in
     let incorporate all num_classes totalf =
-      let to_prob = Common_naive_bayes.smoothing_to_prob opt in
+      let to_prob = Oml_common_naive_bayes.smoothing_to_prob opt in
       List.map all ~f:(fun (cl, (class_count, attr_count)) ->
         let prior      = to_prob (float class_count) totalf (float num_classes) in
         let likelihood =
@@ -167,7 +168,7 @@ module Categorical(Data: Cls_intf.Category_encoded_data) = struct
         in
         cl, (prior, likelihood))
     in
-    Common_naive_bayes.estimate "Categorical" init update incorporate
+    Oml_common_naive_bayes.estimate "Categorical" init update incorporate
       (module Cm)
 
   end (* Categorical *)

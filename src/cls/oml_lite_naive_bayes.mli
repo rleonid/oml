@@ -19,8 +19,8 @@
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
   {{!modtype:Cls_intf.Dummy_encoded_data}Dummy variables.} *)
-module Binomial(D: Cls_intf.Dummy_encoded_data) : sig
-  include Cls_intf.Generative with type feature = D.feature
+module Binomial(D: Oml_cls_intf.Dummy_encoded_data) : sig
+  include Oml_cls_intf.Generative with type feature = D.feature
                               and type clas = D.clas
                               and type feature_probability = float array
 
@@ -45,8 +45,8 @@ end
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
   {{!modtype:Cls_intf.Category_encoded_data}Categorical variables.} *)
-module Categorical(D: Cls_intf.Category_encoded_data) : sig
-  include Cls_intf.Generative with type feature = D.feature
+module Categorical(D: Oml_cls_intf.Category_encoded_data) : sig
+  include Oml_cls_intf.Generative with type feature = D.feature
                               and type clas = D.clas
                               and type feature_probability = float array
 

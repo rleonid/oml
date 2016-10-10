@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-include Common_univariate
+include Oml_common_univariate
 
 let confidence_interval, prediction_interval =
   let interval a lrm ~alpha x =
@@ -49,4 +49,3 @@ let beta_test ?(null=0.0) t =
 
 let coefficient_tests ?null t =
   [| alpha_test ?null t ; beta_test ?null t |]
-

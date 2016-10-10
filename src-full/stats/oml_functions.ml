@@ -52,15 +52,16 @@ let rec regularized_beta ~alpha:a ~beta:b ?epsilon ?max_iterations =
                                 ((a +. (2. *. m)) *. (a +. (2. *. m) +. 1.0)) in
   let get_a _n _x = 1.0 in
   let log_beta = ln_beta a b in
-  let fraction = Continued_fraction.init ~get_a ~get_b in fun x ->
+  let fraction = Oml_continued_fraction.init ~get_a ~get_b in fun x ->
     if Oml_util.is_nan x || Oml_util.is_nan a || Oml_util.is_nan b ||
             x < 0.0 || x > 1.0 || a <= 0.0 || b <= 0.0 then nan
     else if (x > (a +. 1.) /. (2. +. b +. a) &&
                    1. -. x <= (b +. 1.) /. (2. +. b +. a))
     then 1. -. regularized_beta ~alpha:b ~beta:a ?epsilon ?max_iterations (1. -. x)
     else exp ((a *. log x) +. (b *. log1p (-.x)) -.
-                log a -. log_beta) *.
-                1.0 /. Continued_fraction.evaluate fraction ?epsilon ?max_iterations x
+              log a -. log_beta) *.
+         1.0 /.
+         Oml_continued_fraction.evaluate fraction ?epsilon ?max_iterations x
 
 let chi_square_less num_observations chi_square =
   regularized_lower_gamma ~a:((float num_observations) /. 2.0) (chi_square /. 2.0)

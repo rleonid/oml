@@ -16,7 +16,7 @@
 *)
 
 open Oml_util
-open Cls_intf
+open Oml_cls_intf
 
 module LrCommon(Data: Continuous_encoded_data) = struct
 
