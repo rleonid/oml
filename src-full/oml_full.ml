@@ -1,6 +1,10 @@
 module Util = Oml.Util
 
-module Uncategorized = Omlf_uncategorized
+module Uncategorized = struct
+  include Oml.Uncategorized
+  module Lacaml_util = Omlf_lacaml_util
+  module Svd = Omlf_svd
+end
 
 module Statistics = struct
   module Continued_fraction = Oml.Statistics.Continued_fraction

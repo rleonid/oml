@@ -8,8 +8,6 @@ cls/omlf_softmax_regression
 unc/omlf_homeless
 unc/omlf_lacaml_util
 unc/omlf_svd
-unc/omlf_uncategorized
-unc/omlf_homeless
 
 stats/omlf_distributions
 stats/omlf_hypothesis_test

@@ -9,7 +9,9 @@ end
 
 (** WIP: Special functions and Linear Algebra. *)
 module Uncategorized : sig
-  include module type of Omlf_uncategorized
+  include module type of Oml.Uncategorized
+  module Lacaml_util : module type of Omlf_lacaml_util
+  module Svd : module type of Omlf_svd
 end
 
 (** Inference, parameter estimation.*)

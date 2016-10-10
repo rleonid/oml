@@ -1,6 +1,11 @@
 module Util = Oml_util
 
-module Uncategorized = Oml_uncategorized
+module Uncategorized = struct
+  module Estimations = Oml_estimations
+  module Solvers = Oml_solvers
+  module Vectors = Oml_vectors
+  module Matrices = Oml_matrices
+end
 
 module Statistics = struct
   module Continued_fraction = Oml_continued_fraction
