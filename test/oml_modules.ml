@@ -19,7 +19,9 @@
   These should not have any C/Fortran dependencies. The associated tests will
   be run when this module is referenced in Oml_lite_test. *)
 
+module Oml_array = Oml_array
 module Oml_rank = Oml_rank
+module Oml_kahan = Oml_kahan
 module Oml_util = Oml_util
 
 (* Uncategorized. *)
