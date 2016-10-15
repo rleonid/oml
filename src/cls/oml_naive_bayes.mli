@@ -21,8 +21,8 @@
   {{!modtype:Cls_intf.Dummy_encoded_data}Dummy variables.} *)
 module Binomial(D: Oml_cls_intf.Dummy_encoded_data) : sig
   include Oml_cls_intf.Generative with type feature = D.feature
-                              and type clas = D.clas
-                              and type feature_probability = float array
+                                   and type clas = D.clas
+                                   and type feature_probability = float array
 
   (** [opt ~smoothing ~bernoulli ()] the optional configuration of the
        classifier.
