@@ -48,7 +48,7 @@ end
 (** Compute running statitics using recurrence equations. *)
 module Online : sig
   include module type of Oml.Online
-        with type t = Oml.Online.t
+    with type t = Oml.Online.t
 end
 
 (** Classify data based on features. *)
@@ -70,6 +70,7 @@ module Classification : sig
   end
   module Performance : sig
     include module type of Oml.Classification.Performance
+      (* binary and performance types are concrete. *)
   end
 end
 
@@ -78,7 +79,6 @@ module Regression : sig
   module Intf : sig
     include module type of Omlf_intf
   end
-
   module Univariate : sig
     include module type of Omlf_univariate
   end
@@ -89,7 +89,9 @@ module Regression : sig
     include module type of Omlf_tikhonov
   end
   module Interpolate : sig
-    include module type of  Oml.Regression.Interpolate
+    include module type of Oml.Regression.Interpolate
+      with type Spline.t = Oml.Regresssion.Interpolate.Spline.t
+       (* Spline.boundary is concrete. *)
   end
 end
 
