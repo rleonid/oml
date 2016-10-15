@@ -13,6 +13,8 @@ end
 (** WIP: Special functions and Linear Algebra. *)
 module Uncategorized : sig
   include module type of Oml.Uncategorized
+    with type Vectors.t = Oml.Uncategorized.Vectors.t
+     and type Matrices.t = Oml.Uncategorized.Matrices.t
   module Lacaml_util : module type of Omlf_lacaml_util
   module Svd : module type of Omlf_svd
 end
