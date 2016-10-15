@@ -90,7 +90,7 @@ module Regression : sig
   end
   module Interpolate : sig
     include module type of Oml.Regression.Interpolate
-      with type Spline.t = Oml.Regresssion.Interpolate.Spline.t
+      with type Spline.t = Oml.Regression.Interpolate.Spline.t
        (* Spline.boundary is concrete. *)
   end
 end
