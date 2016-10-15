@@ -15,7 +15,6 @@
    limitations under the License.
 *)
 
-
 (** Extend the [Array] module with useful functions. *)
 
 include module type of Array
@@ -108,5 +107,3 @@ val unzip : ('a * 'b) array -> ('a array * 'b array)
 
     @param copy can be set to false to perform the permutation in place. *)
 val permute : ?copy:bool -> 'a array -> 'a array
-
-
