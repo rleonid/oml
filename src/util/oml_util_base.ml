@@ -16,10 +16,10 @@
 *)
 
 type iterative_failure_reason =
-    | Out_of_bounds of float
-    | No_convergence
-    | Too_many_iterations of int
-    | Too_few_iterations of int
+  | Out_of_bounds of float
+  | No_convergence
+  | Too_many_iterations of int
+  | Too_few_iterations of int
 
 exception Iteration_failure of string * iterative_failure_reason
 
