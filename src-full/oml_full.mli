@@ -5,6 +5,9 @@
 (** Common values used throughout the library. *)
 module Util : sig
   include module type of Oml.Util
+    with type iterative_failure_reason = Oml.Util.iterative_failure_reason
+     and type 'a bound = 'a Oml.Util.bound
+     and type Kahan.t = Oml.Util.Kahan.t
 end
 
 (** WIP: Special functions and Linear Algebra. *)
