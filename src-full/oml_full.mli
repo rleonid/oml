@@ -24,15 +24,18 @@ module Statistics : sig
 
   module Continued_fraction : sig
     include module type of Oml.Statistics.Continued_fraction
+      with type t = Oml.Statistics.Continued_fraction.t
   end
   module Functions : sig
     include module type of Omlf_functions
   end
   module Sampling : sig
     include module type of Oml.Statistics.Sampling
+      (* generator type is concrete. *)
   end
   module Descriptive : sig
     include module type of Oml.Statistics.Descriptive
+    (* [skew|kurtosis]_classification and summary types are concrete. *)
   end
   module Measures : sig
     include module type of Oml.Statistics.Measures
