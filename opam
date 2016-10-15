@@ -12,7 +12,6 @@ depends: [
   "ocamlfind" {build}
   "ocamlbuild" {build}
   "topkg" {build}
-  "cppo" { build & >= "1.4.0" }
 ]
 depopts: [
   "lacaml"
