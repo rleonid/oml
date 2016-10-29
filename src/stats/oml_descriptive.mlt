@@ -16,7 +16,7 @@
 *)
 
 open Test_utils
-open Util
+module Util = Oml_util
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Descriptive" in

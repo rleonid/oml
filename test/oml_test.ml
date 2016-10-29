@@ -17,7 +17,7 @@
 
 open Test_utils
 
-module Oml_lite_modules = Oml_lite_modules
+module Oml_modules = Oml_modules
 
 let () =
   if Array.length Sys.argv > 1 then

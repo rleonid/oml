@@ -16,7 +16,7 @@
 *)
 
 open Test_utils
-open Util
+module U = Oml_util
 
 let fac i =
   let rec loop a i =
@@ -36,7 +36,7 @@ let () =
   (* Gamma *)
   add_random_test
     ~title:"Functions, gamma defined for (0+dx,1e2) positive values."
-    Gen.(make_float Util.dx 1e2)
+    Gen.(make_float U.dx 1e2)
     gamma
     Spec.([ just_postcond_pred is_nonzero_float]);
 
@@ -45,7 +45,7 @@ let () =
     ~nb_runs:14
     Gen.(make_int 1 10)
     (fun i -> (float (fac (i - 1)), (gamma (float i))))
-    Spec.([ just_postcond_pred (fun (x, y) -> equal_floats ~d:1e1 x y)]);
+    Spec.([ just_postcond_pred (fun (x, y) -> U.equal_floats ~d:1e1 x y)]);
 
   (* Log gamma *)
   add_random_test
@@ -59,50 +59,50 @@ let () =
     ~nb_runs:14
     Gen.(make_int 1 10)
     (fun i -> (float (fac (i - 1)), exp (ln_gamma (float i))))
-    Spec.([ just_postcond_pred (fun (x, y) -> equal_floats ~d:1e1 x y)]);
+    Spec.([ just_postcond_pred (fun (x, y) -> U.equal_floats ~d:1e1 x y)]);
 
   add_random_test
     ~title:"(Log) gamma function statisfies multiplicative recurrence (aka Bohr-Mollerup 2)."
     ~nb_runs:1000
     Gen.(bpos_float max_float)
     (fun x -> log x +. ln_gamma x, ln_gamma (x +. 1.0))
-    Spec.([just_postcond_pred (fun (x, y) -> equal_floats ~d:1. x y)]);
+    Spec.([just_postcond_pred (fun (x, y) -> U.equal_floats ~d:1. x y)]);
 
   (* Beta. *)
   add_random_test
     ~title:"Beta function is symmetric."
-    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    Gen.(zip2 (make_float U.dx 1e5) (make_float U.dx 1e5))
     (fun (x, y) -> beta x y = beta y x)
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
     ~title:"Adding one to x in beta function is like scaling."
-    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    Gen.(zip2 (make_float U.dx 1e5) (make_float U.dx 1e5))
     (fun (x, y) -> beta x y = (beta (x +. 1.0) y) *. (x/. (x+.y)))
     Spec.([just_postcond_pred is_true]);
 
   (* Log beta *)
   add_random_test
     ~title:"Log beta function is symmetric."
-    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    Gen.(zip2 (make_float U.dx 1e5) (make_float U.dx 1e5))
     (fun (x, y) -> ln_beta x y = ln_beta y x)
     Spec.([just_postcond_pred is_true]);
 
   (* A pretty poor test. *)
   add_random_test
     ~title:"log of multi beta with 2 args is same as beta"
-    Gen.(zip2 (make_float Util.dx 1e5) (make_float Util.dx 1e5))
+    Gen.(zip2 (make_float U.dx 1e5) (make_float U.dx 1e5))
     (fun (x, y) -> ln_beta x y = ln_multivariate_beta [|x;y|])
     Spec.([just_postcond_pred is_true]);
 
   (* Chi *)
   add_random_test
     ~title:"Chi less and greater should sum to 1.0."
-    Gen.(zip2 (make_int 2 100) (make_float Util.dx 1e3))
+    Gen.(zip2 (make_int 2 100) (make_float U.dx 1e3))
     (fun (df, x) ->
       let l = chi_square_less df x in
       let g = chi_square_greater df x in
-      equal_floats ~d:1e-8 1.0 (l +.g))
+      U.equal_floats ~d:1e-8 1.0 (l +.g))
     Spec.([just_postcond_pred is_true]);
 
   ()

@@ -16,8 +16,8 @@
 *)
 
 open Test_utils
-open Util
-module D = Descriptive
+module U = Oml_util
+module D = Oml_descriptive
 
 (* In order for these tests to work well, we have to span the range of
    acceptable floats as well. If we're uniformly sampling from [0, largest_float]
@@ -34,42 +34,42 @@ let () =
   in
   let max_array_size = 10000 in (* tested up to 100000 *)
   let not_degenerate rs =
-    not (is_degenerate rs.last) &&
-    not (is_degenerate rs.max) &&
-    not (is_degenerate rs.min) &&
-    not (is_degenerate rs.sum) &&
-    not (is_degenerate rs.sum_sq) &&
-    not (is_degenerate rs.mean) &&
-    not (is_degenerate rs.var)
+    not (U.is_degenerate rs.last) &&
+    not (U.is_degenerate rs.max) &&
+    not (U.is_degenerate rs.min) &&
+    not (U.is_degenerate rs.sum) &&
+    not (U.is_degenerate rs.sum_sq) &&
+    not (U.is_degenerate rs.mean) &&
+    not (U.is_degenerate rs.var)
   in
   let roughly_equal ~order_comp x y =
     let d = (D.geometric_mean [|x; y|]) /. order_comp in
-    not (significantly_different_from ~d x y)
+    not (U.significantly_different_from ~d x y)
     in
   let compare_against_descriptive rs data =
     let n = Array.length data in
     let dv = D.var ~biased:false data in
-    let ds = data |> Array.map (fun x-> x *. x) |> Array.sumf in
+    let ds = data |> Array.map (fun x-> x *. x) |> U.Array.sumf in
     (*Printf.printf "%f vs %f \n" rs.sum_sq ds; *)
     rs.size = n &&
-    equal_floats ~d:dx rs.last data.(n - 1) &&
-    equal_floats ~d:dx rs.max (Array.max data) &&
-    equal_floats ~d:dx rs.min (Array.min data)  &&
-    equal_floats ~d:(dx*.1e14) rs.sum (Array.sumf data) &&
+    U.equal_floats ~d:U.dx rs.last data.(n - 1) &&
+    U.equal_floats ~d:U.dx rs.max (U.Array.max data) &&
+    U.equal_floats ~d:U.dx rs.min (U.Array.min data)  &&
+    U.equal_floats ~d:(U.dx*.1e14) rs.sum (U.Array.sumf data) &&
     roughly_equal ~order_comp:1e14 rs.sum_sq ds &&
-    equal_floats ~d:(dx*.1e10) rs.mean (D.mean data) &&
+    U.equal_floats ~d:(U.dx*.1e10) rs.mean (D.mean data) &&
     roughly_equal ~order_comp:1e13 rs.var dv
   in
   let compare_rs rs1 rs2 =
     (* Printf.printf "[mean] %f vs %f \n" rs1.mean rs2.mean; *)
     (* Printf.printf "[var] %f vs %f \n" rs1.var rs2.var; *)
     rs1.size = rs2.size &&
-    equal_floats ~d:dx rs1.last rs2.last &&
-    equal_floats ~d:dx rs1.max rs2.max &&
-    equal_floats ~d:dx rs1.min rs2.min &&
-    equal_floats ~d:(dx*.1e14) rs1.sum rs2.sum &&
+    U.equal_floats ~d:U.dx rs1.last rs2.last &&
+    U.equal_floats ~d:U.dx rs1.max rs2.max &&
+    U.equal_floats ~d:U.dx rs1.min rs2.min &&
+    U.equal_floats ~d:(U.dx*.1e14) rs1.sum rs2.sum &&
     roughly_equal ~order_comp:1e13 rs1.sum_sq rs2.sum_sq &&
-    equal_floats ~d:(dx*.1e13) rs1.mean rs2.mean &&
+    U.equal_floats ~d:(U.dx*.1e13) rs1.mean rs2.mean &&
     roughly_equal ~order_comp:1e13 rs1.var rs2.var
   in
   add_random_test

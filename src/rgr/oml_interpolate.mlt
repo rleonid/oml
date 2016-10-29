@@ -17,7 +17,7 @@
 
 open Printf
 open Test_utils
-open Util
+module U = Oml_util
 
 let () =
   (*let add_simple_test = Test.add_simple_test_group "Interpolate" in*)

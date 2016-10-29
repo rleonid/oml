@@ -15,8 +15,8 @@
    limitations under the License.
 *)
 open Test_utils
-open Util
-module D = Descriptive
+module U = Oml_util
+module D = Oml_descriptive
 
 let () =
   let add_random_test
@@ -51,18 +51,18 @@ let () =
       let o = second_order f in
       if List.length clst = 2 then
         let d_everywhere = List.nth clst 0 in
-        equal_floats ~d:1e-3 d_everywhere (s x) &&
-        equal_floats ~d:1e-3 d_everywhere (o x)
+        U.equal_floats ~d:1e-3 d_everywhere (s x) &&
+        U.equal_floats ~d:1e-3 d_everywhere (o x)
       else
         let d = poly_to_df clst in
         (* There are so many possible overflows with these two methods,
           perhaps it is easier to test that they're returning the 'same' thing.*)
-        let r = Array.range ~start:(x -. 10.) ~stop:(x +. 10.) () in
+        let r = U.Array.range ~start:(x -. 10.) ~stop:(x +. 10.) () in
         let cd = Array.map d r in
         let cs = Array.map s r in
         let co = Array.map o r in
-        equal_floats ~d:1e-3 1.0 (D.correlation cs cd) &&
-        equal_floats ~d:1e-3 1.0 (D.correlation co cd))
+        U.equal_floats ~d:1e-3 1.0 (D.correlation cs cd) &&
+        U.equal_floats ~d:1e-3 1.0 (D.correlation co cd))
     Spec.([just_postcond_pred is_true]);
 
   ()

@@ -19,26 +19,26 @@
   These should not have any C/Fortran dependencies. The associated tests will
   be run when this module is referenced in Oml_lite_test. *)
 
-module Rank = Rank
-module Util = Util
+module Oml_rank = Oml_rank
+module Oml_util = Oml_util
 
 (* Uncategorized. *)
-module Estimations = Estimations
-module Solvers = Solvers
-module Matrices = Matrices
-module Vectors = Vectors
+module Oml_estimations = Oml_estimations
+module Oml_solvers = Oml_solvers
+module Oml_matrices = Oml_matrices
+module Oml_vectors = Oml_vectors
 
 (* Statistics. *)
-module Descriptive = Descriptive
-module Measures = Measures
-module Sampling = Sampling
-module Oml_lite_functions = Oml_lite_functions
+module Oml_descriptive = Oml_descriptive
+module Oml_measures = Oml_measures
+module Oml_sampling = Oml_sampling
+module Oml_functions = Oml_functions
 
 (* Online *)
-module Online = Online
+module Oml_online = Oml_online
 
 (* Classification. *)
-module Oml_lite_naive_bayes = Oml_lite_naive_bayes
+module Oml_naive_bayes = Oml_naive_bayes
 
 (* Regression. *)
-module Oml_lite_univariate = Oml_lite_univariate
+module Oml_univariate = Oml_univariate

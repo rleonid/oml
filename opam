@@ -12,6 +12,7 @@ depends: [
   "ocamlfind" {build}
   "ocamlbuild" {build}
   "topkg" {build}
+  "kaputt" {test}
 ]
 depopts: [
   "lacaml"
@@ -26,3 +27,7 @@ build: [[
            "--with-lbfgs" lbfgs:installed
            "--with-ocephes" ocephes:installed
 ]]
+build-test: [
+  [ "ocaml" "pkg/pkg.ml" "build" "--pinned" pinned "--tests" "true" ]
+  [ "ocaml" "pkg/pkg.ml" "test" ]
+]

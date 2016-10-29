@@ -17,6 +17,9 @@
 
 open Test_utils
 open Lacaml.D
+module U = Oml_util
+module Vectors = Oml_vectors
+module Matrices = Oml_matrices
 
 let () =
   let add_partial_random_test
@@ -38,7 +41,7 @@ let () =
       let open Lacaml.D in
       let t = svd (Mat.of_array a) in
       let a_rec = Matrices.(prod (prod (u t) (diagonal (s t))) (vt t)) in
-      Matrices.equal ~d:(Util.dx *. 1e9) a a_rec)
+      Matrices.equal ~d:(U.dx *. 1e9) a a_rec)
     Spec.([ (*at_least_as_man_rows_as_columns ==> is_result is_true *)
           always ==> is_result is_true]);
 

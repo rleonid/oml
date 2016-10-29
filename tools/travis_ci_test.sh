@@ -25,18 +25,18 @@ export OPAMYES="true"
 opam install ocamlbuild
 opam pin add dsfo git://github.com/rleonid/dsfo
 
-echo Installing Libraries
-make setup-test
+#echo Installing Libraries
+#make setup-test
 
 echo Compiling
-make build
-make lite
+topkg build
+topkg build -n omltest
 
 echo Testing
-make covered_test
+topkg test
 
-echo PostingCoverage
-opam install ocveralls
+#echo PostingCoverage
+#opam install ocveralls
 
-cd _test_build
-ocveralls --repo_token $COVERALLSTOKEN --git --send ../bisect0001.out
+#cd _test_build
+#ocveralls --repo_token $COVERALLSTOKEN --git --send ../bisect0001.out

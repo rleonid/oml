@@ -16,6 +16,7 @@
 *)
 
 open Test_utils
+module U = Oml_util
 
 let () =
   let v   = [|1.0; 2.0; 3.0 |] in
@@ -49,7 +50,7 @@ let () =
     ~title:"Scalar multiplication is additive."
     Gen.(zip3 (bfloat 1e3) (bfloat 1e3) (bmatrix_float 1e3 mts mts))
                             (* on order of 1e-10 *)
-    (fun (a, b, m) -> equal ~d:(Util.dx *. 1e6) (mult (a +. b) m) (add (mult a m) (mult b m)))
+    (fun (a, b, m) -> equal ~d:(U.dx *. 1e6) (mult (a +. b) m) (add (mult a m) (mult b m)))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test
@@ -87,7 +88,7 @@ let () =
     ~title:"Products are not effected by scaling."
     Gen.(zip3 (bfloat 1e3) (bmatrix_float 1e3 mts mts) (bmatrix_float 1e3 mts mts))
     (fun (s, m1, m2) ->
-      equal ~d:(Util.dx *. 1e10) (prod m1 (mult s m2)) (prod (mult s m1) m2))
+      equal ~d:(U.dx *. 1e10) (prod m1 (mult s m2)) (prod (mult s m1) m2))
     Spec.([just_postcond_pred is_true]);
 
   add_random_test

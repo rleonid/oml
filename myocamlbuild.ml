@@ -9,6 +9,8 @@ let is_test_target () =
   List.exists (function
     | "oml_test.native"
     | "oml_lite_test.native" -> true
+    | s when (Filename.basename s = "oml_test.native"
+           || Filename.basename s = "oml_lite_test.native") -> true
     | _                      -> false)
     !Options.targets
 
@@ -163,6 +165,7 @@ let to_mli_assoc =
   List.map (fun s ->
     String.capitalize_ascii (Filename.chop_extension (Filename.basename s)), s)
 
+  (*
 let imto_regex =
   Str.regexp "include module type of \\([A-Z][a-zA-Z_]+\\)"
 
@@ -202,6 +205,7 @@ let rec include_includes modassoc mli =
       let oc = open_out mli in
       List.iter (output_string oc) (List.rev lst);
       close_out oc
+      *)
 
 let () =
   let additional_rules =
@@ -218,16 +222,31 @@ let () =
               (*add_lite_ml_and_mlt_and_depends (); *)
               add_compile_mlj_to_native_rule ();
               add_compile_mlj_to_byte_rule ();
-              Options.make_links := true;
-              Pathname.define_context "src/test"
-                [ "src/lib"; "src/lib/util"; "src/lib/unc"; "src/lib/stats"
-                ; "src/lib/cls"; "src/lib/rgr"; "src/lib/uns"];
-              Pathname.define_context "src/lib"       ["src/lib/util"; "src/lib/stats"];
-              Pathname.define_context "src/lib/unc"   ["src/lib/util"; "src/lib/stats"];
-              Pathname.define_context "src/lib/stats" ["src/lib/util"; ];
-              Pathname.define_context "src/lib/cls"   ["src/lib/util"; "src/lib/stats"];
-              Pathname.define_context "src/lib/rgr"   ["src/lib/util"; "src/lib/unc"; "src/lib/stats"];
-              Pathname.define_context "src/lib/uns"   ["src/lib/util"; "src/lib/unc" ];
+              let regular_source_dirs =
+                    [ "src"         (* For the Online stuff that hasn't been packaged. *)
+                    ; "src/util"
+                    ; "src/unc"
+                    ; "src/stats"
+                    ; "src/cls"
+                    ; "src/rgr"
+                    ; "src/uns"
+                    ]
+              in
+              let full_source_dirs =
+                    [ "src-full/unc"
+                    ; "src-full/stats"
+                    ; "src-full/cls"
+                    ; "src-full/rgr"
+                    ; "src-full/uns"
+                    ]
+              in
+
+              Pathname.define_context "test" regular_source_dirs;
+              Pathname.define_context "test" full_source_dirs;
+              List.iter (fun dir -> Pathname.define_context dir [ "test"])
+                regular_source_dirs;
+              List.iter (fun dir -> Pathname.define_context dir [ "test"])
+                full_source_dirs
             end;
 
             (* To build without interfaces
@@ -239,7 +258,7 @@ let () =
               (Ocaml_compiler.byte_compile_ocaml_implem "%.ml" "%.cmo");
             *)
 
-            (* For documentation. *)
+            (* For documentation.
             if target_with_extension "html" then begin
               Options.make_links := true;
               Pathname.define_context "src/lib"
@@ -264,7 +283,7 @@ let () =
                   include_includes mla mli;
                   Ocaml_compiler.compile_ocaml_interf "%.mli" "%.cmi" env build
                 end;
-            end
+            end *)
           end
   in
   dispatch additional_rules

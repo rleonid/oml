@@ -16,8 +16,9 @@
 *)
 
 open Test_utils
-open Util
 open Lacaml.D
+module U = Oml_util
+module Matrices = Oml_matrices
 
 let () =
   let matrix_size = 100 in
@@ -42,7 +43,7 @@ let () =
       let v = variances t in
       let _ = components t in
       let _ = scalings t in
-      Array.length v = s && Array.has_order ( > ) v)
+      Array.length v = s && U.Array.has_order ( > ) v)
     Spec.([ just_postcond_pred is_true ]);
 
   ()

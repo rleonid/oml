@@ -16,7 +16,7 @@
 *)
 
 open Test_utils
-module P = Probabilities
+module P = Oml_probabilities
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Logistic Regression" in

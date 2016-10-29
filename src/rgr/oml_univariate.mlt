@@ -16,7 +16,7 @@
 *)
 
 open Test_utils
-open Util
+module U = Oml_util
 
 (* Testing the accuracy of numerical algorithms is hard (and fun).
   Linear Regression provides an interesting example.
@@ -58,7 +58,7 @@ let () =
       eval lrm x)
     Spec.([ always =>
       (fun((x, lrm), y) ->
-        equal_floats ~d:dx y (alpha lrm +. beta lrm *. x)) ]);
+        U.equal_floats ~d:U.dx y (alpha lrm +. beta lrm *. x)) ]);
 
   add_random_test
     ~title:"Using linear regression on canonical [0.0 ... 99.0] data we can recover coefficients"
@@ -68,7 +68,7 @@ let () =
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (equal_floats ~d:1e-5 a (alpha lrm)) && (equal_floats ~d:1e-5 b (beta lrm)))]);
+        (U.equal_floats ~d:1e-5 a (alpha lrm)) && (U.equal_floats ~d:1e-5 b (beta lrm)))]);
 
   add_random_test
     ~title:"Using linear regression on random float data we can recover coefficients"
@@ -78,7 +78,7 @@ let () =
     Spec.([ always =>
       (fun ((a, b, _), lrm) ->
       (*Printf.printf "1. our lrm %s a %f and b %f\n" (to_string lrm) a b; *)
-        (equal_floats ~d:1e-1 a (alpha lrm)) && (equal_floats ~d:1e-1 b (beta lrm)))]);
+        (U.equal_floats ~d:1e-1 a (alpha lrm)) && (U.equal_floats ~d:1e-1 b (beta lrm)))]);
 
   (* TODO: clever test to react to variance in the predicted variable. *)
   (*
@@ -89,7 +89,7 @@ let () =
     (fun (lrm, alpha_level, x) -> confidence_interval lrm ~alpha_level x)
     Spec.([ always =>
       (fun ((_lrm, _alpha, x), (lb, ub)) ->
-        equal_floats ~d:1e-5 x (Util.midpoint lb ub))]);
+        U.equal_floats ~d:1e-5 x (Util.midpoint lb ub))]);
 
     ~title:"Prediction intervals grow as alpha increases."
       Gen.(zip3 simple_lrm_gen two_ordered bfloat)

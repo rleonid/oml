@@ -21,7 +21,7 @@
    want our distributions to be well behaved. *)
 
 open Test_utils
-open Util
+module U = Oml_util
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Sampling" in
@@ -170,7 +170,7 @@ let () =
         done;
         let comp =
           Array.mapi (fun i count ->
-            Util.equal_floats ~d:1e-2 weights.(i) (float count /. float n_samples))
+            U.equal_floats ~d:1e-2 weights.(i) (float count /. float n_samples))
             counts
         in
         Array.all (fun b -> b) comp)

@@ -16,9 +16,7 @@
 *)
 
 open Test_utils
-open Util
-
-module Matrices = Matrices
+module Matrices = Oml_matrices
 
 let () =
   let add_random_test

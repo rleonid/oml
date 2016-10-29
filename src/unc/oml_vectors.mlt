@@ -16,6 +16,7 @@
 *)
 
 open Test_utils
+module Util = Oml_util
 
 (* TODO: Organize the testing parameters:
   There are currently three factors that effect the stability of these tests

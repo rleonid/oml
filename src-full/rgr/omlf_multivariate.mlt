@@ -18,10 +18,9 @@
 
 open Test_utils
 
-open Util
-
-module Descriptive = Descriptive
-module Vectors = Vectors
+module U = Oml_util
+module Descriptive = Oml_descriptive
+module Vectors = Oml_vectors
 
 let looe_manually lambda pred resp =
   let predi = Array.to_list pred |> List.mapi ~f:(fun i p -> (i, p)) in
@@ -67,8 +66,8 @@ let () =
       let glm = regress ~resp pred in
       let r0 = (residuals glm).(0) in
       let e0 = resp.(0) -. eval glm pred.(0) in
-      (*Printf.printf "%.20f\t%.20f\t%b\t%b\n" r0 e0 (r0 = e0) (equal_floats ~d:dx r0 e0)*)
-      equal_floats ~d:1e-6 r0 e0)
+      (*Printf.printf "%.20f\t%.20f\t%b\t%b\n" r0 e0 (r0 = e0) (U.equal_floats ~d:dx r0 e0)*)
+      U.equal_floats ~d:1e-6 r0 e0)
     Spec.([just_postcond_pred is_true]);
 
   add_random_test

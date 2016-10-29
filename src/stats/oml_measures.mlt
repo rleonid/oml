@@ -34,13 +34,14 @@ let () =
       let q_sigma = p_sigma in
       let kldiv q_mean = (*Oml.Measures.*) normal_kl_divergence
         ~p_mean ~q_mean ~p_sigma ~q_sigma in
-      List.fold_left
-      (fun (res, kl, l) frac ->
-        let delta = (p_mean -. res) *. frac in
-        let res' = res +. delta in
-        let kl' = kldiv res' in
-        (res', kl', (res', kl, kl')::l)) (q_mean, infinity, [])
-      [0.6;0.4;0.25;0.1] |> fun (_, _, l) ->
+      List.fold_left [0.6;0.4;0.25;0.1]
+        ~f:(fun (res, kl, l) frac ->
+            let delta = (p_mean -. res) *. frac in
+            let res' = res +. delta in
+            let kl' = kldiv res' in
+            (res', kl', (res', kl, kl')::l))
+        ~init:(q_mean, infinity, [])
+      |> fun (_, _, l) ->
         List.for_all (fun (_res, kl, kl') -> kl' <= kl) l)
     Spec.([just_postcond_pred is_true]);
 
@@ -52,13 +53,14 @@ let () =
       let q_mean = p_mean in
       let kldiv q_sigma = (*Oml.Measures.*) normal_kl_divergence
         ~p_mean ~q_mean ~p_sigma ~q_sigma in
-      List.fold_left
-      (fun (res, kl, l) frac ->
-        let delta = (p_sigma -. res) *. frac in
-        let res' = res +. delta in
-        let kl' = kldiv res' in
-        (res', kl', (res', kl, kl')::l)) (q_sigma, infinity, [])
-      [0.6;0.4;0.25;0.1] |> fun (_, _, l) ->
+      List.fold_left [0.6;0.4;0.25;0.1]
+        ~f:(fun (res, kl, l) frac ->
+              let delta = (p_sigma -. res) *. frac in
+              let res' = res +. delta in
+              let kl' = kldiv res' in
+              (res', kl', (res', kl, kl')::l))
+        ~init:(q_sigma, infinity, [])
+      |> fun (_, _, l) ->
         List.for_all (fun (_res, kl, kl') -> kl' <= kl) l)
     Spec.([just_postcond_pred is_true]);
 

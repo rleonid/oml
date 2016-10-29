@@ -16,8 +16,8 @@
 *)
 
 (* Common functions for writing tests and specifications. *)
-
 open Printf
+module List=ListLabels
 
 let array_to_string conv arr =
   Array.map conv arr
@@ -173,8 +173,9 @@ module Test = struct
 
   let launch_tests () =
     TestMap.bindings !test_holder
-    |> List.sort compare
-    |> List.iter (fun (group, tests) ->
+    |> List.sort ~cmp:compare
+    |> fun l -> Printf.printf "%d\n" (List.length l); l
+    |> List.iter ~f:(fun (group, tests) ->
         Printf.printf "--%s--\n%!" group;
         List.rev tests |> run_tests)
 

@@ -15,9 +15,9 @@
    limitations under the License.
 *)
 
-module P = Printf
 open Test_utils
-open Util
+open Printf
+module U = Oml_util
 
 let () =
   let add_random_test
@@ -69,10 +69,10 @@ let () =
       (fun lst ->
         let f = poly_to_f lst in
         match newton ~init:0.1 ~lower ~upper f with
-        | exception Util.Iteration_failure (_, Util.Too_many_iterations _) ->
+        | exception U.Iteration_failure (_, U.Too_many_iterations _) ->
             let _ =
-              P.printf "newton failed for %s with Too_many_iterations\n%!"
-                (String.concat ";" (List.map ~f:(P.sprintf "%f") lst))
+              printf "newton failed for %s with Too_many_iterations\n%!"
+                (String.concat ";" (List.map ~f:(sprintf "%f") lst))
             in
             true
         | rn ->

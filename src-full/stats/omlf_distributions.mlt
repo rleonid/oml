@@ -16,7 +16,7 @@
 *)
 
 open Test_utils
-open Util
+module U = Oml_util
 
 let () =
   let add_random_test
@@ -75,7 +75,7 @@ let () =
     Gen.(zip3 (make_float (-0.5) 1.5) (make_float (-100.) 100.) (make_float (-100.) 100.))
     (fun (p, mean, std) ->
       let pp = normal_cdf ~mean ~std (normal_quantile ~mean ~std p) in
-      equal_floats ~d:1e-9 pp p)
+      U.equal_floats ~d:1e-9 pp p)
     Spec.([ prob (fun p -> p < 0.0 || p > 1.0)   ==> is_exception is_invalid_arg
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
@@ -86,7 +86,7 @@ let () =
     Gen.(zip2 (make_float (-0.5) 1.5) (make_int 1 1000))
     (fun (p, degrees_of_freedom) ->
       let pp = student_cdf ~degrees_of_freedom (student_quantile ~degrees_of_freedom p) in
-      equal_floats ~d:1e-6 pp p)
+      U.equal_floats ~d:1e-6 pp p)
     Spec.([ prob (fun p -> p < 0.0 || p > 1.0)   ==> is_exception is_invalid_arg
           ; prob (fun p -> p >= 0.0 && p <= 1.0) ==> is_result is_true
           ]);
