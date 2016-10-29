@@ -24,15 +24,15 @@ setup-test:
 #### Building
 
 build:
-	topkg build
+	ocaml pkg/pkg.ml build
 
 clean:
-	topkg clean
+	ocaml pkg/pkg.ml clean
 
 #### Testing
 
 test: 
-	topkg build --build-dir $(TEST_BUILD_DIR) -n omltest && time topkg test --build-dir $(TEST_BUILD_DIR)
+	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) -n omltest && time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
 
 covered_test: covered_test.native
 	time ./oml_test.native ${TEST}
