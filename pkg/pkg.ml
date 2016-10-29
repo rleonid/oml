@@ -3,10 +3,9 @@
 #require "topkg"
 open Topkg
 
-let lacaml = Conf.with_pkg "lacaml"
-let lbfgs = Conf.with_pkg "lbfgs"
-let ocephes = Conf.with_pkg "ocephes"
-
+let lacaml = Conf.with_pkg ~default:false "lacaml"
+let lbfgs = Conf.with_pkg ~default:false "lbfgs"
+let ocephes = Conf.with_pkg ~default:false "ocephes"
 let kaputt = Conf.with_pkg "kaputt"
 
 let () =
@@ -22,6 +21,7 @@ let () =
           ]
   | "omltest" ->
       let kaputt = Conf.value c kaputt in
+      (* TODO: Add dsfo! *)
       let full = full && kaputt in
       Ok  [ Pkg.mllib ~api:["Oml"] "src/oml.mllib"
           ; Pkg.mllib ~cond:full ~api:["Oml_full"] "src-full/oml_full.mllib"
