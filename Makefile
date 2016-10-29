@@ -1,6 +1,7 @@
-TEST_BUILD_DIR="_test"
+TEST_BUILD_DIR="_test_build"
+COVERED_TEST_BUILD_DIR="_covered_test_build"
 
-.PHONY: all clean test build setup doc 
+.PHONY: all clean test build setup doc
 
 default: FORCE
 	@echo "available targets:"
@@ -31,12 +32,13 @@ clean:
 
 #### Testing
 
-test: 
-	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) -n omltest && time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+test:
+	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) -n omltest && \
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
 
-covered_test: covered_test.native
-	time ./oml_test.native ${TEST}
-
+covered_test:
+	ocaml pkg/pkg.ml build --build-dir $(COVERED_TEST_BUILD_DIR) --with-coverage true -n omltest && \
+		time ocaml pkg/pkg.ml test --build-dir $(COVERED_TEST_BUILD_DIR)
 
 #### Test Coverage
 
@@ -47,7 +49,7 @@ report_dir:
 # (ie. the *.ml has the *.mlt inside of it with our label), we get proper
 # alignment of the html!
 report: report_dir
-	cd $(TEST_BUILD_DIR) && \
+	cd $(COVERED_TEST_BUILD_DIR) && \
 	bisect-ppx-report -html ../report_dir ../$(shell ls -t bisect*.out | head -1) && \
 	cd -
 

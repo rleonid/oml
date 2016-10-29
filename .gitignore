@@ -1,6 +1,6 @@
 _build
 _test_build
-_lite_build
+_covered_test_build
 _doc_build
 report_dir/
 *.native
