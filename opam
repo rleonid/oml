@@ -28,6 +28,12 @@ build: [[
            "--with-ocephes" ocephes:installed
 ]]
 build-test: [
-  [ "ocaml" "pkg/pkg.ml" "build" "--pinned" pinned "--tests" "true" ]
-  [ "ocaml" "pkg/pkg.ml" "test" ]
+  [ "ocaml" "pkg/pkg.ml" "build"
+      "--pinned" "%{pinned}%"
+      "--build-dir" "_test"
+      "-n" "omltest"
+      "--tests" "true" ]
+  [ "ocaml" "pkg/pkg.ml" "test"
+      "--build-dir" "_test"
+  ]
 ]
