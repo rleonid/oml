@@ -22,6 +22,7 @@ esac
 
 eval `opam config env`
 export OPAMYES="true"
+echo Installing basic deps
 opam install ocamlfind topkg ocamlbuild
 opam pin add dsfo git://github.com/rleonid/dsfo
 
@@ -29,11 +30,20 @@ opam pin add dsfo git://github.com/rleonid/dsfo
 #make setup-test
 
 echo Compiling
-topkg build
-topkg build -n omltest
+make build
 
 echo Testing
-topkg test
+make test
+
+echo Installing C and Fortran deps
+opam install ocephes lacaml lbfgs
+
+echo Compiling with C/Fortran deps
+make build
+
+echo Testing with C/Fortran dest
+make test
+
 
 #echo PostingCoverage
 #opam install ocveralls
