@@ -22,7 +22,7 @@ esac
 
 eval `opam config env`
 export OPAMYES="true"
-opam install ocamlbuild
+opam install ocamlfind topkg ocamlbuild
 opam pin add dsfo git://github.com/rleonid/dsfo
 
 #echo Installing Libraries
