@@ -49,4 +49,5 @@ opam install bisect_ppx ocveralls
 
 echo Testing with C/Fortran dest
 make covered_test
-ocveralls --repo_token $COVERALLSTOKEN --git --send bisect0001.out
+cd _covered_test_build
+ocveralls --repo_token $COVERALLSTOKEN --git --send ../bisect0001.out
