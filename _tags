@@ -19,6 +19,4 @@ true: safe_string, annot, bin_annot, principal, warn(A-42-44-48-50)
 <test/**> : package(kaputt)
 
 "_build": -traverse
-"_test_build": -traverse
-"_lite_build": -traverse
-"_doc_build": -traverse
+"_test": -traverse
