@@ -24,13 +24,16 @@ eval `opam config env`
 export OPAMYES="true"
 echo Installing basic deps
 opam install ocamlfind topkg ocamlbuild
-opam pin add dsfo git://github.com/rleonid/dsfo
 
 #echo Installing Libraries
 #make setup-test
 
 echo Compiling
 make build
+
+echo Installing Testing libs
+opam install kaputt
+opam pin add dsfo git://github.com/rleonid/dsfo
 
 echo Testing
 make test
