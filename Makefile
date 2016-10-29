@@ -1,4 +1,4 @@
-
+TEST_BUILD_DIR="_test"
 
 .PHONY: all clean test build setup doc 
 
@@ -32,7 +32,7 @@ clean:
 #### Testing
 
 test: 
-	topkg build -n omltest && time topkg test
+	topkg build --build-dir $(TEST_BUILD_DIR) -n omltest && time topkg test --build-dir $(TEST_BUILD_DIR)
 
 covered_test: covered_test.native
 	time ./oml_test.native ${TEST}
