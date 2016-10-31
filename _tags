@@ -15,7 +15,7 @@ true: safe_string, annot, bin_annot, principal, warn(A-42-44-48-50)
 <src-full/**> : package(lacaml), package(ocephes), package(lbfgs)
 <src/**/*.mlj> : package(kaputt)
 <src-full/**/*.mlj> : package(kaputt)
-<test/**> : package(kaputt), package(lacaml), package(ocephes), package(lbfgs)
+<test/**> : package(kaputt)
 
 "_build": -traverse
 "_test_build": -traverse
