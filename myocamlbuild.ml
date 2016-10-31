@@ -8,11 +8,14 @@ let target_with_extension ext =
 let is_test_target () =
   List.exists (function
     | "oml_test.native"
-    | "oml_lite_test.native" -> true
+    | "omlf_test.native" -> true
     | s when (Filename.basename s = "oml_test.native"
-           || Filename.basename s = "oml_lite_test.native") -> true
+           || Filename.basename s = "omlf_test.native") -> true
     | _                      -> false)
     !Options.targets
+
+let is_doc_target () =
+  target_with_extension "html"
 
 let add_ml_and_mlt_and_depends () =
   rule "concat ml and mlt files, and build dependencies"
@@ -107,8 +110,7 @@ let add_compile_mlj_to_byte_rule () =
       Ocaml_compiler.prepare_compile build mlj;
       Cmd ( S [ !Options.ocamlc; A"-c"; Ocaml_arch.forpack_flags_of_pathname mlj
               ; T tags
-              ; (*!Options.ocaml_ppflags tags
-              ; *) Ocaml_utils.ocaml_include_flags mlj
+              ; Ocaml_utils.ocaml_include_flags mlj
               ; A "-o"; Px cmo
               ; A "-impl"; P mlj])
     end
@@ -136,8 +138,7 @@ let add_compile_mlj_to_native_rule () =
       Ocaml_compiler.prepare_link cmx cmi ["cmx"; "cmi"] build;
       Cmd ( S [ !Options.ocamlopt; A"-c"; Ocaml_arch.forpack_flags_of_pathname mlj
               ; T tags
-              ; (*!Options.ocaml_ppflags tags
-              ; *) Ocaml_utils.ocaml_include_flags mlj
+              ; Ocaml_utils.ocaml_include_flags mlj
               ; A "-o"; Px cmx (* FIXME ocamlopt bug -o cannot be after the input file *)
               ; A "-impl"; P mlj])
     end
@@ -165,7 +166,6 @@ let to_mli_assoc =
   List.map (fun s ->
     String.capitalize_ascii (Filename.chop_extension (Filename.basename s)), s)
 
-  (*
 let imto_regex =
   Str.regexp "include module type of \\([A-Z][a-zA-Z_]+\\)"
 
@@ -181,6 +181,7 @@ let rec include_includes modassoc mli =
       let ap = Str.match_end () in
       try
         let file = List.assoc md modassoc in
+        Printf.printf "inserting %s for %s ----\n" file md;
         let bef  = String.sub ff pos (np - pos) in
         let ic   =
           if not (Sys.file_exists file) then begin
@@ -194,6 +195,7 @@ let rec include_includes modassoc mli =
         close_in ic;
         loop ap (incf :: bef :: acc)
       with Not_found -> (* Missing module in modassoc *)
+        Printf.printf "didn't find %s \n" md;
         let bef  = String.sub ff pos (ap - pos - 1) in
         loop (ap - 1) (bef :: acc)
     with Not_found ->
@@ -205,7 +207,6 @@ let rec include_includes modassoc mli =
       let oc = open_out mli in
       List.iter (output_string oc) (List.rev lst);
       close_out oc
-      *)
 
 let () =
   let additional_rules =
@@ -217,30 +218,31 @@ let () =
       | Before_rules    -> ()
       | After_rules     ->
           begin
+            let regular_source_dirs =
+                  [ "src"         (* For the Online stuff that hasn't been packaged. *)
+                  ; "src/util"
+                  ; "src/unc"
+                  ; "src/stats"
+                  ; "src/cls"
+                  ; "src/rgr"
+                  ; "src/uns"
+                  ]
+            in
+            let full_source_dirs =
+                  [ "src-full"
+                  ; "src-full/unc"
+                  ; "src-full/stats"
+                  ; "src-full/cls"
+                  ; "src-full/rgr"
+                  ; "src-full/uns"
+                  ]
+            in
+
             if is_test_target () then begin
               add_ml_and_mlt_and_depends ();
               (*add_lite_ml_and_mlt_and_depends (); *)
               add_compile_mlj_to_native_rule ();
               add_compile_mlj_to_byte_rule ();
-              let regular_source_dirs =
-                    [ "src"         (* For the Online stuff that hasn't been packaged. *)
-                    ; "src/util"
-                    ; "src/unc"
-                    ; "src/stats"
-                    ; "src/cls"
-                    ; "src/rgr"
-                    ; "src/uns"
-                    ]
-              in
-              let full_source_dirs =
-                    [ "src-full/unc"
-                    ; "src-full/stats"
-                    ; "src-full/cls"
-                    ; "src-full/rgr"
-                    ; "src-full/uns"
-                    ]
-              in
-
               Pathname.define_context "test" regular_source_dirs;
               Pathname.define_context "test" full_source_dirs;
               List.iter (fun dir -> Pathname.define_context dir [ "test"])
@@ -258,22 +260,31 @@ let () =
               (Ocaml_compiler.byte_compile_ocaml_implem "%.ml" "%.cmo");
             *)
 
-            (* For documentation.
-            if target_with_extension "html" then begin
-              Options.make_links := true;
-              Pathname.define_context "src/lib"
-                [ "src/lib"; "src/lib/util"; "src/lib/unc"; "src/lib/stats"
-                ; "src/lib/cls"; "src/lib/rgr"; "src/lib/uns"];
-              Pathname.define_context "src/lib/cls"   ["src/lib/util"; ];
-              Pathname.define_context "src/lib/rgr"   ["src/lib/util"; "src/lib/stats"];
+            if is_doc_target () then begin
+              Pathname.define_context "src" regular_source_dirs;
+              Pathname.define_context "src-full" full_source_dirs;
 
               (* Since ocamldoc doesn't work very well with
                  "include module type of ___" directives, we'll preprocess the
-                 mli files to manually insert the relevant signature. *)
+                 mli files to manually insert the relevant signature.
+                 1. Get all the mli's.
+                 2. Before compiling them, scan for "include m... sig"
+                 3. If we find this pattern and we have a signature file.
+                    3a. Recurse!
+                 4. Manually insert it into the mli.
+              *)
+              let mla =
+                (all_mli_files "src"
+                @ all_mli_files "src-full")
+                |> to_mli_assoc
+                |> fun l ->
+                    ("Oml_cls_intf", "src/cls/oml_cls_intf.ml") ::
+                    ("Oml_intf", "src-full/rgr/omlf_intf.ml") ::
+                    l
+              in
+              Printf.printf "We have these files:\n%!";
+              List.iter (fun (m,f) -> Printf.printf "%s\t\t%s\n%!" m f) mla;
 
-              let mla = all_mli_files "src" |> to_mli_assoc in
-              (*Printf.printf "We have these files:\n%!";
-              List.iter (fun (m,f) -> Printf.printf "%s\t\t%s\n%!" m f) mla; *)
               rule "For documentation ocaml: mli -> cmi"
                 ~insert:`top
                 ~deps:[ "%.mli"; "%.mli.depends" ]
@@ -283,7 +294,7 @@ let () =
                   include_includes mla mli;
                   Ocaml_compiler.compile_ocaml_interf "%.mli" "%.cmi" env build
                 end;
-            end *)
+            end
           end
   in
   dispatch additional_rules

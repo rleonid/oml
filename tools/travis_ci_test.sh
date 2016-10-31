@@ -42,7 +42,7 @@ echo Installing C and Fortran deps
 opam install ocephes lacaml lbfgs
 
 echo Compiling with C/Fortran deps
-make build
+make full
 
 echo Install bisect ppx and ocveralls for coverage reporting
 opam install bisect_ppx ocveralls

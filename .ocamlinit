@@ -1,10 +1,5 @@
 (* Need to list all of the sub directories so that Utop
   knows where to look. *)
-(*
-#directory "_lite_build/src/lib" ;;
-#load_rec "oml_lite.cma" ;;
-print_endline "Loaded Oml_lite" ;;
-*)
 
 #directory "_build/src";;
 #load_rec "oml.cma";;

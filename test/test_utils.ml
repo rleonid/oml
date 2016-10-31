@@ -174,7 +174,7 @@ module Test = struct
   let launch_tests () =
     TestMap.bindings !test_holder
     |> List.sort ~cmp:compare
-    |> fun l -> Printf.printf "%d\n" (List.length l); l
+    |> fun l -> Printf.printf "Testing %d groups.\n" (List.length l); l
     |> List.iter ~f:(fun (group, tests) ->
         Printf.printf "--%s--\n%!" group;
         List.rev tests |> run_tests)

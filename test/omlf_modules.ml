@@ -20,20 +20,20 @@
    driver: oml_test.ml. *)
 
 (* Uncategorized. *)
-module Svd = Svd
+module Omlf_svd = Omlf_svd
 
 (* Statistics. *)
-module Oml_functions = Oml_functions
-module Distributions = Distributions
-module Hypothesis_test = Hypothesis_test
+module Omlf_functions = Omlf_functions
+module Omlf_distributions = Omlf_distributions
+module Omlf_hypothesis_test = Omlf_hypothesis_test
 
 (* Classification. *)
-module Logistic_regression = Logistic_regression
-module Oml_naive_bayes = Oml_naive_bayes
+module Omlf_logistic_regression = Omlf_logistic_regression
+module Omlf_naive_bayes = Omlf_naive_bayes
 
 (* Regression. *)
-module Multivariate = Multivariate
-module Tikhonov = Tikhonov
+module Omlf_multivariate = Omlf_multivariate
+module Omlf_tikhonov = Omlf_tikhonov
 
 (* Unsupervised. *)
-module Pca = Pca
+module Omlf_pca = Omlf_pca

@@ -1,11 +1,13 @@
 TEST_BUILD_DIR="_test_build"
 COVERED_TEST_BUILD_DIR="_covered_test_build"
+DOC_BUILD_DIR="_doc_build"
 
-.PHONY: all clean test build setup doc
+.PHONY: all clean test build full setup doc
 
 default: FORCE
 	@echo "available targets:"
-	@echo "  build      	compiles Oml_lite and Oml if possible"
+	@echo "  build      	compiles Oml"
+	@echo "  full      	  compiles Omlf"
 	@echo "  test       	runs unit tests"
 	@echo "  doc        	generates ocamldoc documentations"
 	@echo "  clean      	deletes all produced files"
@@ -25,10 +27,15 @@ setup-test:
 #### Building
 
 build:
+	ocaml pkg/pkg.ml build --with-lacaml false --with-lbfgs false --with-ocephes false
+
+full:
 	ocaml pkg/pkg.ml build
 
 clean:
-	ocaml pkg/pkg.ml clean
+	ocaml pkg/pkg.ml clean --build-dir $(TEST_BUILD_DIR)
+	ocaml pkg/pkg.ml clean --build-dir $(COVERED_TEST_BUILD_DIR)
+	ocaml pkg/pkg.ml clean --build-dir $(DOC_BUILD_DIR)
 
 #### Testing
 
@@ -58,14 +65,18 @@ clean_reports:
 
 #### Documentation
 
-oml.odocl:
-	cp src/lib/oml.mlpack oml.odocl
+#oml.odocl:
+#	cp src/lib/oml.mlpack oml.odocl
 
 # including the cmi as build targets triggers all of the including logic
 # to get saner documentation.
 doc:
-	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) \
-		$(foreach package, $(PACKAGES),-package $(package)) \
-		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib oml.cmi doc.docdir/index.html
+	ocamlbuild -classic-display -use-ocamlfind -plugin-tag 'package(str)' -no-links -build-dir $(DOC_BUILD_DIR) -docflags '-colorize-code,-charset,utf-8' doc/api.docdir/index.html
+
+# topkg doc --build-dir $(DOC_BUILD_DIR)
+#
+#	$(OCAMLBUILD) -build-dir $(DOC_BUILD_DIR) \
+#		$(foreach package, $(PACKAGES),-package $(package)) \
+#		$(foreach sd, $(SOURCE_DIRS), -I src/lib$(sd)) -I src/lib oml.cmi doc.docdir/index.html
 
 FORCE:
