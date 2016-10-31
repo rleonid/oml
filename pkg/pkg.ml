@@ -16,7 +16,7 @@ let () =
     let cmd c os fpaths =
       let scmd =
         Cmd.(Pkg.build_cmd c os
-          %% (of_list ["-plugin-tag"; "package(str)"])       (* Cause of Str in myocamlbuild.ml *)
+          %% (of_list ["-plugin-tag"; "package(str)"])       (* Str in myocamlbuild.ml *)
           %% on (Conf.value c coverage) (of_list ["-package"; "bisect_ppx"])
           %% on (Conf.pkg_name c = "omltest") (of_list [ "-package"; "dsfo"
                                                        ; "-package"; "kaputt"
