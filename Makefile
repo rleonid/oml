@@ -1,6 +1,8 @@
 TEST_BUILD_DIR="_test_build"
 COVERED_TEST_BUILD_DIR="_covered_test_build"
 DOC_BUILD_DIR="_doc_build"
+PACKAGES_INSTALL=ocephes lacaml lbfgs
+PACKAGES_INSTALL_TEST=kaputt bisect_ppx dsfo
 
 .PHONY: all clean test build full setup doc
 
@@ -12,16 +14,17 @@ default: FORCE
 	@echo "	test_lite		test without C dependencies"
 	@echo "	covered_test		runs unit tests with coverage"
 	@echo "	covered_test_lite	runs unit tests without C dependencies with coverage"
+	@echo "	setup			opam install packages necessary for full build"
+	@echo "	setup_test		opam install packages necessary for testing"
 	@echo "	doc			generates ocamldoc documentations"
 	@echo "	clean			deletes all produced files"
 	@echo "	report			generate Bisect_ppx coverage report"
-
 
 # This should be called something else.
 setup:
 	opam install $(PACKAGES_INSTALL)
 
-setup-test:
+setup_test:
 	opam pin add dsfo git://github.com/rleonid/dsfo
 	opam install $(PACKAGES_INSTALL_TEST)
 
