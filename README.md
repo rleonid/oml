@@ -12,7 +12,8 @@ The API is available [online](http://hammerlab.github.io/oml/index.html).
 ### Goals
 
   1. Perform simple and sophisticated mathematical and statistical analysis
-      inside of (mostly) OCaml. Please see [Oml_lite](#oml_lite) for details.
+      inside of (mostly) OCaml. Please see [Oml_full](#oml_full) section
+      for details.
   2. Have a descriptive, simple, and typed approach to those algorithms.
       - _descriptive_: what a function does should be easy to understand from
         the type and name.
@@ -27,37 +28,38 @@ The API is available [online](http://hammerlab.github.io/oml/index.html).
 ### Building
 
   - `make setup` will `opam install` the necessary packages for Oml.
-    [Oml_lite](#oml_lite) has no dependencies.
-  - `make` will compile source.
-  - `make test
+    [Oml_full](#oml_full) has no dependencies.
+  - `make build` will compile source.
   - `make test` for tests.
         - We use [Kaputt](http://kaputt.x9c.fr/) as the testing framework. Tests
         are found in `*.mlt` files and are joined with their respective source
-        files only when we build a test target.
+        files only when building a test target.
         - `make TEST={ModuleName} test` will run the test in `ModuleName`,
            ex `make TEST=Descriptive test`
-        - `make setup-test` will install packages necessary for testing.
+        - `make setup_test` will install packages necessary for testing.
   - `make covered_test` for [Bisect_ppx](https://github.com/rleonid/bisect_ppx)
       instrumented test coverage.
 
-### <a name="oml_lite">Oml_lite</a>
+### <a name="oml_full">Oml_full</a>
 
-  Oml_lite is a subset of Oml that excludes any code with a `C` or `Fortran`
-  dependency.
+  Oml_full is a superset of Oml that includes `C` and/or `Fortran` dependencies.
+  It is generally more useful and incorporates `Oml` in a typed equivalent way.
+  The goal is to provide a flexible end-user target for those who don't need
+  `C` dependent functionality.
 
 ### Dependencies
 
-  `make setup` will `opam install` these:
+  For the "full" Oml package `make setup` will `opam install` these:
 
   - [Lacaml](https://github.com/mmottl/lacaml) for BLAS/LAPACK bindings.
   - [LBFGS](https://github.com/Chris00/L-BFGS-ocaml) for bindings to LBFGS
       optimization routines.
   - [ocephes](https://github.com/rleonid/ocephes) for special functions.
+
+  And for testing:
+
   - [Kaputt](http://kaputt.x9c.fr/) for testing.
   - [Bisect_ppx](https://github.com/rleonid/bisect_ppx) for code coverage.
-      - See [Bisect](http://bisect.x9c.fr/) for initial implementation
-      - and [Ocveralls](https://github.com/sagotch/ocveralls/) for pushing to
-          [Coveralls](https://coveralls.io/).
 
 ### Contributing
 
