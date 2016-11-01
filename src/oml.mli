@@ -29,7 +29,7 @@ module Online : sig include module type of Oml_online end
 
 (** Classify data based on features. *)
 module Classification : sig
-  module Intf : sig include module type of Oml_cls_intf end
+  module Interfaces : sig include module type of Oml_classification_interfaces end
   module Probabilities : sig include module type of Oml_probabilities end
   module Naive_bayes : sig
     include module type of Oml_naive_bayes
@@ -39,7 +39,7 @@ end
 
 (** Model relationship between variables. *)
 module Regression : sig
-  module Intf : sig include module type of Oml_intf end
+  module Interfaces : sig include module type of Oml_regression_interfaces end
   module Univariate : sig include module type of Oml_univariate end
   module Interpolate : sig include module type of Oml_interpolate end
 end

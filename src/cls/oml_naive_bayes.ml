@@ -16,8 +16,9 @@
 *)
 
 open Oml_util
+module Interfaces = Oml_classification_interfaces
 
-module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
+module Binomial(Data: Interfaces.Dummy_encoded_data) = struct
 
   type feature = Data.feature
   type class_ = Data.class_
@@ -103,7 +104,7 @@ module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
 
 end (* Binomial *)
 
-module Categorical(Data: Oml_cls_intf.Category_encoded_data) = struct
+module Categorical(Data: Interfaces.Category_encoded_data) = struct
 
   type feature = Data.feature
   type class_ = Data.class_

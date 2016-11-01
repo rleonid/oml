@@ -53,8 +53,8 @@ end
 
 (** Classify data based on features. *)
 module Classification : sig
-  module Intf : sig
-    include module type of Oml.Classification.Intf
+  module Interfaces : sig
+    include module type of Oml.Classification.Interfaces
   end
   module Probabilities : sig
     include module type of Oml.Classification.Probabilities
@@ -76,8 +76,8 @@ end
 
 (** Model relationship between variables. *)
 module Regression : sig
-  module Intf : sig
-    include module type of Omlf_intf
+  module Interfaces : sig
+    include module type of Omlf_regression_interfaces
   end
   module Univariate : sig
     include module type of Omlf_univariate

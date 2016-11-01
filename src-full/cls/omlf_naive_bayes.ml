@@ -18,7 +18,7 @@
 include Oml_naive_bayes
 open Oml_util
 
-module Gaussian(Data: Oml_cls_intf.Continuous_encoded_data) = struct
+module Gaussian(Data: Oml_classification_interfaces.Continuous_encoded_data) = struct
 
   module D = Omlf_distributions
   module O = Oml_online

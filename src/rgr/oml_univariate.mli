@@ -26,7 +26,7 @@ type opt = float array
 
 val opt : ?weights:float array -> unit -> opt
 
-include Oml_intf.Linear_model
+include Oml_regression_interfaces.Linear_model
   with type input = float
   and type opt := opt
 

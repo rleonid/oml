@@ -19,9 +19,9 @@ type opt = float array
 
 val opt : ?weights:float array -> unit -> opt
 
-include Omlf_intf.Linear_model
-  with type input = float
-  and type opt := opt
+include Omlf_regression_interfaces.Linear_model
+    with type input = float
+     and type opt := opt
 
 (** [alpha t] a shorthand for the constant parameter used in the regression.
     Equivalent to [(coefficients t).(0)] *)

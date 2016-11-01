@@ -18,14 +18,14 @@ end
 module Online = Oml_online
 
 module Classification = struct
-  module Intf = Oml_cls_intf
+  module Interfaces = Oml_classification_interfaces
   module Probabilities = Oml_probabilities
   module Naive_bayes = Oml_naive_bayes
   module Performance = Oml_performance
 end
 
 module Regression = struct
-  module Intf = Oml_intf
+  module Interfaces = Oml_regression_interfaces
   module Univariate = Oml_univariate
   module Interpolate = Oml_interpolate
 end

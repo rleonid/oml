@@ -5,19 +5,21 @@
     then used to model a {{:https://en.wikipedia.org/wiki/Multivariate_normal_distribution}
     Multivariate normal distribution}. These, per class, distributions are used
     in Bayes's rule for classification. *)
-module LDA(D: Oml_cls_intf.Continuous_encoded_data) : sig
-  include Oml_cls_intf.Generative with type feature = D.feature
-                                   and type class_ = D.class_
-                                   and type feature_probability = float
+module LDA(D: Oml_classification_interfaces.Continuous_encoded_data) : sig
+  include Oml_classification_interfaces.Generative
+      with type feature = D.feature
+       and type class_ = D.class_
+       and type feature_probability = float
 
   val opt : ?shrinkage:float -> unit -> opt
 
 end
 
-module QDA(D: Oml_cls_intf.Continuous_encoded_data) : sig
-  include Oml_cls_intf.Generative with type feature = D.feature
-                                   and type class_ = D.class_
-                                   and type feature_probability = float
+module QDA(D: Oml_classification_interfaces.Continuous_encoded_data) : sig
+  include Oml_classification_interfaces.Generative
+      with type feature = D.feature
+       and type class_ = D.class_
+       and type feature_probability = float
 
   val opt : ?normalize:bool -> ?shrinkage:float -> unit -> opt
 

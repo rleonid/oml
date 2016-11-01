@@ -19,7 +19,7 @@ end
 module Online = Oml.Online
 
 module Classification = struct
-  module Intf = Oml.Classification.Intf
+  module Interfaces = Oml.Classification.Interfaces
   module Probabilities = Oml.Classification.Probabilities
   module Naive_bayes = Omlf_naive_bayes
   module Logistic_regression = Omlf_logistic_regression
@@ -28,7 +28,7 @@ module Classification = struct
 end
 
 module Regression = struct
-  module Intf = Omlf_intf
+  module Interfaces = Omlf_regression_interfaces
   module Univariate = Omlf_univariate
   module Multivariate = Omlf_multivariate
   module Tikhonov = Omlf_tikhonov
