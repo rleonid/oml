@@ -25,15 +25,11 @@ let packages ps =
 let () =
   let build =
     let cmd c os fpaths =
-      let full     = full c in
       let coverage = Conf.value c coverage in
-      let is_test  = Conf.pkg_name c = "omltest" in
       let scmd =
         Cmd.(Pkg.build_cmd c os
           %% (of_list ["-plugin-tag"; "package(str)"])       (* Str in myocamlbuild.ml *)
-          %% on full      (packages [ "ocephes"; "lacaml"; "lbfgs"])
           %% on coverage  (packages [ "bisect_ppx"])
-          %% on is_test   (packages [ "dsfo" ; "kaputt" ])
           %% of_list fpaths)
       in
       OS.Cmd.run scmd
@@ -48,6 +44,8 @@ let () =
             ; Pkg.mllib ~cond:full ~api:["Oml_full"] "src-full/oml_full.mllib"
             ]
     | "omltest" ->
-        Ok  [ Pkg.test (if full then "test/omlf_test" else "test/oml_test") ]
+        Ok  [ Pkg.test ~cond:(not full) "test/oml_test"
+            ; Pkg.test ~cond:full "test/omlf_test"
+            ]
     | other ->
-      R.error_msgf "Unrecognized package name: %s" other
+        R.error_msgf "Unrecognized package name: %s" other

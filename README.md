@@ -27,8 +27,8 @@ The API is available [online](http://hammerlab.github.io/oml/index.html).
 
 ### Building
 
-  - `make setup` will `opam install` the necessary packages for Oml.
-    [Oml_full](#oml_full) has no dependencies.
+  - `make setup` will `opam install` the necessary packages for
+       [Oml_full](#oml_full).
   - `make build` will compile source.
   - `make test` for tests.
         - We use [Kaputt](http://kaputt.x9c.fr/) as the testing framework. Tests
