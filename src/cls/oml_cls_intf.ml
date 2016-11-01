@@ -18,9 +18,9 @@
 (** Interfaces to categorize the different logic of classification. *)
 
 (** From the perspective of classification there are two types of data:
-  {{!clas}classes} and {{!feature}features}. *)
+  {{!class_}classes} and {{!feature}features}. *)
 module type Data = sig
-  type clas       (** Classes that represent groups we want to classify. *)
+  type class_       (** Classes that represent groups we want to classify. *)
   type feature    (** Features that describe elements of a class.*)
 end
 
@@ -84,7 +84,7 @@ end
     the {{!type:Data.feature}features} found in
     {{!type:samples}samples} of data, assigns
     {{!Probabilities.t}probabilities} to
-    {{!type:Data.clas}classes}
+    {{!type:Data.class_}classes}
     on future samples when {{!val:eval}evaluated}. *)
 module type Classifier = sig
   include Data
@@ -94,11 +94,11 @@ module type Classifier = sig
   type t
 
   (** [eval classifier feature] assign {{!Probabilities.t}probabilities} to the
-      possible {{!type:Data.clas}classes} based upon [feature]. *)
-  val eval : t -> feature -> clas Oml_probabilities.t
+      possible {{!type:Data.class_}classes} based upon [feature]. *)
+  val eval : t -> feature -> class_ Oml_probabilities.t
 
   (** Representing training data. *)
-  type samples = (clas * feature) list
+  type samples = (class_ * feature) list
 
   (** [estimate opt classes samples] estimates a classifier based upon the
       training [samples].
@@ -115,16 +115,16 @@ module type Classifier = sig
       found in the training [samples].
       @raise Invalid_argument if [samples] is empty.
   *)
-  val estimate : ?opt:opt -> ?classes:clas list -> samples -> t
+  val estimate : ?opt:opt -> ?classes:class_ list -> samples -> t
 end
 
 (** A generative classifier builds models of the form
-    P({{!type:Data.clas}class},
+    P({{!type:Data.class_}class},
       {{!type:Data.feature}feature}).
 
     For current purposes these classifiers can return individual probabilities
     of the form P({{!type:Data.feature}feature} |
-      {{!type:Data.clas}class}).
+      {{!type:Data.class_}class}).
 *)
 module type Generative = sig
   include Classifier
@@ -135,6 +135,6 @@ module type Generative = sig
       likelihood probability (ies) learned by [t] for [class].
 
       @raise Not_found if [t] never trained on [class]. *)
-  val class_probabilities : t -> clas -> float * (feature -> feature_probability)
+  val class_probabilities : t -> class_ -> float * (feature -> feature_probability)
 
 end

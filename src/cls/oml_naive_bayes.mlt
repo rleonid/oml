@@ -54,7 +54,7 @@ let () =
       let module NB = Binomial(
         struct
           type feature = [ `shortbread | `lager | `whiskey | `porridge | `football ] list
-          type clas = [ `English | `Scottish]
+          type class_ = [ `English | `Scottish]
           let encoding = to_feature_arr
           let size = 5
         end)
