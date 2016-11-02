@@ -14,7 +14,7 @@ stats/omlf_hypothesis_test
 stats/omlf_functions
 
 rgr/omlf_eval_multivariate
-rgr/omlf_intf
+rgr/omlf_regression_interfaces
 rgr/omlf_multivariate
 rgr/omlf_solvedLPViaSvd
 rgr/omlf_tikhonov

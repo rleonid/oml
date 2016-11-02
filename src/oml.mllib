@@ -16,7 +16,7 @@ stats/oml_functions
 stats/oml_measures
 stats/oml_sampling
 
-cls/oml_cls_intf
+cls/oml_classification_interfaces
 cls/oml_common_naive_bayes
 cls/oml_naive_bayes
 cls/oml_performance
@@ -25,7 +25,7 @@ cls/oml_probabilities
 rgr/oml_common_univariate
 rgr/oml_interpolate
 rgr/oml_univariate
-rgr/oml_intf
+rgr/oml_regression_interfaces
 
 unc/oml_estimations
 unc/oml_solvers

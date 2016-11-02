@@ -16,13 +16,14 @@
 *)
 
 open Oml_util
+module Interfaces = Oml_classification_interfaces
 
-module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
+module Binomial(Data: Interfaces.Dummy_encoded_data) = struct
 
   type feature = Data.feature
-  type clas = Data.clas
+  type class_ = Data.class_
 
-  type samples = (clas * feature) list
+  type samples = (class_ * feature) list
 
   type opt =
     { smoothing : float
@@ -34,7 +35,7 @@ module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
 
   type t =
     (* Store the class prior in last element of the array. *)
-    { table       : (clas * float array) list
+    { table       : (class_ * float array) list
     ; e_bernoulli : bool
     }
 
@@ -62,7 +63,7 @@ module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
     in
     Oml_common_naive_bayes.eval ~to_prior ~to_likelihood nb.table
 
-  module Cm = Map.Make(struct type t = clas let compare = compare end)
+  module Cm = Map.Make(struct type t = class_ let compare = compare end)
 
   let estimate ?(opt=default) ?classes data =
     let aa = Data.size + 1 in
@@ -103,13 +104,13 @@ module Binomial(Data: Oml_cls_intf.Dummy_encoded_data) = struct
 
 end (* Binomial *)
 
-module Categorical(Data: Oml_cls_intf.Category_encoded_data) = struct
+module Categorical(Data: Interfaces.Category_encoded_data) = struct
 
   type feature = Data.feature
-  type clas = Data.clas
-  type samples = (clas * feature) list
+  type class_ = Data.class_
+  type samples = (class_ * feature) list
 
-  type t = (clas * (float * float array array)) list
+  type t = (class_ * (float * float array array)) list
 
   type opt = float
   let opt ?(smoothing=0.0) () = smoothing
@@ -145,7 +146,7 @@ module Categorical(Data: Oml_cls_intf.Category_encoded_data) = struct
     in
     Oml_common_naive_bayes.eval ~to_prior ~to_likelihood table
 
-  module Cm = Map.Make(struct type t = clas let compare = compare end)
+  module Cm = Map.Make(struct type t = class_ let compare = compare end)
 
   let estimate ?(opt=default) =
     let init _ = (0, Array.map (fun i -> Array.make i 0) Data.encoding_sizes) in

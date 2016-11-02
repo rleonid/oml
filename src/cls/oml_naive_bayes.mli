@@ -19,10 +19,11 @@
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
   {{!modtype:Cls_intf.Dummy_encoded_data}Dummy variables.} *)
-module Binomial(D: Oml_cls_intf.Dummy_encoded_data) : sig
-  include Oml_cls_intf.Generative with type feature = D.feature
-                                   and type clas = D.clas
-                                   and type feature_probability = float array
+module Binomial(D: Oml_classification_interfaces.Dummy_encoded_data) : sig
+  include Oml_classification_interfaces.Generative
+      with type feature = D.feature
+       and type class_ = D.class_
+       and type feature_probability = float array
 
   (** [opt ~smoothing ~bernoulli ()] the optional configuration of the
        classifier.
@@ -45,10 +46,11 @@ end
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
   classifier on data encoded using
   {{!modtype:Cls_intf.Category_encoded_data}Categorical variables.} *)
-module Categorical(D: Oml_cls_intf.Category_encoded_data) : sig
-  include Oml_cls_intf.Generative with type feature = D.feature
-                              and type clas = D.clas
-                              and type feature_probability = float array
+module Categorical(D: Oml_classification_interfaces.Category_encoded_data) : sig
+  include Oml_classification_interfaces.Generative
+      with type feature = D.feature
+       and type class_ = D.class_
+       and type feature_probability = float array
 
   (** [opt ~smoothing ()] the optional configuration of the classifier.
 

@@ -18,14 +18,14 @@
 include Oml_naive_bayes
 open Oml_util
 
-module Gaussian(Data: Oml_cls_intf.Continuous_encoded_data) = struct
+module Gaussian(Data: Oml_classification_interfaces.Continuous_encoded_data) = struct
 
   module D = Omlf_distributions
   module O = Oml_online
 
-  type samples = (Data.clas * Data.feature) list
+  type samples = (Data.class_ * Data.feature) list
 
-  type t = (Data.clas * (float * (float * float) array)) list
+  type t = (Data.class_ * (float * (float * float) array)) list
 
   let safe_encoding f =
     let e = Data.encoding f in
@@ -60,7 +60,7 @@ module Gaussian(Data: Oml_cls_intf.Continuous_encoded_data) = struct
   type opt = unit
   let default = ()
 
-  module Cm = Map.Make(struct type t = Data.clas let compare = compare end)
+  module Cm = Map.Make(struct type t = Data.class_ let compare = compare end)
 
   let estimate ?(opt=default) =
     ignore opt;

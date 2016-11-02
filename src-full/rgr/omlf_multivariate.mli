@@ -14,9 +14,9 @@ val opt : ?l2_regularizer:[`S of float | `From of float array] ->
           unit ->
           opt
 
-include Omlf_intf.Linear_model
+include Omlf_regression_interfaces.Linear_model
   with type input = float array
-  and type opt := opt
+   and type opt := opt
 
 (** [aic linear_model] return the Akaike information criterion for the
     [linear_model].*)

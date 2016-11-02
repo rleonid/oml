@@ -30,10 +30,11 @@
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
   {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
-module Binary(D: Oml_cls_intf.Continuous_encoded_data) :
+module Binary(D: Oml_classification_interfaces.Continuous_encoded_data) :
   sig
-    include Oml_cls_intf.Classifier with  type feature = D.feature
-                            and type clas = D.clas
+    include Oml_classification_interfaces.Classifier
+        with type feature = D.feature
+         and type class_ = D.class_
 
     (** [opt ~lambda ~tolerance ()] a constructor for the optional arguments,
 
@@ -54,7 +55,7 @@ module Binary(D: Oml_cls_intf.Continuous_encoded_data) :
 
     (** [base_class t] returns the class C against which the log-odds
         are computed (and hence coefficients). *)
-    val base_class : t -> clas
+    val base_class : t -> class_
   end
 
 (** Use
@@ -67,11 +68,11 @@ module Binary(D: Oml_cls_intf.Continuous_encoded_data) :
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
   {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
-module Multiclass(D: Oml_cls_intf.Continuous_encoded_data) :
+module Multiclass(D: Oml_classification_interfaces.Continuous_encoded_data) :
   sig
-    include Oml_cls_intf.Classifier with (* type opt := opt
-                            and*) type feature = D.feature
-                            and type clas = D.clas
+    include Oml_classification_interfaces.Classifier
+        with type feature = D.feature
+         and type class_ = D.class_
 
     (** [opt ~lambda ~tolerance ()] a constructor for the optional arguments,
 
@@ -90,6 +91,6 @@ module Multiclass(D: Oml_cls_intf.Continuous_encoded_data) :
     val coefficients : t -> float array array
 
     (** [class_order t] specifies the order in which coefficients are returned. *)
-    val class_order : t -> clas list
+    val class_order : t -> class_ list
 
   end

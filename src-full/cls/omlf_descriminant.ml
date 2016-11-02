@@ -3,15 +3,16 @@
 open Lacaml.D
 open Oml_util
 module LU = Omlf_lacaml_util
+module Interfaces = Oml_classification_interfaces
 
-module LDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
+module LDA(Data : Interfaces.Continuous_encoded_data) = struct
   type feature = Data.feature
-  type clas = Data.clas
+  type class_ = Data.class_
 
-  type samples = (clas * feature) list
+  type samples = (class_ * feature) list
   type t =
     { cov_i : Mat.t
-    ; prior_and_means : (clas * (float * Vec.t)) list
+    ; prior_and_means : (class_ * (float * Vec.t)) list
     }
 
   let safe_encoding f =
@@ -69,7 +70,7 @@ module LDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
     if samples = [] then
       invalid_arg ~m:"Lda" ~f:"estimate" "empty training data"
     else
-      let module Cs = Set.Make (struct type t = clas let compare = compare end) in
+      let module Cs = Set.Make (struct type t = class_ let compare = compare end) in
       let clsls = List.map ~f:fst samples in
       let masks =
         if classes = [] then
@@ -100,12 +101,12 @@ module LDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
 
 end (* LDA *)
 
-module QDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
+module QDA(Data : Interfaces.Continuous_encoded_data) = struct
   type feature = Data.feature
-  type clas = Data.clas
+  type class_ = Data.class_
 
-  type samples = (clas * feature) list
-  type t = (clas * (float * Vec.t * Mat.t * float)) list
+  type samples = (class_ * feature) list
+  type t = (class_ * (float * Vec.t * Mat.t * float)) list
 
   let safe_encoding f =
     let e = Data.encoding f in
@@ -162,7 +163,7 @@ module QDA(Data : Oml_cls_intf.Continuous_encoded_data) = struct
     if samples = [] then
       invalid_arg ~m:"Qda" ~f:"estimate" "empty training data"
     else
-      let module Cs = Set.Make (struct type t = clas let compare = compare end) in
+      let module Cs = Set.Make (struct type t = class_ let compare = compare end) in
       let clsls = List.map ~f:fst samples in
       let masks =
         if classes = [] then

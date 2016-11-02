@@ -16,16 +16,16 @@
 *)
 
 open Oml_util
-open Oml_cls_intf
+module Interfaces = Oml_classification_interfaces
 
-module LrCommon(Data: Continuous_encoded_data) = struct
+module LrCommon(Data: Interfaces.Continuous_encoded_data) = struct
 
   open Lacaml.D
 
   type feature = Data.feature
-  type clas = Data.clas
+  type class_ = Data.class_
 
-  type samples = (clas * feature) list
+  type samples = (class_ * feature) list
 
   type opt =
     { lambda    : float
@@ -100,14 +100,14 @@ module LrCommon(Data: Continuous_encoded_data) = struct
 
 end
 
-module Binary(Data: Continuous_encoded_data) = struct
+module Binary(Data: Interfaces.Continuous_encoded_data) = struct
 
   include LrCommon(Data)
   open Lacaml.D
 
   type t =
     { weights    : vec
-    ; classes    : clas list
+    ; classes    : class_ list
     }
 
   let coefficients t = Vec.to_array t.weights
@@ -133,14 +133,14 @@ module Binary(Data: Continuous_encoded_data) = struct
 
 end
 
-module Multiclass(Data: Continuous_encoded_data) = struct
+module Multiclass(Data: Interfaces.Continuous_encoded_data) = struct
 
   include LrCommon(Data)
   open Lacaml_D
 
   type t =
     { weights : mat
-    ; classes : clas list
+    ; classes : class_ list
     }
 
   let coefficients t = Mat.to_array t.weights

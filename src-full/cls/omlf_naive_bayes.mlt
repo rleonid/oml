@@ -23,7 +23,7 @@ let () =
   let module IrisEncoding =
     struct
       type feature = float array
-      type clas = [ `setosa | `versicolor | `virginica ]
+      type class_ = [ `setosa | `versicolor | `virginica ]
       let encoding x = x
       let size = 4
     end
