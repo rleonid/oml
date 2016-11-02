@@ -1,0 +1,71 @@
+(*
+   Copyright 2015,2016:
+     Leonid Rozenberg <leonidr@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*)
+
+open Test_utils
+module P = Oml_probabilities
+
+let () =
+  let add_simple_test = Test.add_simple_test_group "Naive Bayes" in
+  add_simple_test ~title:"Naive Multinomial Bayes."
+    (fun () ->
+      (** This example comes from
+          Bayesian Reasoning and Machine Learning by David Barber
+          http://web4.cs.ucl.ac.uk/staff/D.Barber/pmwiki/pmwiki.php?n=Brml.HomePage
+        *)
+      let feature_map = function
+        | `shortbread -> 0
+        | `lager      -> 1
+        | `whiskey    -> 2
+        | `porridge   -> 3
+        | `football   -> 4
+      in
+      let data =
+        [
+          (`English, [`whiskey; `porridge; `football]);
+          (`English, [`shortbread; `whiskey; `porridge]);
+          (`English, [`shortbread; `lager; `football]);
+          (`English, [`shortbread; `lager]);
+          (`English, [`lager; `football]);
+          (`English, [`porridge]);
+          (`Scottish, [`shortbread; `porridge; `football]);
+          (`Scottish, [`shortbread; `lager; `football]);
+          (`Scottish, [`shortbread; `lager; `whiskey; `porridge]);
+          (`Scottish, [`shortbread; `lager; `porridge]);
+          (`Scottish, [`shortbread; `lager; `porridge; `football]);
+          (`Scottish, [`shortbread; `whiskey; `porridge]);
+          (`Scottish, [`shortbread; `whiskey])
+        ]
+      in
+      let to_feature_arr l = l |> List.map ~f:feature_map |> Array.of_list in
+      let module NB = Binomial(
+        struct
+          type feature = [ `shortbread | `lager | `whiskey | `porridge | `football ] list
+          type clas = [ `English | `Scottish]
+          let encoding = to_feature_arr
+          let size = 5
+        end)
+      in
+      let naiveb = NB.(estimate ~opt:(opt ~bernoulli:true ()) data) in
+      let sample = [ `shortbread ; `whiskey; `porridge  ] in
+      let result = NB.eval naiveb sample in
+      let expect =
+        List.sort ~cmp:compare
+          [(`Scottish, 0.807627593942793); (`English, 0.192372406057206957)]
+      in
+      Assert.is_true (expect = result));
+
+  ()

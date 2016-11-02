@@ -1,5 +1,8 @@
 PKG kaputt
-S ./src/lib/**
+PKG lacaml lbfgs ocephes
+S src/**
+S src-full/**
+S test
+S scripts
 B _build/**
 B _driver/**
-PKG lacaml lbfgs ocephes

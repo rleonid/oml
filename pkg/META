@@ -1,0 +1,19 @@
+description = "OCaml Math Library"
+version = "%%VERSION_NUM%%"
+
+requires = ""
+archive(byte) = "oml.cma"
+archive(native) = "oml.cmxa"
+plugin(byte) = "oml.cma"
+plugin(native) = "oml.cmxs"
+
+package "full" (
+  version = "%%VERSION_NUM%%"
+  description = "Full API with C and Fortran bindings for optimized routines"
+  requires = "lacaml lbfgs ocephes oml"
+  archive(byte) = "oml_full.cma"
+  archive(native) = "oml_full.cmxa"
+  plugin(byte) = "oml_full.cma"
+  plugin(native) = "oml_full.cmxs"
+  exists_if = "oml_full.cma"
+)

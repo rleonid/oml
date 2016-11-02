@@ -5,13 +5,13 @@ travis_install_on_linux () {
 }
 
 travis_install_on_osx () {
-    echo "brew install lapack"
-    brew install homebrew/dupes/lapack > /dev/null
-    echo "brew install gcc"
-    brew install gcc > /dev/null  # for gfortran
-    echo "brew install libffi"
-    brew install libffi > /dev/null # for ocephes
-    echo "brew install finished!"
+  echo "brew install lapack"
+  brew install homebrew/dupes/lapack > /dev/null
+  echo "brew install gcc"
+  brew install gcc > /dev/null  # for gfortran
+  echo "brew install libffi"
+  brew install libffi > /dev/null # for ocephes
+  echo "brew install finished!"
 }
 
 case $TRAVIS_OS_NAME in
@@ -22,21 +22,32 @@ esac
 
 eval `opam config env`
 export OPAMYES="true"
-opam install ocamlbuild
+echo ----------Installing basic deps----------
+opam install ocamlfind topkg ocamlbuild
+
+#echo Installing Libraries
+#make setup-test
+
+echo ----------Compiling lite----------
+make build_lite
+
+echo ----------Installing Testing libs----------
+opam install kaputt
 opam pin add dsfo git://github.com/rleonid/dsfo
 
-echo Installing Libraries
-make setup-test
+echo ----------Testing lite----------
+make test_lite
 
-echo Compiling
+echo ----------Installing C and Fortran deps----------
+opam install ocephes lacaml lbfgs
+
+echo ----------Compiling full----------
 make build
-make lite
 
-echo Testing
+echo ----------Install bisect ppx and ocveralls for coverage reporting----------
+opam install bisect_ppx ocveralls
+
+echo ----------Testing full----------
 make covered_test
-
-echo PostingCoverage
-opam install ocveralls
-
-cd _test_build
+cd _covered_test_build
 ocveralls --repo_token $COVERALLSTOKEN --git --send ../bisect0001.out
