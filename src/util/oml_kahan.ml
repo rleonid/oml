@@ -24,11 +24,12 @@ let empty = { correction = 0.; sum = 0. }
 let zero = empty
 
 let update t v =
-  let x  = v -. t.correction in
-  let ns = t.sum +. x in
-  { correction = (ns -. t.sum) -. x
-  ; sum = ns
-  }
+  if Oml_util_base.is_degenerate t.sum then t else
+    let x  = v -. t.correction in
+    let ns = t.sum +. x in
+    { correction = (ns -. t.sum) -. x
+    ; sum = ns
+    }
 
 let ( + ) = update
 

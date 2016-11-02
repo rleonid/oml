@@ -25,3 +25,13 @@ val normal_kl_divergence : p_mean:float -> p_sigma:float
 (** Computes kl divergence of the normal distributions P and Q defined
     given means [p_mean] and [q_mean] and std deviations [p_sigma]
     and [q_sigma]. Returns infinity for variances near zero. *)
+
+val discrete_kl_divergence : p:('a * float) list -> q:('a * float) list -> float
+(** [discrete_kl_divergence ~p:p_pdf ~q:q_pdf] Compute the KL divergence from
+    [p_pdf] to [q_pdf]. [p_pdf] and [q_pdf] represent discrete probability
+    distributions. Please note that this metric is not symmetric and the result
+    does {b not} equal [discrete_kl_divergence ~p:q_pdf ~q:p_pdf].
+
+    @raise Invalid_argument if [p_pdf] or [q_pdf] have duplicate events,
+      the probabilities are outside the bounds, or they not sum to 1.
+    *)
