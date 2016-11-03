@@ -34,7 +34,7 @@ let () =
       let p_sigma = max 0.1 (sqrt @@ abs_float p_mean) in
       let q_sigma = p_sigma in
       let kldiv q_mean = normal_kl_divergence
-        ~p_mean ~q_mean ~p_sigma ~q_sigma in
+        ~p_mean ~q_mean ~p_sigma ~q_sigma () in
       List.fold_left [0.6;0.4;0.25;0.1]
         ~f:(fun (res, kl, l) frac ->
             let delta = (p_mean -. res) *. frac in
@@ -53,7 +53,7 @@ let () =
       let p_mean = p_sigma *. p_sigma in
       let q_mean = p_mean in
       let kldiv q_sigma = normal_kl_divergence
-        ~p_mean ~q_mean ~p_sigma ~q_sigma in
+        ~p_mean ~q_mean ~p_sigma ~q_sigma () in
       List.fold_left [0.6;0.4;0.25;0.1]
         ~f:(fun (res, kl, l) frac ->
               let delta = (p_sigma -. res) *. frac in
@@ -70,7 +70,7 @@ let () =
     (fun () ->
       let fair_die = Array.init 6 (fun i -> i + 1, 1. /. 6.) |> Array.to_list in
       let not_fair = [ (1, 0.1) ; (2, 0.1); (3, 0.1); (4, 0.1); (5, 0.1); (6, 0.5) ] in
-      let kld =  discrete_kl_divergence ~p:fair_die ~q:not_fair in
+      let kld = discrete_kl_divergence ~p:fair_die ~q:not_fair () in
       Assert.equalf kld 0.242585971693640517);
 
   ()
