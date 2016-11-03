@@ -79,6 +79,7 @@ let discrete_kl_divergence (type a) ~(p : (a * 'b) list) ~q =
   let ks = Kahan.sum s in
   invalid_if (significantly_different_from ks 1.)
     (sprintf "Q probabilities don't sum to 1: %f" ks);
+  let k_up_with_dg_c = Kahan.update_with_degenerate_check in
   S.fold keys
     ~init:Kahan.empty (* TODO: is the accuracy warrented? *)
     ~f:(fun key s ->
@@ -87,7 +88,7 @@ let discrete_kl_divergence (type a) ~(p : (a * 'b) list) ~q =
           | 0.                      -> s
           | p  ->
               match M.find key mq with
-              | exception Not_found -> Kahan.update s infinity
-              | 0.                  -> Kahan.update s infinity
-              | q                   -> Kahan.update s (p *. log ( p /. q)))
+              | exception Not_found -> k_up_with_dg_c s infinity
+              | 0.                  -> k_up_with_dg_c s infinity
+              | q                   -> k_up_with_dg_c s (p *. log ( p /. q)))
   |> Kahan.sum
