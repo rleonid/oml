@@ -26,6 +26,11 @@ val zero : t
 (** [update summation value] *)
 val update : t -> float -> t
 
+(** [update_with_degenerate_check summation value]
+    Does not update the sum if it is currently at a degenerate
+    (infinity, neg_infinity or nan) value. *)
+val update_with_degenerate_check : t -> float -> t
+
 (** [update summation value] *)
 val ( + ) : t -> float -> t
 
