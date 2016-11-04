@@ -16,9 +16,7 @@
    limitations under the License.
 *)
 
-
 (** Provides various measurement functions from statistics and analysis *)
-
 
 val normal_kl_divergence : ?d:float -> p_mean:float -> p_sigma:float ->
       q_mean:float -> q_sigma:float -> unit -> float
