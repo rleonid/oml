@@ -19,9 +19,6 @@
 open MoreLabels
 module List = ListLabels
 
-let invalid_arg ~f fmt =
-  Oml_util.invalid_arg ~m:"Measure" ~f fmt
-
 let normal_kl_divergence ?d ~p_mean ~p_sigma ~q_mean ~q_sigma () =
   let open Oml_util in
   let p_sigma_degen = not @@ significantly_different_from ?d p_sigma 0.0 in
@@ -48,7 +45,9 @@ let discrete_kl_divergence ?d (type a) ~(p : (a * 'b) list) ~q () =
   let module S = Set.Make(O) in
   let module M = Map.Make(O) in
   let invalid_if b s =
-    if b then invalid_arg ~f:"discrete_kl_divergence" "%s" s else ()
+    if b then
+      invalid_arg ~m:"Measure" ~f:"discrete_kl_divergence" "%s" s
+    else ()
   in
   let not_within_prob_range p = p < 0. || 1. < p in
   (* TODO: We should probably have different strategies for aggregating keys.
