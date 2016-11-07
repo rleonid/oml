@@ -19,17 +19,18 @@ open Test_utils
 
 let () =
   let add_simple_test = Test.add_simple_test_group __MODULE__ in
-  add_simple_test ~title:"Kahan summations keep the first degeneracy"
+  add_simple_test ~title:"Kahan summations keep the first degeneracy when updated with degenerate check."
     (fun () ->
       let is_nan (x : float) = x <> x in
       let e = empty in
-      Assert.is_true (sum (update (update e infinity) nan) = infinity
-                  &&  sum (update (update e infinity) neg_infinity) = infinity
-                  &&  sum (update (update e infinity) 3.4) = infinity
-                  &&  sum (update (update e neg_infinity) nan) = neg_infinity
-                  &&  sum (update (update e neg_infinity) infinity) = neg_infinity
-                  &&  sum (update (update e neg_infinity) (-342.3)) = neg_infinity
-                  &&  (is_nan (sum (update (update e nan) infinity)))
-                  &&  (is_nan (sum (update (update e nan) 0.3)))
-                  &&  (is_nan (sum (update (update e nan) neg_infinity)))));
+      let upwdgc = update_with_degenerate_check in
+      Assert.is_true (sum (upwdgc (upwdgc e infinity) nan) = infinity
+                  &&  sum (upwdgc (upwdgc e infinity) neg_infinity) = infinity
+                  &&  sum (upwdgc (upwdgc e infinity) 3.4) = infinity
+                  &&  sum (upwdgc (upwdgc e neg_infinity) nan) = neg_infinity
+                  &&  sum (upwdgc (upwdgc e neg_infinity) infinity) = neg_infinity
+                  &&  sum (upwdgc (upwdgc e neg_infinity) (-342.3)) = neg_infinity
+                  &&  (is_nan (sum (upwdgc (upwdgc e nan) infinity)))
+                  &&  (is_nan (sum (upwdgc (upwdgc e nan) 0.3)))
+                  &&  (is_nan (sum (upwdgc (upwdgc e nan) neg_infinity)))));
   ()

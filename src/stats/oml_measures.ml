@@ -19,13 +19,10 @@
 open MoreLabels
 module List = ListLabels
 
-let invalid_arg ~f fmt =
-  Oml_util.invalid_arg ~m:"Measure" ~f fmt
-
-let normal_kl_divergence ~p_mean ~p_sigma ~q_mean ~q_sigma =
+let normal_kl_divergence ?d ~p_mean ~p_sigma ~q_mean ~q_sigma () =
   let open Oml_util in
-  let p_sigma_degen = not @@ significantly_different_from p_sigma 0.0 in
-  let q_sigma_degen = not @@ significantly_different_from q_sigma 0.0 in
+  let p_sigma_degen = not @@ significantly_different_from ?d p_sigma 0.0 in
+  let q_sigma_degen = not @@ significantly_different_from ?d q_sigma 0.0 in
   if p_sigma_degen || q_sigma_degen then infinity else
   let mean_diff = p_mean -. q_mean in
   let mean_diff_sq = mean_diff *. mean_diff in
@@ -41,14 +38,16 @@ let normal_kl_divergence ~p_mean ~p_sigma ~q_mean ~q_sigma =
 
   TODO: allow parameterization over different logs, ex. nats vs bits.
 *)
-let discrete_kl_divergence (type a) ~(p : (a * 'b) list) ~q =
+let discrete_kl_divergence ?d (type a) ~(p : (a * 'b) list) ~q () =
   let open Printf in
   let open Oml_util in
   let module O = struct type t = a let compare = compare end in
   let module S = Set.Make(O) in
   let module M = Map.Make(O) in
   let invalid_if b s =
-    if b then invalid_arg ~f:"discrete_kl_divergence" "%s" s else ()
+    if b then
+      invalid_arg ~m:"Measure" ~f:"discrete_kl_divergence" "%s" s
+    else ()
   in
   let not_within_prob_range p = p < 0. || 1. < p in
   (* TODO: We should probably have different strategies for aggregating keys.
@@ -70,15 +69,16 @@ let discrete_kl_divergence (type a) ~(p : (a * 'b) list) ~q =
       ~f:(across_distribution_assoc "P")
   in
   let ks = Kahan.sum s in
-  invalid_if (significantly_different_from ks 1.)
+  invalid_if (significantly_different_from ?d ks 1.)
     (sprintf "P probabilities don't sum to 1: %f" ks);
   let keys, mq, s =
     List.fold_left q ~init:(keys, M.empty, Kahan.empty)
       ~f:(across_distribution_assoc "Q")
   in
   let ks = Kahan.sum s in
-  invalid_if (significantly_different_from ks 1.)
+  invalid_if (significantly_different_from ?d ks 1.)
     (sprintf "Q probabilities don't sum to 1: %f" ks);
+  let k_up_with_dg_c = Kahan.update_with_degenerate_check in
   S.fold keys
     ~init:Kahan.empty (* TODO: is the accuracy warrented? *)
     ~f:(fun key s ->
@@ -87,7 +87,7 @@ let discrete_kl_divergence (type a) ~(p : (a * 'b) list) ~q =
           | 0.                      -> s
           | p  ->
               match M.find key mq with
-              | exception Not_found -> Kahan.update s infinity
-              | 0.                  -> Kahan.update s infinity
-              | q                   -> Kahan.update s (p *. log ( p /. q)))
+              | exception Not_found -> k_up_with_dg_c s infinity
+              | 0.                  -> k_up_with_dg_c s infinity
+              | q                   -> k_up_with_dg_c s (p *. log ( p /. q)))
   |> Kahan.sum
