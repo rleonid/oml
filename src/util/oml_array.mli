@@ -107,3 +107,5 @@ val unzip : ('a * 'b) array -> ('a array * 'b array)
 
     @param copy can be set to false to perform the permutation in place. *)
 val permute : ?copy:bool -> 'a array -> 'a array
+
+val of_list_map : ('a -> 'b) -> 'a list -> 'b array

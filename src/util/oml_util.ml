@@ -17,9 +17,7 @@
 
 include Oml_util_base
 
-module Array = struct
-  include Oml_array
-end
+module Array = Oml_array
 
 module List = ListLabels
 
@@ -37,3 +35,5 @@ module type Optional_arg_intf = sig
 end
 
 module Kahan = Oml_kahan
+
+module Polynomial = Oml_poly

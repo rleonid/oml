@@ -90,3 +90,5 @@ module type Optional_arg_intf = sig
 end
 
 module Kahan : sig include module type of Oml_kahan end
+
+module Polynomial : sig include module type of Oml_poly end

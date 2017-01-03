@@ -6,6 +6,7 @@ Oml_online
 
 util/oml_array
 util/oml_kahan
+util/oml_poly
 util/oml_rank
 util/oml_util
 util/oml_util_base

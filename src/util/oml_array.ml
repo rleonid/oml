@@ -145,3 +145,14 @@ let permute ?(copy=true) arr =
     a.(k) <- temp
   done;
   a
+
+let of_list_map f = function
+  | []            -> [||]
+  | (h :: t) as l ->
+      let arr = make (List.length l) (f h) in
+      let rec loop i = function
+        | []     -> arr
+        | h :: t -> unsafe_set arr i (f h);
+                    loop (i + 1) t
+      in
+      loop 1 t
