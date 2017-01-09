@@ -47,5 +47,12 @@ let () =
         Ok  [ Pkg.test ~cond:(not full) "test/oml_test"
             ; Pkg.test ~cond:full "test/omlf_test"
             ]
+    | "examples" ->
+        Ok  [ Pkg.test  "examples/oml/classify"
+            ; Pkg.test  "examples/oml/generate_fat_tailed_data"
+            ; Pkg.test  "examples/oml/skewness"
+            ; Pkg.test ~cond:full "examples/oml_full/mean_test"
+            ; Pkg.test ~cond:full "examples/oml_full/regression_ex"
+            ]
     | other ->
         R.error_msgf "Unrecognized package name: %s" other

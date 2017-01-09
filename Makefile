@@ -4,7 +4,7 @@ DOC_BUILD_DIR="_doc_build"
 PACKAGES_INSTALL=ocephes lacaml lbfgs
 PACKAGES_INSTALL_TEST=kaputt bisect_ppx dsfo
 
-.PHONY: all clean test build full setup doc
+.PHONY: all clean test build full setup doc examples examples_lite
 
 default: FORCE
 	@echo "available targets:"
@@ -36,7 +36,6 @@ build:
 
 build_lite:
 	ocaml pkg/pkg.ml build --with-lacaml false --with-lbfgs false --with-ocephes false
-
 
 clean:
 	ocaml pkg/pkg.ml clean
@@ -88,5 +87,15 @@ showed: build
 	utop -I _build/src oml.cma tools/show.ml > showed.mli
 	utop -require lacaml -require lbfgs -require ocephes -I _build/src oml.cma -I _build/src-full oml_full.cma tools/show_full.ml > showed_full.mli
 
-# topkg doc --build-dir $(DOC_BUILD_DIR)
+#### Examples
+
+examples_lite:
+	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) --with-lacaml false --with-lbfgs false --with-ocephes false -n examples && \
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+
+examples:
+	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) -n examples && \
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+
 FORCE:
+
