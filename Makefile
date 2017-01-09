@@ -19,6 +19,7 @@ default: FORCE
 	@echo "	doc			generates ocamldoc documentations"
 	@echo "	clean			deletes all produced files"
 	@echo "	report			generate Bisect_ppx coverage report"
+	@echo " showed  generate showed.mli that contains the current interfaces"
 
 # This should be called something else.
 setup:
@@ -61,6 +62,7 @@ covered_test_lite:
 	ocaml pkg/pkg.ml build --build-dir $(COVERED_TEST_BUILD_DIR) --with-lacaml false --with-lbfgs false --with-ocephes false --with-coverage true -n omltest && \
 		time ocaml pkg/pkg.ml test --build-dir $(COVERED_TEST_BUILD_DIR)
 
+
 #### Test Coverage
 
 report_dir:
@@ -81,6 +83,9 @@ clean_reports:
 
 doc:
 	ocamlbuild -classic-display -use-ocamlfind -plugin-tag 'package(str)' -no-links -build-dir $(DOC_BUILD_DIR) -docflags '-colorize-code,-charset,utf-8' doc/api.docdir/index.html
+
+showed: build
+	utop -require lacaml -require lbfgs -require ocephes -I _build/src oml.cma -I _build/src-full oml_full.cma tools/show.ml > showed.mli
 
 # topkg doc --build-dir $(DOC_BUILD_DIR)
 FORCE:

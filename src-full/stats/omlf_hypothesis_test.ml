@@ -15,8 +15,9 @@
    limitations under the License.
 *)
 
-open Oml_util
-open Oml_descriptive
+open Oml
+open Util
+open Statistics.Descriptive
 open Omlf_distributions
 module F = Omlf_functions
 

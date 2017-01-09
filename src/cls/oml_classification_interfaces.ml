@@ -15,6 +15,8 @@
    limitations under the License.
 *)
 
+module Probabilities = Oml_probabilities
+
 (** Interfaces to categorize the different logic of classification. *)
 
 (** From the perspective of classification there are two types of data:
@@ -95,7 +97,7 @@ module type Classifier = sig
 
   (** [eval classifier feature] assign {{!Probabilities.t}probabilities} to the
       possible {{!type:Data.class_}classes} based upon [feature]. *)
-  val eval : t -> feature -> class_ Oml_probabilities.t
+  val eval : t -> feature -> class_ Probabilities.t
 
   (** Representing training data. *)
   type samples = (class_ * feature) list
