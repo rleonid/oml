@@ -55,7 +55,7 @@ module Statistics : sig
       we can still create a prediction interval based off of basic sampled
       statistics and Student's distribution.
       *)
-    val prediction_interval : Oml.Statistics.Descriptive.summary -> float -> float * float
+    val prediction_interval : Descriptive.summary -> float -> float * float
 
     (** A hypothesis test.  *)
     type t =
