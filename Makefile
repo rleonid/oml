@@ -85,7 +85,8 @@ doc:
 	ocamlbuild -classic-display -use-ocamlfind -plugin-tag 'package(str)' -no-links -build-dir $(DOC_BUILD_DIR) -docflags '-colorize-code,-charset,utf-8' doc/api.docdir/index.html
 
 showed: build
-	utop -require lacaml -require lbfgs -require ocephes -I _build/src oml.cma -I _build/src-full oml_full.cma tools/show.ml > showed.mli
+	utop -I _build/src oml.cma tools/show.ml > showed.mli
+	utop -require lacaml -require lbfgs -require ocephes -I _build/src oml.cma -I _build/src-full oml_full.cma tools/show_full.ml > showed_full.mli
 
 # topkg doc --build-dir $(DOC_BUILD_DIR)
 FORCE:

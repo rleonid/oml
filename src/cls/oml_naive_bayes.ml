@@ -16,7 +16,7 @@
 *)
 
 open Oml_util
-module Interfaces = Oml_classification_interfaces
+module Interfaces = Oml_classification_input_interfaces
 
 module Binomial(Data: Interfaces.Dummy_encoded_data) = struct
 

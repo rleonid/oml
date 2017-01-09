@@ -3,9 +3,9 @@
 open Lacaml.D
 open Oml_util
 module LU = Omlf_lacaml_util
-module Interfaces = Oml_classification_interfaces
+module I = Oml.Classification.Input_interfaces
 
-module LDA(Data : Interfaces.Continuous_encoded_data) = struct
+module LDA(Data : I.Continuous_encoded_data) = struct
   type feature = Data.feature
   type class_ = Data.class_
 
@@ -101,7 +101,7 @@ module LDA(Data : Interfaces.Continuous_encoded_data) = struct
 
 end (* LDA *)
 
-module QDA(Data : Interfaces.Continuous_encoded_data) = struct
+module QDA(Data : I.Continuous_encoded_data) = struct
   type feature = Data.feature
   type class_ = Data.class_
 

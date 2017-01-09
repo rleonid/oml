@@ -121,8 +121,8 @@ end
 
 (** Classify data based on features. *)
 module Classification : sig
-  module Interfaces : sig
-    include module type of Oml.Classification.Interfaces
+  module Input_interfaces : sig
+    include module type of Oml.Classification.Input_interfaces
   end
   module Probabilities : sig
     include module type of Oml.Classification.Probabilities

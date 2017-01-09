@@ -15,8 +15,6 @@
    limitations under the License.
 *)
 
-module Probabilities = Oml_probabilities
-
 (** Interfaces to categorize the different logic of classification. *)
 
 (** From the perspective of classification there are two types of data:
@@ -80,63 +78,4 @@ module type Continuous_encoded_data = sig
 
   (** The number of quantitative variables needed to describe the features.*)
   val size : int
-end
-
-(** A {{!type:t}classifier}, once {{!val:estimate} estimated} from
-    the {{!type:Data.feature}features} found in
-    {{!type:samples}samples} of data, assigns
-    {{!Probabilities.t}probabilities} to
-    {{!type:Data.class_}classes}
-    on future samples when {{!val:eval}evaluated}. *)
-module type Classifier = sig
-  include Data
-  include Oml_util.Optional_arg_intf
-
-  (** The classifier. *)
-  type t
-
-  (** [eval classifier feature] assign {{!Probabilities.t}probabilities} to the
-      possible {{!type:Data.class_}classes} based upon [feature]. *)
-  val eval : t -> feature -> class_ Probabilities.t
-
-  (** Representing training data. *)
-  type samples = (class_ * feature) list
-
-  (** [estimate opt classes samples] estimates a classifier based upon the
-      training [samples].
-
-      [classes] is an optional argument to specify ahead of time the possible
-      classes to train on (defaults to the ones found in the training data).
-      This is useful for models where we know the population domain but may
-      not see an example of a training datum for rare cases.
-
-      [opt] are the optional classifier dependent estimation/evaluation
-      arguments.
-
-      @raise Invalid_argument if [classes] are specified and new ones are
-      found in the training [samples].
-      @raise Invalid_argument if [samples] is empty.
-  *)
-  val estimate : ?opt:opt -> ?classes:class_ list -> samples -> t
-end
-
-(** A generative classifier builds models of the form
-    P({{!type:Data.class_}class},
-      {{!type:Data.feature}feature}).
-
-    For current purposes these classifiers can return individual probabilities
-    of the form P({{!type:Data.feature}feature} |
-      {{!type:Data.class_}class}).
-*)
-module type Generative = sig
-  include Classifier
-
-  type feature_probability
-
-  (** [class_probabilities t class] returns the prior and per feature
-      likelihood probability (ies) learned by [t] for [class].
-
-      @raise Not_found if [t] never trained on [class]. *)
-  val class_probabilities : t -> class_ -> float * (feature -> feature_probability)
-
 end

@@ -76,14 +76,74 @@ module Online : sig include module type of Oml_online end
 (** Classify data based on features. *)
 module Classification : sig
   module Probabilities : sig include module type of Oml_probabilities end
-  module Interfaces : sig include module type of Oml_classification_interfaces end
+  module Input_interfaces : sig include module type of Oml_classification_input_interfaces end
+  module Classifier_interfaces : sig
+    (** A {{!type:t}classifier}, once {{!val:estimate} estimated} from
+        the {{!type:Data.feature}features} found in
+        {{!type:samples}samples} of data, assigns
+        {{!Probabilities.t}probabilities} to
+        {{!type:Data.class_}classes}
+        on future samples when {{!val:eval}evaluated}. *)
+    module type Classifier = sig
+      include Input_interfaces.Data
+      include Oml_util.Optional_arg_intf
+
+      (** The classifier. *)
+      type t
+
+      (** [eval classifier feature] assign {{!Probabilities.t}probabilities} to the
+          possible {{!type:Input_interfaces.Data.class_}classes} based upon [feature]. *)
+      val eval : t -> feature -> class_ Probabilities.t
+
+      (** Representing training data. *)
+      type samples = (class_ * feature) list
+
+      (** [estimate opt classes samples] estimates a classifier based upon the
+          training [samples].
+
+          [classes] is an optional argument to specify ahead of time the possible
+          classes to train on (defaults to the ones found in the training data).
+          This is useful for models where we know the population domain but may
+          not see an example of a training datum for rare cases.
+
+          [opt] are the optional classifier dependent estimation/evaluation
+          arguments.
+
+          @raise Invalid_argument if [classes] are specified and new ones are
+          found in the training [samples].
+          @raise Invalid_argument if [samples] is empty.
+      *)
+      val estimate : ?opt:opt -> ?classes:class_ list -> samples -> t
+    end
+
+    (** A generative classifier builds models of the form
+        P({{!type:Input_interfaces.Data.class_}class},
+          {{!type:Input_interfaces.Data.feature}feature}).
+
+        For current purposes these classifiers can return individual probabilities
+        of the form P({{!type:Input_interfaces.Data.feature}feature} |
+          {{!type:Input_interfaces.Data.class_}class}).
+    *)
+    module type Generative = sig
+      include Classifier
+
+      type feature_probability
+
+      (** [class_probabilities t class] returns the prior and per feature
+          likelihood probability (ies) learned by [t] for [class].
+
+          @raise Not_found if [t] never trained on [class]. *)
+      val class_probabilities : t -> class_ -> float * (feature -> feature_probability)
+
+    end
+  end
   module Naive_bayes : sig
     (** Train a
       {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
       classifier on data encoded using
       {{!modtype:Cls_intf.Dummy_encoded_data}Dummy variables.} *)
-    module Binomial(D: Interfaces.Dummy_encoded_data) : sig
-      include Interfaces.Generative
+    module Binomial(D: Input_interfaces.Dummy_encoded_data) : sig
+      include Classifier_interfaces.Generative
           with type feature = D.feature
           and type class_ = D.class_
           and type feature_probability = float array
@@ -109,8 +169,8 @@ module Classification : sig
       {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
       classifier on data encoded using
       {{!modtype:Cls_intf.Category_encoded_data}Categorical variables.} *)
-    module Categorical(D: Interfaces.Category_encoded_data) : sig
-      include Interfaces.Generative
+    module Categorical(D: Input_interfaces.Category_encoded_data) : sig
+      include Classifier_interfaces.Generative
           with type feature = D.feature
           and type class_ = D.class_
           and type feature_probability = float array

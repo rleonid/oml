@@ -16,9 +16,9 @@
 *)
 
 open Oml_util
-module Interfaces = Oml_classification_interfaces
+module I = Oml.Classification.Input_interfaces
 
-module LrCommon(Data: Interfaces.Continuous_encoded_data) = struct
+module LrCommon(Data: I.Continuous_encoded_data) = struct
 
   open Lacaml.D
 
@@ -100,7 +100,7 @@ module LrCommon(Data: Interfaces.Continuous_encoded_data) = struct
 
 end
 
-module Binary(Data: Interfaces.Continuous_encoded_data) = struct
+module Binary(Data: I.Continuous_encoded_data) = struct
 
   include LrCommon(Data)
   open Lacaml.D
@@ -133,7 +133,7 @@ module Binary(Data: Interfaces.Continuous_encoded_data) = struct
 
 end
 
-module Multiclass(Data: Interfaces.Continuous_encoded_data) = struct
+module Multiclass(Data: I.Continuous_encoded_data) = struct
 
   include LrCommon(Data)
   open Lacaml_D
