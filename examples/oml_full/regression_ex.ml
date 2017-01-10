@@ -6,7 +6,7 @@ let rows = 100
 let cols = 3
 
 let gen = Sampling.normal_std () ;;
-let pred = Array.init rows (fun r -> Array.init cols (fun _ -> gen ())) ;;
+let pred = Array.init rows (fun _ -> Array.init cols (fun _ -> gen ())) ;;
 let constant_term = 2.
 let a1 = 3.
 let a2 = 4.
