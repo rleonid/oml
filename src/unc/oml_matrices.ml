@@ -18,7 +18,8 @@
 open Oml_util
 let invalid_arg ~f fmt = invalid_arg ~m:"Matrices" ~f fmt
 
-type t = Oml_vectors.t array
+module Vectors = Oml_vectors
+type t = Vectors.t array
 
 let row m i = Array.copy (Array.get m i)
 
@@ -46,14 +47,14 @@ let equal ?d x y =
   let n = Array.length x
   and m = Array.length y in
   let rec loop i =
-    i = n || Oml_vectors.equal ?d x.(i) y.(i) && loop (i + 1)
+    i = n || Vectors.equal ?d x.(i) y.(i) && loop (i + 1)
   in
   n = m && loop 0
 
-let add x y = Array.init (Array.length x) (fun i -> Oml_vectors.add x.(i) y.(i))
-let sub x y = Array.init (Array.length x) (fun i -> Oml_vectors.sub x.(i) y.(i))
+let add x y = Array.init (Array.length x) (fun i -> Vectors.add x.(i) y.(i))
+let sub x y = Array.init (Array.length x) (fun i -> Vectors.sub x.(i) y.(i))
 
-let mult x = Array.map (Oml_vectors.mult x)
+let mult x = Array.map (Vectors.mult x)
 
 
 let identity n =

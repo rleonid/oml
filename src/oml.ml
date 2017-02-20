@@ -18,8 +18,24 @@ end
 module Online = Oml_online
 
 module Classification = struct
-  module Interfaces = Oml_classification_interfaces
   module Probabilities = Oml_probabilities
+  module Input_interfaces = Oml_classification_input_interfaces
+  module Classifier_interfaces = struct
+    module type Classifier = sig
+      include Input_interfaces.Data
+      include Oml_util.Optional_arg_intf
+      type t
+      val eval : t -> feature -> class_ Probabilities.t
+      type samples = (class_ * feature) list
+      val estimate : ?opt:opt -> ?classes:class_ list -> samples -> t
+    end
+
+    module type Generative = sig
+      include Classifier
+      type feature_probability
+      val class_probabilities : t -> class_ -> float * (feature -> feature_probability)
+    end
+  end
   module Naive_bayes = Oml_naive_bayes
   module Performance = Oml_performance
 end

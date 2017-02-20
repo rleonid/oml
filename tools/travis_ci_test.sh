@@ -44,6 +44,9 @@ opam install ocephes lacaml lbfgs
 echo ----------Compiling full----------
 make build
 
+echo ----------Examples ----
+make examples
+
 echo ----------Install bisect ppx and ocveralls for coverage reporting----------
 opam install bisect_ppx ocveralls
 

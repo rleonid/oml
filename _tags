@@ -17,6 +17,8 @@ true: safe_string, annot, bin_annot, principal, warn(A-42-44-48-50)
 <src-full/**/*.mlj> : package(kaputt), package(dsfo)
 <test/**> : package(dsfo), package(kaputt)
 <test/omlf_test.native> : package(lacaml), package(ocephes), package(lbfgs)
+<examples/*> : include
+<examples/oml_full/*.native> : package(lacaml), package(ocephes), package(lbfgs)
 
 "_build": -traverse
 "_test_build": -traverse

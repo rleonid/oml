@@ -219,7 +219,7 @@ let () =
       | After_rules     ->
           begin
             let regular_source_dirs =
-                  [ "src"         (* For the Online stuff that hasn't been packaged. *)
+                  [ "src/onl"
                   ; "src/util"
                   ; "src/unc"
                   ; "src/stats"
@@ -229,8 +229,7 @@ let () =
                   ]
             in
             let full_source_dirs =
-                  [ "src-full"
-                  ; "src-full/unc"
+                  [ "src-full/unc"
                   ; "src-full/stats"
                   ; "src-full/cls"
                   ; "src-full/rgr"

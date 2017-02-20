@@ -17,9 +17,7 @@
 
 include Oml_util_base
 
-module Array = struct
-  include Oml_array
-end
+module Array = Oml_array
 
 module List = ListLabels
 

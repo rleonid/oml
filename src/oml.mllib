@@ -1,5 +1,4 @@
 Oml
-Oml_online
 
 # The following modules are uncapitalized due do
 # https://github.com/dbuenzli/topkg/issues/75
@@ -10,13 +9,15 @@ util/oml_rank
 util/oml_util
 util/oml_util_base
 
+onl/oml_online
+
 stats/oml_continued_fraction
 stats/oml_descriptive
 stats/oml_functions
 stats/oml_measures
 stats/oml_sampling
 
-cls/oml_classification_interfaces
+cls/oml_classification_input_interfaces
 cls/oml_common_naive_bayes
 cls/oml_naive_bayes
 cls/oml_performance

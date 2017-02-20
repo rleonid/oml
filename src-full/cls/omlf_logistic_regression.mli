@@ -30,9 +30,9 @@
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
   {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
-module Binary(D: Oml_classification_interfaces.Continuous_encoded_data) :
+module Binary(D: Oml.Classification.Input_interfaces.Continuous_encoded_data) :
   sig
-    include Oml_classification_interfaces.Classifier
+    include Oml.Classification.Classifier_interfaces.Classifier
         with type feature = D.feature
          and type class_ = D.class_
 
@@ -68,9 +68,9 @@ module Binary(D: Oml_classification_interfaces.Continuous_encoded_data) :
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
   {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
-module Multiclass(D: Oml_classification_interfaces.Continuous_encoded_data) :
+module Multiclass(D: Oml.Classification.Input_interfaces.Continuous_encoded_data) :
   sig
-    include Oml_classification_interfaces.Classifier
+    include Oml.Classification.Classifier_interfaces.Classifier
         with type feature = D.feature
          and type class_ = D.class_
 
