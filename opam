@@ -1,6 +1,4 @@
 opam-version: "1.2"
-name: "oml"
-version: "0.0.7"
 available: [ ocaml-version >= "4.03" ]
 maintainer: "Leonid Rozenberg <leonidr@gmail.com>"
 authors: "Leonid Rozenberg <leonidr@gmail.com>"
