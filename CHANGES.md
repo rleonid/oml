@@ -1,3 +1,10 @@
+Version 0.0.7 (2017-02-21):
+--------------------------
+  - Reworked separation of library in Oml (OCaml only) and Oml_full
+    (includes C/Fortran source links), such that the former is a
+    functional (types and modules work together) subset of the latter.
+  -
+
 Version 0.0.6 (2016-08-19):
 ---------------------------
   - Alias method for sampling from Categorical distribution and
