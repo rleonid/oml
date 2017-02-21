@@ -40,7 +40,13 @@ let () =
     in
     Pkg.build ~cmd ()
   in
-  Pkg.describe ~build "oml" @@ fun c ->
+  let distrib =
+    Pkg.distrib ()
+      ~exclude_paths:(fun () ->
+        Pkg.exclude_paths () >>= fun l ->
+          Ok ("scripts" :: "tools" :: l))
+  in
+  Pkg.describe ~build ~distrib "oml" @@ fun c ->
     let full = full c in
     match Conf.pkg_name c with
     | "oml" ->
