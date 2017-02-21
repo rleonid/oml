@@ -1,6 +1,8 @@
 (** OCaml Math, Statistics and ML Libary.
 
-    Oml {i plus} [C] and [Fortran] bindings where appropriate.*)
+Oml {i plus} [C] and [Fortran] bindings where appropriate.
+Verions: %%VERSION%%
+*)
 
 (** Common values used throughout the library. *)
 module Util : sig

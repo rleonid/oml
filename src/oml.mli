@@ -1,4 +1,7 @@
-(** OCaml Math, Statistics and ML Libary (Pure OCaml). *)
+(** OCaml Math, Statistics and ML Libary (Pure OCaml). 
+ 
+ Verions: %%VERSION%%
+*)
 
 (** Common values used throughout the library. *)
 module Util : sig
