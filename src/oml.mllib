@@ -1,34 +1,31 @@
 Oml
 
-# The following modules are uncapitalized due do
-# https://github.com/dbuenzli/topkg/issues/75
+util/Oml_array
+util/Oml_kahan
+util/Oml_rank
+util/Oml_util
+util/Oml_util_base
 
-util/oml_array
-util/oml_kahan
-util/oml_rank
-util/oml_util
-util/oml_util_base
+onl/Oml_online
 
-onl/oml_online
+stats/Oml_continued_fraction
+stats/Oml_descriptive
+stats/Oml_functions
+stats/Oml_measures
+stats/Oml_sampling
 
-stats/oml_continued_fraction
-stats/oml_descriptive
-stats/oml_functions
-stats/oml_measures
-stats/oml_sampling
+cls/Oml_classification_input_interfaces
+cls/Oml_common_naive_bayes
+cls/Oml_naive_bayes
+cls/Oml_performance
+cls/Oml_probabilities
 
-cls/oml_classification_input_interfaces
-cls/oml_common_naive_bayes
-cls/oml_naive_bayes
-cls/oml_performance
-cls/oml_probabilities
+rgr/Oml_common_univariate
+rgr/Oml_interpolate
+rgr/Oml_univariate
+rgr/Oml_regression_interfaces
 
-rgr/oml_common_univariate
-rgr/oml_interpolate
-rgr/oml_univariate
-rgr/oml_regression_interfaces
-
-unc/oml_estimations
-unc/oml_solvers
-unc/oml_matrices
-unc/oml_vectors
+unc/Oml_estimations
+unc/Oml_solvers
+unc/Oml_matrices
+unc/Oml_vectors

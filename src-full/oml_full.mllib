@@ -1,22 +1,22 @@
 Oml_full
 
-cls/omlf_descriminant
-cls/omlf_logistic_regression
-cls/omlf_naive_bayes
-cls/omlf_softmax_regression
+cls/Omlf_descriminant
+cls/Omlf_logistic_regression
+cls/Omlf_naive_bayes
+cls/Omlf_softmax_regression
 
-unc/omlf_homeless
-unc/omlf_lacaml_util
-unc/omlf_svd
+unc/Omlf_homeless
+unc/Omlf_lacaml_util
+unc/Omlf_svd
 
-stats/omlf_distributions
-stats/omlf_hypothesis_test
-stats/omlf_functions
+stats/Omlf_distributions
+stats/Omlf_hypothesis_test
+stats/Omlf_functions
 
-rgr/omlf_eval_multivariate
-rgr/omlf_multivariate
-rgr/omlf_solvedLPViaSvd
-rgr/omlf_tikhonov
-rgr/omlf_univariate
+rgr/Omlf_eval_multivariate
+rgr/Omlf_multivariate
+rgr/Omlf_solvedLPViaSvd
+rgr/Omlf_tikhonov
+rgr/Omlf_univariate
 
-uns/omlf_pca
+uns/Omlf_pca
