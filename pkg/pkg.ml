@@ -3,14 +3,18 @@
 #require "topkg"
 open Topkg
 
+(* Configuration flags. *)
 let lacaml = Conf.with_pkg "lacaml"
 let lbfgs = Conf.with_pkg "lbfgs"
 let ocephes = Conf.with_pkg "ocephes"
 let kaputt = Conf.with_pkg "kaputt"
+let dsfo = Conf.with_pkg "dsfo"
 let bisect_ppx = Conf.with_pkg "bisect_ppx"
 let coverage = Conf.with_pkg ~default:false "coverage"
 let documentation = Conf.with_pkg ~default:false "documentation"
 
+(* Are we compiling the full package?
+   ie. are all the native packages present? *)
 let full c =
   let lacaml = Conf.value c lacaml in
   let lbfgs = Conf.value c lbfgs in
@@ -48,9 +52,9 @@ let () =
             ; Pkg.test ~cond:full "test/omlf_test"
             ]
     | "examples" ->
-        Ok  [ Pkg.test  "examples/oml/classify"
-            ; Pkg.test  "examples/oml/generate_fat_tailed_data"
-            ; Pkg.test  "examples/oml/skewness"
+        Ok  [ Pkg.test "examples/oml/classify"
+            ; Pkg.test "examples/oml/generate_fat_tailed_data"
+            ; Pkg.test "examples/oml/skewness"
             ; Pkg.test ~cond:full "examples/oml_full/mean_test"
             ; Pkg.test ~cond:full "examples/oml_full/regression_ex"
             ]
