@@ -1,7 +1,7 @@
 (** OCaml Math, Statistics and ML Libary.
 
 Oml {i plus} [C] and [Fortran] bindings where appropriate.
-Verions: %%VERSION%%
+Version: %%VERSION%%
 *)
 
 (** Common values used throughout the library. *)

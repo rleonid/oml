@@ -1,6 +1,6 @@
 (** OCaml Math, Statistics and ML Libary (Pure OCaml). 
  
- Verions: %%VERSION%%
+ Version: %%VERSION%%
 *)
 
 (** Common values used throughout the library. *)
