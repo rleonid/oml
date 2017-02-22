@@ -166,15 +166,6 @@ let to_mli_assoc =
   List.map (fun s ->
     String.capitalize_ascii (Filename.chop_extension (Filename.basename s)), s)
 
-(* Exclude these two includes from the mli inserting documentation pass. *)
-let oml_included_regex, oml_included_length =
-  let s = "include module type of Oml\\." in
-  Str.regexp s, String.length s - 1
-
-let omlf_included_regex, omlf_included_length =
-  let s = "include module type of Omlf\\." in
-  Str.regexp s, String.length s - 1
-
 let imto_regex =
   Str.regexp "include module type of \\([A-Z][a-zA-Z_]+\\)"
 
@@ -188,44 +179,32 @@ let rec include_includes modassoc mli =
   let ff = really_input_string ic en in
   close_in ic;
   let rec loop pos acc =
-    match search_forward_opt oml_included_regex ff pos with
-    | Some pp ->
+    match search_forward_opt imto_regex ff pos with
+    | None    -> String.sub ff pos (en - pos) :: acc    (* Safe to assume only 1 per file? *)
+    | Some np ->
+        let md = Str.matched_group 1 ff in
         let ap = Str.match_end () in
-        let bef = String.sub ff pos (pp + oml_included_length - pos) in
-        loop ap (bef :: acc)
-    | None ->
-      begin match search_forward_opt omlf_included_regex ff pos with
-      | Some pp ->
-          let ap = Str.match_end () in
-          let bef = String.sub ff pos (pp + omlf_included_length - pos) in
+        if md = "Oml" then
+          let bef = String.sub ff pos (ap - pos) in
           loop ap (bef :: acc)
-      | None ->
-        begin match search_forward_opt imto_regex ff pos with
-        | None    -> String.sub ff pos (en - pos) :: acc    (* Safe to assume only 1 per file? *)
-        | Some np ->
-            let md = Str.matched_group 1 ff in
-            let ap = Str.match_end () in
-            try
-              let file = List.assoc md modassoc in
-              Printf.printf "inserting %s for %s ----\n" file md;
-              let bef  = String.sub ff pos (np - pos) in
-              let ic   =
-                if not (Sys.file_exists file) then begin
-                  ignore (Sys.command (Printf.sprintf "mkdir -p %s" (Filename.dirname file)));
-                  ignore (Sys.command (Printf.sprintf "cp ../%s %s" file file));
-                end;
-                  include_includes modassoc file;
-                  open_in file
-              in
-              let incf = really_input_string ic (in_channel_length ic) in
-              close_in ic;
-              loop ap (incf :: bef :: acc)
-           with Not_found -> (* Missing module in modassoc *)
-              Printf.printf "didn't find %s \n" md;
-              let bef  = String.sub ff pos (ap - pos - 1) in
-              loop (ap - 1) (bef :: acc)
-        end
-      end
+        else
+          try
+            let file = List.assoc md modassoc in
+            let bef  = String.sub ff pos (np - pos) in
+            let ic   =
+              if not (Sys.file_exists file) then begin
+                ignore (Sys.command (sprintf "mkdir -p %s" (Filename.dirname file)));
+                ignore (Sys.command (sprintf "cp ../%s %s" file file));
+              end;
+                include_includes modassoc file;
+                open_in file
+            in
+            let incf = really_input_string ic (in_channel_length ic) in
+            close_in ic;
+            loop ap (incf :: bef :: acc)
+          with Not_found -> (* Missing module in modassoc *)
+            let bef  = String.sub ff pos (ap - pos - 1) in
+            loop (ap - 1) (bef :: acc)
   in
   match loop 0 [] with
   | [] -> ()
@@ -299,24 +278,27 @@ let () =
                  4. Manually insert it into the mli.
               *)
               let mla =
-                (all_mli_files "src"
-                @ all_mli_files "src-full")
+                (all_mli_files "src" @ all_mli_files "src-full")
                 |> to_mli_assoc
                 |> fun l ->
-                    ("Oml_classification_input_interfaces", "src/cls/oml_classification_input_interfaces.ml") ::
-                    l
+                    ("Oml_classification_input_interfaces"
+                    , "src/cls/oml_classification_input_interfaces.ml")
+                    :: ("Oml_regression_interfaces"
+                       , "src/rgr/oml_regression_interfaces.ml")
+                    :: l
               in
-              Printf.printf "We have these files:\n%!";
-              List.iter (fun (m,f) -> Printf.printf "%s\t\t%s\n%!" m f) mla;
-
-              rule "For documentation ocaml: mli -> cmi"
+              printf "We have these files:\n%!";
+              List.iter (fun (m,f) -> printf "%s\t\t%s\n%!" m f) mla;
+              rule "For documentation ocaml: mli -> mli.depends"
                 ~insert:`top
-                ~deps:[ "%.mli"; "%.mli.depends" ]
-                ~prods:[ "%.cmi" ]
+                ~dep: "%.mli"
+                ~prod:"%.mli.depends"
                 begin fun env build ->
                   let mli = env "%.mli" in
-                  include_includes mla mli;
-                  Ocaml_compiler.compile_ocaml_interf "%.mli" "%.cmi" env build
+                  if Filename.basename mli = "oml.mli"
+                  || Filename.basename mli = "oml_full.mli" then
+                    include_includes mla mli;
+                  Ocaml_tools.ocamldep_command "%.mli" "%.mli.depends" env build
                 end;
             end
           end
