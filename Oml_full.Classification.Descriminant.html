@@ -24,5 +24,13 @@
 
 <pre><span class="keyword">module</span> Descriminant: <code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Descriminant.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
 
-<pre><span class="keyword">include</span> Omlf_descriminant</pre>
-</body></html>
+<pre><span class="keyword">module</span> <a href="Oml_full.Classification.Descriminant.LDA.html">LDA</a>: <div class="sig_block"><code class="code"><span class="keyword">functor</span> (</code><code class="code"><span class="constructor">D</span></code><code class="code"> : </code><code class="type"><a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">Oml.Classification.Input_interfaces.Continuous_encoded_data</a></code><code class="code">) <span class="keywordsign">-&gt;</span> </code><code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Descriminant.LDA.html">..</a> <code class="code"><span class="keyword">end</span></code></div></pre><div class="info">
+Train a
+    <a href="https://en.wikipedia.org/wiki/Linear_discriminant_analysis#Multiclass_LDA">
+    Multiclass LDA</a> model by estimating a mean vector for the features (per
+    class) and a common covariance matrix (common to all classes), which are
+    then used to model a <a href="https://en.wikipedia.org/wiki/Multivariate_normal_distribution">
+    Multivariate normal distribution</a>.
+</div>
+
+<pre><span class="keyword">module</span> <a href="Oml_full.Classification.Descriminant.QDA.html">QDA</a>: <div class="sig_block"><code class="code"><span class="keyword">functor</span> (</code><code class="code"><span class="constructor">D</span></code><code class="code"> : </code><code class="type"><a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">Oml.Classification.Input_interfaces.Continuous_encoded_data</a></code><code class="code">) <span class="keywordsign">-&gt;</span> </code><code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Descriminant.QDA.html">..</a> <code class="code"><span class="keyword">end</span></code></div></pre></body></html>

@@ -24,5 +24,21 @@
 
 <pre><span class="keyword">module</span> Logistic_regression: <code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Logistic_regression.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
 
-<pre><span class="keyword">include</span> Omlf_logistic_regression</pre>
+<pre><span class="keyword">module</span> <a href="Oml_full.Classification.Logistic_regression.Binary.html">Binary</a>: <div class="sig_block"><code class="code"><span class="keyword">functor</span> (</code><code class="code"><span class="constructor">D</span></code><code class="code"> : </code><code class="type"><a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">Oml.Classification.Input_interfaces.Continuous_encoded_data</a></code><code class="code">) <span class="keywordsign">-&gt;</span> </code><code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Logistic_regression.Binary.html">..</a> <code class="code"><span class="keyword">end</span></code></div></pre><div class="info">
+Use
+  <a href="https://en.wikipedia.org/wiki/Logistic_regression">Logistic Regression</a>
+  to estimate log-odds for each of the quantitative features in the
+  <a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">encoded data</a>,
+  per class.
+</div>
+
+<pre><span class="keyword">module</span> <a href="Oml_full.Classification.Logistic_regression.Multiclass.html">Multiclass</a>: <div class="sig_block"><code class="code"><span class="keyword">functor</span> (</code><code class="code"><span class="constructor">D</span></code><code class="code"> : </code><code class="type"><a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">Oml.Classification.Input_interfaces.Continuous_encoded_data</a></code><code class="code">) <span class="keywordsign">-&gt;</span> </code><code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Logistic_regression.Multiclass.html">..</a> <code class="code"><span class="keyword">end</span></code></div></pre><div class="info">
+Use <a href="https://en.wikipedia.org/wiki/Multinomial_logistic_regression">
+  Multiple Class Logistic Regression</a> to estimate log-odds
+  for each of the quantitative features in the
+  <a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">encoded data</a>,
+  per class: A constant <code class="code">1</code> is added to all encoded features by <code class="code">estimate</code>,
+  there is no need to add one with
+  <a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html#VALencoding">encoding</a>.
+</div>
 </body></html>

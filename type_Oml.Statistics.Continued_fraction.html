@@ -14,6 +14,9 @@
 <code class="code"><span class="keyword">sig</span>
 &nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t
 &nbsp;&nbsp;<span class="keyword">val</span>&nbsp;init&nbsp;:
-&nbsp;&nbsp;&nbsp;&nbsp;get_a:(int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;get_b:(int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;t
-&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;evaluate&nbsp;:&nbsp;t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?epsilon:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?max_iterations:int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;&nbsp;&nbsp;get_a:(int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;get_b:(int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Continued_fraction</span>.t
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;evaluate&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Continued_fraction</span>.t&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;?epsilon:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;?max_iterations:int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
 <span class="keyword">end</span></code></body></html>

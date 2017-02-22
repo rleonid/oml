@@ -24,5 +24,13 @@
 
 <pre><span class="keyword">module</span> Naive_bayes: <code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Naive_bayes.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
 
-<pre><span class="keyword">include</span> Omlf_naive_bayes</pre>
+<pre><span class="keyword">include</span> <a href="Oml.Classification.Naive_bayes.html">Oml.Classification.Naive_bayes</a></pre>
+
+<pre><span class="keyword">module</span> <a href="Oml_full.Classification.Naive_bayes.Gaussian.html">Gaussian</a>: <div class="sig_block"><code class="code"><span class="keyword">functor</span> (</code><code class="code"><span class="constructor">D</span></code><code class="code"> : </code><code class="type"><a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">Oml.Classification.Input_interfaces.Continuous_encoded_data</a></code><code class="code">) <span class="keywordsign">-&gt;</span> </code><code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Classification.Naive_bayes.Gaussian.html">..</a> <code class="code"><span class="keyword">end</span></code></div></pre><div class="info">
+Train a
+  <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">
+  Gaussian Naive Bayes</a> by estimating mean and standard deviations
+  for each of the quantitative features in the
+  <a href="Oml.Classification.Input_interfaces.Continuous_encoded_data.html">encoded data</a>.
+</div>
 </body></html>

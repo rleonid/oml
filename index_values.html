@@ -101,14 +101,61 @@ Given an existing running statistic <code class="code">t</code>, number of sampl
 </div>
 </td></tr>
 <tr><td align="left"><br>B</td></tr>
+<tr><td><a href="Oml_full.Classification.Logistic_regression.Binary.html#VALbase_class">base_class</a> [<a href="Oml_full.Classification.Logistic_regression.Binary.html">Oml_full.Classification.Logistic_regression.Binary</a>]</td>
+<td><div class="info">
+<code class="code">base_class t</code> returns the class C against which the log-odds
+        are computed (and hence coefficients).
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALbenford_pdf">benford_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">benford_pdf base digits</code> computes the probability of the
+  sequence of <code class="code">digits</code> in the given <code class="code">base</code> (10 by default) as determined
+  by Benford's Law.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALbenford_pdf_int64">benford_pdf_int64</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">benford_pdf_int64 base digits</code> computes the probability of the
+  sequence of <code class="code">digits</code> in the given <code class="code">base</code> (10 by default) as determined
+  by Benford's Law.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALbenford_pdf_seq">benford_pdf_seq</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">benford_pdf_seq base digits</code> computes the probability of the
+  sequence of <code class="code">digits</code> in the given <code class="code">base</code> (10 by default) as determined
+  by Benford's Law.
+</div>
+</td></tr>
 <tr><td><a href="Oml_full.Regression.Univariate.html#VALbeta">beta</a> [<a href="Oml_full.Regression.Univariate.html">Oml_full.Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">beta t</code> a shorthand for the linear parameter used in the regression.
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALbeta">beta</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">beta x y</code> computes the beta function of <code class="code">x</code> and <code class="code">y</code>, this function is also
+    known as the Euler integral of the first kind and is useful in defining
+    various distributions.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Regression.Univariate.html#VALbeta">beta</a> [<a href="Oml.Regression.Univariate.html">Oml.Regression.Univariate</a>]</td>
 <td><div class="info">
 <code class="code">beta t</code> a shorthand for the linear parameter used in the regression.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALbeta_cdf">beta_cdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">beta_cdf ~alpha ~beta x</code> probability that a beta random variable with
+    <code class="code">alpha</code> and <code class="code">beta</code> shape parameters takes a value less than or equal to
+    <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALbeta_pdf">beta_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">beta_pdf ~alpha ~beta x</code> value of the Beta distribution
+    function (with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters) at <code class="code">x</code>.
 </div>
 </td></tr>
 <tr><td><a href="Oml_full.Regression.Univariate.html#VALbeta_test">beta_test</a> [<a href="Oml_full.Regression.Univariate.html">Oml_full.Regression.Univariate</a>]</td>
@@ -156,6 +203,31 @@ Given an existing running statistic <code class="code">t</code>, number of sampl
       <code class="code">observed</code> data from the the same categorical distribution as <code class="code">expected</code>.
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALchi_square_cdf">chi_square_cdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">chi_square_cdf ~k x</code> computes the probability of seeing a value less than
+    <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees of freedom.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALchi_square_greater">chi_square_greater</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">chi_square_greater k x</code> computes the probability of seeing a value
+    greather than <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees of
+    freedom.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALchi_square_less">chi_square_less</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">chi_square_less k x</code> computes the probability of
+    seeing a value less than <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees
+    of freedom.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Classification.Logistic_regression.Multiclass.html#VALclass_order">class_order</a> [<a href="Oml_full.Classification.Logistic_regression.Multiclass.html">Oml_full.Classification.Logistic_regression.Multiclass</a>]</td>
+<td><div class="info">
+<code class="code">class_order t</code> specifies the order in which coefficients are returned.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Classification.Classifier_interfaces.Generative.html#VALclass_probabilities">class_probabilities</a> [<a href="Oml.Classification.Classifier_interfaces.Generative.html">Oml.Classification.Classifier_interfaces.Generative</a>]</td>
 <td><div class="info">
 <code class="code">class_probabilities t <span class="keyword">class</span></code> returns the prior and per feature
@@ -174,6 +246,12 @@ Given an existing running statistic <code class="code">t</code>, number of sampl
     using <code class="code">-2;-1;1;2</code> as cut off for the <a href="Oml.Statistics.Descriptive.html#TYPEskew_classification"><code class="code"><span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Descriptive</span>.skew_classification</code></a>.
 </div>
 </td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALcoeff_of_determination">coeff_of_determination</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">coeff_of_determination linear_model</code> returns the R^2 statistic for the
+      linear model.
+</div>
+</td></tr>
 <tr><td><a href="Oml_full.Regression.Interfaces.Linear_model.html#VALcoefficient_tests">coefficient_tests</a> [<a href="Oml_full.Regression.Interfaces.Linear_model.html">Oml_full.Regression.Interfaces.Linear_model</a>]</td>
 <td><div class="info">
 <code class="code">coefficient_tests linear_model</code> perform hypothesis tests on the
@@ -181,14 +259,34 @@ Given an existing running statistic <code class="code">t</code>, number of sampl
           the null.
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Classification.Logistic_regression.Multiclass.html#VALcoefficients">coefficients</a> [<a href="Oml_full.Classification.Logistic_regression.Multiclass.html">Oml_full.Classification.Logistic_regression.Multiclass</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> the weights assigned to the log-odds of the features.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Classification.Logistic_regression.Binary.html#VALcoefficients">coefficients</a> [<a href="Oml_full.Classification.Logistic_regression.Binary.html">Oml_full.Classification.Logistic_regression.Binary</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> the weights assigned to the log-odds of the features.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Regression.Interpolate.Spline.html#VALcoefficients">coefficients</a> [<a href="Oml.Regression.Interpolate.Spline.html">Oml.Regression.Interpolate.Spline</a>]</td>
 <td><div class="info">
 <code class="code">coefficients t</code> returns an array of the fit spline coefficients.
 </div>
 </td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALcoefficients">coefficients</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">coefficients t</code> returns the coefficients used in the linear model.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Uncategorized.Matrices.html#VALcolumn">column</a> [<a href="Oml.Uncategorized.Matrices.html">Oml.Uncategorized.Matrices</a>]</td>
 <td><div class="info">
 <code class="code">column m i</code> returns the <code class="code">i</code>th colum of matrix <code class="code">m</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Unsupervised.Pca.html#VALcomponents">components</a> [<a href="Oml_full.Unsupervised.Pca.html">Oml_full.Unsupervised.Pca</a>]</td>
+<td><div class="info">
+<code class="code">components t</code>
 </div>
 </td></tr>
 <tr><td><a href="Oml_full.Regression.Interfaces.Linear_model.html#VALconfidence_interval">confidence_interval</a> [<a href="Oml_full.Regression.Interfaces.Linear_model.html">Oml_full.Regression.Interfaces.Linear_model</a>]</td>
@@ -224,6 +322,11 @@ Given an existing running statistic <code class="code">t</code>, number of sampl
 A default value used when not specified.
 </div>
 </td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALdescribe">describe</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">describe t</code> returns a string describing the regressed linear model.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Uncategorized.Matrices.html#VALdiagonal">diagonal</a> [<a href="Oml.Uncategorized.Matrices.html">Oml.Uncategorized.Matrices</a>]</td>
 <td><div class="info">
 <code class="code">diagonal v</code> create a diagonal matrix from vector <code class="code">v</code>.
@@ -232,6 +335,11 @@ A default value used when not specified.
 <tr><td><a href="Oml.Uncategorized.Matrices.html#VALdim">dim</a> [<a href="Oml.Uncategorized.Matrices.html">Oml.Uncategorized.Matrices</a>]</td>
 <td><div class="info">
 <code class="code">dim m</code> the dimensions (row, columns) of the matrix <code class="code">m</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALdirichlet_pdf">dirichlet_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">dirichlet_pdf</code>
 </div>
 </td></tr>
 <tr><td><a href="Oml.Statistics.Measures.html#VALdiscrete_kl_divergence">discrete_kl_divergence</a> [<a href="Oml.Statistics.Measures.html">Oml.Statistics.Measures</a>]</td>
@@ -302,6 +410,17 @@ An empty <code class="code">t</code>, useful for initializing the fold.
     specifically <code class="code">not (significantly_different_from ~d x y)</code>.
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALerf">erf</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">erf x</code> computes the (Gauss) error function,
+  (2/sqrt(pi) * \int_0^x e^-t^2 dt)
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALerfc">erfc</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">erfc x</code> computes <code class="code">1.0 - erfc x</code>.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Classification.Classifier_interfaces.Classifier.html#VALestimate">estimate</a> [<a href="Oml.Classification.Classifier_interfaces.Classifier.html">Oml.Classification.Classifier_interfaces.Classifier</a>]</td>
 <td><div class="info">
 <code class="code">estimate opt classes samples</code> estimates a classifier based upon the
@@ -311,6 +430,11 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <tr><td><a href="Oml.Regression.Interpolate.Spline.html#VALeval">eval</a> [<a href="Oml.Regression.Interpolate.Spline.html">Oml.Regression.Interpolate.Spline</a>]</td>
 <td><div class="info">
 <code class="code">eval spline x</code> evalute <code class="code">spline</code> at <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALeval">eval</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">eval linear_model x</code> Evaluate a the <code class="code">linear_model</code> at <code class="code">x</code>.
 </div>
 </td></tr>
 <tr><td><a href="Oml.Classification.Classifier_interfaces.Classifier.html#VALeval">eval</a> [<a href="Oml.Classification.Classifier_interfaces.Classifier.html">Oml.Classification.Classifier_interfaces.Classifier</a>]</td>
@@ -325,9 +449,27 @@ An empty <code class="code">t</code>, useful for initializing the fold.
       equivalent to <code class="code"><span class="constructor">Array</span>.map (eval spline) data</code> but a wee bit faster.
 </div>
 </td></tr>
+<tr><td><a href="Oml.Statistics.Continued_fraction.html#VALevaluate">evaluate</a> [<a href="Oml.Statistics.Continued_fraction.html">Oml.Statistics.Continued_fraction</a>]</td>
+<td><div class="info">
+<code class="code">evaluate t x</code> evaluates the continued fraction expression at <code class="code">x</code> until
+    it converges.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Classification.Performance.html#VALevaluate_performance">evaluate_performance</a> [<a href="Oml.Classification.Performance.html">Oml.Classification.Performance</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>F</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALf_less">f_less</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">f_less d1 d2 x</code> computes the probability of seeing a value less than <code class="code">x</code>
+    in an F-distribution parameterized by <code class="code">d1</code> and <code class="code">d2</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALf_statistic">f_statistic</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code"><span class="constructor">F_test</span> linear_model</code> compute the F-statistic to assess if there is any
+      relationship between the response and predictors in the <code class="code">linear_model</code>.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Util.Array.html#VALfind_index">find_index</a> [<a href="Oml.Util.Array.html">Oml.Util.Array</a>]</td>
 <td><div class="info">
 <code class="code"><span class="constructor">Array</span>.find_index f a</code> returns the first <code class="code">i</code> (starting with 0) where
@@ -348,6 +490,11 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <tr><td><a href="Oml.Util.html#VALfst3">fst3</a> [<a href="Oml.Util.html">Oml.Util</a>]</td>
 <td></td></tr>
 <tr><td align="left"><br>G</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALgamma">gamma</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">gamma x</code> computes the gamma function of <code class="code">x</code>.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Statistics.Descriptive.html#VALgeometric_mean">geometric_mean</a> [<a href="Oml.Statistics.Descriptive.html">Oml.Statistics.Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">geometric_mean arr</code> is the product of the elements of <code class="code">arr</code> raised to the
@@ -384,6 +531,13 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <td><div class="info">
 <code class="code">init ?size x</code> initializes a <code class="code">t</code> with <code class="code">x</code> and initial <code class="code">size</code>
     which defaults to <code class="code">1</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml.Statistics.Continued_fraction.html#VALinit">init</a> [<a href="Oml.Statistics.Continued_fraction.html">Oml.Statistics.Continued_fraction</a>]</td>
+<td><div class="info">
+<code class="code">init get_a get_b</code> constructs a continued fraction expression where
+    <code class="code">get_a n x</code> will return the <code class="code">n</code>th constant term at <code class="code">x</code> and <code class="code">get_b n x</code>
+    returns the numerator.
 </div>
 </td></tr>
 <tr><td><a href="Oml.Statistics.Sampling.html#VALint_upper_bound">int_upper_bound</a> [<a href="Oml.Statistics.Sampling.html">Oml.Statistics.Sampling</a>]</td>
@@ -450,6 +604,33 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <td><div class="info">
 <code class="code">linear (x1,y1) (x2,y2)</code> fits a line (l) between the two points such that
     given an x value one can get the y along that line with <code class="code">l x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALln_beta">ln_beta</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">ln_beta x y</code>  computes <code class="code">log (beta x y)</code>, for more accuracy.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALln_beta_pdf">ln_beta_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">beta_pdf ~alpha ~beta x</code> natural log value of the Beta distribution
+    function (with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters) at <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALln_dirichlet_pdf">ln_dirichlet_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">ln_dirichlet_pdf</code>
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALln_gamma">ln_gamma</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">ln_gamma x</code> compute the natural logarithm of the gamma function of <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALln_multivariate_beta">ln_multivariate_beta</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">ln_multivariate_beta x y</code>  computes <code class="code">log (multivariate_beta x y)</code>,
+    for better accuracy.
 </div>
 </td></tr>
 <tr><td align="left"><br>M</td></tr>
@@ -527,6 +708,13 @@ An empty <code class="code">t</code>, useful for initializing the fold.
 <code class="code">mult s v</code> multiplies each element of <code class="code">v</code> by scalar <code class="code">s</code>.
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALmultivariate_beta">multivariate_beta</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">multivariate_beta arr</code> computes the multivariate_beta function <code class="code">arr</code>, this
+    function is also known as the Euler integral of the first kind and is useful
+    in defining various distributions.
+</div>
+</td></tr>
 <tr><td align="left"><br>N</td></tr>
 <tr><td><a href="Oml.Uncategorized.Solvers.html#VALnewton">newton</a> [<a href="Oml.Uncategorized.Solvers.html">Oml.Uncategorized.Solvers</a>]</td>
 <td><div class="info">
@@ -547,11 +735,36 @@ An empty <code class="code">t</code>, useful for initializing the fold.
     from the Normal distribution of <code class="code">mean</code> and <code class="code">std</code> (standard deviation).
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALnormal_cdf">normal_cdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">normal_cdf mean std x</code> is the probability that a normal random
+    variable with <code class="code">mean</code> and standard deviation <code class="code">std</code> takes a value less than
+    or equal to <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALnormal_cdf_inv">normal_cdf_inv</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">normal_cdf_inv x</code> returns the value <code class="code">y</code> such that the integral of the
+    normal cdf is <code class="code">x</code>.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Statistics.Measures.html#VALnormal_kl_divergence">normal_kl_divergence</a> [<a href="Oml.Statistics.Measures.html">Oml.Statistics.Measures</a>]</td>
 <td><div class="info">
 Computes kl divergence of the normal distributions P and Q defined
     given means <code class="code">p_mean</code> and <code class="code">q_mean</code> and std deviations <code class="code">p_sigma</code>
     and <code class="code">q_sigma</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALnormal_pdf">normal_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">normal_pdf mean std x</code> is the value of the Normal distribution
+    function (with <code class="code">mean</code> and standard deviation <code class="code">std</code>) at <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALnormal_quantile">normal_quantile</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">normal_quantile ?mean ?std p</code> computes <code class="code">x</code> such that
+    <code class="code">normal_cdf mean std x = p</code>.
 </div>
 </td></tr>
 <tr><td><a href="Oml.Statistics.Sampling.html#VALnormal_std">normal_std</a> [<a href="Oml.Statistics.Sampling.html">Oml.Statistics.Sampling</a>]</td>
@@ -566,6 +779,20 @@ Computes kl divergence of the normal distributions P and Q defined
 <td></td></tr>
 <tr><td><a href="Oml_full.Regression.Univariate.html#VALopt">opt</a> [<a href="Oml_full.Regression.Univariate.html">Oml_full.Regression.Univariate</a>]</td>
 <td></td></tr>
+<tr><td><a href="Oml_full.Classification.Descriminant.QDA.html#VALopt">opt</a> [<a href="Oml_full.Classification.Descriminant.QDA.html">Oml_full.Classification.Descriminant.QDA</a>]</td>
+<td></td></tr>
+<tr><td><a href="Oml_full.Classification.Descriminant.LDA.html#VALopt">opt</a> [<a href="Oml_full.Classification.Descriminant.LDA.html">Oml_full.Classification.Descriminant.LDA</a>]</td>
+<td></td></tr>
+<tr><td><a href="Oml_full.Classification.Logistic_regression.Multiclass.html#VALopt">opt</a> [<a href="Oml_full.Classification.Logistic_regression.Multiclass.html">Oml_full.Classification.Logistic_regression.Multiclass</a>]</td>
+<td><div class="info">
+<code class="code">opt ~lambda ~tolerance ()</code> a constructor for the optional arguments,
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Classification.Logistic_regression.Binary.html#VALopt">opt</a> [<a href="Oml_full.Classification.Logistic_regression.Binary.html">Oml_full.Classification.Logistic_regression.Binary</a>]</td>
+<td><div class="info">
+<code class="code">opt ~lambda ~tolerance ()</code> a constructor for the optional arguments,
+</div>
+</td></tr>
 <tr><td><a href="Oml.Regression.Univariate.html#VALopt">opt</a> [<a href="Oml.Regression.Univariate.html">Oml.Regression.Univariate</a>]</td>
 <td></td></tr>
 <tr><td><a href="Oml.Classification.Naive_bayes.Categorical.html#VALopt">opt</a> [<a href="Oml.Classification.Naive_bayes.Categorical.html">Oml.Classification.Naive_bayes.Categorical</a>]</td>
@@ -580,6 +807,12 @@ Computes kl divergence of the normal distributions P and Q defined
 </div>
 </td></tr>
 <tr><td align="left"><br>P</td></tr>
+<tr><td><a href="Oml_full.Unsupervised.Pca.html#VALpca">pca</a> [<a href="Oml_full.Unsupervised.Pca.html">Oml_full.Unsupervised.Pca</a>]</td>
+<td><div class="info">
+<code class="code">pca ?demean ?scale ?unbiased data</code> break down <code class="code">data</code> into its principal
+    components.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Util.Array.html#VALpermute">permute</a> [<a href="Oml.Util.Array.html">Oml.Util.Array</a>]</td>
 <td><div class="info">
 <code class="code">permute arr</code> will permute a copy of <code class="code">arr</code>.
@@ -588,6 +821,12 @@ Computes kl divergence of the normal distributions P and Q defined
 <tr><td><a href="Oml.Util.html#VALpi">pi</a> [<a href="Oml.Util.html">Oml.Util</a>]</td>
 <td><div class="info">
 3.14159265358979312
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALpoisson_cdf">poisson_cdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">poisson_cdf mean x</code> is the probability that a Poisson random variable with
+    <code class="code">mean</code> will take a value less than or equal to <code class="code">x</code>.
 </div>
 </td></tr>
 <tr><td><a href="Oml_full.Regression.Interfaces.Linear_model.html#VALprediction_interval">prediction_interval</a> [<a href="Oml_full.Regression.Interfaces.Linear_model.html">Oml_full.Regression.Interfaces.Linear_model</a>]</td>
@@ -612,7 +851,7 @@ Computes kl divergence of the normal distributions P and Q defined
 </td></tr>
 <tr><td><a href="Oml_full.Regression.Multivariate.html#VALpress">press</a> [<a href="Oml_full.Regression.Multivariate.html">Oml_full.Regression.Multivariate</a>]</td>
 <td><div class="info">
-<code class="code">press linear_model</code> return the Predicted REsidual Sum of Squares for the
+<code class="code">press linear_model</code> return the Predicted Residual Sum of Squares for the
         <code class="code">linear_model</code>.
 </div>
 </td></tr>
@@ -649,12 +888,62 @@ Multiply a row vector against a matrix.
     element <code class="code">arr.(i)</code> is replaced by it's rank in <code class="code">arr</code>.
 </div>
 </td></tr>
+<tr><td><a href="Oml_full.Unsupervised.Pca.html#VALreduce">reduce</a> [<a href="Oml_full.Unsupervised.Pca.html">Oml_full.Unsupervised.Pca</a>]</td>
+<td><div class="info">
+<code class="code">reduce t prm</code> restrict the number of stored principal components via <code class="code">prm</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALregress">regress</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">regress options pred resp</code> computes a linear model of <code class="code">resp</code> based
+      off of the independent variables in the design matrix <code class="code">pred</code>, taking
+      into account the various method <code class="code">opt</code>s.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALregularized_beta">regularized_beta</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">regularized_beta ?epsilon ?max_iterations ~alpha ~beta x</code> computes
+    the regularized (divided by <code class="code">beta alpha beta</code>) incomplete beta function,
+    which is the partial (0 to <code class="code">x</code>) integral of the beta function paramterized
+    by <code class="code">alpha</code> and <code class="code">beta</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALregularized_lower_gamma">regularized_lower_gamma</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">regularized_lower_gamma a x</code> computes regularized (normalized by
+    <code class="code">gamma a</code>) incomplete lower (integral from 0 to <code class="code">x</code>) function.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALregularized_upper_gamma">regularized_upper_gamma</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">regularized_upper_gamma a x</code> computes regularized (normalized by
+    <code class="code">gamma a</code>) incomplete upper (integral from <code class="code">x</code> to <code class="code">infinity</code>) function.
+</div>
+</td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALresidual_standard_error">residual_standard_error</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">residual_standard_error linear_model</code> returns an estimate, based on the
+      residuals, of the variance of the error term in the linear model.
+</div>
+</td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html#VALresiduals">residuals</a> [<a href="Oml.Regression.Interfaces.Linear_model.html">Oml.Regression.Interfaces.Linear_model</a>]</td>
+<td><div class="info">
+<code class="code">residuals t</code> returns the residuals, the difference between the observed
+      value and the estimated value for the independent, response, values.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Uncategorized.Matrices.html#VALrow">row</a> [<a href="Oml.Uncategorized.Matrices.html">Oml.Uncategorized.Matrices</a>]</td>
 <td><div class="info">
 <code class="code">row m i</code> returns the <code class="code">i</code>th row of matrix <code class="code">m</code>.
 </div>
 </td></tr>
 <tr><td align="left"><br>S</td></tr>
+<tr><td><a href="Oml_full.Unsupervised.Pca.html#VALscalings">scalings</a> [<a href="Oml_full.Unsupervised.Pca.html">Oml_full.Unsupervised.Pca</a>]</td>
+<td><div class="info">
+<code class="code">scalings t</code> returns an array of tuples representing the subtracted mean and
+    divided standard deviation applied to the data before broken into PC's.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Statistics.Descriptive.html#VALsd">sd</a> [<a href="Oml.Statistics.Descriptive.html">Oml.Statistics.Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">sd data</code> returns the sample standard deviation of <code class="code">data</code>.
@@ -710,6 +999,12 @@ The number of dummy variables to track.
 </td></tr>
 <tr><td><a href="Oml.Util.html#VALsnd3">snd3</a> [<a href="Oml.Util.html">Oml.Util</a>]</td>
 <td></td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALsoftmax">softmax</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">softmax ?temperature weights</code> transforms <code class="code">weights</code> into softmax weights dependent
+    on <code class="code">temperature</code>.
+</div>
+</td></tr>
 <tr><td><a href="Oml.Statistics.Sampling.Poly.html#VALsoftmax">softmax</a> [<a href="Oml.Statistics.Sampling.Poly.html">Oml.Statistics.Sampling.Poly</a>]</td>
 <td><div class="info">
 <code class="code">softmax ?seed ?temperature elems weights</code> creates a generator that will
@@ -735,6 +1030,30 @@ The number of dummy variables to track.
 <tr><td><a href="Oml.Statistics.Descriptive.html#VALspearman">spearman</a> [<a href="Oml.Statistics.Descriptive.html">Oml.Statistics.Descriptive</a>]</td>
 <td><div class="info">
 <code class="code">spearman x y</code> returns the Spearman rank correlation coefficient.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALstudent_cdf">student_cdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">student_cdf degrees_of_freedom x</code> computest the probability that the Student T's
+    distrubtion with <code class="code">degrees_of_freedom</code> takes a value less than <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Functions.html#VALstudent_cdf_inv">student_cdf_inv</a> [<a href="Oml_full.Statistics.Functions.html">Oml_full.Statistics.Functions</a>]</td>
+<td><div class="info">
+<code class="code">student_cdf_inv k x</code> returns the value <code class="code">y</code> such that the integral of the
+    Students T distribution with <code class="code">k</code> degrees of freedom is <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALstudent_pdf">student_pdf</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">student_pdf degrees_of_freedom x</code> computes the value of the Student T's
+    distribution with <code class="code">degrees_of_freedom</code> at <code class="code">x</code>.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Statistics.Distributions.html#VALstudent_quantile">student_quantile</a> [<a href="Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a>]</td>
+<td><div class="info">
+<code class="code">student_quantile degrees_of_freedom p</code> computes <code class="code">x</code> such that
+    <code class="code">student_cdf degrees_of_freedom x = p</code>.
 </div>
 </td></tr>
 <tr><td><a href="Oml.Uncategorized.Matrices.html#VALsub">sub</a> [<a href="Oml.Uncategorized.Matrices.html">Oml.Uncategorized.Matrices</a>]</td>
@@ -851,6 +1170,12 @@ Describe a hypothesis test.
 <td><div class="info">
 <code class="code">variance_ratio_test sample1 sample2</code> tests the data in <code class="code">sample1</code> and
         <code class="code">sample2</code> have the same variance based on F-test.
+</div>
+</td></tr>
+<tr><td><a href="Oml_full.Unsupervised.Pca.html#VALvariances">variances</a> [<a href="Oml_full.Unsupervised.Pca.html">Oml_full.Unsupervised.Pca</a>]</td>
+<td><div class="info">
+<code class="code">variances t</code> returns a vector of the amount of variance explained by each
+    PC in <code class="code">t</code>.
 </div>
 </td></tr>
 <tr><td align="left"><br>W</td></tr>

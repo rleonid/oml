@@ -21,6 +21,22 @@
 <h1>Module <a href="type_Oml.Statistics.Continued_fraction.html">Oml.Statistics.Continued_fraction</a></h1>
 
 <pre><span class="keyword">module</span> Continued_fraction: <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Statistics.Continued_fraction.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
+<br>
+Evaluate continued fraction expressions.<br>
 
-<pre><span class="keyword">include</span> Oml_continued_fraction</pre>
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+
+
+<pre><span id="VALinit"><span class="keyword">val</span> init</span> : <code class="type">get_a:(int -> float -> float) -><br>       get_b:(int -> float -> float) -> <a href="Oml.Statistics.Continued_fraction.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">init get_a get_b</code> constructs a continued fraction expression where
+    <code class="code">get_a n x</code> will return the <code class="code">n</code>th constant term at <code class="code">x</code> and <code class="code">get_b n x</code>
+    returns the numerator.<br>
+</div>
+
+<pre><span id="VALevaluate"><span class="keyword">val</span> evaluate</span> : <code class="type"><a href="Oml.Statistics.Continued_fraction.html#TYPEt">t</a> -><br>       ?epsilon:float -> ?max_iterations:int -> float -> float</code></pre><div class="info ">
+<code class="code">evaluate t x</code> evaluates the continued fraction expression at <code class="code">x</code> until
+    it converges.<br>
+<b>Raises</b> <code>Util.IterationFailure</code> if <code class="code">t</code> diverges or it does not converge after
+    <code class="code">200</code> iterations.<br>
+</div>
 </body></html>

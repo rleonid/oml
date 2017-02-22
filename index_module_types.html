@@ -26,10 +26,10 @@ Data where features are encoded using a set of
 <tr><td><a href="Oml.Classification.Classifier_interfaces.Classifier.html">Classifier</a> [<a href="Oml.Classification.Classifier_interfaces.html">Oml.Classification.Classifier_interfaces</a>]</td>
 <td><div class="info">
 A <a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEt">classifier</a>, once <a href="Oml.Classification.Classifier_interfaces.Classifier.html#VALestimate"> estimated</a> from
-        the features found in
+        the <a href="Oml.Classification.Input_interfaces.Data.html#TYPEfeature">features</a> found in
         <a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEsamples">samples</a> of data, assigns
         <a href="Oml.Classification.Probabilities.html#TYPEt">probabilities</a> to
-        classes
+        <a href="Oml.Classification.Input_interfaces.Data.html#TYPEclass_">classes</a>
         on future samples when <a href="Oml.Classification.Classifier_interfaces.Classifier.html#VALeval">evaluated</a>.
 </div>
 </td></tr>
@@ -63,6 +63,11 @@ A generative classifier builds models of the form
 <tr><td align="left"><br>L</td></tr>
 <tr><td><a href="Oml_full.Regression.Interfaces.Linear_model.html">Linear_model</a> [<a href="Oml_full.Regression.Interfaces.html">Oml_full.Regression.Interfaces</a>]</td>
 <td></td></tr>
+<tr><td><a href="Oml.Regression.Interfaces.Linear_model.html">Linear_model</a> [<a href="Oml.Regression.Interfaces.html">Oml.Regression.Interfaces</a>]</td>
+<td><div class="info">
+The interface of the model constructed by a Regression procedure.
+</div>
+</td></tr>
 <tr><td align="left"><br>O</td></tr>
 <tr><td><a href="Oml.Util.Optional_arg_intf.html">Optional_arg_intf</a> [<a href="Oml.Util.html">Oml.Util</a>]</td>
 <td><div class="info">

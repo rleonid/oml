@@ -13,7 +13,15 @@
 <link title="Index of modules" rel=Appendix href="index_modules.html">
 <link title="Index of module types" rel=Appendix href="index_module_types.html">
 <link title="Oml" rel="Chapter" href="Oml.html">
-<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml_full.Statistics.Distributions</title>
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><link title="Probability density, cumulative and quantile functions common distributions." rel="Section" href="#1_Probabilitydensitycumulativeandquantilefunctionscommondistributions">
+<link title="Normal " rel="Subsection" href="#2_Normal">
+<link title="Poisson" rel="Subsection" href="#2_Poisson">
+<link title="Beta" rel="Subsection" href="#2_Beta">
+<link title="Chi" rel="Subsection" href="#2_Chi">
+<link title="Student" rel="Subsection" href="#2_Student">
+<link title="Dirichlet" rel="Subsection" href="#2_Dirichlet">
+<link title="Benford" rel="Subsection" href="#2_Benford">
+<title>Oml_full.Statistics.Distributions</title>
 </head>
 <body>
 <div class="navbar"><a class="pre" href="Oml_full.Statistics.Measures.html" title="Oml_full.Statistics.Measures">Previous</a>
@@ -23,6 +31,110 @@
 <h1>Module <a href="type_Oml_full.Statistics.Distributions.html">Oml_full.Statistics.Distributions</a></h1>
 
 <pre><span class="keyword">module</span> Distributions: <code class="code"><span class="keyword">sig</span></code> <a href="Oml_full.Statistics.Distributions.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
+<br>
+<h1 id="1_Probabilitydensitycumulativeandquantilefunctionscommondistributions">Probability density, cumulative and quantile functions common distributions.</h1><br>
+<br>
+<h2 id="2_Normal">Normal </h2><br>
 
-<pre><span class="keyword">include</span> Omlf_distributions</pre>
+<pre><span id="VALnormal_cdf"><span class="keyword">val</span> normal_cdf</span> : <code class="type">?mean:float -> ?std:float -> float -> float</code></pre><div class="info ">
+<code class="code">normal_cdf mean std x</code> is the probability that a normal random
+    variable with <code class="code">mean</code> and standard deviation <code class="code">std</code> takes a value less than
+    or equal to <code class="code">x</code>.  <code class="code">mean</code> defaults to 0.0 and <code class="code">std</code> to 1.0.<br>
+</div>
+
+<pre><span id="VALnormal_pdf"><span class="keyword">val</span> normal_pdf</span> : <code class="type">?mean:float -> ?std:float -> float -> float</code></pre><div class="info ">
+<code class="code">normal_pdf mean std x</code> is the value of the Normal distribution
+    function (with <code class="code">mean</code> and standard deviation <code class="code">std</code>) at <code class="code">x</code>.
+    <code class="code">mean</code> defaults to 0.0 and <code class="code">std</code> to 1.0.<br>
+</div>
+
+<pre><span id="VALnormal_quantile"><span class="keyword">val</span> normal_quantile</span> : <code class="type">?mean:float -> ?std:float -> float -> float</code></pre><div class="info ">
+<code class="code">normal_quantile ?mean ?std p</code> computes <code class="code">x</code> such that
+    <code class="code">normal_cdf mean std x = p</code>. <code class="code">mean</code> defaults to 0.0 and <code class="code">std</code> to 1.0.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">p</code> is outside <code class="code">0,1</code>.<br>
+</div>
+<br>
+<h2 id="2_Poisson">Poisson</h2><br>
+
+<pre><span id="VALpoisson_cdf"><span class="keyword">val</span> poisson_cdf</span> : <code class="type">mean:float -> float -> float</code></pre><div class="info ">
+<code class="code">poisson_cdf mean x</code> is the probability that a Poisson random variable with
+    <code class="code">mean</code> will take a value less than or equal to <code class="code">x</code>.<br>
+</div>
+<br>
+<h2 id="2_Beta">Beta</h2><br>
+
+<pre><span id="VALln_beta_pdf"><span class="keyword">val</span> ln_beta_pdf</span> : <code class="type">alpha:float -> beta:float -> float -> float</code></pre><div class="info ">
+<code class="code">beta_pdf ~alpha ~beta x</code> natural log value of the Beta distribution
+    function (with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters) at <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALbeta_pdf"><span class="keyword">val</span> beta_pdf</span> : <code class="type">alpha:float -> beta:float -> float -> float</code></pre><div class="info ">
+<code class="code">beta_pdf ~alpha ~beta x</code> value of the Beta distribution
+    function (with <code class="code">alpha</code> and <code class="code">beta</code> shape parameters) at <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALbeta_cdf"><span class="keyword">val</span> beta_cdf</span> : <code class="type">alpha:float -> beta:float -> float -> float</code></pre><div class="info ">
+<code class="code">beta_cdf ~alpha ~beta x</code> probability that a beta random variable with
+    <code class="code">alpha</code> and <code class="code">beta</code> shape parameters takes a value less than or equal to
+    <code class="code">x</code>.<br>
+</div>
+<br>
+<h2 id="2_Chi">Chi</h2><br>
+
+<pre><span id="VALchi_square_cdf"><span class="keyword">val</span> chi_square_cdf</span> : <code class="type">k:int -> float -> float</code></pre><div class="info ">
+<code class="code">chi_square_cdf ~k x</code> computes the probability of seeing a value less than
+    <code class="code">x</code> in a Chi-square distribution with <code class="code">k</code> degrees of freedom.<br>
+</div>
+<br>
+<h2 id="2_Student">Student</h2><br>
+
+<pre><span id="VALstudent_pdf"><span class="keyword">val</span> student_pdf</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_pdf degrees_of_freedom x</code> computes the value of the Student T's
+    distribution with <code class="code">degrees_of_freedom</code> at <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALstudent_cdf"><span class="keyword">val</span> student_cdf</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_cdf degrees_of_freedom x</code> computest the probability that the Student T's
+    distrubtion with <code class="code">degrees_of_freedom</code> takes a value less than <code class="code">x</code>.<br>
+</div>
+
+<pre><span id="VALstudent_quantile"><span class="keyword">val</span> student_quantile</span> : <code class="type">degrees_of_freedom:int -> float -> float</code></pre><div class="info ">
+<code class="code">student_quantile degrees_of_freedom p</code> computes <code class="code">x</code> such that
+    <code class="code">student_cdf degrees_of_freedom x = p</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">p</code> is outside <code class="code">0,1</code>.<br>
+</div>
+<br>
+<h2 id="2_Dirichlet">Dirichlet</h2><br>
+
+<pre><span id="VALln_dirichlet_pdf"><span class="keyword">val</span> ln_dirichlet_pdf</span> : <code class="type">alphas:float array -> float array -> float</code></pre><div class="info ">
+<code class="code">ln_dirichlet_pdf</code><br>
+</div>
+
+<pre><span id="VALdirichlet_pdf"><span class="keyword">val</span> dirichlet_pdf</span> : <code class="type">alphas:float array -> float array -> float</code></pre><div class="info ">
+<code class="code">dirichlet_pdf</code><br>
+</div>
+<br>
+<h2 id="2_Benford">Benford</h2><br>
+
+<pre><span id="VALbenford_pdf"><span class="keyword">val</span> benford_pdf</span> : <code class="type">?base:int -> digits:int -> float</code></pre><div class="info ">
+<code class="code">benford_pdf base digits</code> computes the probability of the
+  sequence of <code class="code">digits</code> in the given <code class="code">base</code> (10 by default) as determined
+  by Benford's Law.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">base</code> &lt;= 1, <code class="code">base</code> &gt; 10 or <code class="code">digits</code> &lt; 0.<br>
+</div>
+
+<pre><span id="VALbenford_pdf_int64"><span class="keyword">val</span> benford_pdf_int64</span> : <code class="type">?base:int -> digits:Int64.t -> float</code></pre><div class="info ">
+<code class="code">benford_pdf_int64 base digits</code> computes the probability of the
+  sequence of <code class="code">digits</code> in the given <code class="code">base</code> (10 by default) as determined
+  by Benford's Law.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">base</code> &lt;= 1, <code class="code">base</code> &gt; 10 or <code class="code">digits</code> &lt; 0.<br>
+</div>
+
+<pre><span id="VALbenford_pdf_seq"><span class="keyword">val</span> benford_pdf_seq</span> : <code class="type">?base:int -> int list -> float</code></pre><div class="info ">
+<code class="code">benford_pdf_seq base digits</code> computes the probability of the
+  sequence of <code class="code">digits</code> in the given <code class="code">base</code> (10 by default) as determined
+  by Benford's Law.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">base</code> &lt;= 1, empty <code class="code">digits</code>,
+  or any digit &lt; 0 or &gt;= <code class="code">base</code><br>
+</div>
 </body></html>
