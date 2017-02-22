@@ -144,7 +144,7 @@ module Classification : sig
     (** Train a
       {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
       classifier on data encoded using
-      {{!modtype:Cls_intf.Dummy_encoded_data}Dummy variables.} *)
+      {{!modtype:Input_interfaces.Dummy_encoded_data}Dummy variables.} *)
     module Binomial(D: Input_interfaces.Dummy_encoded_data) : sig
       include Classifier_interfaces.Generative
           with type feature = D.feature
@@ -171,7 +171,7 @@ module Classification : sig
     (** Train a
       {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier}Naive Bayes}
       classifier on data encoded using
-      {{!modtype:Cls_intf.Category_encoded_data}Categorical variables.} *)
+      {{!modtype:Input_interfaces.Category_encoded_data}Categorical variables.} *)
     module Categorical(D: Input_interfaces.Category_encoded_data) : sig
       include Classifier_interfaces.Generative
           with type feature = D.feature

@@ -1,6 +1,6 @@
 (** Train a
     {{:https://en.wikipedia.org/wiki/Linear_discriminant_analysis#Multiclass_LDA}
-    Multiclass LDA model by estimating a mean vector for the features (per
+    Multiclass LDA} model by estimating a mean vector for the features (per
     class) and a common covariance matrix (common to all classes), which are
     then used to model a {{:https://en.wikipedia.org/wiki/Multivariate_normal_distribution}
     Multivariate normal distribution}. These, per class, distributions are used

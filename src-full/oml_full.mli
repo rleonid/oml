@@ -215,7 +215,7 @@ module Regression : sig
         [linear_model].*)
     val aic : t -> float
 
-    (** [press linear_model] return the Predicted REsidual Sum of Squares for the
+    (** [press linear_model] return the Predicted Residual Sum of Squares for the
         [linear_model]. *)
     val press : t -> float
   end
