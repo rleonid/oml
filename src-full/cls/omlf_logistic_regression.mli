@@ -18,7 +18,7 @@
 (** Use
   {{:https://en.wikipedia.org/wiki/Logistic_regression}Logistic Regression}
   to estimate log-odds for each of the quantitative features in the
-  {{!modtype:Cls_intf.Continuous_encoded_data}encoded data},
+  {{!modtype:Oml.Classification.Input_interfaces.Continuous_encoded_data}encoded data},
   per class.
 
   Unless specified via the [classes] argument to [estimate], the first
@@ -29,7 +29,7 @@
 
   A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
-  {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
+  {{!val:Oml.Classification.Input_interfaces.Continuous_encoded_data.encoding}encoding}. *)
 module Binary(D: Oml.Classification.Input_interfaces.Continuous_encoded_data) :
   sig
     include Oml.Classification.Classifier_interfaces.Classifier
@@ -58,16 +58,13 @@ module Binary(D: Oml.Classification.Input_interfaces.Continuous_encoded_data) :
     val base_class : t -> class_
   end
 
-(** Use
-  {{:https://en.wikipedia.org/wiki/Multinomial_logistic_regression}
+(** Use {{:https://en.wikipedia.org/wiki/Multinomial_logistic_regression}
   Multiple Class Logistic Regression} to estimate log-odds
   for each of the quantitative features in the
-  {{!modtype:Cls_intf.Continuous_encoded_data}encoded data},
-  per class.
-
-  A constant [1] is added to all encoded features by [estimate],
+  {{!modtype:Oml.Classification.Input_interfaces.Continuous_encoded_data}encoded data},
+  per class: A constant [1] is added to all encoded features by [estimate],
   there is no need to add one with
-  {{!val:Cls_intf.Continuous_encoded_data.encoding}encoding}. *)
+  {{!val:Oml.Classification.Input_interfaces.Continuous_encoded_data.encoding}encoding}. *)
 module Multiclass(D: Oml.Classification.Input_interfaces.Continuous_encoded_data) :
   sig
     include Oml.Classification.Classifier_interfaces.Classifier

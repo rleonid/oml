@@ -64,8 +64,8 @@ end
 
 (** Inference, parameter estimation.*)
 module Statistics : sig
-  module Continued_fraction : sig include
-    module type of Oml_continued_fraction
+  module Continued_fraction : sig
+    include module type of Oml_continued_fraction
   end
   module Functions : sig include module type of Oml_functions end
   module Sampling : sig include module type of Oml_sampling end
@@ -82,14 +82,14 @@ module Classification : sig
   module Input_interfaces : sig include module type of Oml_classification_input_interfaces end
   module Classifier_interfaces : sig
     (** A {{!type:t}classifier}, once {{!val:estimate} estimated} from
-        the {{!type:Data.feature}features} found in
+        the {{!type:Input_interfaces.Data.feature}features} found in
         {{!type:samples}samples} of data, assigns
         {{!Probabilities.t}probabilities} to
-        {{!type:Data.class_}classes}
+        {{!type:Input_interfaces.Data.class_}classes}
         on future samples when {{!val:eval}evaluated}. *)
     module type Classifier = sig
       include Input_interfaces.Data
-      include Oml_util.Optional_arg_intf
+      include Util.Optional_arg_intf
 
       (** The classifier. *)
       type t

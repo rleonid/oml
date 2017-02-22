@@ -21,7 +21,7 @@ include module type of Oml.Classification.Naive_bayes
   {{:https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes}
   Gaussian Naive Bayes} by estimating mean and standard deviations
   for each of the quantitative features in the
-  {{!modtype:Cls_intf.Continuous_encoded_data}encoded data}. *)
+  {{!modtype:Oml.Classification.Input_interfaces.Continuous_encoded_data}encoded data}. *)
 module Gaussian(D: Oml.Classification.Input_interfaces.Continuous_encoded_data) : sig
   include Oml.Classification.Classifier_interfaces.Generative
       with type feature := D.feature
