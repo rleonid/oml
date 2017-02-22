@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Oml.Statistics.html">
+<link rel="next" href="Oml.Classification.html">
+<link rel="Up" href="Oml.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Online</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Oml.Statistics.html" title="Oml.Statistics">Previous</a>
+&nbsp;<a class="up" href="Oml.html" title="Oml">Up</a>
+&nbsp;<a class="post" href="Oml.Classification.html" title="Oml.Classification">Next</a>
+</div>
+<h1>Module <a href="type_Oml.Online.html">Oml.Online</a></h1>
+
+<pre><span class="keyword">module</span> Online: <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Online.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info module top">
+Compute running statitics using recurrence equations.<br>
+</div>
+<hr width="100%">
+
+<pre><code><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.size">size</span>&nbsp;: <code class="type">int</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Number of observations.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.last">last</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Last observation.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.max">max</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Maxiumum.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.min">min</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Minimum.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.sum">sum</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Sum .<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.sum_sq">sum_sq</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Sum of squares.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.mean">mean</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+Mean.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.var">var</span>&nbsp;: <code class="type">float</code>;</code></td>
+<td class="typefieldcomment" align="left" valign="top" ><code>(*</code></td><td class="typefieldcomment" align="left" valign="top" ><div class="info ">
+<i>Unbiased</i> variance.<br>
+</div>
+</td><td class="typefieldcomment" align="left" valign="bottom" ><code>*)</code></td>
+</tr></table>
+}
+
+<div class="info ">
+Compute running statitics using recurrence equations.<br>
+</div>
+
+
+<pre><span id="VALempty"><span class="keyword">val</span> empty</span> : <code class="type"><a href="Oml.Online.html#TYPEt">t</a></code></pre><div class="info ">
+An empty <code class="code">t</code>, useful for initializing the fold.<br>
+</div>
+
+<pre><span id="VALinit"><span class="keyword">val</span> init</span> : <code class="type">?size:int -> float -> <a href="Oml.Online.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">init ?size x</code> initializes a <code class="code">t</code> with <code class="code">x</code> and initial <code class="code">size</code>
+    which defaults to <code class="code">1</code>.<br>
+</div>
+
+<pre><code><span id="TYPEupdate"><span class="keyword">type</span> <code class="type"></code>update</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTupdate.n_mean">n_mean</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTupdate.n_var">n_var</span>&nbsp;: <code class="type">float</code>;</code></td>
+
+</tr></table>
+}
+
+
+
+<pre><span class="keyword">module type</span> <a href="Oml.Online.Update_rules.html">Update_rules</a> = <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Online.Update_rules.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info">
+Defines an update rule.
+</div>
+
+<pre><span class="keyword">module</span> <a href="Oml.Online.Make.html">Make</a>: <div class="sig_block"><code class="code"><span class="keyword">functor</span> (</code><code class="code"><span class="constructor">Update</span></code><code class="code"> : </code><code class="type"><a href="Oml.Online.Update_rules.html">Update_rules</a></code><code class="code">) <span class="keywordsign">-&gt;</span> </code><code class="code"><span class="keyword">sig</span></code> <a href="Oml.Online.Make.html">..</a> <code class="code"><span class="keyword">end</span></code></div></pre><div class="info">
+Create custom <a href="Oml.Online.Make.html#VALupdate"><code class="code"><span class="constructor">Oml</span>.<span class="constructor">Online</span>.<span class="constructor">Make</span>.update</code></a> and <a href="Oml.Online.Make.html#VALjoin"><code class="code"><span class="constructor">Oml</span>.<span class="constructor">Online</span>.<span class="constructor">Make</span>.join</code></a> rules depending on how the <code class="code">mean</code> and
+    <code class="code">var</code> are update.
+</div>
+
+<pre><span id="VALupdate"><span class="keyword">val</span> update</span> : <code class="type">?size:int -> <a href="Oml.Online.html#TYPEt">t</a> -> float -> <a href="Oml.Online.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">update ?size t x</code> incorporate <code class="code">x</code> with given <code class="code">size</code> (defaulting to <code class="code">1</code>)
+    into the statistics tracked in <code class="code">t</code>, using Welford std update rule.<br>
+</div>
+
+<pre><span id="VALjoin"><span class="keyword">val</span> join</span> : <code class="type"><a href="Oml.Online.html#TYPEt">t</a> -> <a href="Oml.Online.html#TYPEt">t</a> -> <a href="Oml.Online.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">join t1 t2</code> return a <code class="code"><span class="constructor">Online</span>.t</code> if you had first observed the elements by
+    <code class="code">t1</code> and then <code class="code">t2</code> using Welford std update rules.<br>
+</div>
+</body></html>

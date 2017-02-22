@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Oml.Statistics.Descriptive.html">
+<link rel="Up" href="Oml.Statistics.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Statistics.Measures</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Oml.Statistics.Descriptive.html" title="Oml.Statistics.Descriptive">Previous</a>
+&nbsp;<a class="up" href="Oml.Statistics.html" title="Oml.Statistics">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Oml.Statistics.Measures.html">Oml.Statistics.Measures</a></h1>
+
+<pre><span class="keyword">module</span> Measures: <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Statistics.Measures.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
+<br>
+Provides various measurement functions from statistics and analysis<br>
+
+<pre><span id="VALnormal_kl_divergence"><span class="keyword">val</span> normal_kl_divergence</span> : <code class="type">?d:float -><br>       p_mean:float -><br>       p_sigma:float -> q_mean:float -> q_sigma:float -> unit -> float</code></pre><div class="info ">
+Computes kl divergence of the normal distributions P and Q defined
+    given means <code class="code">p_mean</code> and <code class="code">q_mean</code> and std deviations <code class="code">p_sigma</code>
+    and <code class="code">q_sigma</code>. Returns infinity for variances near zero.<br>
+</div>
+<div class="param_info"><code class="code">d</code> : float can be used to tune the sensitivity of the checks for
+    zero.</div>
+
+<pre><span id="VALdiscrete_kl_divergence"><span class="keyword">val</span> discrete_kl_divergence</span> : <code class="type">?d:float -> p:('a * float) list -> q:('a * float) list -> unit -> float</code></pre><div class="info ">
+<code class="code">discrete_kl_divergence ~p:p_pdf ~q:q_pdf</code> Compute the KL divergence from
+    <code class="code">p_pdf</code> to <code class="code">q_pdf</code>. <code class="code">p_pdf</code> and <code class="code">q_pdf</code> represent discrete probability
+    distributions. Please note that this metric is not symmetric and the result
+    does <b>not</b> equal <code class="code">discrete_kl_divergence ~p:q_pdf ~q:p_pdf</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if <code class="code">p_pdf</code> or <code class="code">q_pdf</code> have duplicate events,
+      the probabilities are outside the bounds, or they not sum to 1.<br>
+</div>
+<div class="param_info"><code class="code">d</code> : float can be used to tune the sensitivity of checks that the
+      probabilities sum to 1.</div>
+</body></html>

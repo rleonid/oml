@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Oml.Classification.Classifier_interfaces.Generative.html">
+<link rel="Up" href="Oml.Classification.Classifier_interfaces.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Classification.Classifier_interfaces.Classifier</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="Oml.Classification.Classifier_interfaces.html" title="Oml.Classification.Classifier_interfaces">Up</a>
+&nbsp;<a class="post" href="Oml.Classification.Classifier_interfaces.Generative.html" title="Oml.Classification.Classifier_interfaces.Generative">Next</a>
+</div>
+<h1>Module type <a href="type_Oml.Classification.Classifier_interfaces.Classifier.html">Oml.Classification.Classifier_interfaces.Classifier</a></h1>
+
+<pre><span class="keyword">module type</span> Classifier = <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Classification.Classifier_interfaces.Classifier.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info modtype top">
+A <a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEt">classifier</a>, once <a href="Oml.Classification.Classifier_interfaces.Classifier.html#VALestimate"> estimated</a> from
+        the features found in
+        <a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEsamples">samples</a> of data, assigns
+        <a href="Oml.Classification.Probabilities.html#TYPEt">probabilities</a> to
+        classes
+        on future samples when <a href="Oml.Classification.Classifier_interfaces.Classifier.html#VALeval">evaluated</a>.<br>
+</div>
+<hr width="100%">
+
+<pre><span class="keyword">include</span> <a href="Oml.Classification.Input_interfaces.Data.html">Oml.Classification.Input_interfaces.Data</a></pre>
+
+<pre><span class="keyword">include</span> Oml_util.Optional_arg_intf</pre>
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+<div class="info ">
+The classifier.<br>
+</div>
+
+
+<pre><span id="VALeval"><span class="keyword">val</span> eval</span> : <code class="type"><a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEt">t</a> -><br>       feature -> class_ <a href="Oml.Classification.Probabilities.html#TYPEt">Oml.Classification.Probabilities.t</a></code></pre><div class="info ">
+<code class="code">eval classifier feature</code> assign <a href="Oml.Classification.Probabilities.html#TYPEt">probabilities</a> to the
+          possible <a href="Oml.Classification.Input_interfaces.Data.html#TYPEclass_">classes</a> based upon <code class="code">feature</code>.<br>
+</div>
+
+<pre><span id="TYPEsamples"><span class="keyword">type</span> <code class="type"></code>samples</span> = <code class="type">(class_ * feature) list</code> </pre>
+<div class="info ">
+Representing training data.<br>
+</div>
+
+
+<pre><span id="VALestimate"><span class="keyword">val</span> estimate</span> : <code class="type">?opt:opt -><br>       ?classes:class_ list -><br>       <a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEsamples">samples</a> -><br>       <a href="Oml.Classification.Classifier_interfaces.Classifier.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">estimate opt classes samples</code> estimates a classifier based upon the
+          training <code class="code">samples</code>.
+<p>
+
+          <code class="code">classes</code> is an optional argument to specify ahead of time the possible
+          classes to train on (defaults to the ones found in the training data).
+          This is useful for models where we know the population domain but may
+          not see an example of a training datum for rare cases.
+<p>
+
+          <code class="code">opt</code> are the optional classifier dependent estimation/evaluation
+          arguments.<br>
+<b>Raises</b><ul><li><code>Invalid_argument</code> if <code class="code">classes</code> are specified and new ones are
+          found in the training <code class="code">samples</code>.</li>
+<li><code>Invalid_argument</code> if <code class="code">samples</code> is empty.</li>
+</ul>
+</div>
+</body></html>

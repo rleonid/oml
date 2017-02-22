@@ -1,0 +1,45 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Statistics.Sampling</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;generator&nbsp;=&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;int_upper_bound&nbsp;:&nbsp;int
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uniform_i&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uniform_f&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;normal&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;mean:float&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;std:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;normal_std&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;categorical&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;softmax&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;?temperature:float&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;<span class="keyword">module</span>&nbsp;<span class="constructor">Poly</span>&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">sig</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;uniform&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;categorical&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">'</span>a&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;softmax&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;?seed:int&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;?temperature:float&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">'</span>a&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;array&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;<span class="constructor">Oml</span>.<span class="constructor">Statistics</span>.<span class="constructor">Sampling</span>.generator
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">end</span>
+<span class="keyword">end</span></code></body></html>

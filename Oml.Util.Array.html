@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="next" href="Oml.Util.List.html">
+<link rel="Up" href="Oml.Util.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Util.Array</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="Oml.Util.html" title="Oml.Util">Up</a>
+&nbsp;<a class="post" href="Oml.Util.List.html" title="Oml.Util.List">Next</a>
+</div>
+<h1>Module <a href="type_Oml.Util.Array.html">Oml.Util.Array</a></h1>
+
+<pre><span class="keyword">module</span> Array: <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Util.Array.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><div class="info module top">
+Extend the <code class="code"><span class="constructor">Array</span></code> module with useful functions.<br>
+</div>
+<hr width="100%">
+<br>
+Extend the <code class="code"><span class="constructor">Array</span></code> module with useful functions.<br>
+
+<pre><span class="keyword">include</span> Array</pre>
+
+<pre><span id="VALfold2"><span class="keyword">val</span> fold2</span> : <code class="type">('a -> 'b -> 'c -> 'a) -> 'a -> 'b array -> 'c array -> 'a</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.fold2 f x a b</code> computes
+      <code class="code">f (... (f (f x a.(0) b.(0)) a.(1) b.(1)) ...) a.(n-1) b.(n-1)</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the lengths are unequal.<br>
+</div>
+
+<pre><span id="VALmap2"><span class="keyword">val</span> map2</span> : <code class="type">('a -> 'b -> 'c) -> 'a array -> 'b array -> 'c array</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.map2 f a b</code> applies <code class="code">f</code> to all of the aligned elements of <code class="code">a</code> and
+    <code class="code">b</code>.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the lengths are unequal.<br>
+</div>
+
+<pre><span id="VALsumf"><span class="keyword">val</span> sumf</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.sumf a</code> computes the sum of the elements of <code class="code">a</code> using
+    <a href="https://en.wikipedia.org/wiki/Kahan_summation_algorithm">Kahan summation algorithm</a>.<br>
+</div>
+
+<pre><span id="VALprodf"><span class="keyword">val</span> prodf</span> : <code class="type">float array -> float</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.prodf a</code> computes <code class="code">a.(0) *. a.(1) *. ... a.(n-1)</code>, naively.<br>
+</div>
+
+<pre><span id="VALmax"><span class="keyword">val</span> max</span> : <code class="type">'a array -> 'a</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.max a</code> computes <code class="code">max a.(0) (max a.(1)  ... (max a.(n-2) a.(n-1)))</code>.<br>
+</div>
+
+<pre><span id="VALmin"><span class="keyword">val</span> min</span> : <code class="type">'a array -> 'a</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.min a</code> computes <code class="code">min a.(0) (min a.(1)  ... (min a.(n-2) a.(n-1)))</code>.<br>
+</div>
+
+<pre><span id="VALfind_index"><span class="keyword">val</span> find_index</span> : <code class="type">?start:int -> ('a -> bool) -> 'a array -> int</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.find_index f a</code> returns the first <code class="code">i</code> (starting with 0) where
+    <code class="code">f a.(i)</code> is true.<br>
+</div>
+<div class="param_info"><code class="code">start</code> : The index from which we start searching, defaults to 0.</div>
+
+<pre><span id="VALbinary_search"><span class="keyword">val</span> binary_search</span> : <code class="type">('a -> int) -> 'a array -> int</code></pre><div class="info ">
+<code class="code">binary_search c a</code>, find the index of element <code class="code">e</code> in <code class="code">a</code> where
+    <code class="code">c e = 0</code>. Where <code class="code">c e'</code> returns &lt; 0 if <code class="code">e' &lt; e</code> and <code class="code">&gt; 0</code> if <code class="code">e' &gt; e</code>.
+<p>
+
+    If no element is found where <code class="code">c e = 0</code> then the largest index such that
+    <code class="code">c e &lt; -1</code> is returned, this might be (-1).<br>
+</div>
+
+<pre><span id="VALbinary_search_exn"><span class="keyword">val</span> binary_search_exn</span> : <code class="type">('a -> int) -> 'a array -> int</code></pre><div class="info ">
+<code class="code"><span class="constructor">Array</span>.binary_search_exn c a</code>, find the index of an element <code class="code">e</code> in <code class="code">a</code> where
+    <code class="code">c e = 0</code>.  Where <code class="code">c e'</code> returns &lt; 0 if <code class="code">e' &lt; e</code> and <code class="code">&gt; 0</code> if <code class="code">e' &gt; e</code>.<br>
+<b>Raises</b> <code>Not_found</code> if no element is found where <code class="code">c e = 0</code>.<br>
+</div>
+
+<pre><span id="VALall"><span class="keyword">val</span> all</span> : <code class="type">('a -> bool) -> 'a array -> bool</code></pre><div class="info ">
+<code class="code">all p arr</code> equivalent to <code class="code"><span class="keyword">true</span> <span class="keywordsign">&amp;&amp;</span> (p arr.(0)) <span class="keywordsign">&amp;&amp;</span> (p arr.(1)) ...
+    <span class="keywordsign">&amp;&amp;</span> (p arr.(n))</code><br>
+</div>
+
+<pre><span id="VALany"><span class="keyword">val</span> any</span> : <code class="type">('a -> bool) -> 'a array -> bool</code></pre><div class="info ">
+<code class="code">any p arr</code> equivalent to <code class="code"><span class="keyword">false</span> <span class="keywordsign">||</span> (p arr.(0)) <span class="keywordsign">||</span> (p arr.(1)) ...
+    <span class="keywordsign">||</span> (p arr.(n))</code><br>
+</div>
+
+<pre><span id="VALhas_order"><span class="keyword">val</span> has_order</span> : <code class="type">('a -> 'a -> bool) -> 'a array -> bool</code></pre><div class="info ">
+<code class="code">has_order c arr</code> equivalent to
+    <code class="code"> c arr.(0) arr.(1) <span class="keywordsign">&amp;&amp;</span> c arr.(1) arr.(2) ... c arr.(n-1) arr.(n)</code>
+    but short circuits.<br>
+</div>
+
+<pre><span id="VALrange"><span class="keyword">val</span> range</span> : <code class="type">?incr:float -> start:float -> stop:float -> unit -> float array</code></pre><div class="info ">
+<code class="code">range incr start stop</code> creates a float array of all the values in the
+    interval <code class="code">[start,stop)</code>, counting by <code class="code">incr</code> (defaults to <code class="code">1.0</code>).<br>
+</div>
+
+<pre><span id="VALranks"><span class="keyword">val</span> ranks</span> : <code class="type">?start:int -><br>       ?average_ties:bool -><br>       ?compare:(float -> float -> int) -> float array -> float array</code></pre><div class="info ">
+<code class="code">ranks ?start ?average_ties ?compare arr</code> returns an array where each
+    element <code class="code">arr.(i)</code> is replaced by it's rank in <code class="code">arr</code>. The first element is
+    <code class="code">start</code> (defaults to 1).
+<p>
+
+    Optionally <code class="code">average_ties</code> can be specified if the assigned ranks should
+    be averaged together (ex. <code class="code"><span class="keywordsign">|</span>1;2;3<span class="keywordsign">|</span></code> -&gt; <code class="code"><span class="keywordsign">|</span>2;2;2<span class="keywordsign">|</span></code>).
+    <code class="code">compare</code> can also be specified if more granularity is desired over float
+    comparison.<br>
+</div>
+
+<pre><span id="VALzip"><span class="keyword">val</span> zip</span> : <code class="type">'a array -> 'b array -> ('a * 'b) array</code></pre><div class="info ">
+<code class="code">zip x y</code> construct an array that stores the elements of x and y as a
+    tuple.<br>
+<b>Raises</b> <code>Invalid_argument</code> if the arrays of unequal length.<br>
+</div>
+
+<pre><span id="VALunzip"><span class="keyword">val</span> unzip</span> : <code class="type">('a * 'b) array -> 'a array * 'b array</code></pre><div class="info ">
+<code class="code">unzip arr</code> split an array of tuples into an array of the first value and
+    an array of the second.<br>
+</div>
+
+<pre><span id="VALpermute"><span class="keyword">val</span> permute</span> : <code class="type">?copy:bool -> 'a array -> 'a array</code></pre><div class="info ">
+<code class="code">permute arr</code> will permute a copy of <code class="code">arr</code>.<br>
+</div>
+<div class="param_info"><code class="code">copy</code> : can be set to false to perform the permutation in place.</div>
+</body></html>

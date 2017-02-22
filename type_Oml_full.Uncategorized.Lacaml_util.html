@@ -1,0 +1,87 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml_full.Uncategorized.Lacaml_util</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;col_mean&nbsp;:&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;msk_mean&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;sum_sq_dm&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.num_type
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;col_std&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;normalize&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?demean:bool&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;?scale:bool&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;?unbiased:bool&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(float&nbsp;*&nbsp;float)&nbsp;array&nbsp;*&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;remove_column_max&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;column_means&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.vec
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;row_means&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.vec
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;centered&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;centering&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;column_scatter&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?alpha:<span class="constructor">Lacaml_float64</span>.num_type&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;row_scatter&nbsp;:&nbsp;?alpha:float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;scale_or_unbiased_rows&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;option&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;sample_covariance&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?scale:<span class="constructor">Lacaml_float64</span>.num_type&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;sample_covariance_upper_tri&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?scale:<span class="constructor">Lacaml_float64</span>.num_type&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;msk_mean_mat&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.vec
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;class_positions&nbsp;=&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;mask&nbsp;:&nbsp;<span class="constructor">Lacaml</span>.<span class="constructor">D</span>.<span class="constructor">Vec</span>.t;
+&nbsp;&nbsp;&nbsp;&nbsp;inds&nbsp;:&nbsp;int&nbsp;list;
+&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;:&nbsp;float;
+&nbsp;&nbsp;}
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;class_mask&nbsp;=&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;masks&nbsp;:&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml</span>.<span class="constructor">D</span>.<span class="constructor">Vec</span>.t&nbsp;list
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;sizes&nbsp;:&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;list
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_masks&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?class_order:<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_means_pip&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>b)&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywordsign">'</span>b
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_means&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;centered_class&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;within_class_scatter&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;within_class_scatter_upper_tri&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;between_class_scatter&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;determinant_of_one_and_two_d_blocks_fold&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;dt1:(int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;(int32,&nbsp;<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>b)&nbsp;<span class="constructor">Bigarray</span>.<span class="constructor">Array1</span>.t&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;f:(<span class="keywordsign">'</span>c&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>c)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;init:<span class="keywordsign">'</span>c&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>c
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;determinant_of_one_and_two_d_blocks&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;dt1:(int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float)&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;(int32,&nbsp;<span class="keywordsign">'</span>a,&nbsp;<span class="keywordsign">'</span>b)&nbsp;<span class="constructor">Bigarray</span>.<span class="constructor">Array1</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;determinant_symmetric&nbsp;:&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;determinant_symmetric_and_inverse&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?copy:bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;det_pipeline&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?copy:bool&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;(float&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_common</span>.int32_vec&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a)&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="keywordsign">'</span>a
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;determinant&nbsp;:&nbsp;?copy:bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;determinant_and_inverse&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;?copy:bool&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;float&nbsp;*&nbsp;<span class="constructor">Lacaml_float64</span>.mat
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;class_sample_covariance&nbsp;:
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="constructor">Lacaml_float64</span>.mat&nbsp;<span class="keywordsign">-&gt;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;class_positions)&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;(<span class="keywordsign">'</span>a&nbsp;*&nbsp;<span class="constructor">Lacaml_float64</span>.mat)&nbsp;list
+<span class="keyword">end</span></code></body></html>

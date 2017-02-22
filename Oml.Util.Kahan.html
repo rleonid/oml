@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Oml.Util.Float.html">
+<link rel="Up" href="Oml.Util.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Util.Kahan</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Oml.Util.Float.html" title="Oml.Util.Float">Previous</a>
+&nbsp;<a class="up" href="Oml.Util.html" title="Oml.Util">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Oml.Util.Kahan.html">Oml.Util.Kahan</a></h1>
+
+<pre><span class="keyword">module</span> Kahan: <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Util.Kahan.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+<div class="info ">
+A more summation that keeps track of low order bits.<br>
+</div>
+
+
+<pre><span id="VALempty"><span class="keyword">val</span> empty</span> : <code class="type"><a href="Oml.Util.Kahan.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">empty</code> initialize a summation.<br>
+</div>
+
+<pre><span id="VALzero"><span class="keyword">val</span> zero</span> : <code class="type"><a href="Oml.Util.Kahan.html#TYPEt">t</a></code></pre>
+<pre><span id="VALupdate"><span class="keyword">val</span> update</span> : <code class="type"><a href="Oml.Util.Kahan.html#TYPEt">t</a> -> float -> <a href="Oml.Util.Kahan.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">update summation value</code><br>
+</div>
+
+<pre><span id="VALupdate_with_degenerate_check"><span class="keyword">val</span> update_with_degenerate_check</span> : <code class="type"><a href="Oml.Util.Kahan.html#TYPEt">t</a> -> float -> <a href="Oml.Util.Kahan.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">update_with_degenerate_check summation value</code>
+    Does not update the sum if it is currently at a degenerate
+    (infinity, neg_infinity or nan) value.<br>
+</div>
+
+<pre><span id="VAL(+)"><span class="keyword">val</span> (+)</span> : <code class="type"><a href="Oml.Util.Kahan.html#TYPEt">t</a> -> float -> <a href="Oml.Util.Kahan.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">update summation value</code><br>
+</div>
+
+<pre><span id="VALsum"><span class="keyword">val</span> sum</span> : <code class="type"><a href="Oml.Util.Kahan.html#TYPEt">t</a> -> float</code></pre><div class="info ">
+<code class="code">sum summation</code> returns the sum from summation.<br>
+</div>
+</body></html>

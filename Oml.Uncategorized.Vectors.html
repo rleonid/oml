@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Oml.Uncategorized.Solvers.html">
+<link rel="next" href="Oml.Uncategorized.Matrices.html">
+<link rel="Up" href="Oml.Uncategorized.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Index of module types" rel=Appendix href="index_module_types.html">
+<link title="Oml" rel="Chapter" href="Oml.html">
+<link title="Oml_full" rel="Chapter" href="Oml_full.html"><title>Oml.Uncategorized.Vectors</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Oml.Uncategorized.Solvers.html" title="Oml.Uncategorized.Solvers">Previous</a>
+&nbsp;<a class="up" href="Oml.Uncategorized.html" title="Oml.Uncategorized">Up</a>
+&nbsp;<a class="post" href="Oml.Uncategorized.Matrices.html" title="Oml.Uncategorized.Matrices">Next</a>
+</div>
+<h1>Module <a href="type_Oml.Uncategorized.Vectors.html">Oml.Uncategorized.Vectors</a></h1>
+
+<pre><span class="keyword">module</span> Vectors: <code class="code"><span class="keyword">sig</span></code> <a href="Oml.Uncategorized.Vectors.html">..</a> <code class="code"><span class="keyword">end</span></code></pre><hr width="100%">
+<br>
+Provide an interface to treat float array's as vectors.<br>
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = <code class="type">float array</code> </pre>
+
+
+<pre><span id="VALequal"><span class="keyword">val</span> equal</span> : <code class="type">?d:float -><br>       <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> bool</code></pre><div class="info ">
+<code class="code">equal d x y</code> two vectors are equal if they have the same length and all
+  pairwise elements are not <code class="code"><span class="constructor">Util</span>.significantly_different_from ?d</code> .<br>
+</div>
+
+<pre><span id="VALadd"><span class="keyword">val</span> add</span> : <code class="type"><a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -><br>       <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">add x y</code> add pairwise elements.<br>
+</div>
+
+<pre><span id="VALsub"><span class="keyword">val</span> sub</span> : <code class="type"><a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -><br>       <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">sub x y</code> subtract pairwise elements.<br>
+</div>
+
+<pre><span id="VALmult"><span class="keyword">val</span> mult</span> : <code class="type">float -> <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a></code></pre><div class="info ">
+<code class="code">mult s v</code> multiplies each element of <code class="code">v</code> by scalar <code class="code">s</code>.<br>
+</div>
+
+<pre><span id="VALdot"><span class="keyword">val</span> dot</span> : <code class="type"><a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> <a href="Oml.Uncategorized.Vectors.html#TYPEt">t</a> -> float</code></pre><div class="info ">
+<code class="code">dot x y</code> computes dot product.<br>
+</div>
+</body></html>
