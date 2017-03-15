@@ -15,7 +15,7 @@
    limitations under the License.
 *)
 
-open Lacaml_D
+open Lacaml.D
 
 (* [general_eval_and_grad ~lambda number_of_classes data_in_rows classes]
    returns a function [f] that for a weight vector [w] and a gradient vector
