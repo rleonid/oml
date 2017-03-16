@@ -47,19 +47,19 @@ clean:
 
 test:
 	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) -n omltest && \
-		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR) -n omltest
 
 test_lite:
 	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) --with-lacaml false --with-lbfgs false --with-ocephes false -n omltest && \
-		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR) -n omltest
 
 covered_test:
 	ocaml pkg/pkg.ml build --build-dir $(COVERED_TEST_BUILD_DIR) --with-coverage true -n omltest && \
-		time ocaml pkg/pkg.ml test --build-dir $(COVERED_TEST_BUILD_DIR)
+		time ocaml pkg/pkg.ml test --build-dir $(COVERED_TEST_BUILD_DIR) -n omltest
 
 covered_test_lite:
 	ocaml pkg/pkg.ml build --build-dir $(COVERED_TEST_BUILD_DIR) --with-lacaml false --with-lbfgs false --with-ocephes false --with-coverage true -n omltest && \
-		time ocaml pkg/pkg.ml test --build-dir $(COVERED_TEST_BUILD_DIR)
+		time ocaml pkg/pkg.ml test --build-dir $(COVERED_TEST_BUILD_DIR) -n omltest
 
 
 #### Test Coverage
@@ -91,11 +91,11 @@ showed: build
 
 examples_lite:
 	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) --with-lacaml false --with-lbfgs false --with-ocephes false -n examples && \
-		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR) -n examples
 
 examples:
 	ocaml pkg/pkg.ml build --build-dir $(TEST_BUILD_DIR) -n examples && \
-		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR)
+		time ocaml pkg/pkg.ml test --build-dir $(TEST_BUILD_DIR) -n examples
 
 FORCE:
 
