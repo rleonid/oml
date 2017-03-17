@@ -136,7 +136,7 @@ end
 module Multiclass(Data: I.Continuous_encoded_data) = struct
 
   include LrCommon(Data)
-  open Lacaml_D
+  open Lacaml.D
 
   type t =
     { weights : mat
