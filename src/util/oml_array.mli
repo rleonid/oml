@@ -105,5 +105,11 @@ val unzip : ('a * 'b) array -> ('a array * 'b array)
 
 (** [permute arr] will permute a copy of [arr].
 
-    @param copy can be set to false to perform the permutation in place. *)
-val permute : ?copy:bool -> 'a array -> 'a array
+    @param copy can be set to false to perform the permutation in place and
+                and returning arr.
+    @param seed can be used to initialize the Random state before performing
+                the permutation to obtain better or consistent permutations. *)
+val permute : ?seed:[`Self | `Init of int | `Full of int array ]
+            -> ?copy:bool
+            -> 'a array
+            -> 'a array

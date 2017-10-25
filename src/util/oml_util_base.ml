@@ -64,3 +64,9 @@ let fst3 (x,_,_) = x
 let snd3 (_,x,_) = x
 let thr3 (_,_,x) = x
 
+let random_init = function
+  | None -> ()
+  | Some `Self    -> Random.self_init ()
+  | Some `Init i  -> Random.init i
+  | Some `Full a  -> Random.full_init a
+
