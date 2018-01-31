@@ -6,7 +6,7 @@ travis_install_on_linux () {
 
 travis_install_on_osx () {
   echo "brew install lapack"
-  brew install homebrew/dupes/lapack > /dev/null
+  brew install lapack > /dev/null
   echo "brew install gcc"
   brew install gcc > /dev/null  # for gfortran
   echo "brew install libffi"
