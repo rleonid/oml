@@ -38,17 +38,15 @@ opam pin add dsfo git://github.com/rleonid/dsfo
 echo ----------Testing lite----------
 make test_lite
 
+echo ----------Install bisect ppx and ocveralls for coverage reporting----------
 echo ----------Installing C and Fortran deps----------
-opam install ocephes lacaml.9.2.2 lbfgs
+opam install bisect_ppx ocveralls ocephes lacaml.9.2.2 lbfgs
 
 echo ----------Compiling full----------
 make build
 
 echo ----------Examples ----
 make examples
-
-echo ----------Install bisect ppx and ocveralls for coverage reporting----------
-opam install bisect_ppx ocveralls
 
 echo ----------Testing full----------
 make covered_test
