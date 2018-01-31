@@ -39,7 +39,7 @@ echo ----------Testing lite----------
 make test_lite
 
 echo ----------Installing C and Fortran deps----------
-opam install ocephes lacaml lbfgs
+opam install ocephes lacaml.9.2.2 lbfgs
 
 echo ----------Compiling full----------
 make build
