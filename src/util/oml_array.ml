@@ -136,7 +136,8 @@ let zip x y =
 
 let unzip arr = Array.map fst arr, Array.map snd arr
 
-let permute ?(copy=true) arr =
+let permute ?seed ?(copy=true) arr =
+  random_init seed;
   let a = if copy then Array.copy arr else arr in
   for n = Array.length a - 1 downto 1 do
     let k = Random.int (n + 1) in

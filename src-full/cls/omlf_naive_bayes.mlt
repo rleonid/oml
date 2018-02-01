@@ -16,6 +16,7 @@
 *)
 
 open Test_utils
+open Dsfo
 
 let () =
   let add_simple_test = Test.add_simple_test_group "Naive Bayes" in

@@ -6,6 +6,6 @@ script:
   - bash -ex ./tools/travis_ci_test.sh
 os:
   - linux
-  - osx
+#  - osx
 env:
-  - OCAML_VERSION=4.03 OPAM_VERSION=1.2.2
+  - OCAML_VERSION=4.05 OPAM_VERSION=1.2.2
